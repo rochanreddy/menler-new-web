@@ -29,6 +29,15 @@ export default function AccredSection() {
             <p className="accred-text"><strong>India-first program</strong>Bengaluru-based. Hybrid delivery. INR-priced.</p>
           </div>
         </div>
+
+        <div className="accred-by">
+          <p className="accred-by-label">We are accredited by</p>
+          <div className="accred-by-row">
+            {['Skill India', 'MSME India', 'Google for Education', 'Anthropic'].map(name => (
+              <span key={name} className="accred-by-logo">{name}</span>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import MeridianLogo from '../components/common/MeridianLogo';
+import MenlerLogo from '../components/common/MenlerLogo';
 
 const EyeIcon = ({ open }) => open ? (
   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -63,12 +63,12 @@ export default function SignUp() {
     <div className="auth-page">
       <div className="auth-card">
         <div className="auth-logo" onClick={() => navigate('/')}>
-          <MeridianLogo color="#534AB7" />
-          <span className="auth-logo-text">Meridian</span>
+          <MenlerLogo color="#534AB7" />
+          <span className="auth-logo-text">Menler</span>
         </div>
 
         <h1 className="auth-h1">Create your account.</h1>
-        <p className="auth-sub">Join Meridian and start your AI journey.</p>
+        <p className="auth-sub">Join Menler and start your AI journey.</p>
 
         {error && <div className="auth-error">{error}</div>}
 

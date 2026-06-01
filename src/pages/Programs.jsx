@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CtaBanner from '../components/common/CtaBanner';
 import Footer from '../components/layout/Footer';
+import MentorsRail from '../components/common/MentorsRail';
 import { submitLead } from '../services/leadService';
 
 const COMPARE_ROWS = [
@@ -32,7 +33,7 @@ export default function Programs() {
   return (
     <>
       {/* ── HERO ── */}
-      <section className="hero hero-centered" style={{ padding: '72px 40px 48px' }}>
+      <section className="hero" style={{ padding: '72px 40px 48px' }}>
         <div className="hero-ring r1" /><div className="hero-ring r2" />
         <div className="hero-inner">
           <p className="hero-eyebrow">Programs · India · Cohort 01 enrolling</p>
@@ -143,6 +144,9 @@ export default function Programs() {
           )}
         </div>
       </section>
+
+      {/* ── MENTORS ── */}
+      <MentorsRail />
 
       {/* ── CTA ── */}
       <CtaBanner

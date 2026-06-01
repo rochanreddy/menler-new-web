@@ -1,5 +1,5 @@
 /**
- * Lead capture service — posts marketing-form submissions to the Meridian API.
+ * Lead capture service — posts marketing-form submissions to the Menler API.
  */
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';

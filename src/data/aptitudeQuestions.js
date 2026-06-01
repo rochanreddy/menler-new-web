@@ -1,5 +1,5 @@
 /**
- * Meridian AI Aptitude Test — 10 questions, each option has score (s).
+ * Menler AI Aptitude Test — 10 questions, each option has score (s).
  * Max score = 40 (10 questions × max 4 points each).
  */
 export const APTITUDE_QUESTIONS = [

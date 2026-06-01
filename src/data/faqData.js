@@ -1,7 +1,7 @@
 export const HOME_FAQS = [
   {
-    q: 'What is Meridian Fellowship and how is it different from other AI courses in India?',
-    a: "Meridian Fellowship is India's first Claude-native AI specialist program. Unlike generic AI courses that survey ChatGPT and prompt-engineering basics, Meridian goes deep on a single, market-leading model — Claude — and applies it to seven specific career domains. Every fellow ships a portfolio of domain-specific projects, sits a Claude Specialist certification exam, and is matched to a placed role through Demo Day. The fellowship runs 12 weeks intensive with two paths: Generalist (no coding required) and Engineering (Python or JavaScript required) — both leading to a recognised AI Specialist credential.",
+    q: 'What is Menler Fellowship and how is it different from other AI courses in India?',
+    a: "Menler Fellowship is India's first Claude-native AI specialist program. Unlike generic AI courses that survey ChatGPT and prompt-engineering basics, Menler goes deep on a single, market-leading model — Claude — and applies it to seven specific career domains. Every fellow ships a portfolio of domain-specific projects, sits a Claude Specialist certification exam, and is matched to a placed role through Demo Day. The fellowship runs 12 weeks intensive with two paths: Generalist (no coding required) and Engineering (Python or JavaScript required) — both leading to a recognised AI Specialist credential.",
   },
   {
     q: 'Who should apply to the Claude AI Generalist program?',
@@ -12,24 +12,24 @@ export const HOME_FAQS = [
     a: "The Engineering program is built for technical professionals — software engineers, data scientists, ML practitioners, IT engineers, and deep-tech professionals — who already write production code in Python or JavaScript. You'll go from Claude API basics to deployed multi-agent systems, MCP servers, RAG pipelines with evals, and full LLMOps.",
   },
   {
-    q: 'Does Meridian guarantee placement and what does placement support look like?',
-    a: "Placement is the program's primary outcome metric, not a guarantee. Meridian operates an active placement cell that maintains a network of 25+ Indian hiring partners, runs Demo Day with live employer attendance, prepares fellows for domain-specific interviews, and continues matching alumni to roles after graduation. Our placement target is 90% of fellows into an active interview pipeline within 90 days of program completion.",
+    q: 'Does Menler guarantee placement and what does placement support look like?',
+    a: "Placement is the program's primary outcome metric, not a guarantee. Menler operates an active placement cell that maintains a network of 25+ Indian hiring partners, runs Demo Day with live employer attendance, prepares fellows for domain-specific interviews, and continues matching alumni to roles after graduation. Our placement target is 90% of fellows into an active interview pipeline within 90 days of program completion.",
   },
   {
     q: 'What is the Claude Specialist certification?',
-    a: 'Claude Specialist is Meridian\'s domain-specific career credential, awarded after passing a written exam and a practical capstone review. The credential is issued as "Claude Specialist — [Domain]" — e.g. Claude Specialist — Finance. Engineering fellows earn the Claude Engineer credential via a written exam plus live coding assessment.',
+    a: 'Claude Specialist is Menler\'s domain-specific career credential, awarded after passing a written exam and a practical capstone review. The credential is issued as "Claude Specialist — [Domain]" — e.g. Claude Specialist — Finance. Engineering fellows earn the Claude Engineer credential via a written exam plus live coding assessment.',
   },
   {
-    q: 'Is Meridian Fellowship online, in-person, or hybrid?',
-    a: "Meridian runs as a hybrid fellowship — fully remote-friendly with optional in-person intensives for fellows in Bengaluru. Demo Day is held in Bengaluru with remote attendance. Live sessions happen on India-friendly timezones, all sessions are recorded.",
+    q: 'Is Menler Fellowship online, in-person, or hybrid?',
+    a: "Menler runs as a hybrid fellowship — fully remote-friendly with optional in-person intensives for fellows in Bengaluru. Demo Day is held in Bengaluru with remote attendance. Live sessions happen on India-friendly timezones, all sessions are recorded.",
   },
   {
     q: 'What is the program fee and are scholarships available?',
     a: "Fellowship fees, payment plans, and ISA (income-share-agreement) options are published on the Apply page. Need-based scholarships are available for every batch, including dedicated seats for women in tech, students from tier-2/3 cities, and career switchers from underrepresented backgrounds.",
   },
   {
-    q: 'How is Meridian different from MBA AI programs or postgraduate diplomas?',
-    a: "An MBA AI elective gives you frameworks; a postgraduate diploma gives you a syllabus. Meridian gives you a portfolio, a credential, and a placed role. We're 12 weeks instead of 18–24 months, narrower in scope (Claude, not \"all AI\"), deeper in execution (real shipped projects), and explicitly placement-driven.",
+    q: 'How is Menler different from MBA AI programs or postgraduate diplomas?',
+    a: "An MBA AI elective gives you frameworks; a postgraduate diploma gives you a syllabus. Menler gives you a portfolio, a credential, and a placed role. We're 12 weeks instead of 18–24 months, narrower in scope (Claude, not \"all AI\"), deeper in execution (real shipped projects), and explicitly placement-driven.",
   },
 ];
 
@@ -39,7 +39,7 @@ export const KICKSTARTER_FAQS = [
   { q: 'What language is the program in?', a: 'Primary instruction in English. Hindi explanations available on request. Discord is bilingual.' },
   { q: 'Are the sessions recorded?', a: 'Yes. All 14 sessions are recorded and available within 24 hours of going live.' },
   { q: 'Do you offer group discounts?', a: 'Yes — 15% off for groups of 5+ from the same school, college, or company. Email partner@meridian.in.' },
-  { q: 'Is the certificate recognised?', a: "It's a Meridian-issued credential, verifiable on our public alumni page. Trusted by our 25+ hiring partners as a top-of-funnel signal." },
+  { q: 'Is the certificate recognised?', a: "It's a Menler-issued credential, verifiable on our public alumni page. Trusted by our 25+ hiring partners as a top-of-funnel signal." },
 ];
 
 export const GENERALIST_FAQS = [
@@ -99,6 +99,6 @@ export const APTITUDE_FAQS = [
   },
   {
     q: 'How many people have taken this test?',
-    a: '28,000+ Indians have taken the AI Aptitude Test. 12% went on to a Meridian program.',
+    a: '28,000+ Indians have taken the AI Aptitude Test. 12% went on to a Menler program.',
   },
 ];

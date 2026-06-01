@@ -6,7 +6,7 @@ import Footer from '../components/layout/Footer';
 
 const QUALIFY_PATHS = [
   { title: 'Need-based', sub: '50% off', desc: 'Family income under ₹8L p.a. Documented. Up to 50% off.' },
-  { title: 'Aptitude Test top scorers', sub: '30% off', desc: 'Top 10% scorers on the Meridian AI Aptitude Test. Up to 30% off.' },
+  { title: 'Aptitude Test top scorers', sub: '30% off', desc: 'Top 10% scorers on the Menler AI Aptitude Test. Up to 30% off.' },
   { title: 'Women in AI', sub: '15% off', desc: '15% off, stackable with other paths.' },
   { title: 'Tier-2 / Tier-3 cities', sub: '15% off', desc: 'Candidates outside the top 8 metros. 15% off, stackable.' },
   { title: 'First-generation learners', sub: '15% off', desc: 'First in your family to attend a paid post-college program. 15% off, stackable.' },
@@ -47,7 +47,7 @@ export default function Scholarship() {
       <section className="scholar-hero" style={{ textAlign: 'center', padding: '64px 40px 40px' }}>
         <p className="section-label" style={{ justifyContent: 'center' }}>Scholarships · Up to 50% off</p>
         <h1 style={{ fontFamily: "'DM Serif Display',serif", fontSize: 'clamp(30px,5vw,48px)', lineHeight: 1.1, color: 'var(--ink)', marginBottom: 16, maxWidth: 640, margin: '0 auto 16px' }}>
-          The Meridian Scholarship.<br /><em>Because money can't be the reason.</em>
+          The Menler Scholarship.<br /><em>Because money can't be the reason.</em>
         </h1>
         <p className="section-sub" style={{ maxWidth: 580, margin: '0 auto 32px', textAlign: 'center' }}>
           We will not let fees be the wall between you and the AI era. Multiple scholarship paths, all stackable, decided fast. One application. One review committee. Decisions in 7 days.
@@ -62,7 +62,7 @@ export default function Scholarship() {
       {/* ── WHO QUALIFIES ── */}
       <section className="section" style={{ background: 'white' }}>
         <p className="section-label">Who qualifies</p>
-        <h2 className="section-h2">Six paths to<br /><em>a Meridian scholarship.</em></h2>
+        <h2 className="section-h2">Six paths to<br /><em>a Menler scholarship.</em></h2>
         <p className="section-sub">Paths are stackable. A Tier-3 city woman with demonstrated need can qualify for up to 80% off. Apply and we'll calculate your maximum eligible reduction.</p>
         <div className="qualify-grid">
           {QUALIFY_PATHS.map((q, i) => (
@@ -116,7 +116,7 @@ export default function Scholarship() {
                 ))}
               </div>
               <label>Tell us about yourself and why you're applying</label>
-              <textarea required placeholder="A few sentences on where you are, what you want to build, and why Meridian matters to you right now." value={form.why} onChange={e => set('why', e.target.value)} style={{ minHeight: 100 }} />
+              <textarea required placeholder="A few sentences on where you are, what you want to build, and why Menler matters to you right now." value={form.why} onChange={e => set('why', e.target.value)} style={{ minHeight: 100 }} />
               <button type="submit" disabled={loading}>{loading ? 'Submitting…' : 'Submit scholarship application →'}</button>
             </form>
           )}

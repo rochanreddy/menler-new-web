@@ -108,7 +108,7 @@ export default function Resources() {
         <div className="hero-ring r1" /><div className="hero-ring r2" />
         <div className="hero-inner">
           <p className="hero-eyebrow">Resources · Free · Updated weekly</p>
-          <h1 className="hero-h1">The Meridian library.<br /><em>Free. Forever.</em></h1>
+          <h1 className="hero-h1">The Menler library.<br /><em>Free. Forever.</em></h1>
           <p className="hero-sub">Every guide, prompt, template, and tool walkthrough is maintained and updated weekly by the same instructors who built the Fellowship. No waitlist. No paywall. Just the best free Claude AI resources in India.</p>
         </div>
       </section>
@@ -116,7 +116,7 @@ export default function Resources() {
       {/* ── LIBRARY CARDS ── */}
       <section className="res-preview" style={{ background: 'var(--parchment)' }}>
         <div className="preview-shell">
-          <p className="section-label">The Meridian library</p>
+          <p className="section-label">The Menler library</p>
           <h2 className="section-h2">Six resources.<br /><em>All free.</em></h2>
           <div className="res-grid">
             {LIBRARY_CARDS.map((r, i) => (
@@ -191,7 +191,7 @@ export default function Resources() {
         <div className="mini-lead-inner">
           <div className="mini-lead-copy">
             <h3>The Resources<br /><em>weekly drop.</em></h3>
-            <p>One email a week. A new prompt, a new guide, a new template, and one India AI signal. No filler. Maintained by the Meridian instructor team.</p>
+            <p>One email a week. A new prompt, a new guide, a new template, and one India AI signal. No filler. Maintained by the Menler instructor team.</p>
           </div>
           {done ? (
             <p style={{ color: 'var(--placed)', fontWeight: 500 }}>✓ You're in. Every Friday morning.</p>
@@ -264,7 +264,7 @@ My question: [YOUR QUESTION]`,
 ];
 
 const RESOURCES = [
-  { num: '01', name: 'Prompt Architecture Guide', desc: 'The definitive Meridian framework for building Claude prompts that work the first time. Covers role, context, format, constraints, and worked examples.', tags: ['Prompting', 'All levels', 'PDF + interactive'] },
+  { num: '01', name: 'Prompt Architecture Guide', desc: 'The definitive Menler framework for building Claude prompts that work the first time. Covers role, context, format, constraints, and worked examples.', tags: ['Prompting', 'All levels', 'PDF + interactive'] },
   { num: '02', name: 'Claude API Quickstart', desc: 'Get from zero to your first Claude API call in 30 minutes. Python-focused. Covers auth, messages, streaming, and tool use basics.', tags: ['Claude API', 'Engineering', 'Python'] },
   { num: '03', name: 'Domain Track Playbooks', desc: 'Nine playbooks — one per Generalist track. Each contains 10 vetted prompt patterns, 3 workflow templates, and a 30-day starter project.', tags: ['Generalist', 'All tracks', 'Templates'] },
   { num: '04', name: 'MCP Builder\'s Handbook', desc: 'Step-by-step guide to building your first Model Context Protocol server. Includes schema reference, worked examples, and a sample weather + database MCP server.', tags: ['MCP', 'Engineering', 'Advanced'] },

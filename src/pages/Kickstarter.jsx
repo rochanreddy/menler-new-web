@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import FaqList from '../components/common/FaqList';
 import CtaBanner from '../components/common/CtaBanner';
 import Footer from '../components/layout/Footer';
+import MentorsRail from '../components/common/MentorsRail';
+import ProjectModal from '../components/common/ProjectModal';
+import { BrandLogo } from '../components/common/PartnersMarquee';
 import { KICKSTARTER_FAQS } from '../data/faqData';
 import { submitLead } from '../services/leadService';
 
@@ -23,7 +26,21 @@ const DAYS = [
   { num: 'Day 14', topic: 'Capstone demo + certificate', tool: 'Live audience', cap: true },
 ];
 
-const TOOLS = ['Claude.ai', 'ChatGPT', 'Gemini', 'Perplexity', 'NotebookLM', 'Claude Desktop', 'Cowork', 'Cursor (free)', 'Canva AI', 'Suno', 'MCP basics', 'Claude in Excel'];
+// Tool logos load by domain (with name fallback) — see BrandLogo.
+const TOOLS = [
+  { name: 'Claude.ai', domain: 'claude.ai' },
+  { name: 'ChatGPT', domain: 'openai.com' },
+  { name: 'Gemini', domain: 'gemini.google.com' },
+  { name: 'Perplexity', domain: 'perplexity.ai' },
+  { name: 'NotebookLM', domain: 'notebooklm.google.com' },
+  { name: 'Claude Desktop', domain: 'claude.ai' },
+  { name: 'Cowork', domain: 'claude.ai' },
+  { name: 'Cursor', domain: 'cursor.com' },
+  { name: 'Canva AI', domain: 'canva.com' },
+  { name: 'Suno', domain: 'suno.com' },
+  { name: 'MCP', domain: 'modelcontextprotocol.io' },
+  { name: 'Claude in Excel', domain: 'microsoft.com' },
+];
 
 const PROJECTS = [
   { tag: 'Build 1', tagStyle: { background: '#FAEEDA', color: '#854F0B' }, title: 'Personal research agent', meta: 'Day 5 · Perplexity + NotebookLM', desc: 'An always-ready research agent that answers your questions across PDFs, links, and YouTube transcripts.', cardStyle: { background: 'white', borderColor: 'rgba(186,117,23,0.18)' } },
@@ -34,12 +51,33 @@ const PROJECTS = [
   { tag: 'Capstone', tagStyle: { background: '#BA7517', color: 'white' }, title: 'Your AI capstone', meta: 'Day 13–14 · Free choice', desc: 'A real, useful AI project — yours to keep, demo to family, post to LinkedIn. Powers your AI Fluency certificate.', cardStyle: { background: '#FFE9C7', borderColor: 'rgba(186,117,23,0.4)' } },
 ];
 
+const MODULES = [
+  { label: 'Module 1', span: 'Days 1–3', title: 'AI foundations & your first prompts',
+    lessons: ['What is AI? How LLMs actually work', 'Meet Claude — your first 10 prompts', 'ChatGPT, Gemini & Perplexity — pick your stack'],
+    tools: ['Claude.ai', 'ChatGPT', 'Gemini', 'Perplexity'],
+    project: 'Personal research agent' },
+  { label: 'Module 2', span: 'Days 4–6', title: 'Prompt engineering & research',
+    lessons: ['Prompt engineering — 5 patterns that work', 'Build #1: Personal research agent', 'Reading & summarising with NotebookLM'],
+    tools: ['Claude', 'ChatGPT', 'NotebookLM', 'Perplexity'],
+    project: 'Study planner agent' },
+  { label: 'Module 3', span: 'Days 7–10', title: 'Multimodal AI & no-code builds',
+    lessons: ['Multimodal AI — image, audio & video', 'Build #3: Content engine', 'Build #4: Idea validator'],
+    tools: ['Canva AI', 'Suno', 'Claude', 'Cowork'],
+    project: 'Content engine' },
+  { label: 'Module 4', span: 'Days 11–14', title: 'Claude Skills, MCP & capstone',
+    lessons: ['Claude Skills + MCP basics', 'AI safety & responsible use', 'Capstone build & live demo'],
+    tools: ['Claude Desktop', 'MCP', 'Claude in Excel', 'Cursor (free)'],
+    project: 'Personal AI workflow + capstone' },
+];
+
 export default function Kickstarter() {
   const navigate = useNavigate();
   const go = (path) => { navigate(path); window.scrollTo(0, 0); };
 
   const [form, setForm] = useState({ name: '', email: '', phone: '', role: '' });
   const [done, setDone] = useState(false);
+  const [activeProject, setActiveProject] = useState(null);
+  const [activeModule, setActiveModule] = useState(0);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,22 +88,22 @@ export default function Kickstarter() {
   return (
     <>
       {/* ── HERO ── */}
-      <section className="hero hero-centered" style={{ background: 'linear-gradient(135deg,#1A1647 0%,#854F0B 100%)', padding: '64px 40px 56px' }}>
+      <section className="hero" style={{ background: 'linear-gradient(135deg,#1A1647 0%,#854F0B 100%)', padding: '64px 40px 56px' }}>
         <div className="hero-ring r1" style={{ borderColor: 'rgba(250,238,218,0.12)' }} />
         <div className="hero-ring r2" style={{ borderColor: 'rgba(250,238,218,0.08)' }} />
         <div className="hero-inner">
           <p className="hero-eyebrow" style={{ color: '#FAEEDA' }}>Gen AI Kickstarter · India · No prerequisites</p>
           <h1 className="hero-h1" style={{ color: '#FFF6E1' }}>14 days. 5 builds.<br /><em style={{ color: '#FAEEDA' }}>AI-fluent.</em></h1>
-          <p className="hero-sub" style={{ color: 'rgba(255,246,225,0.7)' }}>India's most accessible Gen AI program. Built for school students, college students, working professionals new to AI, founders' first AI hires, and anyone who wants to go from curious to fluent in 14 days. Daily live sessions, hands-on practice, five mini-projects, one capstone, one certificate.</p>
+          <p className="hero-sub" style={{ color: 'rgba(255,246,225,0.7)' }}>India's most accessible Gen AI program.<strong style={{ color: '#FFF6E1', fontWeight: 500 }}><br />Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
           <div className="hero-actions">
-            <button className="btn-primary" style={{ background: '#BA7517' }} onClick={() => go('/scholarship')}>Sign up</button>
-            <button className="btn-ghost" style={{ color: '#FAEEDA' }}>Download brochure →</button>
+            <button className="btn-primary" style={{ background: '#BA7517' }} onClick={() => go('/scholarship')}>Apply Now</button>
+            <button className="btn-outline" style={{ color: '#FAEEDA', borderColor: 'rgba(250,238,218,0.5)' }}>Download Brochure</button>
           </div>
           <div className="hero-stats" style={{ borderColor: 'rgba(250,238,218,0.2)' }}>
             <div><span className="hero-stat-num" style={{ color: '#FFF6E1' }}>14</span><span className="hero-stat-lbl" style={{ color: '#FAEEDA' }}>Days</span></div>
-            <div><span className="hero-stat-num" style={{ color: '#FFF6E1' }}>10+</span><span className="hero-stat-lbl" style={{ color: '#FAEEDA' }}>Tools</span></div>
+            <div><span className="hero-stat-num" style={{ color: '#FFF6E1' }}>10+</span><span className="hero-stat-lbl" style={{ color: '#FAEEDA' }}>AI Tools</span></div>
             <div><span className="hero-stat-num" style={{ color: '#FFF6E1' }}>5</span><span className="hero-stat-lbl" style={{ color: '#FAEEDA' }}>Mini-builds</span></div>
-            <div><span className="hero-stat-num" style={{ color: '#FFF6E1' }}>1</span><span className="hero-stat-lbl" style={{ color: '#FAEEDA' }}>Fluency cert</span></div>
+            <div><span className="hero-stat-num" style={{ color: '#FFF6E1' }}>1</span><span className="hero-stat-lbl" style={{ color: '#FAEEDA' }}>Fluency Certificate</span></div>
           </div>
         </div>
       </section>
@@ -100,12 +138,49 @@ export default function Kickstarter() {
         </div>
       </section>
 
+      {/* ── MODULES ── */}
+      <section className="section" style={{ background: '#FFFBF1' }}>
+        <p className="section-label" style={{ color: '#854F0B' }}>Course modules</p>
+        <h2 className="section-h2">Four modules.<br /><em>Click to open the plan.</em></h2>
+        <p className="section-sub">Each module opens its lesson plan, the tool stack you'll use, and the project you'll build.</p>
+        <div className="curric">
+          <div className="curric-terms">
+            {MODULES.map((m, i) => (
+              <button
+                key={i}
+                className={`curric-term${activeModule === i ? ' on' : ''}`}
+                onClick={() => setActiveModule(i)}
+              >
+                <span className="curric-term-no">{m.label} · {m.span}</span>
+                <span className="curric-term-title">{m.title}</span>
+              </button>
+            ))}
+          </div>
+          <div className="curric-detail">
+            <p className="curric-label">Lesson plan</p>
+            <ul className="curric-modules">
+              {MODULES[activeModule].lessons.map(l => <li key={l}>{l}</li>)}
+            </ul>
+            <p className="curric-label" style={{ marginTop: 28 }}>Tool stack</p>
+            <div className="curric-tools">
+              {MODULES[activeModule].tools.map(t => <span key={t} className="curric-tool">{t}</span>)}
+            </div>
+            <p className="curric-label" style={{ marginTop: 28 }}>Project you'll build</p>
+            <ul className="curric-modules">
+              <li>{MODULES[activeModule].project}</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
       {/* ── TOOLS ── */}
       <section className="section" style={{ background: '#1A1647' }}>
         <p className="section-label" style={{ color: '#FAEEDA', textAlign: 'center' }}>Tools you'll learn</p>
         <h2 className="section-h2" style={{ color: '#FFF6E1', textAlign: 'center' }}>A real Gen AI toolkit.<br /><em style={{ color: '#FAEEDA' }}>Free tiers wherever possible.</em></h2>
-        <div className="tools-strip">
-          {TOOLS.map(t => <span key={t} className="tool-pill">{t}</span>)}
+        <div className="partners-marquee">
+          <div className="partners-track">
+            {[...TOOLS, ...TOOLS].map((t, i) => <BrandLogo key={i} name={t.name} domain={t.domain} />)}
+          </div>
         </div>
       </section>
 
@@ -115,7 +190,15 @@ export default function Kickstarter() {
         <h2 className="section-h2">Five mini-builds.<br /><em>One personal capstone.</em></h2>
         <div className="proj-grid">
           {PROJECTS.map((p, i) => (
-            <div key={i} className="proj-card" style={p.cardStyle}>
+            <div
+              key={i}
+              className="proj-card proj-card--clickable"
+              style={p.cardStyle}
+              role="button"
+              tabIndex={0}
+              onClick={() => setActiveProject(p)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveProject(p); } }}
+            >
               <span className="proj-track" style={p.tagStyle}>{p.tag}</span>
               <p className="proj-name">{p.title}</p>
               <p className="proj-meta">{p.meta}</p>
@@ -125,44 +208,14 @@ export default function Kickstarter() {
         </div>
       </section>
 
-      {/* ── MENTORS ── */}
-      <section className="section" style={{ background: 'white' }}>
-        <p className="section-label">Mentors</p>
-        <h2 className="section-h2">Operators, in plain English.<br /><em>No jargon. Ever.</em></h2>
-        <p className="section-sub">Instructors who use AI in real jobs and explain it the way you'd want a friend to.</p>
-        <div className="mentors-grid">
-          <article className="mentor-card">
-            <div className="mentor-portrait" style={{ background: '#FAEEDA', color: '#854F0B' }}>DM</div>
-            <p className="mentor-name">Dev Mehta</p>
-            <p className="mentor-role">AI educator · ex-Byju's product</p>
-            <p className="mentor-bio">Taught AI to 12,000+ students. Specialises in making the first 14 days click for non-technical learners.</p>
-            <p className="mentor-tags">Lead instructor</p>
-          </article>
-          <article className="mentor-card">
-            <div className="mentor-portrait" style={{ background: 'var(--cloud)', color: 'var(--specialist)' }}>RA</div>
-            <p className="mentor-name">Riya Agarwal</p>
-            <p className="mentor-role">Founder · Boutique AI agency</p>
-            <p className="mentor-bio">Built a profitable agency with Claude as her co-founder. Mentors content, marketing, and small-business builds.</p>
-            <p className="mentor-tags">Practice mentor</p>
-          </article>
-          <article className="mentor-card">
-            <div className="mentor-portrait" style={{ background: '#E1F5EE', color: '#085041' }}>JN</div>
-            <p className="mentor-name">Jaideep Nair</p>
-            <p className="mentor-role">CS faculty · IIIT Hyderabad</p>
-            <p className="mentor-bio">Demystifies how LLMs actually work — without a single equation. Mentors school + college students.</p>
-            <p className="mentor-tags">Faculty mentor</p>
-          </article>
-        </div>
-      </section>
-
       {/* ── OUTCOMES ── */}
       <section className="hiring-section" style={{ background: 'var(--parchment)' }}>
         <p className="section-label" style={{ textAlign: 'center' }}>Outcome</p>
         <h2 className="section-h2" style={{ textAlign: 'center' }}>What you leave with<br /><em>after 14 days.</em></h2>
         <div className="roles-grid">
-          <div className="role-card"><p className="role-name">AI Fluency Certificate</p><p className="role-comp">Issued by Meridian</p><p className="role-desc">Verifiable credential. Proof that you're Gen AI fluent — across 10+ tools and 5 builds.</p></div>
+          <div className="role-card"><p className="role-name">AI Fluency Certificate</p><p className="role-comp">Issued by Menler</p><p className="role-desc">Verifiable credential. Proof that you're Gen AI fluent — across 10+ tools and 5 builds.</p></div>
           <div className="role-card"><p className="role-name">Portfolio of 5 builds</p><p className="role-comp">Public + shareable</p><p className="role-desc">Five real AI mini-projects on a personal portfolio page. Show in interviews, on LinkedIn, on your CV.</p></div>
-          <div className="role-card"><p className="role-name">Discord community</p><p className="role-comp">Lifetime access</p><p className="role-desc">Stay in the room with 1000+ Kickstarter alumni. Weekly drops, alumni-only AMAs, build challenges.</p></div>
+          <div className="role-card"><p className="role-name">Internship opportunities</p><p className="role-comp">Top performers</p><p className="role-desc">Standout fellows get matched to internship openings with our hiring partners — real work, real experience, on your CV.</p></div>
           <div className="role-card"><p className="role-name">Scholarship pathway</p><p className="role-comp">Up to 30%</p><p className="role-desc">Top scorers in the Aptitude Test get a 30% scholarship to the 12-week Generalist or Engineering Fellowship.</p></div>
           <div className="role-card"><p className="role-name">Daily-use AI workflows</p><p className="role-comp">Permanent skill lift</p><p className="role-desc">Actual daily habits — not theoretical knowledge. You leave with workflows you'll use forever.</p></div>
           <div className="role-card"><p className="role-name">A community of practice</p><p className="role-comp">India-wide</p><p className="role-desc">Cohort buddies across India. Meet at city meetups, build together, hire each other later.</p></div>
@@ -208,6 +261,9 @@ export default function Kickstarter() {
         </div>
       </section>
 
+      {/* ── MENTORS ── */}
+      <MentorsRail />
+
       {/* ── CTA ── */}
       <CtaBanner
         style={{ background: '#854F0B' }}
@@ -222,6 +278,8 @@ export default function Kickstarter() {
       />
 
       <Footer />
+
+      <ProjectModal project={activeProject} onClose={() => setActiveProject(null)} />
     </>
   );
 }

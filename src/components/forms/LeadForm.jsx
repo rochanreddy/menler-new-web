@@ -31,7 +31,7 @@ export default function LeadForm({ defaultProgram = '' }) {
     return (
       <div className="lf-success">
         <p style={{ fontFamily: "'DM Serif Display', serif", fontSize: 22, color: 'var(--ink)', marginBottom: 8 }}>Thank you.</p>
-        <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>Your interest is in. The Meridian admissions team will reach out within 48 hours with your personalised next step.</p>
+        <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>Your interest is in. The Menler admissions team will reach out within 48 hours with your personalised next step.</p>
       </div>
     );
   }
@@ -39,7 +39,7 @@ export default function LeadForm({ defaultProgram = '' }) {
   return (
     <form className="lead-form" onSubmit={handleSubmit}>
       <span className="lead-form-label">Express interest</span>
-      <p className="lead-form-title">Start your Meridian journey.</p>
+      <p className="lead-form-title">Start your Menler journey.</p>
 
       <div className="lf-field">
         <label>Full name</label>
@@ -96,15 +96,10 @@ export default function LeadForm({ defaultProgram = '' }) {
         </select>
       </div>
 
-      <div className="lf-field">
-        <label>Message (optional)</label>
-        <textarea placeholder="A few lines on where you are now and what you'd like the AI era to look like for you." value={form.message} onChange={e => set('message', e.target.value)} rows={3} />
-      </div>
-
       <button className="lf-submit" type="submit" disabled={loading}>
         {loading ? 'Submitting…' : 'Express interest →'}
       </button>
-      <p className="lf-fineprint">By submitting, you agree to be contacted by the Meridian admissions team. We don't spam — only genuine, useful updates about the fellowship.</p>
+      <p className="lf-fineprint">By submitting, you agree to be contacted by the Menler admissions team. We don't spam — only genuine, useful updates about the fellowship.</p>
     </form>
   );
 }

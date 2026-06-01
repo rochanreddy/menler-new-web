@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import MeridianLogo from '../components/common/MeridianLogo';
+import MenlerLogo from '../components/common/MenlerLogo';
 import { supabase } from '../lib/supabase';
 
 export default function ForgotPassword() {
@@ -30,8 +30,8 @@ export default function ForgotPassword() {
     <div className="auth-page">
       <div className="auth-card">
         <div className="auth-logo" onClick={() => navigate('/')}>
-          <MeridianLogo color="#534AB7" />
-          <span className="auth-logo-text">Meridian</span>
+          <MenlerLogo color="#534AB7" />
+          <span className="auth-logo-text">Menler</span>
         </div>
 
         {sent ? (

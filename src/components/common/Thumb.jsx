@@ -1,5 +1,5 @@
 /**
- * Brand illustration for card thumbnails — the Meridian orbit + half-disc (◐)
+ * Brand illustration for card thumbnails — the Menler orbit + half-disc (◐)
  * motif, tinted per category. Replaces flat gradient placeholders.
  * Decorative only (aria-hidden); scales to fill its container.
  */

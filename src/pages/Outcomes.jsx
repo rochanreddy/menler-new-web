@@ -17,13 +17,13 @@ const PRODUCTS = [
 const BIP_POSTS = [
   { initials: 'AV', name: 'Anjali Verma', platform: 'LinkedIn · Week 8 · Generalist', text: '"Just shipped a Brand Voice Engine for Lyra. Cut their content cost 70%. Here\'s the full prompt + Skill walkthrough →"', reactions: '1.2k reactions' },
   { initials: 'KI', name: 'Karan Iyer', platform: 'GitHub · Week 11 · Engineering', text: '"flexlegal-rag — production RAG over 12,000 legal contracts. Citations + RAGAS evals. ⭐ 220"', reactions: '220 stars' },
-  { initials: 'SM', name: 'Sahil Mehta', platform: 'Twitter · Day 14 · Kickstarter', text: '"My class-12 friends are using my JEE study agent. 60 users in 2 weeks. Built in 14 days at @MeridianAI"', reactions: '340 likes' },
+  { initials: 'SM', name: 'Sahil Mehta', platform: 'Twitter · Day 14 · Kickstarter', text: '"My class-12 friends are using my JEE study agent. 60 users in 2 weeks. Built in 14 days at @MenlerAI"', reactions: '340 likes' },
   { initials: 'NS', name: 'Neha Subramanian', platform: 'LinkedIn · Week 9 · Engineering', text: '"Multi-agent research system on the Claude Agent SDK. Lead agent + 4 specialists. Recording + repo in comments."', reactions: '2.4k reactions' },
   { initials: 'RT', name: 'Rohit Tandon', platform: 'LinkedIn · Week 10 · Generalist', text: '"I\'m a finance guy. I built an earnings-call insight engine in Claude in Excel. Saved my team 12 hours/week."', reactions: '890 reactions' },
   { initials: 'AK', name: 'Aman Kapoor', platform: 'Twitter · Week 7 · Generalist', text: '"Cowork as a VC associate. Memos that took 4 hours now take 25 minutes. Here\'s the workflow →"', reactions: '610 likes' },
   { initials: 'DR', name: 'Divya Rao', platform: 'GitHub · Week 12 · Engineering', text: '"claude-evals-toolkit — a drop-in evals harness for production Claude apps. Open-sourced today."', reactions: '180 stars' },
   { initials: 'SM2', name: 'Sneha Menon', platform: 'LinkedIn · Week 6 · Generalist', text: '"30-day content engine for a Tier-2 D2C brand. Posts written, designed, scheduled. By Claude. By me."', reactions: '1.5k reactions' },
-  { initials: 'PR', name: 'Priya Raman', platform: 'Twitter · Week 9 · Generalist', text: '"My CEO asked for a Monday briefing agent. I built it in a weekend at Meridian. He wants every senior to use it."', reactions: '420 likes' },
+  { initials: 'PR', name: 'Priya Raman', platform: 'Twitter · Week 9 · Generalist', text: '"My CEO asked for a Monday briefing agent. I built it in a weekend at Menler. He wants every senior to use it."', reactions: '420 likes' },
 ];
 
 const PLACEMENT_STORIES = [
@@ -48,7 +48,7 @@ export default function Outcomes() {
         <div className="hero-ring r2" style={{ borderColor: 'rgba(175,169,236,0.08)' }} />
         <div className="hero-inner">
           <p className="hero-eyebrow" style={{ color: 'var(--lavender)' }}>Outcomes · Real proof</p>
-          <h1 className="hero-h1" style={{ color: '#EEEDFE' }}>Proof, not promises.<br /><em style={{ color: 'var(--lavender)' }}>The Meridian outcome.</em></h1>
+          <h1 className="hero-h1" style={{ color: '#EEEDFE' }}>Proof, not promises.<br /><em style={{ color: 'var(--lavender)' }}>The Menler outcome.</em></h1>
           <p className="hero-sub" style={{ color: 'rgba(238,237,254,0.7)' }}>Capstone products built by students. Public projects shipped during the program. Real placement stories from real alumni. Real lives changed across India. Every metric on this page is auditable. We earn trust by showing receipts.</p>
           <div className="outcomes-stats">
             <div><p>90<em>%</em></p><p>Placement target</p></div>
@@ -64,7 +64,7 @@ export default function Outcomes() {
       <section className="section" style={{ background: 'white' }}>
         <p className="section-label">Section 1 · Real products</p>
         <h2 className="section-h2">The flagships.<br /><em>Capstone products in the wild.</em></h2>
-        <p className="section-sub" style={{ maxWidth: 680, margin: '14px auto 0', textAlign: 'center' }}>Six student-built products that exist as real tools, used by real organisations. Each was a Meridian capstone.</p>
+        <p className="section-sub" style={{ maxWidth: 680, margin: '14px auto 0', textAlign: 'center' }}>Six student-built products that exist as real tools, used by real organisations. Each was a Menler capstone.</p>
         <div className="filter-chips">
           {PRODUCT_FILTERS.map(f => (
             <button key={f} className={`filter-chip${productFilter === f ? ' on' : ''}`} onClick={() => setProductFilter(f)}>

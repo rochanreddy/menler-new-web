@@ -1,5 +1,5 @@
 /**
- * Drop-in auth/data client backed by the Meridian MongoDB API.
+ * Drop-in auth/data client backed by the Menler MongoDB API.
  *
  * This intentionally mirrors the small slice of the Supabase JS surface the app
  * actually uses (`supabase.auth.*` and `supabase.from('profiles')`), so the page

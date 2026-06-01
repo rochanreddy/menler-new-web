@@ -110,6 +110,11 @@ export default function Dashboard() {
     }
   };
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/');
+  };
+
   const initials = profile.fullName
     ? profile.fullName.trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase()
     : 'ME';
@@ -128,6 +133,7 @@ export default function Dashboard() {
               </h1>
               <p className="dash-welcome-sub">Keep your details up to date.</p>
             </div>
+            <button className="dash-logout" onClick={handleLogout}>Log out</button>
           </div>
 
           {/* ── PROFILE CARD ── */}

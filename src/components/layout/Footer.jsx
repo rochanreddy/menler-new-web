@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import MeridianLogo from '../common/MeridianLogo';
+import MenlerLogo from '../common/MenlerLogo';
 
 export default function Footer() {
   const navigate = useNavigate();
@@ -9,8 +9,8 @@ export default function Footer() {
     <footer className="footer-5">
       <div className="footer-5-inner">
         <div className="footer-5-brand">
-          <MeridianLogo color="#AFA9EC" />
-          <p className="footer-brand-name">Meridian</p>
+          <MenlerLogo color="#AFA9EC" />
+          <p className="footer-brand-name">Menler</p>
           <p className="footer-brand-desc">AI learning, built for the people doing the work. Your turning point in the AI era.</p>
         </div>
         <div>
@@ -35,7 +35,7 @@ export default function Footer() {
           <p className="footer-col-title">For partners</p>
           <ul className="footer-links">
             <li><a onClick={() => go('/outcomes')}>Hire from us</a></li>
-            <li><a onClick={() => go('/about')}>Meridian Teams (B2B)</a></li>
+            <li><a onClick={() => go('/about')}>Menler Teams (B2B)</a></li>
             <li><a onClick={() => go('/about')}>Partner with us</a></li>
           </ul>
         </div>
@@ -51,7 +51,7 @@ export default function Footer() {
       </div>
       <div className="footer-5-trust">
         <p>25+ hiring associations  ·  90% interview pipeline target  ·  Applications open</p>
-        <p>© 2026 Meridian. India's AI learning brand.</p>
+        <p>© 2026 Menler. India's AI learning brand.</p>
       </div>
     </footer>
   );

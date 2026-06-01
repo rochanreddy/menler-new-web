@@ -95,7 +95,7 @@ export default function Blog() {
       <section className="mini-lead">
         <div className="mini-lead-inner">
           <div className="mini-lead-copy">
-            <h3>Subscribe to the<br /><em>Meridian newsletter.</em></h3>
+            <h3>Subscribe to the<br /><em>Menler newsletter.</em></h3>
             <p>One issue every Friday morning. Best build log of the week, one career-shaping data point, one prompt to try over the weekend.</p>
           </div>
           {done ? (

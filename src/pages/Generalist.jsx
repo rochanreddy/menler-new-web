@@ -3,13 +3,37 @@ import { useNavigate } from 'react-router-dom';
 import FaqList from '../components/common/FaqList';
 import CtaBanner from '../components/common/CtaBanner';
 import Footer from '../components/layout/Footer';
+import MentorsRail from '../components/common/MentorsRail';
+import ProjectModal from '../components/common/ProjectModal';
+import PartnersMarquee from '../components/common/PartnersMarquee';
 import { GENERALIST_FAQS } from '../data/faqData';
 import { submitLead } from '../services/leadService';
 
-const PHASES = [
-  { cls: 'p1', tag: 'Phase 1 · Weeks 1–4', title: 'AI fluency & Claude foundations', items: ['How AI & LLMs work (no code)', 'Claude.ai — features & workflows', 'Prompt engineering — all patterns', 'Multimodal prompting', 'AI safety & responsible use', 'AI aptitude assessment #1'] },
-  { cls: 'p2', tag: 'Phase 2 · Weeks 5–9', title: 'Agentic workflows & real builds', items: ['Agentic thinking & workflow design', 'Claude Cowork & Projects', 'MCP — connecting Claude to tools', 'Claude in Excel, PPT, Docs', 'Domain automation sprint', 'Live project build with cohort'] },
-  { cls: 'p3', tag: 'Phase 3 · Weeks 10–12', title: 'Strategy, portfolio & placement', items: ['AI business strategy & ROI', 'Domain capstone project', 'Portfolio & personal brand', 'Claude Specialist exam', 'Demo Day — live audience', 'Job matching & placement'] },
+const CURRICULUM = [
+  {
+    label: 'Phase 1', weeks: 'Weeks 1–4', title: 'AI fluency & Claude foundations',
+    modules: ['Week 1 — How AI & LLMs work (no code)', 'Week 2 — Claude.ai features & prompt engineering', 'Week 3 — Multimodal prompting & Claude Projects', 'Week 4 — No-code app building & deployment'],
+    tools: ['Make', 'OpenAI', 'Canva', 'Zapier', 'Typedream', 'Airtable', 'Claude', 'Notion'],
+    projects: ['Personal AI assistant', 'No-code landing page', 'First automation workflow'],
+  },
+  {
+    label: 'Phase 2', weeks: 'Weeks 5–8', title: 'Agentic workflows & real builds',
+    modules: ['Week 5 — Agentic thinking & workflow design', 'Week 6 — Claude Cowork & Projects', 'Week 7 — MCP: connecting Claude to tools', 'Week 8 — Claude in Excel, PPT & Docs'],
+    tools: ['Claude Cowork', 'MCP', 'Make', 'Zapier', 'n8n', 'Slack', 'Gmail', 'Excel'],
+    projects: ['Domain automation agent', 'Multi-tool MCP workflow', 'Live cohort build'],
+  },
+  {
+    label: 'Phase 3', weeks: 'Weeks 9–12', title: 'Domain specialisation, capstone & placement',
+    domains: [
+      { name: "Founder's Office", modules: ['Decision-intelligence agent', 'Weekly briefing automation', 'Exec reporting'], tools: ['Claude', 'MCP', 'Slack', 'Notion'], projects: ['CEO weekly briefing agent'] },
+      { name: 'Venture Capital', modules: ['Deal sourcing', 'Memo writing', 'Thesis-grounded screening'], tools: ['Cowork', 'Web search', 'Projects'], projects: ['Deal-flow triage agent'] },
+      { name: 'Marketing', modules: ['Brand-voice Skill', 'Content engine', 'Campaign automation'], tools: ['Skills', 'Canva', 'Buffer'], projects: ['Always-on content engine'] },
+      { name: 'Analyst', modules: ['Research synthesis', 'Insight memos', 'Multimodal tables'], tools: ['Claude API', 'Web search', 'Excel'], projects: ['Research insight engine'] },
+      { name: 'Finance', modules: ['Budget variance', 'Claude in Excel', 'CFO decks'], tools: ['Excel', 'Claude', 'PowerPoint'], projects: ['Budget variance commentator'] },
+      { name: 'Operations', modules: ['SOP automation', 'Triage & routing', 'Audit logs'], tools: ['MCP', 'Cowork', 'Slack'], projects: ['SOP automation agent'] },
+      { name: 'Technology', modules: ['No-code app builder', 'Artifacts', 'Internal tools'], tools: ['Artifacts', 'Projects', 'Cowork'], projects: ['No-code internal tool'] },
+    ],
+  },
 ];
 
 const TRACKS = [
@@ -34,14 +58,6 @@ const PROJECTS = [
   { track: 'Capstone', title: 'Domain Specialist capstone', meta: 'Weeks 11–12 · Demo Day · Cert', desc: 'A real, deployed automation for a real organisation — judged by industry mentors. Powers your Claude Specialist certification.', stack: 'Outcome: Claude Specialist — [Your domain]', isCap: true },
 ];
 
-const MENTORS = [
-  { initials: 'PR', style: { background: 'var(--cloud)', color: 'var(--specialist)' }, name: 'Priya Raman', role: 'VP Strategy · Series-C SaaS', bio: 'Runs Claude-powered ops at a 400-person company. Mentors the Founder\'s Office and Operations tracks.', tags: "Founder's Office · Operations" },
-  { initials: 'AK', style: { background: '#FAEEDA', color: '#854F0B' }, name: 'Aman Kapoor', role: 'Principal · Mid-market VC fund', bio: "Built one of India's first Claude-driven deal-sourcing workflows. Leads the Venture Capital track.", tags: 'Venture Capital · Analyst' },
-  { initials: 'SM', style: { background: '#FCEBEB', color: '#A32D2D' }, name: 'Sneha Menon', role: 'Marketing Director · D2C unicorn', bio: 'Cut content production cost 70% with Claude. Mentors brand voice, content engines, and campaign workflows.', tags: 'Marketing' },
-  { initials: 'RT', style: { background: '#E1F5EE', color: '#085041' }, name: 'Rohit Tandon', role: 'FP&A Lead · Listed Indian co.', bio: '"Claude in Excel for Finance" author. Mentors finance, audit, and reporting tracks with hands-on workflows.', tags: 'Finance · Analyst' },
-];
-
-const PARTNERS = ['Razorpay', 'Zerodha', 'Cred', 'PhonePe', 'Meesho', 'Swiggy', 'Lightspeed', 'Sequoia', 'Accel', 'Nykaa', 'boAt', 'Lenskart', '+ 13 more'];
 
 const ROLES = [
   { name: 'AI Specialist — Founder\'s Office', comp: '₹16–28L · Series B+ startups', desc: 'Run Claude-powered briefings, decision memos, and reporting agents directly for the CEO.' },
@@ -58,6 +74,9 @@ export default function Generalist() {
 
   const [form, setForm] = useState({ name: '', email: '', phone: '', track: '' });
   const [done, setDone] = useState(false);
+  const [activeProject, setActiveProject] = useState(null);
+  const [activePhase, setActivePhase] = useState(0);
+  const [activeDomain, setActiveDomain] = useState(0);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -68,21 +87,23 @@ export default function Generalist() {
   return (
     <>
       {/* ── HERO ── */}
-      <section className="hero hero-centered">
+      <section className="hero">
         <div className="hero-ring r1" /><div className="hero-ring r2" />
         <div className="hero-inner">
-          <p className="hero-eyebrow">Claude AI Generalist Fellowship · India · No coding required</p>
+          <p className="hero-eyebrow">Claude AI Generalist Fellowship · India</p>
           <h1 className="hero-h1">Master Claude AI.<br /><em>Transform your domain.</em></h1>
-          <p className="hero-sub">India's first <strong style={{ color: '#EEEDFE', fontWeight: 500 }}>no-code Claude AI specialist program</strong>. A 12-week fellowship for students, working professionals, founders, business owners, and career switchers — across seven domain tracks: Founder's Office, Venture Capital, Marketing, Analyst, Finance, Operations, and Technology. Graduate as a certified Claude Specialist with a domain portfolio and a placed role.</p>
+          <p className="hero-sub">India's 1st Claude AI Specialist Fellowship.<strong style={{ color: '#EEEDFE', fontWeight: 500 }}><br />Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
           <div className="hero-actions">
-            <button className="btn-primary" onClick={() => go('/scholarship')}>Sign up</button>
-            <button className="btn-ghost">Download brochure →</button>
+            <button className="btn-primary" onClick={() => go('/scholarship')}>Apply Now</button>
+            <button className="btn-outline">Download Brochure</button>
           </div>
           <div className="hero-stats">
-            <div><span className="hero-stat-num">12</span><span className="hero-stat-lbl">Weeks</span></div>
-            <div><span className="hero-stat-num">0</span><span className="hero-stat-lbl">Coding needed</span></div>
-            <div><span className="hero-stat-num">7</span><span className="hero-stat-lbl">Domain tracks</span></div>
-            <div><span className="hero-stat-num">1</span><span className="hero-stat-lbl">Specialist cert</span></div>
+            <div><span className="hero-stat-num">90%</span><span className="hero-stat-lbl">Interview pipeline<br />target</span></div>
+            <div><span className="hero-stat-num">25+</span><span className="hero-stat-lbl">Hiring<br />associations</span></div>
+            <div><span className="hero-stat-num">20+</span><span className="hero-stat-lbl">AI Builders<br />/ Operators</span></div>
+            <div><span className="hero-stat-num">12</span><span className="hero-stat-lbl">Weeks intensive<br />fellowship</span></div>
+            <div><span className="hero-stat-num">7+</span><span className="hero-stat-lbl">Domain<br />tracks</span></div>
+            <div><span className="hero-stat-num">5+</span><span className="hero-stat-lbl">Shipped<br />projects</span></div>
           </div>
         </div>
       </section>
@@ -105,15 +126,69 @@ export default function Generalist() {
       <section className="section" style={{ background: 'white' }}>
         <p className="section-label">12-week curriculum</p>
         <h2 className="section-h2">From curious<br /><em>to Claude Specialist.</em></h2>
-        <p className="section-sub">Three phases, no code — just Claude mastery applied to your domain.</p>
-        <div className="phases">
-          {PHASES.map((p, i) => (
-            <div key={i} className={`phase ${p.cls}`}>
-              <p className="phase-tag">{p.tag}</p>
-              <p className="phase-title">{p.title}</p>
-              <ul className="phase-items">{p.items.map((it, j) => <li key={j}>{it}</li>)}</ul>
-            </div>
-          ))}
+        <p className="section-sub">Three phases, no code — just Claude mastery applied to your domain. Pick a phase to open its modules, tools, and projects.</p>
+        <div className="curric">
+          <div className="curric-terms">
+            {CURRICULUM.map((p, i) => (
+              <button
+                key={i}
+                className={`curric-term${activePhase === i ? ' on' : ''}`}
+                onClick={() => setActivePhase(i)}
+              >
+                <span className="curric-term-no">{p.label} · {p.weeks}</span>
+                <span className="curric-term-title">{p.title}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="curric-detail">
+            {activePhase < 2 ? (
+              <>
+                <p className="curric-label">Modules · week by week</p>
+                <ul className="curric-modules">
+                  {CURRICULUM[activePhase].modules.map(m => <li key={m}>{m}</li>)}
+                </ul>
+                <p className="curric-label" style={{ marginTop: 28 }}>Tools</p>
+                <div className="curric-tools">
+                  {CURRICULUM[activePhase].tools.map(t => <span key={t} className="curric-tool">{t}</span>)}
+                </div>
+                <p className="curric-label" style={{ marginTop: 28 }}>Projects you'll build</p>
+                <ul className="curric-modules">
+                  {CURRICULUM[activePhase].projects.map(pr => <li key={pr}>{pr}</li>)}
+                </ul>
+              </>
+            ) : (
+              <>
+                <p className="curric-label">Domain tracks</p>
+                <div className="curric-domains">
+                  {CURRICULUM[2].domains.map((d, di) => (
+                    <button
+                      key={d.name}
+                      className={`curric-domain${activeDomain === di ? ' on' : ''}`}
+                      onClick={() => setActiveDomain(di)}
+                    >
+                      {d.name}<span className="curric-domain-caret">{activeDomain === di ? '▾' : '▸'}</span>
+                    </button>
+                  ))}
+                </div>
+                <p className="curric-label" style={{ marginTop: 24 }}>Modules · {CURRICULUM[2].domains[activeDomain].name}</p>
+                <ul className="curric-modules">
+                  {CURRICULUM[2].domains[activeDomain].modules.map(m => <li key={m}>{m}</li>)}
+                </ul>
+                <p className="curric-label" style={{ marginTop: 24 }}>Tools</p>
+                <div className="curric-tools">
+                  {CURRICULUM[2].domains[activeDomain].tools.map(t => <span key={t} className="curric-tool">{t}</span>)}
+                </div>
+                <p className="curric-label" style={{ marginTop: 24 }}>Projects you'll build</p>
+                <ul className="curric-modules">
+                  {CURRICULUM[2].domains[activeDomain].projects.map(pr => <li key={pr}>{pr}</li>)}
+                </ul>
+              </>
+            )}
+          </div>
+        </div>
+        <div style={{ textAlign: 'center', marginTop: 28 }}>
+          <button className="btn-primary" onClick={() => go('/scholarship')}>Download curriculum →</button>
         </div>
       </section>
 
@@ -139,7 +214,15 @@ export default function Generalist() {
         <p className="section-sub">Real domain projects you'll ship from your Claude account — no code, just structured prompting, Claude Skills, MCPs, and Cowork.</p>
         <div className="proj-grid">
           {PROJECTS.map((p, i) => (
-            <div key={i} className="proj-card" style={p.isCap ? { background: 'var(--cloud)', borderColor: 'rgba(83,74,183,0.25)' } : {}}>
+            <div
+              key={i}
+              className="proj-card proj-card--clickable"
+              style={p.isCap ? { background: 'var(--cloud)', borderColor: 'rgba(83,74,183,0.25)' } : {}}
+              role="button"
+              tabIndex={0}
+              onClick={() => setActiveProject(p)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveProject(p); } }}
+            >
               <span className="proj-track" style={p.isCap ? { background: 'var(--specialist)', color: 'white' } : {}}>{p.track}</span>
               <p className="proj-name">{p.title}</p>
               <p className="proj-meta">{p.meta}</p>
@@ -150,32 +233,12 @@ export default function Generalist() {
         </div>
       </section>
 
-      {/* ── MENTORS ── */}
-      <section className="section" style={{ background: 'white' }}>
-        <p className="section-label">Generalist mentors</p>
-        <h2 className="section-h2">Domain leaders.<br /><em>Not lecturers.</em></h2>
-        <p className="section-sub">Operators and founders who use Claude in their day job — guiding you through your domain track, capstone, and placement.</p>
-        <div className="mentors-grid">
-          {MENTORS.map((m, i) => (
-            <article key={i} className="mentor-card">
-              <div className="mentor-portrait" style={m.style}>{m.initials}</div>
-              <p className="mentor-name">{m.name}</p>
-              <p className="mentor-role">{m.role}</p>
-              <p className="mentor-bio">{m.bio}</p>
-              <p className="mentor-tags">{m.tags}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
       {/* ── HIRING PARTNERS ── */}
       <section className="hiring-section" style={{ background: 'var(--parchment)' }}>
         <p className="section-label" style={{ textAlign: 'center' }}>Hiring partners</p>
         <h2 className="section-h2" style={{ textAlign: 'center' }}>Where Claude AI Generalists<br /><em>get hired.</em></h2>
         <p className="section-sub" style={{ textAlign: 'center' }}>25+ partner companies hiring across our 7 domain tracks. Direct pipeline from Demo Day → interview → offer.</p>
-        <div className="partners-strip">
-          {PARTNERS.map(p => <span key={p} className="partner-chip">{p}</span>)}
-        </div>
+        <PartnersMarquee />
         <div className="roles-grid">
           {ROLES.map((r, i) => (
             <div key={i} className="role-card">
@@ -248,6 +311,8 @@ export default function Generalist() {
         <FaqList items={GENERALIST_FAQS} />
       </section>
 
+      <MentorsRail />
+
       <CtaBanner
         badge="Applications open · Cohort 01 · 30 seats"
         title="Ready to become a Claude AI Generalist?"
@@ -257,6 +322,8 @@ export default function Generalist() {
       />
 
       <Footer />
+
+      <ProjectModal project={activeProject} onClose={() => setActiveProject(null)} />
     </>
   );
 }

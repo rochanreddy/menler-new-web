@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import MeridianLogo from '../common/MeridianLogo';
+import MenlerLogo from '../common/MenlerLogo';
 import { supabase } from '../../lib/supabase';
 
 export default function Navbar() {
@@ -48,16 +48,11 @@ export default function Navbar() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    go('/');
-  };
-
   return (
     <nav className="nav" ref={navRef}>
-      <button className="nav-logo" onClick={() => go('/')} aria-label="Meridian — home">
-        <MeridianLogo color="#534AB7" />
-        <span className="nav-logo-text">Meridian</span>
+      <button className="nav-logo" onClick={() => go('/')} aria-label="Menler — home">
+        <MenlerLogo color="#534AB7" />
+        <span className="nav-logo-text">Menler</span>
       </button>
 
       <button
@@ -104,10 +99,8 @@ export default function Navbar() {
           </div>
         </div>
 
-        <button className={`nav-link${isActive('/outcomes') ? ' active' : ''}`} onClick={() => go('/outcomes')}>Outcomes</button>
         <button className={`nav-link${isActive('/aptitude') ? ' active' : ''}`} onClick={() => go('/aptitude')}>AI Aptitude Test</button>
-        <button className={`nav-link${isActive('/resources') ? ' active' : ''}`} onClick={() => go('/resources')}>Resources</button>
-        <button className={`nav-link${isActive('/blog') ? ' active' : ''}`} onClick={() => go('/blog')}>Blog</button>
+        <button className={`nav-link${isActive('/resources') ? ' active' : ''}`} onClick={() => go('/resources')}>Library</button>
         <button className={`nav-link${isActive('/about') ? ' active' : ''}`} onClick={() => go('/about')}>About</button>
         {session ? (
           <>
@@ -123,10 +116,10 @@ export default function Navbar() {
                 <circle cx="12" cy="7" r="4" />
               </svg>
             </button>
-            <button className="nav-login" onClick={handleLogout}>Log out</button>
+            <button className="nav-cta" onClick={() => go('/scholarship')}>Apply Now</button>
           </>
         ) : (
-          <button className="nav-cta" onClick={() => go('/register')}>Register</button>
+          <button className="nav-cta" onClick={() => go('/scholarship')}>Apply Now</button>
         )}
       </div>
 
@@ -138,21 +131,19 @@ export default function Navbar() {
         <button className="mm-link" onClick={() => go('/engineering')}>Claude AI Engineering</button>
         <button className="mm-link sub" onClick={() => go('/programs')}>Compare programs →</button>
         <div className="mm-divider" />
-        <button className={`mm-link${isActive('/outcomes') ? ' active' : ''}`} onClick={() => go('/outcomes')}>Outcomes</button>
         <button className={`mm-link${isActive('/aptitude') ? ' active' : ''}`} onClick={() => go('/aptitude')}>AI Aptitude Test</button>
-        <button className={`mm-link${isActive('/resources') ? ' active' : ''}`} onClick={() => go('/resources')}>Resources</button>
-        <button className={`mm-link${isActive('/blog') ? ' active' : ''}`} onClick={() => go('/blog')}>Blog</button>
+        <button className={`mm-link${isActive('/resources') ? ' active' : ''}`} onClick={() => go('/resources')}>Library</button>
         <button className={`mm-link${isActive('/about') ? ' active' : ''}`} onClick={() => go('/about')}>About</button>
         <div className="mm-divider" />
         {session ? (
           <>
             <button className="mm-link" onClick={() => go('/profile')}>My Profile</button>
-            <button className="mm-cta" onClick={handleLogout}>Log out</button>
+            <button className="mm-cta" onClick={() => go('/scholarship')}>Apply Now →</button>
           </>
         ) : (
           <>
             <button className="mm-link" onClick={() => go('/login')}>Log in</button>
-            <button className="mm-cta" onClick={() => go('/register')}>Register →</button>
+            <button className="mm-cta" onClick={() => go('/scholarship')}>Apply Now →</button>
           </>
         )}
       </div>

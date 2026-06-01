@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import FaqList from '../components/common/FaqList';
 import CtaBanner from '../components/common/CtaBanner';
 import Footer from '../components/layout/Footer';
+import MentorsRail from '../components/common/MentorsRail';
+import ProjectModal from '../components/common/ProjectModal';
+import PartnersMarquee from '../components/common/PartnersMarquee';
 import { ENGINEERING_FAQS } from '../data/faqData';
 import { submitLead } from '../services/leadService';
 
@@ -30,14 +33,6 @@ const PORTFOLIO_PROJECTS = [
   { track: 'Cert', title: 'Claude Engineer certification', meta: 'Written + live coding · Domain badge', desc: '3-hour written exam plus a live build session reviewed by senior Claude engineers. Earn the Claude Engineer — [Specialty] badge.', stack: 'Outcome: Claude Engineer — [Your specialty]', isCert: true },
 ];
 
-const MENTORS = [
-  { initials: 'VK', style: { background: 'rgba(93,202,165,0.18)', color: '#9FE1CB' }, nameStyle: { color: '#E1F5EE' }, roleStyle: { color: 'rgba(159,225,203,0.7)' }, bioStyle: { color: 'rgba(225,245,238,0.55)' }, tagsStyle: { color: '#9FE1CB' }, name: 'Vikram Krishnan', role: 'Staff AI Engineer · Listed AI co.', bio: 'Shipped Claude-powered RAG to 1M+ users. Mentors retrieval, evals, and production observability tracks.', tags: 'RAG · Evals · LLMOps' },
-  { initials: 'NS', style: { background: 'rgba(175,169,236,0.25)', color: '#AFA9EC' }, nameStyle: { color: '#E1F5EE' }, roleStyle: { color: 'rgba(159,225,203,0.7)' }, bioStyle: { color: 'rgba(225,245,238,0.55)' }, tagsStyle: { color: '#9FE1CB' }, name: 'Neha Subramanian', role: 'Founding Engineer · YC-backed AI', bio: 'Built the agent framework powering an 800k-user product. Leads multi-agent and Claude Agent SDK modules.', tags: 'Agents · SDK · Architecture' },
-  { initials: 'AC', style: { background: 'rgba(186,117,23,0.25)', color: '#F7B05B' }, nameStyle: { color: '#E1F5EE' }, roleStyle: { color: 'rgba(159,225,203,0.7)' }, bioStyle: { color: 'rgba(225,245,238,0.55)' }, tagsStyle: { color: '#9FE1CB' }, name: 'Arjun Chatterjee', role: 'Principal Engineer · Enterprise SaaS', bio: 'Maintainer of three open-source MCP servers. Mentors the MCP, tool-use, and integration tracks.', tags: 'MCP · Tool use · Integrations' },
-  { initials: 'DR', style: { background: 'rgba(252,235,235,0.18)', color: '#F0A0A0' }, nameStyle: { color: '#E1F5EE' }, roleStyle: { color: 'rgba(159,225,203,0.7)' }, bioStyle: { color: 'rgba(225,245,238,0.55)' }, tagsStyle: { color: '#9FE1CB' }, name: 'Divya Rao', role: 'ML Lead · Fintech unicorn', bio: 'Owns Claude safety, guardrails, and red-teaming for a regulated fintech. Leads the safety + evals modules.', tags: 'Safety · Evals · Guardrails' },
-];
-
-const PARTNERS = ['Razorpay', 'Cred', 'PhonePe', 'Zerodha', 'Swiggy', 'Postman', 'Browserbase', 'Sarvam AI', 'Krutrim', 'Cohere India', 'Rephrase', 'Mihup', '+ 13 more'];
 
 const ROLES = [
   { name: 'AI Engineer (Claude)', comp: '₹22–42L · Scale-ups', desc: 'Build production Claude features — RAG, agents, tool use — across the full backend stack.' },
@@ -54,6 +49,8 @@ export default function Engineering() {
 
   const [form, setForm] = useState({ name: '', email: '', phone: '', role: '' });
   const [done, setDone] = useState(false);
+  const [activeProject, setActiveProject] = useState(null);
+  const [activePhase, setActivePhase] = useState(0);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,22 +61,23 @@ export default function Engineering() {
   return (
     <>
       {/* ── HERO ── */}
-      <section className="hero hero-centered" style={{ background: '#085041' }}>
+      <section className="hero" style={{ background: '#085041' }}>
         <div className="hero-ring r1" style={{ borderColor: 'rgba(93,202,165,0.1)' }} />
         <div className="hero-ring r2" style={{ borderColor: 'rgba(93,202,165,0.08)' }} />
         <div className="hero-inner">
-          <p className="hero-eyebrow" style={{ color: '#5DCAA5' }}>Claude AI Engineering Fellowship · India · Python or JavaScript required</p>
+          <p className="hero-eyebrow" style={{ color: '#5DCAA5' }}>Claude AI Engineering Fellowship · India</p>
           <h1 className="hero-h1" style={{ color: '#E1F5EE' }}>Build Claude AI systems<br /><em style={{ color: '#9FE1CB' }}>that go to production.</em></h1>
-          <p className="hero-sub" style={{ color: 'rgba(225,245,238,0.55)' }}>India's most rigorous <strong style={{ color: '#E1F5EE', fontWeight: 500 }}>Claude AI engineering certification</strong>. A 12-week production-grade fellowship for software engineers, data scientists, ML practitioners, IT engineers, and deep-tech professionals. Build the full Claude stack — Claude API mastery, RAG pipelines, MCP servers, multi-agent systems with the Claude Agent SDK, computer use, evals, and deployed AI apps. Earn the Claude Engineer certification and get placed.</p>
+          <p className="hero-sub" style={{ color: 'rgba(225,245,238,0.55)' }}>India's 1st Claude AI Engineering Fellowship.<strong style={{ color: '#E1F5EE', fontWeight: 500 }}><br />Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
           <div className="hero-actions">
-            <button className="btn-primary" style={{ background: '#1D9E75' }} onClick={() => go('/scholarship')}>Sign up</button>
-            <button className="btn-ghost" style={{ color: '#9FE1CB' }}>Download brochure →</button>
+            <button className="btn-primary" style={{ background: '#1D9E75' }} onClick={() => go('/scholarship')}>Apply Now</button>
+            <button className="btn-outline" style={{ color: '#9FE1CB', borderColor: 'rgba(93,202,165,0.5)' }}>Download Brochure</button>
           </div>
           <div className="hero-stats" style={{ borderColor: 'rgba(93,202,165,0.2)' }}>
-            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}>12</span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Weeks</span></div>
-            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}>Python</span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Required</span></div>
-            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}>5+</span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Shipped projects</span></div>
-            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}>1</span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Engineer cert</span></div>
+            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}>90%</span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Interview pipeline<br />target</span></div>
+            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}>25+</span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Hiring<br />associations</span></div>
+            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}>20+</span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>AI Builders<br />/ Operators</span></div>
+            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}>12</span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Weeks intensive<br />fellowship</span></div>
+            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}>5+</span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Shipped<br />projects</span></div>
           </div>
         </div>
       </section>
@@ -103,14 +101,24 @@ export default function Engineering() {
         <p className="section-label">12-week curriculum</p>
         <h2 className="section-h2">From engineer<br /><em>to Claude Specialist.</em></h2>
         <p className="section-sub">The full Claude engineering stack — API, RAG, MCP, agents, evaluation, LLMOps. Shipped to production.</p>
-        <div className="phases">
-          {PHASES.map((p, i) => (
-            <div key={i} className={`phase ${p.cls}`}>
-              <p className="phase-tag">{p.tag}</p>
-              <p className="phase-title">{p.title}</p>
-              <ul className="phase-items">{p.items.map((it, j) => <li key={j}>{it}</li>)}</ul>
-            </div>
-          ))}
+        <div className="curric curric-eng">
+          <div className="curric-terms">
+            {PHASES.map((p, i) => (
+              <button
+                key={i}
+                className={`curric-term${activePhase === i ? ' on' : ''}`}
+                onClick={() => setActivePhase(i)}
+              >
+                <span className="curric-term-no">{p.tag}</span>
+                <span className="curric-term-title">{p.title}</span>
+              </button>
+            ))}
+          </div>
+          <div className="curric-detail curric-soon">
+            <p className="curric-soon-title">Coming Soon</p>
+            <p className="curric-soon-sub">The full phase-by-phase breakdown for {PHASES[activePhase].tag.split(' · ')[0]} drops soon. Join the waitlist to get it first.</p>
+            <button className="btn-primary" style={{ background: '#1D9E75' }} onClick={() => go('/scholarship')}>Join the waitlist →</button>
+          </div>
         </div>
       </section>
 
@@ -136,7 +144,15 @@ export default function Engineering() {
         <p className="section-sub" style={{ color: 'rgba(225,245,238,0.55)' }}>Each project goes through code review, evaluation, and a live demo. Push to your GitHub. Show in any AI engineering interview.</p>
         <div className="proj-grid">
           {PORTFOLIO_PROJECTS.map((p, i) => (
-            <div key={i} className="proj-card" style={p.isCert ? { background: 'rgba(29,158,117,0.18)', borderColor: 'rgba(93,202,165,0.35)' } : {}}>
+            <div
+              key={i}
+              className="proj-card proj-card--clickable"
+              style={p.isCert ? { background: 'rgba(29,158,117,0.18)', borderColor: 'rgba(93,202,165,0.35)' } : {}}
+              role="button"
+              tabIndex={0}
+              onClick={() => setActiveProject(p)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveProject(p); } }}
+            >
               <span className="proj-track" style={p.isCert ? { background: 'var(--placed)', color: 'white' } : {}}>{p.track}</span>
               <p className="proj-name">{p.title}</p>
               <p className="proj-meta">{p.meta}</p>
@@ -147,32 +163,12 @@ export default function Engineering() {
         </div>
       </section>
 
-      {/* ── MENTORS ── */}
-      <section className="section" style={{ background: '#085041' }}>
-        <p className="section-label" style={{ color: '#5DCAA5' }}>Engineering mentors</p>
-        <h2 className="section-h2" style={{ color: '#E1F5EE' }}>Senior Claude engineers.<br /><em style={{ color: '#9FE1CB' }}>Reviewing your code.</em></h2>
-        <p className="section-sub" style={{ color: 'rgba(225,245,238,0.55)' }}>Engineers who've shipped Claude in production at scale. They run your code reviews, design reviews, and capstone evaluations.</p>
-        <div className="mentors-grid">
-          {MENTORS.map((m, i) => (
-            <article key={i} className="mentor-card" style={{ background: 'rgba(255,255,255,0.06)', borderColor: 'rgba(93,202,165,0.18)' }}>
-              <div className="mentor-portrait" style={m.style}>{m.initials}</div>
-              <p className="mentor-name" style={m.nameStyle}>{m.name}</p>
-              <p className="mentor-role" style={m.roleStyle}>{m.role}</p>
-              <p className="mentor-bio" style={m.bioStyle}>{m.bio}</p>
-              <p className="mentor-tags" style={m.tagsStyle}>{m.tags}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
       {/* ── HIRING PARTNERS ── */}
       <section className="hiring-section dark">
         <p className="section-label" style={{ color: '#5DCAA5', textAlign: 'center' }}>Hiring partners</p>
         <h2 className="section-h2" style={{ color: '#E1F5EE', textAlign: 'center' }}>Where Claude AI Engineers<br /><em style={{ color: '#9FE1CB' }}>get placed.</em></h2>
         <p className="section-sub" style={{ color: 'rgba(225,245,238,0.55)', textAlign: 'center' }}>25+ partner companies hiring AI engineers, applied scientists, and infra engineers — direct pipeline from Demo Day onward.</p>
-        <div className="partners-strip">
-          {PARTNERS.map(p => <span key={p} className="partner-chip">{p}</span>)}
-        </div>
+        <PartnersMarquee />
         <div className="roles-grid">
           {ROLES.map((r, i) => (
             <div key={i} className="role-card">
@@ -243,6 +239,8 @@ export default function Engineering() {
         <FaqList items={ENGINEERING_FAQS} />
       </section>
 
+      <MentorsRail />
+
       <CtaBanner
         badge="Applications open · Cohort 01 · 30 seats"
         title="Ready to build Claude-native systems?"
@@ -254,6 +252,8 @@ export default function Engineering() {
       />
 
       <Footer />
+
+      <ProjectModal project={activeProject} onClose={() => setActiveProject(null)} />
     </>
   );
 }
