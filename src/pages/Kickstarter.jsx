@@ -6,6 +6,7 @@ import Footer from '../components/layout/Footer';
 import MentorsRail from '../components/common/MentorsRail';
 import ProjectModal from '../components/common/ProjectModal';
 import { useApply } from '../components/common/ApplyContext';
+import HiringJobs from '../components/common/HiringJobs';
 import { KICKSTARTER_FAQS } from '../data/faqData';
 import { submitLead } from '../services/leadService';
 
@@ -283,6 +284,9 @@ export default function Kickstarter() {
 
       {/* ── MENTORS ── */}
       <MentorsRail />
+
+      {/* ── HIRING PARTNERS & ROLES ── */}
+      <HiringJobs />
 
       {/* ── OUTCOMES ── */}
       <section className="hiring-section outcome-section" style={{ background: 'var(--parchment)' }}>

@@ -676,6 +676,8 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .proj-card-img { margin: -28px -28px 18px; height: 230px; overflow: hidden; border-radius: 14px 14px 0 0; background: var(--cloud); }
 .proj-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .35s ease; }
 .proj-card--clickable:hover .proj-card-img img { transform: scale(1.05); }
+/* Infographic diagram (CEO agent) — show the whole image, no crop */
+.proj-card-img img[alt="CEO decision-intelligence agent"] { object-fit: contain; background: #F6F3E9; }
 .proj-card-title { font-family: 'DM Serif Display', serif; font-size: 21px; font-weight: 400; color: var(--ink); line-height: 1.3; margin-bottom: 10px; }
 .proj-card-desc { font-size: 13.5px; color: var(--text-muted); line-height: 1.65; margin-bottom: 16px; }
 .proj-stack { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; align-items: center; }

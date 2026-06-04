@@ -2,7 +2,7 @@
 // `slug` is the URL key used by /projects/:slug.
 export const PROJECTS = [
   {
-    slug: 'ceo-decision-intelligence-agent', image: '/projects/ceo.jpg',
+    slug: 'ceo-decision-intelligence-agent', image: '/projects/ceo.png',
     tag: "Founder's Office", tagCls: 't-founder', title: 'CEO decision-intelligence agent',
     desc: "Pulls from Slack, Asana, GitHub, finance docs & reports — synthesises a Monday-morning briefing on what changed, what's at risk, and what to decide.",
     stack: ['MCP', 'Cowork', 'Tool use'], outcome: '15-min briefing replaces 90-min catch-up',
