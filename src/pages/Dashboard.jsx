@@ -317,7 +317,7 @@ export default function Dashboard() {
               <div className="dash-form-footer">
                 {saved && <span className="dash-saved">✓ Profile saved</span>}
                 <button type="submit" className="auth-btn" style={{ width: 'auto', padding: '12px 32px' }} disabled={saving}>
-                  {saving ? 'Saving…' : 'Save profile →'}
+                  {saving ? 'Saving…' : 'Save profile'}
                 </button>
               </div>
 

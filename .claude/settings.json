@@ -1,12 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run *)",
-      "Bash(echo \"BUILD:$?\")",
-      "Bash(npx eslint *)",
-      "Bash(echo \"LINT:$?\")",
-      "Bash(grep -nA2 \"\\\\.mentors-section\\\\|\\\\.mentor-card\\\\b\\\\|\\\\.mentor-card {\\\\|\\\\.mentor-card-body\\\\|\\\\.mentor-photo\\\\|\\\\.mentor-card {\" src/styles/global.css)",
-      "Bash(curl -s -m 4 -o /dev/null -w \"5173 status=%{http_code}\\\\n\" http://localhost:5173/)"
+      "Bash(git check-ignore *)"
     ]
   }
 }

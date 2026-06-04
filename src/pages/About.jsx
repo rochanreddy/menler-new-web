@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import CtaBanner from '../components/common/CtaBanner';
 import Footer from '../components/layout/Footer';
+import { useApply } from '../components/common/ApplyContext';
 
 const VALUES = [
   { title: 'Depth over breadth', desc: 'We go deep on Claude — not a tour of 40 AI tools. One model, mastered. Across real professional domains.' },
@@ -14,6 +15,7 @@ const VALUES = [
 export default function About() {
   const navigate = useNavigate();
   const go = (path) => { navigate(path); window.scrollTo(0, 0); };
+  const openApply = useApply();
 
   return (
     <>
@@ -85,7 +87,7 @@ export default function About() {
           <div className="qualify-card" style={{ cursor: 'pointer' }} onClick={() => go('/outcomes')}>
             <p className="qualify-title">Hire from us</p>
             <p className="qualify-desc">Access the Menler hiring pipeline. Certified Claude Specialists across seven domain tracks — Finance, Marketing, VC, Operations, Technology, Engineering, and Founder's Office.</p>
-            <p style={{ fontSize: 12, color: 'var(--specialist)', fontWeight: 500, marginTop: 8 }}>See outcomes →</p>
+            <p style={{ fontSize: 12, color: 'var(--specialist)', fontWeight: 500, marginTop: 8 }}>See outcomes</p>
           </div>
           <div className="qualify-card">
             <p className="qualify-title">Menler Teams <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-muted)' }}>· B2B</span></p>
@@ -103,7 +105,7 @@ export default function About() {
         title="This is your turning point."
         subtitle="12 weeks. Claude-native. Domain-specialist. Placed."
         buttonText="Sign up"
-        onButtonClick={() => go('/scholarship')}
+        onButtonClick={openApply}
       />
 
       <Footer />

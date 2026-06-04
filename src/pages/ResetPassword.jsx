@@ -53,7 +53,7 @@ export default function ResetPassword() {
           <p className="auth-sub" style={{ marginBottom: 28 }}>
             Your password has been updated. You can now log in with your new password.
           </p>
-          <button className="auth-btn" onClick={() => navigate('/login')}>Log in →</button>
+          <button className="auth-btn" onClick={() => navigate('/login')}>Log in</button>
         </div>
       </div>
     );
@@ -112,7 +112,7 @@ export default function ResetPassword() {
           </div>
 
           <button type="submit" className="auth-btn" disabled={loading}>
-            {loading ? 'Resetting…' : 'Reset password →'}
+            {loading ? 'Resetting…' : 'Reset password'}
           </button>
         </form>
       </div>

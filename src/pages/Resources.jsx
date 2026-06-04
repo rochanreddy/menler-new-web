@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../components/layout/Footer';
+import { PROJECTS } from '../data/projectsData';
 import { submitLead } from '../services/leadService';
 
 const LIBRARY_CARDS = [
@@ -10,75 +11,6 @@ const LIBRARY_CARDS = [
   { num: '04', name: 'AI stack map', desc: 'A one-page visual of best-in-class AI tools by category — writing, coding, research, design, audio, agents. Updated quarterly.', tags: ['All programs', 'Q2 2026'] },
   { num: '05', name: 'Templates & cheat sheets', desc: 'Prompt-engineering one-pager, MCP server starter, Claude in Excel templates, AI evals checklist, and more. Free PDFs and GitHub repos.', tags: ['All programs', 'Free PDFs'] },
   { num: '06', name: 'AI glossary', desc: 'Plain-English glossary of 100+ AI terms in the Indian context — no academic jargon, no assumed knowledge. Sorted by difficulty.', tags: ['Beginners', '100+ terms'] },
-];
-
-const SAMPLE_PROMPTS = [
-  {
-    title: 'Earnings call insight memo',
-    meta: 'Finance · Claude Sonnet 4.6 · structured output',
-    body: `You are a senior equity analyst at an Indian asset management firm.
-
-I will provide you with a raw earnings call transcript. Produce a structured insight memo with exactly these five sections:
-
-1. HEADLINE (1 sentence — the single most important thing management said)
-2. GUIDANCE DELTA (2-3 bullets — what changed vs. last quarter guidance)  
-3. MANAGEMENT TONE (1 sentence — read the subtext)
-4. COMPETITIVE SIGNAL (2-3 bullets — what this means for the sector)
-5. WATCH ITEMS (2 bullets — what to monitor next quarter)
-
-Write for a portfolio manager who has 90 seconds. Use numbers wherever possible. Flag uncertainty explicitly.
-
-TRANSCRIPT:
-[paste transcript here]`,
-  },
-  {
-    title: 'Brand-voice content brief',
-    meta: 'Marketing · Claude Sonnet · voice transfer',
-    body: `You are the brand voice guardian for [BRAND_NAME].
-
-Brand voice pillars: [VOICE_PILLARS — e.g., "Direct. Warm. Slightly irreverent."]
-Audience: [AUDIENCE DESCRIPTION]
-Channel: [LinkedIn / Instagram / Email / etc.]
-
-Write a [FORMAT — e.g., LinkedIn post / email subject + preview text / ad headline + body] about [TOPIC].
-
-Rules:
-- No corporate jargon
-- No em-dashes used decoratively
-- Every sentence must earn its place
-- End with a clear, specific CTA
-
-Tone reference: [paste 2-3 examples of on-brand copy]`,
-  },
-  {
-    title: 'Daily personal briefing',
-    meta: 'Personal productivity · Claude · agent loop',
-    body: `You are my personal chief of staff. Every morning, produce my daily briefing using the inputs I give you.
-
-Structure:
-FOCUS (the one thing I must not lose sight of today)
-CALENDAR INTEL (what's notable about today's schedule — prep needed, conflict risks)
-EMAIL DIGEST (3-5 bullets on what actually matters in my inbox)
-OPEN LOOPS (3 things I said I'd do but haven't)
-WEATHER & LOGISTICS (if relevant)
-
-Keep it under 250 words. Be direct. No filler.
-
-TODAY'S INPUTS:
-Calendar: [paste or describe]
-Email highlights: [paste or describe]
-Notes from yesterday: [paste]
-Journal entry: [optional]`,
-  },
-];
-
-const TOOL_GUIDES = [
-  { title: 'Claude.ai — full setup', duration: '10 min', desc: 'Projects, Skills, Cowork, and custom instructions. The complete setup for power users.' },
-  { title: 'Claude Desktop + MCPs', duration: '15 min', desc: 'Install Claude Desktop. Connect your first MCP server (filesystem, Brave Search, Slack).' },
-  { title: 'Claude Cowork', duration: '8 min', desc: 'Multi-turn, multi-document workflows. Set up your first Cowork for research or content.' },
-  { title: 'Claude Code', duration: '12 min', desc: 'Autonomous coding agent. Terminal install, first repo clone, and safe usage patterns.' },
-  { title: 'Claude in Excel', duration: '10 min', desc: 'Connect Claude to Excel for formula generation, data analysis, and commentary drafting.' },
-  { title: 'Cursor for non-engineers', duration: '9 min', desc: 'AI code editor you can use without knowing how to code. Setup and first project walkthrough.' },
 ];
 
 const TEMPLATE_CARDS = [
@@ -131,39 +63,30 @@ export default function Resources() {
         </div>
       </section>
 
-      {/* ── PROMPT LIBRARY PREVIEW ── */}
-      <section className="res-preview" style={{ background: 'white' }}>
-        <div className="preview-shell">
-          <p className="section-label">Library 01 · Preview</p>
-          <h2 className="section-h2">Three prompts<br /><em>from the library.</em></h2>
-          <p className="section-sub">Every prompt is tested, versioned, and copy-able. The full library has 120+.</p>
-          <div className="prompts-preview">
-            {SAMPLE_PROMPTS.map((p, i) => (
-              <div key={i} className="prompt-card">
-                <div className="prompt-head">
-                  <p className="prompt-title">{p.title}</p>
-                  <p className="prompt-meta">{p.meta}</p>
-                </div>
-                <pre className="prompt-body">{p.body}</pre>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── TOOL SETUP ── */}
+      {/* ── PROJECT BUILDS ── */}
       <section className="res-preview alt" style={{ background: 'var(--parchment)' }}>
         <div className="preview-shell">
-          <p className="section-label">Library 02 · Tool setup</p>
-          <h2 className="section-h2">Six tools.<br /><em>Step-by-step.</em></h2>
-          <p className="section-sub">Every guide includes screenshots, common setup errors, and a "test your setup" prompt to confirm everything's working.</p>
+          <p className="section-label">Library 03 · Project builds</p>
+          <h2 className="section-h2">Every project.<br /><em>One place.</em></h2>
+          <p className="section-sub">The full set of fellow-built projects across domains. Open any one for the build doc, stack, and outcome.</p>
           <div className="proj-grid">
-            {TOOL_GUIDES.map((t, i) => (
-              <div key={i} className="proj-card">
-                <span className="proj-track">{t.duration}</span>
-                <p className="proj-name">{t.title}</p>
-                <p className="proj-desc">{t.desc}</p>
-              </div>
+            {PROJECTS.map((p) => (
+              <article
+                key={p.slug}
+                className="proj-card proj-card--clickable"
+                role="button"
+                tabIndex={0}
+                onClick={() => go(`/projects/${p.slug}`)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(`/projects/${p.slug}`); } }}
+              >
+                {p.image && <div className="proj-card-img"><img src={p.image} alt={p.title} loading="lazy" /></div>}
+                <span className={`proj-domain-tag ${p.tagCls}`}>{p.tag}</span>
+                <h3 className="proj-card-title">{p.title}</h3>
+                <p className="proj-card-desc">{p.desc}</p>
+                <div className="proj-stack">{p.stack.map(s => <span key={s}>{s}</span>)}</div>
+                <p className="proj-outcome">{p.outcome}</p>
+                <span className="proj-card-link">View preview</span>
+              </article>
             ))}
           </div>
         </div>
@@ -198,7 +121,7 @@ export default function Resources() {
           ) : (
             <form className="mini-lead-form" onSubmit={handleNewsletter}>
               <input type="email" required placeholder="you@domain.com" value={email} onChange={e => setEmail(e.target.value)} autoComplete="email" />
-              <button type="submit">Subscribe to the weekly drop →</button>
+              <button type="submit">Subscribe to the weekly drop</button>
             </form>
           )}
         </div>

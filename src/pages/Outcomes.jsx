@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CtaBanner from '../components/common/CtaBanner';
 import Footer from '../components/layout/Footer';
+import { useApply } from '../components/common/ApplyContext';
 
 const PRODUCT_FILTERS = ['all', 'kickstarter', 'generalist', 'engineering'];
 
@@ -36,6 +37,7 @@ const PLACEMENT_STORIES = [
 export default function Outcomes() {
   const navigate = useNavigate();
   const go = (path) => { navigate(path); window.scrollTo(0, 0); };
+  const openApply = useApply();
   const [productFilter, setProductFilter] = useState('all');
 
   const filteredProducts = productFilter === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.group === productFilter);
@@ -100,7 +102,7 @@ export default function Outcomes() {
                 <div><p className="bip-name">{b.name}</p><p className="bip-platform">{b.platform}</p></div>
               </div>
               <p className="bip-text">{b.text}</p>
-              <p className="bip-engagement"><span>{b.reactions}</span><span>View post →</span></p>
+              <p className="bip-engagement"><span>{b.reactions}</span><span>View post</span></p>
             </div>
           ))}
         </div>
@@ -158,7 +160,7 @@ export default function Outcomes() {
         </div>
         <p style={{ textAlign: 'center', color: '#9FE1CB', marginTop: 36, fontFamily: "'DM Serif Display',serif", fontStyle: 'italic', fontSize: 22 }}>Want a path like this?</p>
         <div style={{ textAlign: 'center', marginTop: 18 }}>
-          <button className="btn-primary" style={{ background: '#1D9E75' }} onClick={() => go('/aptitude')}>Take the Aptitude Test →</button>
+          <button className="btn-primary" style={{ background: '#1D9E75' }} onClick={() => go('/aptitude')}>Take the Aptitude Test</button>
         </div>
       </section>
 
@@ -167,7 +169,7 @@ export default function Outcomes() {
         title="Your story belongs on this page."
         subtitle="One application stands between you and a different next year."
         buttonText="Sign up"
-        onButtonClick={() => go('/scholarship')}
+        onButtonClick={openApply}
       />
 
       <Footer />

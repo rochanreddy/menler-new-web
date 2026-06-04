@@ -45,7 +45,7 @@ export default function Blog() {
               <span>{featured.author} · {featured.date} · {featured.readTime}</span>
             </div>
             <div style={{ marginTop: 20 }}>
-              <button className="btn-primary" onClick={() => go('/blog/earnings-agent')}>Read story →</button>
+              <button className="btn-primary" onClick={() => go('/blog/earnings-agent')}>Read story</button>
             </div>
           </div>
         </div>
@@ -68,7 +68,7 @@ export default function Blog() {
             <h3>No stories here yet</h3>
             <p>We haven't published in this category yet — check back soon, or browse all stories.</p>
             <div style={{ marginTop: 18 }}>
-              <button className="btn-primary" onClick={() => setFilter('all')}>View all stories →</button>
+              <button className="btn-primary" onClick={() => setFilter('all')}>View all stories</button>
             </div>
           </div>
         ) : (
@@ -103,7 +103,7 @@ export default function Blog() {
           ) : (
             <form className="mini-lead-form" onSubmit={handleNewsletter}>
               <input type="email" required aria-label="Email address" placeholder="you@domain.com" value={email} onChange={e => setEmail(e.target.value)} autoComplete="email" />
-              <button type="submit">Get Friday issues →</button>
+              <button type="submit">Get Friday issues</button>
             </form>
           )}
         </div>

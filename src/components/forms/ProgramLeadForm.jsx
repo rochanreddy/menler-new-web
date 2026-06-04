@@ -60,7 +60,7 @@ export default function ProgramLeadForm({ program, programColor = 'var(--special
         </select>
       </div>
       <button type="submit" style={{ background: buttonBg }} disabled={loading}>
-        {loading ? 'Sending…' : 'Get brochure & cohort details →'}
+        {loading ? 'Sending…' : 'Get brochure & cohort details'}
       </button>
     </form>
   );

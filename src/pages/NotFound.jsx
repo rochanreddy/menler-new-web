@@ -24,8 +24,8 @@ export default function NotFound() {
           <h1 className="notfound-h1">This page is <em>off the meridian.</em></h1>
           <p className="notfound-sub">The link you followed doesn't exist — but everything that matters is one tap away.</p>
           <div className="notfound-actions">
-            <button className="btn-primary" onClick={() => go('/')}>← Back to home</button>
-            <button className="btn-ghost" onClick={() => go('/programs')}>Explore programs →</button>
+            <button className="btn-primary" onClick={() => go('/')}>Back to home</button>
+            <button className="btn-ghost" onClick={() => go('/programs')}>Explore programs</button>
           </div>
           <nav className="notfound-links" aria-label="Popular pages">
             {LINKS.map(l => (

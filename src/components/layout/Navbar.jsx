@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import MenlerLogo from '../common/MenlerLogo';
+import MenlerWordmark from '../common/MenlerWordmark';
+import { useApply } from '../common/ApplyContext';
 import { supabase } from '../../lib/supabase';
 
 export default function Navbar() {
@@ -9,12 +10,16 @@ export default function Navbar() {
   const navRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const openApply = useApply();
 
   const go = (path) => {
     navigate(path);
     setOpenDropdown(null);
     setMobileOpen(false);
   };
+
+  // Apply Now → open the popup (and close any open menus first).
+  const apply = () => { setOpenDropdown(null); setMobileOpen(false); openApply(); };
 
   const toggleDropdown = (name) => {
     setOpenDropdown(prev => (prev === name ? null : name));
@@ -50,9 +55,8 @@ export default function Navbar() {
 
   return (
     <nav className="nav" ref={navRef}>
-      <button className="nav-logo" onClick={() => go('/')} aria-label="Menler — home">
-        <MenlerLogo color="#534AB7" />
-        <span className="nav-logo-text">Menler</span>
+      <button className="nav-logo" onClick={() => go('/')} aria-label="menler — home">
+        <MenlerWordmark size={26} theme="light" />
       </button>
 
       <button
@@ -93,7 +97,7 @@ export default function Navbar() {
             </button>
             <div className="dd-divider" />
             <button className="dd-item" role="menuitem" onClick={() => go('/programs')}>
-              <span className="dd-title" style={{ fontStyle: 'italic', color: 'var(--specialist)' }}>Compare programs →</span>
+              <span className="dd-title" style={{ fontStyle: 'italic', color: 'var(--specialist)' }}>Compare programs</span>
               <span className="dd-desc">Side-by-side feature, fee, and outcome matrix.</span>
             </button>
           </div>
@@ -116,10 +120,10 @@ export default function Navbar() {
                 <circle cx="12" cy="7" r="4" />
               </svg>
             </button>
-            <button className="nav-cta" onClick={() => go('/scholarship')}>Apply Now</button>
+            <button className="nav-cta" onClick={apply}>Apply Now</button>
           </>
         ) : (
-          <button className="nav-cta" onClick={() => go('/scholarship')}>Apply Now</button>
+          <button className="nav-cta" onClick={apply}>Apply Now</button>
         )}
       </div>
 
@@ -129,7 +133,7 @@ export default function Navbar() {
         <button className="mm-link" onClick={() => go('/kickstarter')}>Gen AI Kickstarter</button>
         <button className="mm-link" onClick={() => go('/generalist')}>Claude AI Generalist</button>
         <button className="mm-link" onClick={() => go('/engineering')}>Claude AI Engineering</button>
-        <button className="mm-link sub" onClick={() => go('/programs')}>Compare programs →</button>
+        <button className="mm-link sub" onClick={() => go('/programs')}>Compare programs</button>
         <div className="mm-divider" />
         <button className={`mm-link${isActive('/aptitude') ? ' active' : ''}`} onClick={() => go('/aptitude')}>AI Aptitude Test</button>
         <button className={`mm-link${isActive('/resources') ? ' active' : ''}`} onClick={() => go('/resources')}>Library</button>
@@ -138,12 +142,12 @@ export default function Navbar() {
         {session ? (
           <>
             <button className="mm-link" onClick={() => go('/profile')}>My Profile</button>
-            <button className="mm-cta" onClick={() => go('/scholarship')}>Apply Now →</button>
+            <button className="mm-cta" onClick={apply}>Apply Now</button>
           </>
         ) : (
           <>
             <button className="mm-link" onClick={() => go('/login')}>Log in</button>
-            <button className="mm-cta" onClick={() => go('/scholarship')}>Apply Now →</button>
+            <button className="mm-cta" onClick={apply}>Apply Now</button>
           </>
         )}
       </div>

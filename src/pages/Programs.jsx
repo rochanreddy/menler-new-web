@@ -2,24 +2,38 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CtaBanner from '../components/common/CtaBanner';
 import Footer from '../components/layout/Footer';
+import { useApply } from '../components/common/ApplyContext';
 import MentorsRail from '../components/common/MentorsRail';
 import { submitLead } from '../services/leadService';
 
-const COMPARE_ROWS = [
-  { label: 'Length', kick: '14 days', gen: '12 weeks', eng: '12 weeks', kickCls: 'kick-col', genCls: 'gen-col', engCls: 'eng-col' },
-  { label: 'Prerequisites', kick: 'None', gen: 'None — any domain', eng: 'Python or JS', kickCls: '', genCls: '', engCls: '' },
-  { label: 'Format', kick: 'Daily 90-min live + practice', gen: '3 evenings + Saturday', eng: '3 evenings + Saturday', kickCls: '', genCls: '', engCls: '' },
-  { label: 'Projects shipped', kick: '5 mini + 1 capstone', gen: '8 incl. domain capstone', eng: '5 production-grade', kickCls: '', genCls: '', engCls: '' },
-  { label: 'Mentors', kick: '2–3 instructors', gen: '4 domain operators', eng: '4 senior Claude engineers', kickCls: '', genCls: '', engCls: '' },
-  { label: 'Certification', kick: 'AI Fluency cert', gen: 'Claude Specialist — [Domain]', eng: 'Claude Engineer — [Specialty]', kickCls: '', genCls: '', engCls: '' },
-  { label: 'Placement support', kick: 'Discord + scholarship to Fellowship', gen: '25+ partners · Demo Day', eng: '25+ partners · Demo Day · Code review', kickCls: '', genCls: '', engCls: '' },
-  { label: 'Investment', kick: 'Entry tier ₹', gen: 'Specialist tier ₹₹', eng: 'Engineer tier ₹₹₹', kickCls: 'kick-col', genCls: 'gen-col', engCls: 'eng-col' },
-  { label: 'Scholarships', kick: 'Up to 30%', gen: 'Up to 50%', eng: 'Up to 50%', kickCls: '', genCls: '', engCls: '' },
+const PLANS = [
+  {
+    key: 'gen', label: 'Claude AI Generalist', name: 'Core Track', path: '/generalist',
+    for: '12 weeks. No coding required. Domain portfolio + Claude Specialist credential.',
+    price: '₹49,999', emi: 'EMI from ₹4,500/month',
+    features: ['80+ hours live over 12 weeks', '1:1 mentor sessions', 'Domain capstone project', 'Claude Specialist credential', 'Job board & alumni network'],
+    cta: 'Apply — Generalist', featured: false,
+  },
+  {
+    key: 'eng', label: 'Claude AI Engineering', name: 'Core Track', path: '/engineering',
+    for: '12 weeks. Python/JS required. Production builds + Claude Engineer credential.',
+    price: '₹59,999', emi: 'EMI from ₹5,400/month',
+    features: ['80+ hours live over 12 weeks', '1:1 mentor sessions', '3 production builds (API, RAG, MCP)', 'Claude Engineer credential', 'Job board & alumni network'],
+    cta: 'Apply — Engineering', featured: false,
+  },
+  {
+    key: 'ccaf', label: 'Fellowship + CCA-F', name: 'CCAF + Interview Track', path: '/programs',
+    for: 'Generalist or Engineering, plus CCA-F certification prep and structured interview assistance.',
+    price: '₹89,999', emi: 'EMI from ₹8,100/month',
+    features: ['Everything in Core Track', 'Choose Generalist or Engineering', 'Module 11 — CCA-F Prep Track', 'Anthropic Academy CPN learning path', 'Mock exams, CCA-F format', 'Structured interview prep', 'Founding Fellow co-branded certificate'],
+    cta: 'Apply — CCAF Track', featured: true,
+  },
 ];
 
 export default function Programs() {
   const navigate = useNavigate();
   const go = (path) => { navigate(path); window.scrollTo(0, 0); };
+  const openApply = useApply();
 
   const [form, setForm] = useState({ name: '', email: '', phone: '', program: '' });
   const [done, setDone] = useState(false);
@@ -42,65 +56,22 @@ export default function Programs() {
         </div>
       </section>
 
-      {/* ── LADDER ── */}
+      {/* ── PRICING CARDS ── */}
       <section className="section" style={{ background: 'white', padding: '32px 40px 72px' }}>
-        <div className="ladder">
-          <div className="ladder-card kick" onClick={() => go('/kickstarter')}>
-            <p className="ladder-tier">Tier 1 · Entry</p>
-            <p className="ladder-name">Gen AI Kickstarter</p>
-            <p className="ladder-tag">School + college students, Gen AI aspirants</p>
-            <div className="ladder-stats">
-              <div><p>Length</p><p>14 days</p></div>
-              <div><p>Format</p><p>Live evening</p></div>
-              <div><p>Builds</p><p>5 + capstone</p></div>
-              <div><p>Outcome</p><p>AI fluency cert</p></div>
-            </div>
-            <div className="ladder-fee"><p className="ladder-fee-amt">₹</p><p className="ladder-fee-cta">Explore Kickstarter →</p></div>
-          </div>
-          <div className="ladder-card gen" onClick={() => go('/generalist')}>
-            <p className="ladder-tier">Tier 2 · Specialist</p>
-            <p className="ladder-name">Claude AI Generalist</p>
-            <p className="ladder-tag">Professionals, founders, switchers — no code</p>
-            <div className="ladder-stats">
-              <div><p>Length</p><p>12 weeks</p></div>
-              <div><p>Format</p><p>Cohort, hybrid</p></div>
-              <div><p>Builds</p><p>8 projects</p></div>
-              <div><p>Outcome</p><p>Specialist + placement</p></div>
-            </div>
-            <div className="ladder-fee"><p className="ladder-fee-amt">₹₹</p><p className="ladder-fee-cta">Explore Generalist →</p></div>
-          </div>
-          <div className="ladder-card eng" onClick={() => go('/engineering')}>
-            <p className="ladder-tier">Tier 3 · Engineer</p>
-            <p className="ladder-name">Claude AI Engineering</p>
-            <p className="ladder-tag">SDEs, DS, ML, IT — Python required</p>
-            <div className="ladder-stats">
-              <div><p>Length</p><p>12 weeks</p></div>
-              <div><p>Format</p><p>Cohort, intensive</p></div>
-              <div><p>Builds</p><p>5 production</p></div>
-              <div><p>Outcome</p><p>Engineer + placement</p></div>
-            </div>
-            <div className="ladder-fee"><p className="ladder-fee-amt">₹₹₹</p><p className="ladder-fee-cta">Explore Engineering →</p></div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── COMPARE TABLE ── */}
-      <section className="compare-section">
-        <p className="section-label" style={{ textAlign: 'center' }}>Side-by-side</p>
-        <h2 className="section-h2" style={{ textAlign: 'center' }}>Compare programs<br /><em>at a glance.</em></h2>
-        <div className="compare-table">
-          <div className="compare-row head">
-            <div className="compare-cell">Feature</div>
-            <div className="compare-cell">Kickstarter</div>
-            <div className="compare-cell">Generalist</div>
-            <div className="compare-cell">Engineering</div>
-          </div>
-          {COMPARE_ROWS.map((r, i) => (
-            <div key={i} className="compare-row">
-              <div className="compare-cell">{r.label}</div>
-              <div className={`compare-cell ${r.kickCls}`}>{r.kick}</div>
-              <div className={`compare-cell ${r.genCls}`}>{r.gen}</div>
-              <div className={`compare-cell ${r.engCls}`}>{r.eng}</div>
+        <div className="pricing-grid">
+          {PLANS.map(pl => (
+            <div className={`pricing-card pricing-card--${pl.key}${pl.featured ? ' featured' : ''}`} key={pl.key}>
+              <p className="pricing-eyebrow">{pl.label}</p>
+              <p className="pricing-name">{pl.name}</p>
+              <p className="pricing-for">{pl.for}</p>
+              <p className="pricing-price">{pl.price}</p>
+              <p className="pricing-emi">{pl.emi}</p>
+              <ul className="pricing-feats">
+                {pl.features.map(f => (
+                  <li key={f}><span className="pricing-check">✓</span>{f}</li>
+                ))}
+              </ul>
+              <button className="pricing-btn" onClick={() => go(pl.path)}>{pl.cta}</button>
             </div>
           ))}
         </div>
@@ -111,7 +82,7 @@ export default function Programs() {
         <p className="section-label">Not sure which fits?</p>
         <h2 className="section-h2" style={{ fontSize: 32 }}>Take the AI Aptitude Test.<br /><em>Get a personal recommendation.</em></h2>
         <p className="section-sub" style={{ maxWidth: 540, margin: '14px auto 22px' }}>12 minutes. Free. You'll leave with a score, a recommended program, and a 10-day learning roadmap.</p>
-        <button className="btn-primary" onClick={() => go('/aptitude')}>Take the Aptitude Test →</button>
+        <button className="btn-primary" onClick={() => go('/aptitude')}>Take the Aptitude Test</button>
       </section>
 
       {/* ── PROG LEAD ── */}
@@ -139,7 +110,7 @@ export default function Programs() {
                 <option>Claude AI Engineering</option>
                 <option>Not sure — recommend based on Aptitude Test</option>
               </select>
-              <button type="submit">Send me the comparison →</button>
+              <button type="submit">Send me the comparison</button>
             </form>
           )}
         </div>
@@ -154,7 +125,7 @@ export default function Programs() {
         title="Ready to commit?"
         subtitle="Skip ahead. Apply for a scholarship and we'll match you to the right program."
         buttonText="Sign up"
-        onButtonClick={() => go('/scholarship')}
+        onButtonClick={openApply}
       />
 
       <Footer />

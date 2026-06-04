@@ -3,6 +3,7 @@ import { useEffect, lazy, Suspense } from 'react';
 import Navbar from './components/layout/Navbar';
 import PageLoader from './components/common/PageLoader';
 import { ToastProvider } from './components/common/Toast';
+import { ApplyProvider } from './components/common/ApplyContext';
 import { supabase } from './lib/supabase';
 
 const Home = lazy(() => import('./pages/Home'));
@@ -10,10 +11,10 @@ const Programs = lazy(() => import('./pages/Programs'));
 const Kickstarter = lazy(() => import('./pages/Kickstarter'));
 const Generalist = lazy(() => import('./pages/Generalist'));
 const Engineering = lazy(() => import('./pages/Engineering'));
+const Projects = lazy(() => import('./pages/Projects'));
 const Outcomes = lazy(() => import('./pages/Outcomes'));
 const Aptitude = lazy(() => import('./pages/Aptitude'));
 const Resources = lazy(() => import('./pages/Resources'));
-const Scholarship = lazy(() => import('./pages/Scholarship'));
 const Blog = lazy(() => import('./pages/Blog'));
 const BlogArticle = lazy(() => import('./pages/BlogArticle'));
 const About = lazy(() => import('./pages/About'));
@@ -53,6 +54,7 @@ export default function App() {
 
   return (
     <ToastProvider>
+      <ApplyProvider>
       <a className="skip-link" href="#main">Skip to content</a>
       <ScrollToTop />
       <Navbar />
@@ -64,10 +66,10 @@ export default function App() {
             <Route path="/kickstarter" element={<Kickstarter />} />
             <Route path="/generalist" element={<Generalist />} />
             <Route path="/engineering" element={<Engineering />} />
+            <Route path="/projects/:slug" element={<Projects />} />
             <Route path="/outcomes" element={<Outcomes />} />
             <Route path="/aptitude" element={<Aptitude />} />
             <Route path="/resources" element={<Resources />} />
-            <Route path="/scholarship" element={<Scholarship />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/earnings-agent" element={<BlogArticle />} />
             <Route path="/about" element={<About />} />
@@ -83,6 +85,7 @@ export default function App() {
           </Routes>
         </Suspense>
       </main>
+      </ApplyProvider>
     </ToastProvider>
   );
 }

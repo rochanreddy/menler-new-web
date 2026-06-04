@@ -133,7 +133,7 @@ export default function SignUp() {
           </div>
 
           <button type="submit" className="auth-btn" disabled={loading}>
-            {loading ? 'Creating account…' : 'Create account →'}
+            {loading ? 'Creating account…' : 'Create account'}
           </button>
         </form>
 

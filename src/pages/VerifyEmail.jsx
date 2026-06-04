@@ -82,7 +82,7 @@ export default function VerifyEmail() {
             />
           </div>
           <button type="submit" className="auth-btn" disabled={loading}>
-            {loading ? 'Verifying…' : 'Verify email →'}
+            {loading ? 'Verifying…' : 'Verify email'}
           </button>
         </form>
 
@@ -95,7 +95,7 @@ export default function VerifyEmail() {
         </div>
 
         <div className="auth-footer">
-          <button className="auth-link" onClick={() => navigate('/signup')}>← Back to sign up</button>
+          <button className="auth-link" onClick={() => navigate('/signup')}>Back to sign up</button>
         </div>
       </div>
     </div>

@@ -86,13 +86,13 @@ TRANSCRIPT:
           <div style={{ background: 'var(--cloud)', borderRadius: 14, padding: '28px 32px', marginTop: 40, border: '0.5px solid rgba(83,74,183,0.2)' }}>
             <p style={{ fontFamily: "'DM Serif Display',serif", fontSize: 20, color: 'var(--ink)', marginBottom: 8 }}>Want to build like this?</p>
             <p style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 16 }}>The Finance track in the Generalist Fellowship builds this exact system in Week 8. No coding required.</p>
-            <button className="btn-primary" onClick={() => go('/generalist')}>See the Generalist Fellowship →</button>
+            <button className="btn-primary" onClick={() => go('/generalist')}>See the Generalist Fellowship</button>
           </div>
         </div>
       </article>
 
       <div style={{ padding: '32px 40px', maxWidth: 760, margin: '0 auto' }}>
-        <button className="btn-ghost" onClick={() => go('/blog')} style={{ color: 'var(--specialist)', fontWeight: 500 }}>← Back to Blog</button>
+        <button className="btn-ghost" onClick={() => go('/blog')} style={{ color: 'var(--specialist)', fontWeight: 500 }}>Back to Blog</button>
       </div>
 
       <Footer />

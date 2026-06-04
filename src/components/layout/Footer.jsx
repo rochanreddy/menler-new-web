@@ -1,17 +1,18 @@
 import { useNavigate } from 'react-router-dom';
-import MenlerLogo from '../common/MenlerLogo';
+import MenlerWordmark from '../common/MenlerWordmark';
+import { useApply } from '../common/ApplyContext';
 
 export default function Footer() {
   const navigate = useNavigate();
   const go = (path) => { navigate(path); window.scrollTo(0, 0); };
+  const openApply = useApply();
 
   return (
     <footer className="footer-5">
       <div className="footer-5-inner">
         <div className="footer-5-brand">
-          <MenlerLogo color="#AFA9EC" />
-          <p className="footer-brand-name">Menler</p>
-          <p className="footer-brand-desc">AI learning, built for the people doing the work. Your turning point in the AI era.</p>
+          <MenlerWordmark size={34} theme="dark" />
+          <p className="footer-brand-desc" style={{ marginTop: 14 }}>AI learning, built for the people doing the work. Your turning point in the AI era.</p>
         </div>
         <div>
           <p className="footer-col-title">Programs</p>
@@ -28,7 +29,7 @@ export default function Footer() {
             <li><a onClick={() => go('/aptitude')}>AI Aptitude Test</a></li>
             <li><a onClick={() => go('/resources')}>Resources</a></li>
             <li><a onClick={() => go('/blog')}>Blog</a></li>
-            <li><a onClick={() => go('/scholarship')}>Scholarships</a></li>
+            <li><a onClick={openApply}>Scholarships</a></li>
           </ul>
         </div>
         <div>

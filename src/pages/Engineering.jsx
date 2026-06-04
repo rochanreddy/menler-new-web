@@ -4,8 +4,8 @@ import FaqList from '../components/common/FaqList';
 import CtaBanner from '../components/common/CtaBanner';
 import Footer from '../components/layout/Footer';
 import MentorsRail from '../components/common/MentorsRail';
-import ProjectModal from '../components/common/ProjectModal';
-import PartnersMarquee from '../components/common/PartnersMarquee';
+import { useApply } from '../components/common/ApplyContext';
+import HiringJobs from '../components/common/HiringJobs';
 import { ENGINEERING_FAQS } from '../data/faqData';
 import { submitLead } from '../services/leadService';
 
@@ -15,42 +15,14 @@ const PHASES = [
   { cls: 'p3', tag: 'Phase 3 · Weeks 10–12', title: 'Evaluation, LLMOps & deployment', items: ['Evals: RAGAS, LLM-as-judge, custom benchmarks', 'Guardrails, safety, prompt injection defence', 'Observability & monitoring in production', 'Capstone: deployed production AI app', 'Claude Engineer certification exam', 'Demo Day & placement'] },
 ];
 
-const SHIPPED_PROJECTS = [
-  { title: 'Claude API integration', desc: 'Tool use + caching + streaming — deployed API wrapper' },
-  { title: 'RAG pipeline', desc: 'Document ingestion → vector DB → grounded answers' },
-  { title: 'MCP server', desc: 'Custom tools + resources, remotely deployed' },
-  { title: 'Multi-agent system', desc: 'Orchestrator + specialist agents, Claude Agent SDK' },
-  { title: 'Capstone app', desc: 'Full-stack production app with evals + observability' },
-  { title: 'Claude Engineer cert', desc: 'Written + live coding exam. Domain specialist badge.', isCert: true },
-];
-
-const PORTFOLIO_PROJECTS = [
-  { track: 'Week 4 · API', title: 'Production Claude API wrapper', meta: 'Tool use · Streaming · Caching', desc: 'Type-safe, retried, observability-ready Claude API client. Cost-optimised with prompt caching, deployed behind a FastAPI gateway.', stack: 'Stack: Python · FastAPI · Anthropic SDK · Redis' },
-  { track: 'Week 6 · RAG', title: 'Grounded enterprise RAG pipeline', meta: 'Embeddings · Vector DB · Re-ranking', desc: 'Document ingestion → chunking → vector store → hybrid retrieval → grounded answers with citations and RAGAS evals.', stack: 'Stack: Pinecone · Voyage · Claude · RAGAS' },
-  { track: 'Week 7 · MCP', title: 'Production MCP server', meta: 'Tools · Resources · Prompts', desc: 'Custom MCP server with 8+ tools and resources, deployed to Cloudflare Workers, connected to Claude Desktop and Cowork.', stack: 'Stack: TypeScript · MCP SDK · Workers · OAuth' },
-  { track: 'Week 9 · Agents', title: 'Multi-agent research system', meta: 'Orchestrator · Specialists · SDK', desc: 'Lead agent that plans, delegates to specialist Claude sub-agents, runs in parallel, and writes a final research report.', stack: 'Stack: Claude Agent SDK · Python · LangFuse' },
-  { track: 'Weeks 10–12 · Capstone', title: 'Full-stack production Claude app', meta: 'UI · Evals · Observability · Deploy', desc: 'End-to-end Claude application — frontend, agent backend, MCP integrations, evals dashboard, monitoring, and CI/CD.', stack: 'Stack: Next.js · Claude · Postgres · Sentry · Braintrust' },
-  { track: 'Cert', title: 'Claude Engineer certification', meta: 'Written + live coding · Domain badge', desc: '3-hour written exam plus a live build session reviewed by senior Claude engineers. Earn the Claude Engineer — [Specialty] badge.', stack: 'Outcome: Claude Engineer — [Your specialty]', isCert: true },
-];
-
-
-const ROLES = [
-  { name: 'AI Engineer (Claude)', comp: '₹22–42L · Scale-ups', desc: 'Build production Claude features — RAG, agents, tool use — across the full backend stack.' },
-  { name: 'Applied AI Engineer', comp: '₹26–48L · Series B+ AI cos', desc: 'Own Claude integration end-to-end: prompt design, evals, latency, cost, deployment.' },
-  { name: 'MCP / Integrations Engineer', comp: '₹24–40L · Enterprise SaaS', desc: 'Design and ship MCP servers connecting Claude to internal systems and partner APIs.' },
-  { name: 'Agentic Systems Engineer', comp: '₹28–55L · AI-first startups', desc: 'Architect multi-agent systems with the Claude Agent SDK, orchestration, and safety rails.' },
-  { name: 'LLMOps / Evals Engineer', comp: '₹24–44L · Regulated industries', desc: 'Build eval pipelines, observability, guardrails, and continuous regression for Claude in prod.' },
-  { name: 'Founding AI Engineer', comp: '₹30–60L + ESOPs · Pre-seed/seed', desc: 'Be the first Claude engineer at an AI-native startup. Lead the entire AI stack from day one.' },
-];
-
 export default function Engineering() {
   const navigate = useNavigate();
   const go = (path) => { navigate(path); window.scrollTo(0, 0); };
 
   const [form, setForm] = useState({ name: '', email: '', phone: '', role: '' });
   const [done, setDone] = useState(false);
-  const [activeProject, setActiveProject] = useState(null);
   const [activePhase, setActivePhase] = useState(0);
+  const openApply = useApply();
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -69,8 +41,8 @@ export default function Engineering() {
           <h1 className="hero-h1" style={{ color: '#E1F5EE' }}>Build Claude AI systems<br /><em style={{ color: '#9FE1CB' }}>that go to production.</em></h1>
           <p className="hero-sub" style={{ color: 'rgba(225,245,238,0.55)' }}>India's 1st Claude AI Engineering Fellowship.<strong style={{ color: '#E1F5EE', fontWeight: 500 }}><br />Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
           <div className="hero-actions">
-            <button className="btn-primary" style={{ background: '#1D9E75' }} onClick={() => go('/scholarship')}>Apply Now</button>
-            <button className="btn-outline" style={{ color: '#9FE1CB', borderColor: 'rgba(93,202,165,0.5)' }}>Download Brochure</button>
+            <button className="btn-primary" style={{ background: '#1D9E75', minWidth: 220, textAlign: 'center' }} onClick={openApply}>Apply Now</button>
+            <button className="btn-outline" style={{ color: '#9FE1CB', borderColor: 'rgba(93,202,165,0.5)', minWidth: 220, textAlign: 'center' }}>Download Brochure</button>
           </div>
           <div className="hero-stats" style={{ borderColor: 'rgba(93,202,165,0.2)' }}>
             <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}>90%</span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Interview pipeline<br />target</span></div>
@@ -117,107 +89,31 @@ export default function Engineering() {
           <div className="curric-detail curric-soon">
             <p className="curric-soon-title">Coming Soon</p>
             <p className="curric-soon-sub">The full phase-by-phase breakdown for {PHASES[activePhase].tag.split(' · ')[0]} drops soon. Join the waitlist to get it first.</p>
-            <button className="btn-primary" style={{ background: '#1D9E75' }} onClick={() => go('/scholarship')}>Join the waitlist →</button>
+            <button className="btn-primary" style={{ background: '#1D9E75' }} onClick={openApply}>Join the waitlist</button>
           </div>
         </div>
       </section>
 
-      {/* ── WHAT YOU'LL SHIP ── */}
-      <section className="section" style={{ background: '#085041' }}>
-        <p className="section-label" style={{ color: '#5DCAA5' }}>What you'll ship</p>
-        <h2 className="section-h2" style={{ color: '#E1F5EE' }}>5 production-grade<br /><em style={{ color: '#9FE1CB' }}>Claude projects.</em></h2>
-        <p className="section-sub" style={{ color: 'rgba(225,245,238,0.55)' }}>Not demos. Not notebooks. Deployed, documented, evaluated systems you can show to any engineering team.</p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginTop: 32 }}>
-          {SHIPPED_PROJECTS.map((p, i) => (
-            <div key={i} style={p.isCert ? { background: 'rgba(29,158,117,0.2)', border: '0.5px solid rgba(93,202,165,0.35)', borderRadius: 10, padding: 16 } : { background: 'rgba(255,255,255,0.07)', border: '0.5px solid rgba(93,202,165,0.2)', borderRadius: 10, padding: 16 }}>
-              <p style={{ fontSize: 13, fontWeight: 500, color: p.isCert ? '#9FE1CB' : '#E1F5EE', marginBottom: 4 }}>{p.title}</p>
-              <p style={{ fontSize: 12, color: p.isCert ? 'rgba(159,225,203,0.6)' : 'rgba(225,245,238,0.5)' }}>{p.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* ── MENTORS ── */}
+      <MentorsRail />
 
-      {/* ── PORTFOLIO PROJECTS ── */}
-      <section className="section proj-eng" style={{ background: '#062B22' }}>
-        <p className="section-label" style={{ color: '#5DCAA5' }}>Portfolio projects</p>
-        <h2 className="section-h2" style={{ color: '#E1F5EE' }}>Five shipped systems.<br /><em style={{ color: '#9FE1CB' }}>Reviewed by senior engineers.</em></h2>
-        <p className="section-sub" style={{ color: 'rgba(225,245,238,0.55)' }}>Each project goes through code review, evaluation, and a live demo. Push to your GitHub. Show in any AI engineering interview.</p>
-        <div className="proj-grid">
-          {PORTFOLIO_PROJECTS.map((p, i) => (
-            <div
-              key={i}
-              className="proj-card proj-card--clickable"
-              style={p.isCert ? { background: 'rgba(29,158,117,0.18)', borderColor: 'rgba(93,202,165,0.35)' } : {}}
-              role="button"
-              tabIndex={0}
-              onClick={() => setActiveProject(p)}
-              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveProject(p); } }}
-            >
-              <span className="proj-track" style={p.isCert ? { background: 'var(--placed)', color: 'white' } : {}}>{p.track}</span>
-              <p className="proj-name">{p.title}</p>
-              <p className="proj-meta">{p.meta}</p>
-              <p className="proj-desc">{p.desc}</p>
-              <p className="proj-stack">{p.stack}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── HIRING PARTNERS ── */}
-      <section className="hiring-section dark">
-        <p className="section-label" style={{ color: '#5DCAA5', textAlign: 'center' }}>Hiring partners</p>
-        <h2 className="section-h2" style={{ color: '#E1F5EE', textAlign: 'center' }}>Where Claude AI Engineers<br /><em style={{ color: '#9FE1CB' }}>get placed.</em></h2>
-        <p className="section-sub" style={{ color: 'rgba(225,245,238,0.55)', textAlign: 'center' }}>25+ partner companies hiring AI engineers, applied scientists, and infra engineers — direct pipeline from Demo Day onward.</p>
-        <PartnersMarquee />
-        <div className="roles-grid">
-          {ROLES.map((r, i) => (
-            <div key={i} className="role-card">
-              <p className="role-name">{r.name}</p>
-              <p className="role-comp">{r.comp}</p>
-              <p className="role-desc">{r.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── SUCCESS STORY ── */}
-      <section className="prog-story dark">
-        <p className="section-label" style={{ color: '#5DCAA5', textAlign: 'center' }}>Engineering alumni</p>
-        <h2 className="section-h2" style={{ color: '#E1F5EE', textAlign: 'center' }}>From backend dev<br /><em style={{ color: '#9FE1CB' }}>to founding AI engineer.</em></h2>
-        <article className="story-card-prog">
-          <div className="story-portrait">K</div>
-          <div>
-            <p className="story-quote">"I joined as a Spring Boot dev with zero LLM experience. The capstone — a multi-agent research system on the Claude Agent SDK — got me four offers. I picked the YC-backed one as founding AI engineer."</p>
-            <p className="story-meta-line"><strong>Karan Iyer</strong> · Founding AI Engineer at Loomwise (YC F25) · Engineering Cohort 01</p>
-            <div className="story-stats">
-              <div><p>4</p><p>Offers</p></div>
-              <div><p>₹38L</p><p>Base + ESOPs</p></div>
-              <div><p>11 wks</p><p>To placement</p></div>
-            </div>
-          </div>
-        </article>
-      </section>
+      {/* ── HIRING PARTNERS & ROLES ── */}
+      <HiringJobs />
 
       {/* ── LEAD FORM ── */}
-      <section className="prog-lead dark">
-        <div className="prog-lead-inner">
-          <div className="prog-lead-copy">
+      <section className="mini-lead">
+        <div className="mini-lead-inner">
+          <div className="mini-lead-copy">
             <h3>Get the Engineering <em>brochure & syllabus</em>.</h3>
             <p>Full Claude engineering stack — API, RAG, MCP, agents, evals — plus mentor list, fee structure, and Cohort 01 timeline.</p>
           </div>
           {done ? (
-            <p style={{ color: '#9FE1CB', fontWeight: 500 }}>✓ Brochure on its way.</p>
+            <div className="mini-lead-success">✓ Brochure on its way.</div>
           ) : (
-            <form className="prog-lead-form" onSubmit={handleSubmit}>
-              <label>Full name</label>
-              <input type="text" required placeholder="Your name" value={form.name} onChange={e => set('name', e.target.value)} autoComplete="name" />
-              <div className="row2">
-                <div><label>Email</label><input type="email" required placeholder="you@domain.com" value={form.email} onChange={e => set('email', e.target.value)} autoComplete="email" /></div>
-                <div><label>WhatsApp</label><input type="tel" required placeholder="+91 …" value={form.phone} onChange={e => set('phone', e.target.value)} autoComplete="tel" /></div>
-              </div>
-              <label>Current role</label>
-              <select required value={form.role} onChange={e => set('role', e.target.value)}>
-                <option value="">Choose your background</option>
+            <form className="mini-lead-form" onSubmit={handleSubmit}>
+              <input type="email" required aria-label="Email address" placeholder="you@domain.com" value={form.email} onChange={e => set('email', e.target.value)} autoComplete="email" />
+              <select required aria-label="Current role" value={form.role} onChange={e => set('role', e.target.value)}>
+                <option value="">You are…</option>
                 <option>Software engineer (backend)</option>
                 <option>Software engineer (frontend / fullstack)</option>
                 <option>Data scientist</option>
@@ -226,7 +122,7 @@ export default function Engineering() {
                 <option>Deep tech / systems engineer</option>
                 <option>Final-year CS / engineering student</option>
               </select>
-              <button type="submit">Send Engineering brochure →</button>
+              <button type="submit">Send brochure</button>
             </form>
           )}
         </div>
@@ -239,8 +135,6 @@ export default function Engineering() {
         <FaqList items={ENGINEERING_FAQS} />
       </section>
 
-      <MentorsRail />
-
       <CtaBanner
         badge="Applications open · Cohort 01 · 30 seats"
         title="Ready to build Claude-native systems?"
@@ -248,12 +142,10 @@ export default function Engineering() {
         buttonText="Sign up"
         buttonStyle={{ color: 'var(--forest)' }}
         sectionStyle={{ background: 'var(--forest)' }}
-        onButtonClick={() => go('/scholarship')}
+        onButtonClick={openApply}
       />
 
       <Footer />
-
-      <ProjectModal project={activeProject} onClose={() => setActiveProject(null)} />
     </>
   );
 }

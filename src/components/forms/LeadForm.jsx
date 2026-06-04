@@ -97,7 +97,7 @@ export default function LeadForm({ defaultProgram = '' }) {
       </div>
 
       <button className="lf-submit" type="submit" disabled={loading}>
-        {loading ? 'Submitting…' : 'Express interest →'}
+        {loading ? 'Submitting…' : 'Express interest'}
       </button>
       <p className="lf-fineprint">By submitting, you agree to be contacted by the Menler admissions team. We don't spam — only genuine, useful updates about the fellowship.</p>
     </form>

@@ -77,12 +77,12 @@ export default function ForgotPassword() {
                 />
               </div>
               <button type="submit" className="auth-btn" disabled={loading}>
-                {loading ? 'Sending…' : 'Send reset link →'}
+                {loading ? 'Sending…' : 'Send reset link'}
               </button>
             </form>
 
             <div className="auth-footer">
-              <button className="auth-link" onClick={() => navigate('/login')}>← Back to log in</button>
+              <button className="auth-link" onClick={() => navigate('/login')}>Back to log in</button>
             </div>
           </>
         )}

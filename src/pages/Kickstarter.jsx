@@ -5,7 +5,7 @@ import CtaBanner from '../components/common/CtaBanner';
 import Footer from '../components/layout/Footer';
 import MentorsRail from '../components/common/MentorsRail';
 import ProjectModal from '../components/common/ProjectModal';
-import { BrandLogo } from '../components/common/PartnersMarquee';
+import { useApply } from '../components/common/ApplyContext';
 import { KICKSTARTER_FAQS } from '../data/faqData';
 import { submitLead } from '../services/leadService';
 
@@ -26,20 +26,21 @@ const DAYS = [
   { num: 'Day 14', topic: 'Capstone demo + certificate', tool: 'Live audience', cap: true },
 ];
 
-// Tool logos load by domain (with name fallback) — see BrandLogo.
+// GenAI toolstack — same set/design as the home page (4 / 5 / 4 rows).
 const TOOLS = [
-  { name: 'Claude.ai', domain: 'claude.ai' },
-  { name: 'ChatGPT', domain: 'openai.com' },
-  { name: 'Gemini', domain: 'gemini.google.com' },
-  { name: 'Perplexity', domain: 'perplexity.ai' },
-  { name: 'NotebookLM', domain: 'notebooklm.google.com' },
-  { name: 'Claude Desktop', domain: 'claude.ai' },
-  { name: 'Cowork', domain: 'claude.ai' },
-  { name: 'Cursor', domain: 'cursor.com' },
-  { name: 'Canva AI', domain: 'canva.com' },
-  { name: 'Suno', domain: 'suno.com' },
-  { name: 'MCP', domain: 'modelcontextprotocol.io' },
-  { name: 'Claude in Excel', domain: 'microsoft.com' },
+  { name: 'ChatGPT', logo: '/logos/chatgpt.png' },
+  { name: 'Lyzr', logo: '/logos/lyzr.png' },
+  { name: 'Claude Code', logo: '/logos/claude.svg' },
+  { name: 'Perplexity', logo: '/logos/perplexity.svg' },
+  { name: 'Runway', logo: '/logos/runway.png' },
+  { name: 'Zapier', logo: '/logos/zapier.png' },
+  { name: 'Gemini', logo: '/logos/gemini.png' },
+  { name: 'Midjourney', logo: '/logos/midjourney.png' },
+  { name: 'Bolt', logo: '/logos/bolt.png' },
+  { name: 'ElevenLabs', logo: '/logos/elevenlabs.png' },
+  { name: 'n8n', logo: '/logos/n8n.png' },
+  { name: 'Pika', logo: '/logos/pika.png' },
+  { name: 'HeyGen', logo: '/logos/heygen.png' },
 ];
 
 const PROJECTS = [
@@ -52,23 +53,56 @@ const PROJECTS = [
 ];
 
 const MODULES = [
-  { label: 'Module 1', span: 'Days 1–3', title: 'AI foundations & your first prompts',
+  { label: 'Module 1', span: 'Days 1–3', title: 'AI Foundations & Your First Prompts',
+    desc: 'Build a strong foundation in AI and learn how tools like Claude, ChatGPT, and modern LLMs actually work. You\'ll understand prompting fundamentals, learn proven prompt frameworks, and discover how to turn everyday tasks into AI-powered workflows. By the end of the module, you\'ll create your first personal AI assistant and research agent.',
     lessons: ['What is AI? How LLMs actually work', 'Meet Claude — your first 10 prompts', 'ChatGPT, Gemini & Perplexity — pick your stack'],
     tools: ['Claude.ai', 'ChatGPT', 'Gemini', 'Perplexity'],
-    project: 'Personal research agent' },
-  { label: 'Module 2', span: 'Days 4–6', title: 'Prompt engineering & research',
+    project: 'Personal AI Operating System' },
+  { label: 'Module 2', span: 'Days 4–6', title: 'Prompt Engineering & Research',
+    desc: 'Go beyond basic prompting by learning Claude Skills, Connectors, and Projects. You\'ll build a personalized AI workspace that understands your context, connect AI to your existing tools, and create powerful research systems using Claude, Perplexity, and NotebookLM. You\'ll also explore AI-powered image, audio, and content creation workflows.',
     lessons: ['Prompt engineering — 5 patterns that work', 'Build #1: Personal research agent', 'Reading & summarising with NotebookLM'],
     tools: ['Claude', 'ChatGPT', 'NotebookLM', 'Perplexity'],
-    project: 'Study planner agent' },
-  { label: 'Module 3', span: 'Days 7–10', title: 'Multimodal AI & no-code builds',
+    project: 'AI Research Intelligence System' },
+  { label: 'Module 3', span: 'Days 7–10', title: 'Multimodal AI & No-Code Builds',
+    desc: 'Learn how to automate repetitive work using Claude Schedules, Routines, and external automation tools like Zapier and n8n. You\'ll work with real datasets, generate insights from information, and build end-to-end AI workflows that save time and improve productivity without writing code.',
     lessons: ['Multimodal AI — image, audio & video', 'Build #3: Content engine', 'Build #4: Idea validator'],
     tools: ['Canva AI', 'Suno', 'Claude', 'Cowork'],
-    project: 'Content engine' },
-  { label: 'Module 4', span: 'Days 11–14', title: 'Claude Skills, MCP & capstone',
+    project: 'Automation Suite' },
+  { label: 'Module 4', span: 'Days 11–14', title: 'Claude Skills, MCP & Capstone',
+    desc: 'Bring everything together by building real AI-powered products using modern no-code and AI development tools. You\'ll create a portfolio-ready capstone project, learn AI-native career positioning, present your work on Demo Day, and leave with practical projects that showcase your AI skills to employers and clients.',
     lessons: ['Claude Skills + MCP basics', 'AI safety & responsible use', 'Capstone build & live demo'],
     tools: ['Claude Desktop', 'MCP', 'Claude in Excel', 'Cursor (free)'],
-    project: 'Personal AI workflow + capstone' },
+    project: 'AI-Powered Capstone Project' },
 ];
+
+// Logo per tool used in the module tool stacks (local SVG for Claude/MCP,
+// Clearbit CDN for the rest). Falls back to text-only if the image fails.
+const TOOL_LOGO_SRC = {
+  'Claude.ai': '/logos/claude.svg',
+  'Claude': '/logos/claude.svg',
+  'Claude Desktop': '/logos/claude.svg',
+  'Claude in Excel': '/logos/claude.svg',
+  'Cowork': '/logos/claude.svg',
+  'MCP': '/logos/mcp.svg',
+  'ChatGPT': '/logos/chatgpt.png',
+  'Gemini': '/logos/gemini.png',
+  'Perplexity': '/logos/perplexity.svg',
+  'NotebookLM': '/logos/notebooklm.png',
+  'Canva AI': '/logos/canva.png',
+  'Suno': '/logos/suno.png',
+  'Cursor (free)': '/logos/cursor.png',
+};
+
+function ToolChip({ name }) {
+  const src = TOOL_LOGO_SRC[name];
+  const [ok, setOk] = useState(!!src);
+  return (
+    <span className="curric-tool">
+      {ok && <img className="curric-tool-logo" src={src} alt="" onError={() => setOk(false)} />}
+      {name}
+    </span>
+  );
+}
 
 export default function Kickstarter() {
   const navigate = useNavigate();
@@ -78,6 +112,7 @@ export default function Kickstarter() {
   const [done, setDone] = useState(false);
   const [activeProject, setActiveProject] = useState(null);
   const [activeModule, setActiveModule] = useState(0);
+  const openApply = useApply();
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -96,8 +131,8 @@ export default function Kickstarter() {
           <h1 className="hero-h1" style={{ color: '#FFF6E1' }}>14 days. 5 builds.<br /><em style={{ color: '#FAEEDA' }}>AI-fluent.</em></h1>
           <p className="hero-sub" style={{ color: 'rgba(255,246,225,0.7)' }}>India's most accessible Gen AI program.<strong style={{ color: '#FFF6E1', fontWeight: 500 }}><br />Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
           <div className="hero-actions">
-            <button className="btn-primary" style={{ background: '#BA7517' }} onClick={() => go('/scholarship')}>Apply Now</button>
-            <button className="btn-outline" style={{ color: '#FAEEDA', borderColor: 'rgba(250,238,218,0.5)' }}>Download Brochure</button>
+            <button className="btn-primary" style={{ background: '#BA7517', minWidth: 220, textAlign: 'center' }} onClick={openApply}>Apply Now</button>
+            <button className="btn-outline" style={{ color: '#FAEEDA', borderColor: 'rgba(250,238,218,0.5)', minWidth: 220, textAlign: 'center' }}>Download Brochure</button>
           </div>
           <div className="hero-stats" style={{ borderColor: 'rgba(250,238,218,0.2)' }}>
             <div><span className="hero-stat-num" style={{ color: '#FFF6E1' }}>14</span><span className="hero-stat-lbl" style={{ color: '#FAEEDA' }}>Days</span></div>
@@ -156,30 +191,24 @@ export default function Kickstarter() {
               </button>
             ))}
           </div>
-          <div className="curric-detail">
-            <p className="curric-label">Lesson plan</p>
-            <ul className="curric-modules">
-              {MODULES[activeModule].lessons.map(l => <li key={l}>{l}</li>)}
-            </ul>
-            <p className="curric-label" style={{ marginTop: 28 }}>Tool stack</p>
-            <div className="curric-tools">
-              {MODULES[activeModule].tools.map(t => <span key={t} className="curric-tool">{t}</span>)}
+          <div className="curric-detail curric-detail--split">
+            <div className="curric-detail-main">
+              <p className="curric-week-desc" style={{ marginTop: 0, marginBottom: 28 }}>{MODULES[activeModule].desc}</p>
+              <p className="curric-label">Lesson plan</p>
+              <ul className="curric-modules">
+                {MODULES[activeModule].lessons.map(l => <li key={l}>{l}</li>)}
+              </ul>
+              <p className="curric-label" style={{ marginTop: 28 }}>Project you'll build</p>
+              <ul className="curric-modules">
+                <li>{MODULES[activeModule].project}</li>
+              </ul>
             </div>
-            <p className="curric-label" style={{ marginTop: 28 }}>Project you'll build</p>
-            <ul className="curric-modules">
-              <li>{MODULES[activeModule].project}</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* ── TOOLS ── */}
-      <section className="section" style={{ background: '#1A1647' }}>
-        <p className="section-label" style={{ color: '#FAEEDA', textAlign: 'center' }}>Tools you'll learn</p>
-        <h2 className="section-h2" style={{ color: '#FFF6E1', textAlign: 'center' }}>A real Gen AI toolkit.<br /><em style={{ color: '#FAEEDA' }}>Free tiers wherever possible.</em></h2>
-        <div className="partners-marquee">
-          <div className="partners-track">
-            {[...TOOLS, ...TOOLS].map((t, i) => <BrandLogo key={i} name={t.name} domain={t.domain} />)}
+            <div className="curric-detail-tools">
+              <p className="curric-label">Tool stack</p>
+              <div className="curric-tools">
+                {MODULES[activeModule].tools.map(t => <ToolChip key={t} name={t} />)}
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -208,10 +237,58 @@ export default function Kickstarter() {
         </div>
       </section>
 
+      {/* ── TOOLS ── */}
+      <section className="section toolstack-section">
+        <h2 className="toolstack-title">Your GenAI toolstack</h2>
+        <p className="toolstack-sub">Get hands-on with AI tools — from your first prompt to your first real project.</p>
+        <div className="toolstack-grid">
+          {[TOOLS.slice(0, 4), TOOLS.slice(4, 9), TOOLS.slice(9, 13)].map((row, ri) => (
+            <div key={ri} className="toolstack-row">
+              {row.map(t => (
+                <div key={t.name} className="toolstack-chip">
+                  <img className="toolstack-logo" src={t.logo} alt="" aria-hidden="true" />
+                  <span className="toolstack-name">{t.name}</span>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── LEAD (brochure) ── */}
+      <section className="mini-lead">
+        <div className="mini-lead-inner">
+          <div className="mini-lead-copy">
+            <h3>Get the Kickstarter <em>brochure.</em></h3>
+            <p>Full 14-day schedule, mentor list, fee tiers, scholarships, and next batch dates — straight to your inbox.</p>
+          </div>
+          {done ? (
+            <div className="mini-lead-success">✓ Brochure on its way.</div>
+          ) : (
+            <form className="mini-lead-form" onSubmit={handleSubmit}>
+              <input type="email" required aria-label="Email address" placeholder="you@domain.com" value={form.email} onChange={e => set('email', e.target.value)} autoComplete="email" />
+              <select required aria-label="You are" value={form.role} onChange={e => set('role', e.target.value)}>
+                <option value="">You are…</option>
+                <option>School student (Class 10–12)</option>
+                <option>College student</option>
+                <option>Working professional new to AI</option>
+                <option>Founder / first AI hire</option>
+                <option>Parent or educator</option>
+              </select>
+              <button type="submit">Send brochure</button>
+            </form>
+          )}
+        </div>
+      </section>
+
+      {/* ── MENTORS ── */}
+      <MentorsRail />
+
       {/* ── OUTCOMES ── */}
-      <section className="hiring-section" style={{ background: 'var(--parchment)' }}>
+      <section className="hiring-section outcome-section" style={{ background: 'var(--parchment)' }}>
         <p className="section-label" style={{ textAlign: 'center' }}>Outcome</p>
         <h2 className="section-h2" style={{ textAlign: 'center' }}>What you leave with<br /><em>after 14 days.</em></h2>
+        <p className="section-sub" style={{ textAlign: 'center' }}>By the end of the program, you'll be able to research, create, automate, and build with AI confidently while maintaining a portfolio of real-world projects that demonstrate practical AI skills.</p>
         <div className="roles-grid">
           <div className="role-card"><p className="role-name">AI Fluency Certificate</p><p className="role-comp">Issued by Menler</p><p className="role-desc">Verifiable credential. Proof that you're Gen AI fluent — across 10+ tools and 5 builds.</p></div>
           <div className="role-card"><p className="role-name">Portfolio of 5 builds</p><p className="role-comp">Public + shareable</p><p className="role-desc">Five real AI mini-projects on a personal portfolio page. Show in interviews, on LinkedIn, on your CV.</p></div>
@@ -229,47 +306,12 @@ export default function Kickstarter() {
         <FaqList items={KICKSTARTER_FAQS} />
       </section>
 
-      {/* ── LEAD ── */}
-      <section className="prog-lead">
-        <div className="prog-lead-inner">
-          <div className="prog-lead-copy">
-            <h3>Get the Kickstarter <em>brochure</em>.</h3>
-            <p>Full 14-day schedule, mentor list, fee tiers (school / college / professional), scholarships, and next batch dates.</p>
-          </div>
-          {done ? (
-            <p style={{ color: 'var(--placed)', fontWeight: 500 }}>✓ Brochure on its way.</p>
-          ) : (
-            <form className="prog-lead-form" onSubmit={handleSubmit}>
-              <label>Full name</label>
-              <input type="text" required placeholder="Your name" value={form.name} onChange={e => set('name', e.target.value)} autoComplete="name" />
-              <div className="row2">
-                <div><label>Email</label><input type="email" required placeholder="you@domain.com" value={form.email} onChange={e => set('email', e.target.value)} autoComplete="email" /></div>
-                <div><label>WhatsApp</label><input type="tel" required placeholder="+91 …" value={form.phone} onChange={e => set('phone', e.target.value)} autoComplete="tel" /></div>
-              </div>
-              <label>You are…</label>
-              <select required value={form.role} onChange={e => set('role', e.target.value)}>
-                <option value="">Pick the closest fit</option>
-                <option>School student (Class 10–12)</option>
-                <option>College student</option>
-                <option>Working professional new to AI</option>
-                <option>Founder / first AI hire</option>
-                <option>Parent or educator</option>
-              </select>
-              <button type="submit">Send Kickstarter brochure →</button>
-            </form>
-          )}
-        </div>
-      </section>
-
-      {/* ── MENTORS ── */}
-      <MentorsRail />
-
       {/* ── CTA ── */}
       <CtaBanner
         style={{ background: '#854F0B' }}
         badge="Next batch · Rolling enrolments"
         badgeDotColor="#FAEEDA"
-        title="Already AI-fluent? See the 12-week Fellowship →"
+        title="Already AI-fluent? See the 12-week Fellowship"
         subtitle="Kickstarter alumni get a 30% scholarship to either Generalist or Engineering tracks."
         buttonText="Explore the Fellowship"
         buttonStyle={{ color: '#854F0B' }}

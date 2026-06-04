@@ -14,7 +14,7 @@ const TRUST_CARDS = [
   { title: 'Why it matters', desc: 'Most people don\'t know where they stand with AI. This assessment gives you a clear baseline before you invest time, effort, or money.' },
 ];
 
-const QB_FILTERS = ['Role: AI Engineer', 'Role: AI Generalist', 'Role: Prompt Engineer', 'Topic: RAG', 'MCP', 'Agents', 'Evals', 'Difficulty: Foundations', 'Senior'];
+const QB_FILTERS = ['All', 'RAG', 'MCP', 'Agents', 'Evals', 'Tool use', 'Prompts', 'Foundations', 'Senior'];
 
 const QB_QUESTIONS = [
   { company: 'Razorpay', level: 'Senior', topic: 'RAG', q: 'You are building a RAG system for Razorpay\'s internal policy docs. The system gives confident wrong answers. What is the most likely root cause and how do you fix it?', a: 'Likely cause: chunk size too large or lack of re-ranking, causing irrelevant passages to dominate context. Fix: smaller, overlapping chunks + cross-encoder re-ranking + source-grounding evaluation (RAGAS).' },
@@ -82,6 +82,26 @@ export default function Aptitude() {
   const [leadForm, setLeadForm] = useState({ name: '', email: '' });
   const [leadDone, setLeadDone] = useState(false);
   const setL = (k, v) => setLeadForm(f => ({ ...f, [k]: v }));
+
+  // Question-bank filter + filtered download.
+  const [qbFilter, setQbFilter] = useState('All');
+  const filteredQB = QB_QUESTIONS.filter(q => qbFilter === 'All' || q.topic === qbFilter || q.level === qbFilter);
+  const downloadQB = () => {
+    if (!filteredQB.length) return;
+    const header = `Menler — AI Interview Question Bank\nFilter: ${qbFilter}\nQuestions: ${filteredQB.length}\n\n`;
+    const body = filteredQB.map((q, i) =>
+      `${i + 1}. [${q.company} · ${q.level} · ${q.topic}]\nQ: ${q.q}\nA: ${q.a}\n`
+    ).join('\n');
+    const blob = new Blob([header + body], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `menler-question-bank-${qbFilter.toLowerCase().replace(/\s+/g, '-')}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
   const saveReport = async (e) => {
     e.preventDefault();
     try { await submitLead({ ...leadForm, cluster: state.cluster, set: state.setIdx + 1, score: calcScore(state.answers), source: 'aptitude-report' }); } catch { /* non-blocking */ }
@@ -109,8 +129,8 @@ export default function Aptitude() {
           </div>
           <p className="runner-hint">Tip: press <kbd>1</kbd>–<kbd>{q.options.length}</kbd> to choose · <kbd>Enter</kbd> for next</p>
           <div className="runner-actions">
-            <button className="runner-btn runner-btn-back" onClick={() => dispatch({ type: 'BACK' })}>← Back</button>
-            <button className="runner-btn runner-btn-next" disabled={selected === null} onClick={() => dispatch({ type: 'NEXT' })}>{state.idx === APTITUDE_QUESTIONS.length - 1 ? 'See my report →' : 'Next →'}</button>
+            <button className="runner-btn runner-btn-back" onClick={() => dispatch({ type: 'BACK' })}>Back</button>
+            <button className="runner-btn runner-btn-next" disabled={selected === null} onClick={() => dispatch({ type: 'NEXT' })}>{state.idx === APTITUDE_QUESTIONS.length - 1 ? 'See my report' : 'Next'}</button>
           </div>
         </div>
       </section>
@@ -145,28 +165,7 @@ export default function Aptitude() {
               ))}
             </div>
 
-            <div className="runner-rec" style={{ background: rec.bg }}>
-              <p className="runner-rec-label">Recommended pathway</p>
-              <p className="runner-rec-name" style={{ color: rec.color }}>{rec.program}</p>
-              <p className="runner-rec-desc">{rec.rationale}</p>
-              <button className="btn-primary" style={{ background: rec.color, marginTop: 16 }} onClick={() => go(rec.path)}>Explore {rec.program} →</button>
-            </div>
-
-            {/* Lead magnet — save / email the full report */}
-            {leadDone ? (
-              <p className="apt-saved">✓ Report saved — check your inbox for your roadmap.</p>
-            ) : (
-              <form className="apt-lead" onSubmit={saveReport}>
-                <p className="apt-lead-label">Save your report &amp; 14-day roadmap</p>
-                <div className="apt-lead-row">
-                  <input type="text" required placeholder="Your name" value={leadForm.name} onChange={e => setL('name', e.target.value)} />
-                  <input type="email" required placeholder="you@email.com" value={leadForm.email} onChange={e => setL('email', e.target.value)} />
-                  <button type="submit">Email me the report →</button>
-                </div>
-              </form>
-            )}
-
-            {/* Answer sheet */}
+            {/* Answer sheet — right below the dimension breakdown */}
             <details className="apt-answers">
               <summary>View answer sheet</summary>
               <div className="apt-answers-body">
@@ -183,6 +182,27 @@ export default function Aptitude() {
                 })}
               </div>
             </details>
+
+            <div className="runner-rec" style={{ background: rec.bg }}>
+              <p className="runner-rec-label">Recommended pathway</p>
+              <p className="runner-rec-name" style={{ color: rec.color }}>{rec.program}</p>
+              <p className="runner-rec-desc">{rec.rationale}</p>
+              <button className="btn-primary" style={{ background: rec.color, marginTop: 16 }} onClick={() => go(rec.path)}>Explore {rec.program}</button>
+            </div>
+
+            {/* Lead magnet — save / email the full report */}
+            {leadDone ? (
+              <p className="apt-saved">✓ Report saved — check your inbox for your roadmap.</p>
+            ) : (
+              <form className="apt-lead" onSubmit={saveReport}>
+                <p className="apt-lead-label">Save your report &amp; 14-day roadmap</p>
+                <div className="apt-lead-row">
+                  <input type="text" required placeholder="Your name" value={leadForm.name} onChange={e => setL('name', e.target.value)} />
+                  <input type="email" required placeholder="you@email.com" value={leadForm.email} onChange={e => setL('email', e.target.value)} />
+                  <button type="submit">Email me the report</button>
+                </div>
+              </form>
+            )}
 
             {/* 14-day roadmap */}
             <p className="apt-roadmap-label">Your 14-day learning roadmap</p>
@@ -212,7 +232,7 @@ export default function Aptitude() {
     return (
       <>
         <section className="section" style={{ background: 'var(--parchment)', minHeight: '60vh' }}>
-          <button className="runner-btn" style={{ color: 'var(--specialist)', marginBottom: 18 }} onClick={() => dispatch({ type: 'TO_CLUSTERS' })}>← All clusters</button>
+          <button className="runner-btn" style={{ color: 'var(--specialist)', marginBottom: 18 }} onClick={() => dispatch({ type: 'TO_CLUSTERS' })}>All clusters</button>
           <p className="section-label">{cluster.name}</p>
           <h2 className="section-h2">Pick a set<br /><em>to begin.</em></h2>
           <p className="section-sub">Five sets, 15 questions each. Choose any — your report and 14-day roadmap come at the end.</p>
@@ -221,7 +241,7 @@ export default function Aptitude() {
               <div key={i} className="cluster-card">
                 <p className="cluster-name">{s.label}</p>
                 <p className="cluster-sets">{s.questions.length} questions · ~10 min</p>
-                <button className="cluster-btn" onClick={() => dispatch({ type: 'PICK_SET', setIdx: i })}>Start test →</button>
+                <button className="cluster-btn" onClick={() => dispatch({ type: 'PICK_SET', setIdx: i })}>Start test</button>
               </div>
             ))}
           </div>
@@ -239,15 +259,18 @@ export default function Aptitude() {
           <p className="apt-eyebrow">Free · No signup to start</p>
           <h1 className="apt-h1">Where do you stand<br /><em>on the AI Curve?</em></h1>
           <p className="apt-sub">A 15-question diagnostic that scores your AI readiness, recommends the right AI learning pathway, and gives you a 14-day learning roadmap. Built by operators, not consultants.</p>
-          <button className="apt-cta-big" onClick={() => dispatch({ type: 'PICK_CLUSTER', cluster: CLUSTERS[0].name })}>Start the test →</button>
+          <button className="apt-cta-big" onClick={() => dispatch({ type: 'PICK_CLUSTER', cluster: CLUSTERS[0].name })}>Start the test</button>
           <p className="apt-trust-line">No email required to start. Save your result at the end.</p>
         </div>
       </section>
 
       <section className="section" style={{ background: 'white' }}>
+        <p className="section-label" style={{ textAlign: 'center' }}>The assessment</p>
+        <h2 className="section-h2" style={{ textAlign: 'center' }}>What this test is<br /><em>and why it matters.</em></h2>
         <div className="apt-trust-grid">
           {TRUST_CARDS.map((t, i) => (
             <div key={i} className="apt-trust-card">
+              <span className="apt-trust-num">{String(i + 1).padStart(2, '0')}</span>
               <p className="apt-trust-title">{t.title}</p>
               <p className="apt-trust-desc">{t.desc}</p>
             </div>
@@ -261,11 +284,12 @@ export default function Aptitude() {
         <h2 className="section-h2">Pick a track.<br /><em>Take a set.</em></h2>
         <p className="section-sub">Nine readiness clusters — each with 5 question sets. Start any set and get your report, score, answer sheet, and a 14-day learning roadmap.</p>
         <div className="cluster-grid">
-          {CLUSTERS.map(c => (
+          {CLUSTERS.map((c, i) => (
             <div key={c.name} className="cluster-card">
+              <span className="cluster-num">{String(i + 1).padStart(2, '0')}</span>
               <p className="cluster-name">{c.name}</p>
               <p className="cluster-sets">{c.sets.length} sets · 15 questions each</p>
-              <button className="cluster-btn" onClick={() => dispatch({ type: 'PICK_CLUSTER', cluster: c.name })}>Start test →</button>
+              <button className="cluster-btn" onClick={() => dispatch({ type: 'PICK_CLUSTER', cluster: c.name })}>Start test <span className="cluster-arrow">→</span></button>
             </div>
           ))}
         </div>
@@ -277,23 +301,21 @@ export default function Aptitude() {
         <h2 className="section-h2">AI Interview QB.<br /><em>200+ questions from real loops.</em></h2>
         <p className="section-sub">Asked at top Indian and global companies. Select a topic and get a PDF of the Q&amp;A asked in real interview rounds.</p>
         <div className="qb-filters">
-          {QB_FILTERS.map(f => <span key={f} className="qb-filter-pill">{f}</span>)}
-        </div>
-        <div className="qb-grid">
-          {QB_QUESTIONS.map((q, i) => (
-            <details key={i} className="qb-card">
-              <summary>
-                <span className="qb-company">{q.company}</span>
-                <span className="qb-level">{q.level}</span>
-                <span className="qb-topic">{q.topic}</span>
-                <p className="qb-question">{q.q}</p>
-              </summary>
-              <div className="qb-answer"><p>{q.a}</p></div>
-            </details>
+          {QB_FILTERS.map(f => (
+            <button
+              key={f}
+              className={`qb-filter-pill${qbFilter === f ? ' active' : ''}`}
+              onClick={() => setQbFilter(f)}
+              aria-pressed={qbFilter === f}
+            >
+              {f}
+            </button>
           ))}
         </div>
         <div style={{ textAlign: 'center', marginTop: 32 }}>
-          <button className="btn-primary" onClick={() => go('/resources')}>Get the Question Bank →</button>
+          <button className="btn-primary" onClick={downloadQB} disabled={!filteredQB.length}>
+            Download Question Bank{qbFilter !== 'All' ? ` — ${qbFilter}` : ''} ({filteredQB.length})
+          </button>
         </div>
       </section>
 

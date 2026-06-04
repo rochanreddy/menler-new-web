@@ -97,7 +97,7 @@ function SignUpForm({ onSwitch }) {
           </div>
         </div>
         <button type="submit" className="auth-btn" disabled={loading}>
-          {loading ? 'Creating account…' : 'Create account →'}
+          {loading ? 'Creating account…' : 'Create account'}
         </button>
       </form>
 
@@ -157,7 +157,7 @@ function LoginForm({ onSwitch }) {
           <button type="button" className="auth-link" onClick={() => navigate('/forgot-password')}>Forgot password?</button>
         </div>
         <button type="submit" className="auth-btn" disabled={loading}>
-          {loading ? 'Logging in…' : 'Log in →'}
+          {loading ? 'Logging in…' : 'Log in'}
         </button>
       </form>
 

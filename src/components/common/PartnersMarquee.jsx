@@ -18,18 +18,20 @@ const PARTNERS = [
   { name: 'Salesforce', domain: 'salesforce.com' },
 ];
 
-// Reusable logo chip — tries several internet logo sources, then the name.
-export function BrandLogo({ name, domain }) {
-  const srcs = [
-    `https://logo.clearbit.com/${domain}`,
-    `https://icons.duckduckgo.com/ip3/${domain}.ico`,
-    `https://www.google.com/s2/favicons?domain=${domain}&sz=128`,
-  ];
+// Reusable logo chip. Tries sources in order: a local file in /public/logos
+// (if `logo` is given), then the Clearbit logo CDN, then the Google favicon
+// service (covers smaller brands Clearbit lacks), then a clean text name.
+export function BrandLogo({ name, domain, logo }) {
+  const sources = [
+    logo,
+    domain && `https://logo.clearbit.com/${domain}`,
+    domain && `https://www.google.com/s2/favicons?domain=${domain}&sz=128`,
+  ].filter(Boolean);
   const [i, setI] = useState(0);
   return (
     <span className="partner-chip">
-      {i < srcs.length
-        ? <img className="partner-logo-img" src={srcs[i]} alt={name} loading="lazy" onError={() => setI(i + 1)} />
+      {i < sources.length
+        ? <img className="partner-logo-img" src={sources[i]} alt={name} loading="lazy" onError={() => setI(i + 1)} />
         : <span className="partner-name">{name}</span>}
     </span>
   );
