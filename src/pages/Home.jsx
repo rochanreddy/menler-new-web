@@ -369,7 +369,7 @@ export default function Home() {
         <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 18, fontStyle: 'italic', lineHeight: 1.6 }}>Salary bands sourced from fellowship partner intake. Updated quarterly.</p>
         <div className="partners-strip">
           <p className="partners-label">Hiring associations · India · 25+ companies</p>
-          <HiringRail companies={HIRING_COMPANIES} />
+          <HiringRail companies={HIRING_COMPANIES} rows={2} />
         </div>
       </section>
 
