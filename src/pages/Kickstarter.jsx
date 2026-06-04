@@ -288,7 +288,7 @@ export default function Kickstarter() {
       <section className="hiring-section outcome-section" style={{ background: 'var(--parchment)' }}>
         <p className="section-label" style={{ textAlign: 'center' }}>Outcome</p>
         <h2 className="section-h2" style={{ textAlign: 'center' }}>What you leave with<br /><em>after 14 days.</em></h2>
-        <p className="section-sub" style={{ textAlign: 'center' }}>By the end of the program, you'll be able to research, create, automate, and build with AI confidently while maintaining a portfolio of real-world projects that demonstrate practical AI skills.</p>
+        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto' }}>By the end of the program, you'll be able to research, create, automate, and build with AI confidently while maintaining a portfolio of real-world projects that demonstrate practical AI skills.</p>
         <div className="roles-grid">
           <div className="role-card"><p className="role-name">AI Fluency Certificate</p><p className="role-comp">Issued by Menler</p><p className="role-desc">Verifiable credential. Proof that you're Gen AI fluent — across 10+ tools and 5 builds.</p></div>
           <div className="role-card"><p className="role-name">Portfolio of 5 builds</p><p className="role-comp">Public + shareable</p><p className="role-desc">Five real AI mini-projects on a personal portfolio page. Show in interviews, on LinkedIn, on your CV.</p></div>
