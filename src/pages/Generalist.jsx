@@ -167,7 +167,17 @@ export default function Generalist() {
             const open = activePhase === i;
             return (
               <div className={`curric-acc-item${open ? ' open' : ''}`} key={i}>
-                <button className="curric-acc-head" onClick={() => setActivePhase(open ? -1 : i)} aria-expanded={open}>
+                <button className="curric-acc-head" onClick={(e) => {
+                  const willOpen = !open;
+                  setActivePhase(willOpen ? i : -1);
+                  if (willOpen) {
+                    const el = e.currentTarget;
+                    setTimeout(() => {
+                      const y = el.getBoundingClientRect().top + window.scrollY - 90;
+                      window.scrollTo({ top: y, behavior: 'smooth' });
+                    }, 70);
+                  }
+                }} aria-expanded={open}>
                   <span className="curric-acc-no">{p.label} · {p.weeks}</span>
                   <span className="curric-acc-title">{p.title}</span>
                   <span className="curric-acc-caret">{open ? '▾' : '▸'}</span>
