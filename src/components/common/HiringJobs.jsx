@@ -1,32 +1,24 @@
 import HiringRail from './HiringRail';
 
-const GEN_ROLES = [
-  { name: 'AI Specialist', band: '₹12–22L · Domain teams' },
-  { name: 'AI Strategist', band: '₹15–28L · Consulting & in-house' },
-  { name: "Founder's Office Associate", band: '₹14–24L · Startups & funds' },
-  { name: 'Marketing AI Lead', band: '₹14–25L · Brand & growth teams' },
-  { name: 'Operations AI Analyst', band: '₹10–18L · Ops & finance' },
-  { name: 'Domain AI Consultant', band: '₹15–30L · Boutique consulting' },
-  { name: 'AI Product Manager', band: '₹16–30L · SaaS & platforms' },
-  { name: 'Finance AI Analyst', band: '₹12–22L · BFSI & fintech' },
-  { name: 'Customer Experience AI Lead', band: '₹12–20L · Support & success' },
-  { name: 'Sales AI Specialist', band: '₹12–24L · Revenue & GTM teams' },
+const DEFAULT_GEN_ROLES = [
+  { name: 'AI Research intern', band: '₹10k–25k/month · Research & Strategy teams' },
+  { name: 'Founders Office intern ', band: '₹10K–25K/month · Startups & venture-backed companies' },
+  { name: "Marketing AI Intern", band: '₹8K–20K/month · Brand & growth teams' },
+  { name: 'Business Operations Intern', band: '₹10K–18K/month · Operations & process teams' },
+  { name: 'AI Content Intern', band: '₹8K–18K/month · Content & media companies' },
+  { name: 'Customer Success Intern', band: '₹8K–15K/month · SaaS & support teams' },
 ];
 
-const ENG_ROLES = [
-  { name: 'Claude Solutions Engineer', band: '₹22–45L · AI-native startups' },
-  { name: 'AI Engineer / Applied AI', band: '₹20–40L · Product teams' },
-  { name: 'RAG / Agent Engineer', band: '₹22–40L · Platform teams' },
-  { name: 'MCP Platform Engineer', band: '₹25–48L · Infra & enterprise AI' },
-  { name: 'LLMOps Engineer', band: '₹22–42L · Production AI' },
-  { name: 'AI Research Engineer', band: '₹25–55L · Frontier teams' },
-  { name: 'Agentic Systems Engineer', band: '₹28–55L · AI-first startups' },
-  { name: 'Applied AI Scientist', band: '₹30–60L · Research teams' },
-  { name: 'AI Infrastructure Engineer', band: '₹24–46L · Platform & infra' },
-  { name: 'Evals & Safety Engineer', band: '₹24–48L · Trust & reliability' },
+const DEFAULT_ENG_ROLES = [
+  { name: 'Prompt Engineering Intern', band: '₹10K–25K/month · AI-first startups' },
+  { name: 'AI Automation Intern', band: '₹12K–25K/month · No-code & operations teams' },
+  { name: 'AI Workflow Intern', band: '₹10K–20K/month · Internal automation teams' },
+  { name: 'Agent Building Intern', band: '₹15K–30K/month · Emerging AI companies' },
+  { name: 'AI Product Operations Intern', band: '₹12K–25K/month · Product teams' },
+  { name: 'Claude / GPT Implementation Intern', band: '₹25–55L · Frontier teams' },
 ];
 
-const HIRING_COMPANIES = [
+const DEFAULT_COMPANIES = [
   { name: 'Ringg AI', domain: 'ringg.ai' },
   { name: 'MyGate', domain: 'mygate.com' },
   { name: 'Zolve', domain: 'zolve.com' },
@@ -54,25 +46,39 @@ const HIRING_COMPANIES = [
   { name: 'PhysicsWallah', domain: 'pw.live' },
 ];
 
-export default function HiringJobs() {
+// All content is prop-driven (defaults below), so each page can pass its own
+// roles, companies and headings without affecting the others.
+export default function HiringJobs({
+  label = 'Hiring associations & roles',
+  title = 'The jobs',
+  titleEm = 'AI fluent are landing.',
+  sub = 'AI is becoming part of every role. Menler Kickstarter prepares learners to contribute from day one.',
+  genLabel = 'non tech',
+  engLabel = 'tech',
+  genRoles = DEFAULT_GEN_ROLES,
+  engRoles = DEFAULT_ENG_ROLES,
+  companies = DEFAULT_COMPANIES,
+  partnersLabel = 'Hiring associations · India · 25+ companies',
+  sectionStyle = {},
+} = {}) {
   return (
-    <section className="section jobs-section">
-      <p className="section-label">Hiring associations &amp; roles</p>
-      <h2 className="section-h2">The jobs<br /><em>AI specialists are landing.</em></h2>
-      <p className="section-sub">India's AI hiring market is splitting in two: companies buying generic AI and companies hiring people who can actually deploy Claude inside a domain. Menler fellows are built for the second list.</p>
+    <section className="section jobs-section" style={sectionStyle}>
+      <p className="section-label">{label}</p>
+      <h2 className="section-h2">{title}<br /><em>{titleEm}</em></h2>
+      <p className="section-sub">{sub}</p>
       <div className="jobs-roles">
         <div className="role-card gen-side">
-          <p className="role-card-program">Claude AI Generalist · Open roles</p>
+          <p className="role-card-program">{genLabel}</p>
           <div className="role-list">
-            {GEN_ROLES.map(r => (
+            {genRoles.map(r => (
               <div key={r.name} className="role-row"><p className="role-name">{r.name}</p><p className="role-band">{r.band}</p></div>
             ))}
           </div>
         </div>
         <div className="role-card eng-side">
-          <p className="role-card-program">Claude AI Engineering · Placement roles</p>
+          <p className="role-card-program">{engLabel}</p>
           <div className="role-list">
-            {ENG_ROLES.map(r => (
+            {engRoles.map(r => (
               <div key={r.name} className="role-row"><p className="role-name">{r.name}</p><p className="role-band">{r.band}</p></div>
             ))}
           </div>
@@ -80,8 +86,8 @@ export default function HiringJobs() {
       </div>
       <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 18, fontStyle: 'italic', lineHeight: 1.6 }}>Salary bands sourced from fellowship partner intake. Updated quarterly.</p>
       <div className="partners-strip">
-        <p className="partners-label">Hiring associations · India · 25+ companies</p>
-        <HiringRail companies={HIRING_COMPANIES} />
+        <p className="partners-label">{partnersLabel}</p>
+        <HiringRail companies={companies} />
       </div>
     </section>
   );

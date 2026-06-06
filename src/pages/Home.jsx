@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, lazy, Suspense } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import AccredSection from '../components/common/AccredSection';
 import FaqList from '../components/common/FaqList';
 import CtaBanner from '../components/common/CtaBanner';
@@ -78,19 +78,22 @@ const ENG_BUILDERS = [
 
 // GenAI toolstack — shown in the home "tech stack" section.
 const TECH = [
-  { name: 'ChatGPT', logo: '/logos/chatgpt.png' },
-  { name: 'Lyzr', logo: '/logos/lyzr.png' },
-  { name: 'Claude Code', logo: '/logos/claude.svg' },
+  { name: 'Claude', logo: '/logos/claude.svg' },
   { name: 'Perplexity', logo: '/logos/perplexity.svg' },
-  { name: 'Runway', logo: '/logos/runway.png' },
-  { name: 'Zapier', logo: '/logos/zapier.png' },
-  { name: 'Gemini', logo: '/logos/gemini.png' },
-  { name: 'Midjourney', logo: '/logos/midjourney.png' },
-  { name: 'Bolt', logo: '/logos/bolt.png' },
+  { name: 'NotebookLM', logo: '/logos/google-notebook-lm.png' },
+  { name: 'Notion AI', logo: '/logos/notion.png' },
+  { name: 'Gamma', logo: '/logos/gamma.png' },
+  { name: 'Canva AI', logo: '/logos/canva.png' },
+  { name: 'Granola', logo: '/logos/granola_ai.png' },
+  { name: 'Fireflies', logo: '/logos/fireflies.png' },
   { name: 'ElevenLabs', logo: '/logos/elevenlabs.png' },
-  { name: 'n8n', logo: '/logos/n8n.png' },
-  { name: 'Pika', logo: '/logos/pika.png' },
+  { name: 'Runway', logo: '/logos/runway.png' },
   { name: 'HeyGen', logo: '/logos/heygen.png' },
+  { name: 'n8n', logo: '/logos/n8n.png' },
+  { name: 'Zapier', logo: '/logos/zapier.png' },
+  { name: 'Lovable', logo: '/logos/lovable-logo.png' },
+  { name: 'Emergent', logo: '/logos/emergent.png' },
+  { name: 'Lyzr', logo: '/logos/lyzr.png' },
 ];
 
 const STORIES = [
@@ -102,6 +105,17 @@ const STORIES = [
   { quote: '"The biggest difference was learning from practitioners who use AI every day. Every session felt connected to actual workflows rather than theory."', initials: 'BF', name: 'Beta Fellow', trans: 'Cohort 0', cls: 'green' },
 ];
 
+// One toolstack chip. Falls back to text-only if the logo fails to load.
+function ToolStackChip({ tool }) {
+  const [ok, setOk] = useState(!!tool.logo);
+  return (
+    <div className="toolstack-chip">
+      {ok && <img className="toolstack-logo" src={tool.logo} alt="" aria-hidden="true" onError={() => setOk(false)} />}
+      <span className="toolstack-name">{tool.name}</span>
+    </div>
+  );
+}
+
 export default function Home() {
   const navigate = useNavigate();
   const toast = useToast();
@@ -110,6 +124,13 @@ export default function Home() {
   const scrollToInterest = () => interestRef.current?.scrollIntoView({ behavior: 'smooth' });
   const programsRef = useRef(null);
   const scrollToPrograms = () => programsRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const location = useLocation();
+  useEffect(() => {
+    if (location.hash === '#programs') {
+      const t = setTimeout(() => programsRef.current?.scrollIntoView({ behavior: 'smooth' }), 120);
+      return () => clearTimeout(t);
+    }
+  }, [location]);
 
   // "What you build" — show a subset; "Explore more" opens the full library page.
   const PROJECTS_PREVIEW = 6;
@@ -262,14 +283,9 @@ export default function Home() {
         <h2 className="toolstack-title">Your GenAI toolstack</h2>
         <p className="toolstack-sub">Get hands-on with AI tools — from your first prompt to your first real project.</p>
         <div className="toolstack-grid">
-          {[TECH.slice(0, 4), TECH.slice(4, 9), TECH.slice(9, 13)].map((row, ri) => (
+          {[TECH.slice(0, 5), TECH.slice(5, 11), TECH.slice(11, 16)].map((row, ri) => (
             <div key={ri} className="toolstack-row">
-              {row.map(t => (
-                <div key={t.name} className="toolstack-chip">
-                  <img className="toolstack-logo" src={t.logo} alt="" aria-hidden="true" />
-                  <span className="toolstack-name">{t.name}</span>
-                </div>
-              ))}
+              {row.map(t => <ToolStackChip key={t.name} tool={t} />)}
             </div>
           ))}
         </div>

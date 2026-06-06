@@ -47,15 +47,41 @@ const CURRICULUM = [
   },
 ];
 
+// Hiring section content for the Generalist page only — edit freely, it does
+// NOT affect the Engineering / Kickstarter hiring sections.
+const GEN_HIRING = {
+  sectionStyle: { paddingTop: 24 },
+  label: 'Hiring associations & roles',
+  title: 'The jobs',
+  titleEm: 'AI specialists are landing.',
+  sub: "AI adoption is accelerating. Demand for AI-native professionals is accelerating faster.",
+  genLabel: 'Domain roles',
+  engLabel: 'AI-native roles',
+  genRoles: [
+    { name: 'AI Strategist', band: '₹15–28L · Consulting & in-house' },
+    { name: 'AI Product Manager', band: '₹16–30L · SaaS & platforms' },
+    { name: 'Domain AI Consultant', band: '₹15–30L · Boutique consulting' },
+    { name: 'Automation Specialist', band: '₹12–24L · Ops & workflow teams' },
+    { name: 'AI Program Manager', band: '₹16–28L · Transformation teams' },
+    { name: 'Prompt / Workflow Lead', band: '₹14–26L · AI-first startups' },
+  ],
+  engRoles: [
+    { name: 'AI Specialist', band: '₹12–22L · Domain teams' },
+    { name: "Founder's Office Associate", band: '₹14–24L · Startups & funds' },
+    { name: 'Marketing AI Lead', band: '₹14–25L · Brand & growth teams' },
+    { name: 'Operations AI Analyst', band: '₹10–18L · Ops & finance' },
+    { name: 'Finance AI Analyst', band: '₹12–22L · BFSI & fintech' },
+    { name: 'Customer Experience AI Lead', band: '₹12–20L · Support & success' },
+  ],
+};
+
 const TRACKS = [
-  { name: "Founder's office", role: 'Decision intelligence · Reporting agents' },
-  { name: 'Venture capital', role: 'Deal sourcing · Due diligence' },
-  { name: 'Marketing', role: 'Content engines · Campaign automation' },
-  { name: 'Analyst', role: 'Research agents · Insight automation' },
-  { name: 'Finance', role: 'Earnings analysis · Risk summaries' },
-  { name: 'Operations', role: 'SOP automation · Workflow agents' },
-  { name: 'Technology', role: 'No-code AI tools · Automation' },
-  { name: 'Business owners', role: 'Custom 2-domain · Your business', dashed: true },
+  { name: "Founder's Office", role: 'Decision intelligence · Exec briefings' },
+  { name: 'Product Management', role: 'Discovery · PRDs · Roadmaps' },
+  { name: 'Finance & Operations', role: 'financial analysis · risk management  · process automation' },
+  { name: 'Marketing & Sales', role: 'Content engines · GTM · CRM' },
+  { name: 'HR Operations', role: 'recruitment operation · employee experience · payroll automation' },
+  { name: 'Business Analysis', role: 'data storytelling · decision  · intelligent' },
 ];
 
 const PROJECTS = [
@@ -127,15 +153,15 @@ export default function Generalist() {
         <div className="hero-inner">
           <p className="hero-eyebrow">Claude AI Generalist Fellowship · India</p>
           <h1 className="hero-h1">Master Claude AI.<br /><em>Transform your domain.</em></h1>
-          <p className="hero-sub">India's 1st Claude AI Specialist Fellowship.<strong style={{ color: '#EEEDFE', fontWeight: 500 }}><br />Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
+          <p className="hero-sub">India's Only Claude AI Specialist Fellowship.<strong style={{ color: '#EEEDFE', fontWeight: 500 }}><br />Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
           <div className="hero-actions">
             <button className="btn-primary" style={{ minWidth: 220, textAlign: 'center' }} onClick={openApply}>Apply Now</button>
             <button className="btn-outline" style={{ minWidth: 220, textAlign: 'center' }}>Download Brochure</button>
           </div>
-          <div className="hero-stats">
+          <div className="hero-stats hero-stats-6">
             <div><span className="hero-stat-num">90%</span><span className="hero-stat-lbl">Interview pipeline<br />target</span></div>
             <div><span className="hero-stat-num">25+</span><span className="hero-stat-lbl">Hiring<br />associations</span></div>
-            <div><span className="hero-stat-num">20+</span><span className="hero-stat-lbl">AI Builders<br />/ Operators</span></div>
+            <div><span className="hero-stat-num">20+</span><span className="hero-stat-lbl">AI Builders<br />& Operators</span></div>
             <div><span className="hero-stat-num">12</span><span className="hero-stat-lbl">Weeks intensive<br />fellowship</span></div>
             <div><span className="hero-stat-num">7+</span><span className="hero-stat-lbl">Domain<br />tracks</span></div>
             <div><span className="hero-stat-num">5+</span><span className="hero-stat-lbl">Shipped<br />projects</span></div>
@@ -147,7 +173,7 @@ export default function Generalist() {
       <section className="section" style={{ background: 'var(--parchment)' }}>
         <p className="section-label">Who this is for</p>
         <h2 className="section-h2">Any background.<br /><em>Any domain. Zero code.</em></h2>
-        <p className="section-sub">If you work with information, decisions, or people — Claude can make you dramatically more effective. No Python required.</p>
+        <p className="section-sub">The AI-native workforce won't be made up of engineers alone. It will be built by professionals across every domain.</p>
         <div className="audience-grid">
           <div className="audience-card"><div className="ava" style={{ background: 'var(--cloud)', color: 'var(--specialist)' }}>ST</div><p className="audience-role">Students</p><p className="audience-desc">Any discipline. Enter the job market as AI-native.</p></div>
           <div className="audience-card"><div className="ava" style={{ background: '#FAEEDA', color: '#854F0B' }}>WP</div><p className="audience-role">Professionals</p><p className="audience-desc">Tech & non-tech. Lead AI in your current role.</p></div>
@@ -312,7 +338,7 @@ export default function Generalist() {
       <MentorsRail />
 
       {/* ── HIRING PARTNERS ── */}
-      <HiringJobs />
+      <HiringJobs {...GEN_HIRING} />
 
       {/* ── FAQ ── */}
       <section className="section" style={{ background: 'var(--parchment)', textAlign: 'center' }}>

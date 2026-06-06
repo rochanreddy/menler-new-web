@@ -21,25 +21,25 @@ export const HOME_FAQS = [
   },
   {
     q: 'Is Menler Fellowship online, in-person, or hybrid?',
-    a: "Menler runs as a hybrid fellowship — fully remote-friendly with optional in-person intensives for fellows in Bengaluru. Demo Day is held in Bengaluru with remote attendance. Live sessions happen on India-friendly timezones, all sessions are recorded.",
+    a: "Menler runs an online fellowship. Demo Day is held online . Live sessions happen on India-friendly timezones, all sessions are recorded.",
   },
   {
     q: 'What is the program fee and are scholarships available?',
-    a: "Fellowship fees, payment plans, and ISA (income-share-agreement) options are published on the Apply page. Need-based scholarships are available for every batch, including dedicated seats for women in tech, students from tier-2/3 cities, and career switchers from underrepresented backgrounds.",
+    a: "Fellowship fees, payment plans, options are published on the Apply page. Need-based scholarships are available for every batch, including dedicated seats for women in tech, students from tier-2/3 cities, and career switchers from underrepresented backgrounds.",
   },
   {
     q: 'How is Menler different from MBA AI programs or postgraduate diplomas?',
-    a: "An MBA AI elective gives you frameworks; a postgraduate diploma gives you a syllabus. Menler gives you a portfolio, a credential, and a placed role. We're 12 weeks instead of 18–24 months, narrower in scope (Claude, not \"all AI\"), deeper in execution (real shipped projects), and explicitly placement-driven.",
+    a: "An MBA AI elective gives you frameworks; a postgraduate diploma gives you a syllabus. Menler gives you a portfolio, a credential, and support. We're 12 weeks instead of 18–24 months, narrower in scope (Claude, not \"all AI\"), deeper in execution (real shipped projects), and explicitly placement-driven.",
   },
 ];
 
 export const KICKSTARTER_FAQS = [
   { q: 'Are there any prerequisites?', a: "None. If you can use a smartphone and join a Zoom call, you're ready." },
-  { q: 'Will I get a refund if it\'s not a fit?', a: 'Yes — full refund within the first 3 days, no questions asked.' },
-  { q: 'What language is the program in?', a: 'Primary instruction in English. Hindi explanations available on request. Discord is bilingual.' },
-  { q: 'Are the sessions recorded?', a: 'Yes. All 14 sessions are recorded and available within 24 hours of going live.' },
-  { q: 'Do you offer group discounts?', a: 'Yes — 15% off for groups of 5+ from the same school, college, or company. Email partner@meridian.in.' },
-  { q: 'Is the certificate recognised?', a: "It's a Menler-issued credential, verifiable on our public alumni page. Trusted by our 25+ hiring partners as a top-of-funnel signal." },
+  { q: 'Will I get a refund if it\'s not a fit?', a: 'Once access to the program has been activated, fees are non-refundable. A full refund will be issued only if course access is not provided.' },
+  { q: 'What language is the program in?', a: 'Primary instruction in English. Hindi explanations available on request. Slack is bilingual.' },
+  { q: 'Are the sessions recorded?', a: 'Yes, all the live class will be recorded' },
+  { q: 'Do you offer group discounts?', a: 'Yes — 15% off for groups of 5+ from the same school, college, or company. Email partner@menler.in.' },
+  { q: 'Is the certificate recognised?', a: "Yes. Menler certificates are verifiable and backed by industry-recognised standards, including MSME, Skill India, and ISO accreditations. They are designed to signal practical AI capability and portfolio-backed learning." },
 ];
 
 export const GENERALIST_FAQS = [
