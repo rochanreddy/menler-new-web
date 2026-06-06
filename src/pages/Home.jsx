@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AccredSection from '../components/common/AccredSection';
 import FaqList from '../components/common/FaqList';
@@ -8,6 +8,7 @@ import Footer from '../components/layout/Footer';
 import Reveal from '../components/common/Reveal';
 import MentorsRail from '../components/common/MentorsRail';
 import { useToast } from '../components/common/Toast';
+const Hero3D = lazy(() => import('../components/common/Hero3D'));
 import { HOME_FAQS } from '../data/faqData';
 import { submitLead } from '../services/leadService';
 import { PROJECTS } from '../data/projectsData';
@@ -16,7 +17,7 @@ import HiringRail from '../components/common/HiringRail';
 
 // Hiring-association companies. Each chip tries the local logo file first
 // (drop official PNG/SVGs in /public/logos with the names below), then the
-// Clearbit logo CDN by domain, then a clean text name.
+// Clearbit logo CDN by domain, then a clean text name d.
 const HIRING_COMPANIES = [
   { name: 'Ringg AI', domain: 'ringg.ai', logo: '/logos/ringg.png' },
   { name: 'MyGate', domain: 'mygate.com', logo: '/logos/mygate.png' },
@@ -142,49 +143,12 @@ export default function Home() {
         <div className="hero-ring r1" /><div className="hero-ring r2" /><div className="hero-ring r3" />
         <div className="hero-grid">
         <div className="hero-visual" aria-hidden="true">
-          <svg viewBox="-56 -56 592 592" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <radialGradient id="meridianGlow" cx="50%" cy="50%" r="55%">
-                <stop offset="0%" stopColor="#AFA9EC" stopOpacity="0.55"/>
-                <stop offset="60%" stopColor="#534AB7" stopOpacity="0.18"/>
-                <stop offset="100%" stopColor="#26215C" stopOpacity="0"/>
-              </radialGradient>
-              <linearGradient id="meridianArc" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="#EEEDFE"/>
-                <stop offset="100%" stopColor="#AFA9EC"/>
-              </linearGradient>
-            </defs>
-            <circle className="hero-glow" cx="240" cy="240" r="220" fill="url(#meridianGlow)"/>
-            <circle cx="240" cy="240" r="180" stroke="rgba(238,237,254,0.22)" strokeWidth="0.8" fill="none"/>
-            <circle cx="240" cy="240" r="135" stroke="rgba(238,237,254,0.32)" strokeWidth="0.8" fill="none"/>
-            <circle cx="240" cy="240" r="92" stroke="rgba(238,237,254,0.46)" strokeWidth="1" fill="none"/>
-            <g className="hero-moon">
-              <path d="M240 148 a92 92 0 0 1 0 184" fill="rgba(38,33,92,0.78)" />
-              <path d="M240 148 a92 92 0 0 0 0 184" fill="rgba(175,169,236,0.95)" />
-            </g>
-            <circle cx="240" cy="240" r="92" stroke="url(#meridianArc)" strokeWidth="1.5" fill="none"/>
-            <g className="hero-orbit-dots" stroke="#EEEDFE" strokeWidth="0.6" fill="#EEEDFE">
-              <circle cx="240" cy="60" r="3.4"/>
-              <circle cx="420" cy="240" r="3.4"/>
-              <circle cx="240" cy="420" r="3.4"/>
-              <circle cx="60"  cy="240" r="3.4"/>
-              <circle cx="367" cy="113" r="2.8" opacity="0.75"/>
-              <circle cx="367" cy="367" r="2.8" opacity="0.75"/>
-              <circle cx="113" cy="113" r="2.8" opacity="0.75"/>
-              <circle cx="113" cy="367" r="2.8" opacity="0.75"/>
-            </g>
-            <g className="hero-labels" fontFamily="DM Sans, sans-serif" fontSize="9.5" fill="rgba(238,237,254,0.7)" letterSpacing="1.2">
-              <text className="hero-label" x="240" y="46" textAnchor="middle">FOUNDER&apos;S OFFICE</text>
-              <text className="hero-label" x="437" y="244" textAnchor="end">VC</text>
-              <text className="hero-label" x="240" y="448" textAnchor="middle">ENGINEERING</text>
-              <text className="hero-label" x="42"  y="244" textAnchor="start">MARKETING</text>
-            </g>
-          </svg>
+          <Suspense fallback={null}><Hero3D /></Suspense>
         </div>
         <div className="hero-inner">
           <p className="hero-eyebrow">Menler Fellowship · India</p>
-          <h1 className="hero-h1">Your turning point<br /><em>in an AI era.</em></h1>
-          <p className="hero-sub">India's 1st Claude AI Specialist Fellowship.<strong style={{ color: '#EEEDFE', fontWeight: 350 }}><br />Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
+          <h1 className="hero-h1">Your turning point<br /><em>in the AI era.</em></h1>
+          <p className="hero-sub">India's only Claude AI Specialist Fellowship.<strong style={{ color: '#EEEDFE', fontWeight: 350 }}><br />Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
           <div className="hero-actions">
             <button className="btn-primary" onClick={() => go('/programs')}>Check Fellowship Program</button>
             <button className="btn-outline" onClick={() => go('/aptitude')}>Take the AI Aptitude Test</button>
@@ -193,7 +157,7 @@ export default function Home() {
           <div className="hero-stats">
             <div><span className="hero-stat-num">90%</span><span className="hero-stat-lbl">Interview pipeline<br />target</span></div>
             <div><span className="hero-stat-num">25+</span><span className="hero-stat-lbl">Hiring<br />associations</span></div>
-            <div><span className="hero-stat-num">20+</span><span className="hero-stat-lbl">AI Builders<br />/ Operators</span></div>
+            <div><span className="hero-stat-num">20+</span><span className="hero-stat-lbl">AI Builders<br />& Operators</span></div>
             <div><span className="hero-stat-num">12</span><span className="hero-stat-lbl">Weeks intensive<br />fellowship</span></div>
             <div><span className="hero-stat-num">7+</span><span className="hero-stat-lbl">Domain<br />tracks</span></div>
           </div>
@@ -208,19 +172,19 @@ export default function Home() {
       <section className="section" style={{ background: 'var(--parchment)' }}>
         <p className="section-label">Choose your program</p>
         <h2 className="section-h2">Two Paths, One Outcome <br /><em>AI Native You!</em></h2>
-        <p className="section-sub">Both fellowships lead to a recognised AI Specialist credential and active Interview support. Pick the one that fits your background — or talk to our Career Advisor and let us help you decide.</p>
+        <p className="section-sub">Both fellowships lead to a recognised AI Specialist credential and active career support. Pick the one that fits your background.</p>
         <div className="prog-compare">
           <div className="prog-card gen">
             <span className="prog-card-badge">No coding required</span>
             <p className="prog-card-title">Claude AI Generalist</p>
-            <p className="prog-card-sub">India's first no-code Claude AI specialist program. Master Claude across your domain — Founder's Office, VC, Marketing, Analyst, Finance, Operations, Technology — and graduate as a certified AI Specialist with a domain portfolio.</p>
+            <p className="prog-card-sub"> Master Claude across your domain — Founder's Office, VC, Marketing, Analyst, Finance, Operations, Technology — and graduate as a certified AI Specialist with a domain portfolio.</p>
             <p className="prog-card-for">Builders from</p>
             <div className="prog-card-logos">
               {GEN_BUILDERS.map(c => <BrandLogo key={c.name} name={c.name} domain={c.domain} logo={c.logo} />)}
             </div>
             <div className="next-batch">
               <p className="nb-label">Batch starts</p>
-              <p className="nb-when"><strong>August 2026</strong>  ·  12 weeks  ·  Online</p>
+              <p className="nb-when"><strong>August 2026</strong>  ·  12 weeks  ·  60 hour live  · Online  · Capstone project </p>
               <p className="nb-deadline">Applications close 25 July 2026</p>
             </div>
             <button className="prog-card-cta" onClick={() => go('/generalist')}>Explore Generalist Program</button>
@@ -228,14 +192,14 @@ export default function Home() {
           <div className="prog-card eng">
             <span className="prog-card-badge">Coding experience required</span>
             <p className="prog-card-title">Claude AI Engineering</p>
-            <p className="prog-card-sub">India's most rigorous Claude AI engineering certification. Build the full Claude stack — API, RAG, MCP, multi-agent systems, computer use, evals, and deployed AI apps — and earn the AI Engineer credential.</p>
+            <p className="prog-card-sub">Build the full Claude stack — API, RAG, MCP, multi-agent systems, computer use, evals, and deployed AI apps — and earn the AI Engineer credential.</p>
             <p className="prog-card-for">Builders from</p>
             <div className="prog-card-logos">
               {ENG_BUILDERS.map(c => <BrandLogo key={c.name} name={c.name} domain={c.domain} logo={c.logo} />)}
             </div>
             <div className="next-batch">
               <p className="nb-label">Upcoming batch</p>
-              <p className="nb-when"><strong>September 2026</strong>  ·  12 weeks  ·  Intensive</p>
+              <p className="nb-when"><strong>September 2026</strong>  ·  12 weeks  ·  60 hour live  · Online  · Capstone project</p>
               <p className="nb-deadline">Applications open July 2026</p>
             </div>
             <button className="prog-card-cta" onClick={() => go('/engineering')}>Explore Engineering Program</button>
@@ -250,7 +214,7 @@ export default function Home() {
       <section className="section" style={{ background: 'white' }}>
         <p className="section-label">What you build</p>
         <h2 className="section-h2">Real Projects.<br /><em>Across Every Domain.</em></h2>
-        <p className="section-sub">Every Menler fellow ships a portfolio of domain-specific projects.<br />Not toy demos — actual systems built for real use cases. Check TOP projects across roles.</p>
+        <p className="section-sub">Every Menler fellow ships a portfolio of domain-specific projects.<br />Not toy demos — actual systems built for real use cases.</p>
         <div className="proj-grid">
           {visibleProjects.map((p, i) => (
             <Reveal
@@ -381,7 +345,7 @@ export default function Home() {
           <div className="outcome dark">
             <span className="outcome-num">01</span>
             <p className="outcome-title">Claude Specialist certification</p>
-            <p className="outcome-desc">Domain-specific badge.<br />The first Claude-native career credential in the AI ecosystem.</p>
+            <p className="outcome-desc">Domain-specific badge.<br />The Only Claude-native career credential in the AI ecosystem.</p>
           </div>
           <div className="outcome">
             <span className="outcome-num">02</span>
@@ -410,7 +374,7 @@ export default function Home() {
       <section className="section" style={{ background: 'white' }}>
         <p className="section-label">Why Menler</p>
         <h2 className="section-h2">Built around outcomes,<br /><em>measured against them.</em></h2>
-        <p className="section-sub">India's AI training ecosystem is full of certificates that don't translate to careers. Menler is engineered backwards from real-time use cases across domains in the workplace — every week, every assignment, every project, every track decision is mapped to a hireable skill in a real domain.</p>
+        <p className="section-sub"> Every technological shift creates a new class of professionals. Menler exists to build the AI-native generation.</p>
         <div className="metrics-strip">
           <Reveal className="metric-tile dark" delay={0}>
             <span className="metric-num">90%</span>
@@ -444,7 +408,7 @@ export default function Home() {
             <p>Limited seats per cohort across our Generalist and Engineering programs. Share a few details and our admissions team will reach out within 48 hours with the right next step: brochure, scholarship eligibility, or a fast-track to the application.</p>
             <ul>
               <li>Receive the fellowship brochure &amp; syllabus</li>
-              <li>Get scholarship &amp; ISA eligibility check</li>
+              <li>Get scholarship check</li>
               <li>Book a 1:1 admissions call</li>
               <li>Be the first to hear about upcoming batch dates</li>
             </ul>

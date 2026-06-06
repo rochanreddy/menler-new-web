@@ -156,22 +156,25 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 
 /* ── HERO ── */
 .hero {
-  background: var(--ink); padding: 88px 40px;
+  background: var(--ink); padding: 28px 40px 100px;
   position: relative; overflow: hidden;
 }
 /* Centered two-column composition: copy left, orbit graphic right. */
 .hero-grid {
   position: relative; z-index: 2;
   max-width: var(--content-max); margin: 0 auto;
-  display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 48px;
-  align-items: center; min-height: 460px;
+  display: grid; grid-template-columns: 1fr 1.1fr; gap: 48px;
+  align-items: center; min-height: 560px;
 }
 .hero-visual {
   grid-column: 2; grid-row: 1; justify-self: center;
-  width: 100%; max-width: 520px; aspect-ratio: 1 / 1;
+  width: 100%; max-width: 680px; aspect-ratio: 1 / 1;
   z-index: 1; pointer-events: none; opacity: 0.95;
 }
 .hero-visual svg { width: 100%; height: 100%; display: block; }
+/* Interactive 3D object — must receive pointer events to be draggable. */
+.hero-visual .hero-3d { width: 100%; height: 100%; pointer-events: auto; cursor: grab; }
+.hero-visual .hero-3d canvas { display: block; }
 /* Subtle, layered orbit animation. All spin around the SVG's own centre via
    fill-box; the global prefers-reduced-motion rule neutralises these. */
 .hero-visual .hero-glow,
@@ -189,7 +192,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 }
 @media (max-width: 1080px) {
   .hero-grid { gap: 32px; }
-  .hero-visual { max-width: 440px; }
+  .hero-visual { max-width: 540px; }
 }
 @media (max-width: 900px) {
   /* Collapse to a single centered column; drop the graphic and inner ring. */
@@ -214,7 +217,18 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .hero-centered .hero-stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 22px 44px; max-width: none; }
 .hero-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--lavender); margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
 .hero-h1 { font-family: 'DM Serif Display', serif; font-size: clamp(30px, 6.4vw, 48px); font-weight: 400; color: #EEEDFE; line-height: 1.1; margin-bottom: 14px; }
-.hero-h1 em { color: var(--lavender); }
+.hero-h1 em {
+  background: linear-gradient(100deg, var(--lavender) 0%, #EEEDFE 45%, var(--lavender) 90%);
+  background-size: 220% auto;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  animation: heroShimmer 6.5s ease-in-out infinite, heroGlowPulse 4.5s ease-in-out infinite;
+}
+@keyframes heroShimmer { 0% { background-position: 0% center; } 100% { background-position: 220% center; } }
+@keyframes heroGlowPulse {
+  0%, 100% { filter: drop-shadow(0 0 1px rgba(175,169,236,0.12)); }
+  50% { filter: drop-shadow(0 0 7px rgba(175,169,236,0.5)); }
+}
 .hero-sub { font-size: 16px; color: rgba(238,237,254,0.58); line-height: 1.7; max-width: 700px; margin-bottom: 32px; }
 .hero-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .btn-primary { background: var(--specialist); color: white; padding: 11px 22px; border-radius: 22px; font-size: 13px; font-weight: 500; text-decoration: none; transition: background .2s; display: inline-block; cursor: pointer; border: none; font-family: inherit; }

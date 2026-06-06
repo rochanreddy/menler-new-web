@@ -1,7 +1,7 @@
 export const HOME_FAQS = [
   {
     q: 'What is Menler Fellowship and how is it different from other AI courses in India?',
-    a: "Menler Fellowship is India's first Claude-native AI specialist program. Unlike generic AI courses that survey ChatGPT and prompt-engineering basics, Menler goes deep on a single, market-leading model — Claude — and applies it to seven specific career domains. Every fellow ships a portfolio of domain-specific projects, sits a Claude Specialist certification exam, and is matched to a placed role through Demo Day. The fellowship runs 12 weeks intensive with two paths: Generalist (no coding required) and Engineering (Python or JavaScript required) — both leading to a recognised AI Specialist credential.",
+    a: "Menler Fellowship is India's only Claude-native AI specialist program. Unlike generic AI courses that survey ChatGPT and prompt-engineering basics, Menler goes deep on a single, market-leading model — Claude — and applies it to seven specific career domains. Every fellow ships a portfolio of domain-specific projects, sits a Claude Specialist certification exam, and is matched to a placed role through Demo Day. The fellowship runs 12 weeks intensive with two paths: Generalist (no coding required) and Engineering (Python or JavaScript required) — both leading to a recognised AI Specialist credential.",
   },
   {
     q: 'Who should apply to the Claude AI Generalist program?',
