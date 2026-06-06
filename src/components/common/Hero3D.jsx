@@ -83,6 +83,7 @@ export default function Hero3D() {
     const dotGeo = new THREE.SphereGeometry(0.085, 16, 16);
     const dotMats = [];
     const labelTex = [];
+    const labels = [];
 
     const makeLabel = (text) => {
       const pad = 34, fs = 46;
@@ -132,7 +133,9 @@ export default function Hero3D() {
       const label = makeLabel(name);
       label.position.set(Math.cos(a) * lr, Math.sin(a) * lr, 0);
       dotsSpin.add(label);
+      labels.push(label);
     });
+    const tmpV = new THREE.Vector3();
 
     // Lights
     scene.add(new THREE.AmbientLight(0xffffff, 0.65));
@@ -170,6 +173,13 @@ export default function Hero3D() {
       group.rotation.x = rotX;
       group.rotation.y = rotY;
       dotsSpin.rotation.z += 0.006; // dots travel along the ring line
+      // Hide labels that pass behind the globe (camera is on +z looking at origin):
+      // occluded when the label is behind centre (z < 0) and within the sphere's silhouette.
+      group.updateWorldMatrix(true, true);
+      for (const lb of labels) {
+        lb.getWorldPosition(tmpV);
+        lb.visible = !(tmpV.z < 0 && Math.hypot(tmpV.x, tmpV.y) < RADIUS * 0.96);
+      }
       renderer.render(scene, camera);
       raf = requestAnimationFrame(animate);
     };

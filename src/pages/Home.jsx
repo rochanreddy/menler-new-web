@@ -63,9 +63,10 @@ const TOOL_LOGO = {
 // "Builders from" company logos shown on the program cards.
 const GEN_BUILDERS = [
   { name: 'Flipkart', domain: 'flipkart.com', logo: '/logos/flipkart.png' },
-  { name: 'Zolve', domain: 'zolve.com', logo: '/logos/zolve.png' },
-  { name: 'NTT Data', domain: 'nttdata.com' },
-  { name: 'Equifax', domain: 'equifax.com' },
+  { name: 'McKinsey', domain: 'mckinsey.com', logo: '/logos/mckinsey.png' },
+  { name: 'Black Tiger Cement', domain: 'blacktigercement.com', logo: '/logos/black_tiger_cement.png' },
+  { name: 'Zendesk', domain: 'zendesk.com' },
+  { name: 'Al Yusr Leasing & Financing', domain: 'alyusr.com' },
 ];
 const ENG_BUILDERS = [
   { name: 'Google', domain: 'google.com' },
@@ -107,6 +108,8 @@ export default function Home() {
   const go = (path) => { navigate(path); window.scrollTo(0, 0); };
   const interestRef = useRef(null);
   const scrollToInterest = () => interestRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const programsRef = useRef(null);
+  const scrollToPrograms = () => programsRef.current?.scrollIntoView({ behavior: 'smooth' });
 
   // "What you build" — show a subset; "Explore more" opens the full library page.
   const PROJECTS_PREVIEW = 6;
@@ -150,7 +153,7 @@ export default function Home() {
           <h1 className="hero-h1">Your turning point<br /><em>in the AI era.</em></h1>
           <p className="hero-sub">India's only Claude AI Specialist Fellowship.<strong style={{ color: '#EEEDFE', fontWeight: 350 }}><br />Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
           <div className="hero-actions">
-            <button className="btn-primary" onClick={() => go('/programs')}>Check Fellowship Program</button>
+            <button className="btn-primary" onClick={scrollToPrograms}>Check Fellowship Program</button>
             <button className="btn-outline" onClick={() => go('/aptitude')}>Take the AI Aptitude Test</button>
           </div>
           <p className="hero-metrics-label">Menler Fellowship · at a glance</p>
@@ -169,7 +172,7 @@ export default function Home() {
       <AccredSection />
 
       {/* ── PROGRAMS ── */}
-      <section className="section" style={{ background: 'var(--parchment)' }}>
+      <section className="section" style={{ background: 'var(--parchment)' }} ref={programsRef}>
         <p className="section-label">Choose your program</p>
         <h2 className="section-h2">Two Paths, One Outcome <br /><em>AI Native You!</em></h2>
         <p className="section-sub">Both fellowships lead to a recognised AI Specialist credential and active career support. Pick the one that fits your background.</p>
@@ -177,14 +180,17 @@ export default function Home() {
           <div className="prog-card gen">
             <span className="prog-card-badge">No coding required</span>
             <p className="prog-card-title">Claude AI Generalist</p>
-            <p className="prog-card-sub"> Master Claude across your domain — Founder's Office, VC, Marketing, Analyst, Finance, Operations, Technology — and graduate as a certified AI Specialist with a domain portfolio.</p>
+            <div className="prog-card-desc">
+              <p className="prog-card-sub">Master Claude across your domain and graduates as a certified AI specialist with a domain portfolio.</p>
+              <p className="prog-card-sub">Founder's Office · Product management · Marketing &amp; Sales · Analyst · Finance Operations · HR Operations.</p>
+            </div>
             <p className="prog-card-for">Builders from</p>
             <div className="prog-card-logos">
               {GEN_BUILDERS.map(c => <BrandLogo key={c.name} name={c.name} domain={c.domain} logo={c.logo} />)}
             </div>
             <div className="next-batch">
               <p className="nb-label">Batch starts</p>
-              <p className="nb-when"><strong>August 2026</strong>  ·  12 weeks  ·  60 hour live  · Online  · Capstone project </p>
+              <p className="nb-when"><strong>August 2026</strong>  ·  12 weeks  ·  60 hour live  · Online  </p>
               <p className="nb-deadline">Applications close 25 July 2026</p>
             </div>
             <button className="prog-card-cta" onClick={() => go('/generalist')}>Explore Generalist Program</button>
@@ -192,21 +198,24 @@ export default function Home() {
           <div className="prog-card eng">
             <span className="prog-card-badge">Coding experience required</span>
             <p className="prog-card-title">Claude AI Engineering</p>
-            <p className="prog-card-sub">Build the full Claude stack — API, RAG, MCP, multi-agent systems, computer use, evals, and deployed AI apps — and earn the AI Engineer credential.</p>
+            <div className="prog-card-desc">
+              <p className="prog-card-sub">Build the full Claude stack and earn the AI Engineer credential.</p>
+              <p className="prog-card-sub">API · RAG · MCP · Multi-agent systems · Computer use · Evals · Deployed AI apps.</p>
+            </div>
             <p className="prog-card-for">Builders from</p>
             <div className="prog-card-logos">
               {ENG_BUILDERS.map(c => <BrandLogo key={c.name} name={c.name} domain={c.domain} logo={c.logo} />)}
             </div>
             <div className="next-batch">
               <p className="nb-label">Upcoming batch</p>
-              <p className="nb-when"><strong>September 2026</strong>  ·  12 weeks  ·  60 hour live  · Online  · Capstone project</p>
+              <p className="nb-when"><strong>September 2026</strong>  ·  12 weeks  ·  60 hour live  · Online</p>
               <p className="nb-deadline">Applications open July 2026</p>
             </div>
             <button className="prog-card-cta" onClick={() => go('/engineering')}>Explore Engineering Program</button>
           </div>
         </div>
         <div style={{ textAlign: 'center', marginTop: 28 }}>
-          <button className="btn-primary" style={{ background: 'var(--ink)', color: '#fff', border: 'none', minWidth: 200 }} onClick={scrollToInterest}>Book a call</button>
+          <button className="btn-primary" style={{ background: 'var(--ink)', color: '#fff', border: 'none', minWidth: 200 }} onClick={() => setShowApply(true)}>Book a call</button>
         </div>
       </section>
 
@@ -294,7 +303,7 @@ export default function Home() {
       <MentorsRail />
 
       {/* ── HIRING PARTNERS & ROLES ── */}
-      <section className="section jobs-section">
+      <section className="section jobs-section" style={{ paddingBottom: 28 }}>
         <p className="section-label">Hiring associations &amp; roles</p>
         <h2 className="section-h2">The jobs<br /><em>AI specialists are landing.</em></h2>
         <p className="section-sub">India's AI hiring market is splitting in two: companies buying generic AI and companies hiring people who can actually deploy Claude inside a domain. Menler fellows are built for the second list.</p>
@@ -335,10 +344,13 @@ export default function Home() {
           <p className="partners-label">Hiring associations · India · 25+ companies</p>
           <HiringRail companies={HIRING_COMPANIES} rows={2} />
         </div>
+        <div style={{ textAlign: 'center', marginTop: 32 }}>
+          <button className="btn-primary" style={{ background: 'var(--ink)', color: '#fff', border: 'none', minWidth: 200 }} onClick={() => setShowApply(true)}>Book a call</button>
+        </div>
       </section>
 
       {/* ── WHAT YOU LEAVE WITH ── */}
-      <section className="section" style={{ background: 'white' }}>
+      <section className="section" style={{ background: 'white', paddingBottom: 28 }}>
         <p className="section-label">What you leave with</p>
         <h2 className="section-h2">Every fellow graduates<br /><em>with all five.</em></h2>
         <div className="outcomes-grid">
