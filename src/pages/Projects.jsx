@@ -80,7 +80,7 @@ export default function Projects() {
         title="Want to build this?"
         subtitle="Menler fellows ship systems like this in 12 weeks."
         buttonText="Explore the programs"
-        onButtonClick={() => go('/programs')}
+        onButtonClick={() => go('/#programs')}
       />
 
       <Footer />

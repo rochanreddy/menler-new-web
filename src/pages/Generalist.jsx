@@ -50,7 +50,7 @@ const CURRICULUM = [
 // Hiring section content for the Generalist page only — edit freely, it does
 // NOT affect the Engineering / Kickstarter hiring sections.
 const GEN_HIRING = {
-  sectionStyle: { paddingTop: 24 },
+  sectionStyle: { paddingTop: 40 },
   label: 'Hiring associations & roles',
   title: 'The jobs',
   titleEm: 'AI specialists are landing.',
@@ -148,7 +148,7 @@ export default function Generalist() {
   return (
     <>
       {/* ── HERO ── */}
-      <section className="hero">
+      <section className="hero" style={{ paddingTop: 64 }}>
         <div className="hero-ring r1" /><div className="hero-ring r2" />
         <div className="hero-inner">
           <p className="hero-eyebrow">Claude AI Generalist Fellowship · India</p>
@@ -170,7 +170,7 @@ export default function Generalist() {
       </section>
 
       {/* ── WHO THIS IS FOR ── */}
-      <section className="section" style={{ background: 'var(--parchment)' }}>
+      <section className="section" style={{ background: 'var(--parchment)', paddingTop: 40 }}>
         <p className="section-label">Who this is for</p>
         <h2 className="section-h2">Any background.<br /><em>Any domain. Zero code.</em></h2>
         <p className="section-sub">The AI-native workforce won't be made up of engineers alone. It will be built by professionals across every domain.</p>
@@ -184,7 +184,7 @@ export default function Generalist() {
       </section>
 
       {/* ── CURRICULUM ── */}
-      <section className="section" style={{ background: 'white' }}>
+      <section className="section" style={{ background: 'white', paddingTop: 40 }}>
         <p className="section-label">12-week curriculum</p>
         <h2 className="section-h2">From curious<br /><em>to Claude Specialist.</em></h2>
         <p className="section-sub">Three phases, no code — just Claude mastery applied to your domain. Pick a phase to open its modules, tools, and projects.</p>
@@ -290,7 +290,7 @@ export default function Generalist() {
       </section>
 
       {/* ── DOMAIN TRACKS ── */}
-      <section className="section tracks-dark">
+      <section className="section tracks-dark" style={{ paddingTop: 40 }}>
         <p className="section-label" style={{ color: 'var(--lavender)' }}>Domain tracks</p>
         <h2 className="section-h2" style={{ color: '#EEEDFE' }}>Your Claude skills,<br /><em>applied to your career.</em></h2>
         <p className="section-sub" style={{ color: 'rgba(238,237,254,0.5)' }}>Choose your track in Week 8. Capstone, certification module, and job matching are all domain-specific.</p>
@@ -305,7 +305,7 @@ export default function Generalist() {
       </section>
 
       {/* ── LEAD FORM (brochure) ── */}
-      <section className="mini-lead">
+      <section className="mini-lead" style={{ paddingTop: 40 }}>
         <div className="mini-lead-inner">
           <div className="mini-lead-copy">
             <h3>Get the Generalist <em>brochure & syllabus</em>.</h3>
@@ -335,13 +335,13 @@ export default function Generalist() {
       </section>
 
       {/* ── MENTORS ── */}
-      <MentorsRail />
+      <MentorsRail style={{ paddingTop: 40 }} />
 
       {/* ── HIRING PARTNERS ── */}
       <HiringJobs {...GEN_HIRING} />
 
       {/* ── FAQ ── */}
-      <section className="section" style={{ background: 'var(--parchment)', textAlign: 'center' }}>
+      <section className="section" style={{ background: 'var(--parchment)', textAlign: 'center', paddingTop: 40 }}>
         <p className="section-label">FAQ</p>
         <h2 className="section-h2">Your questions answered</h2>
         <FaqList items={GENERALIST_FAQS} />

@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import Footer from '../components/layout/Footer';
 
 const LINKS = [
-  { label: 'Programs', path: '/programs' },
+  { label: 'Programs', path: '/#programs' },
   { label: 'Outcomes', path: '/outcomes' },
   { label: 'AI Aptitude Test', path: '/aptitude' },
   { label: 'Resources', path: '/resources' },
@@ -25,7 +25,7 @@ export default function NotFound() {
           <p className="notfound-sub">The link you followed doesn't exist — but everything that matters is one tap away.</p>
           <div className="notfound-actions">
             <button className="btn-primary" onClick={() => go('/')}>Back to home</button>
-            <button className="btn-ghost" onClick={() => go('/programs')}>Explore programs</button>
+            <button className="btn-ghost" onClick={() => go('/#programs')}>Explore programs</button>
           </div>
           <nav className="notfound-links" aria-label="Popular pages">
             {LINKS.map(l => (

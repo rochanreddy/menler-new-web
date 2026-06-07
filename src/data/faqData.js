@@ -44,43 +44,63 @@ export const KICKSTARTER_FAQS = [
 
 export const GENERALIST_FAQS = [
   {
-    q: "I'm not a tech person. Can I really succeed in this program?",
-    a: "Absolutely. The Generalist program is designed specifically for non-technical professionals. You'll work in Claude.ai, not code editors. If you can use Google Docs, you can do this program.",
+    q: "I'm not a technical person. Can I still succeed in this Fellowship?",
+    a: "You don't need coding experience—just the willingness to learn, build, and apply AI to real-world work.",
   },
   {
-    q: 'What domain tracks are available?',
-    a: "Founder's Office, Venture Capital, Marketing, Analyst, Finance, Operations, Technology, and Business Owner (custom 2-domain). Choose your track in Week 8 — capstone, certification module, and job matching are all domain-specific.",
+    q: 'What will I build during the Fellowship?',
+    a: "You'll graduate with a portfolio of real AI projects. Every build is designed to demonstrate practical capability within your chosen domain, creating proof of work you can showcase to employers and your professional network.",
   },
   {
-    q: 'How many hours per week does it require?',
-    a: 'Approximately 8–10 hours per week: three evenings + Saturday sessions plus project work. Designed for working professionals with day jobs.',
+    q: 'How much time should I expect to commit each week?',
+    a: 'Approximately 8–10 hours per week. This includes live sessions, hands-on assignments, project work, and mentor support. The program is designed for working professionals and ambitious learners.',
   },
   {
-    q: 'Is there a job guarantee?',
-    a: "We don't offer job guarantees because outcomes depend on your background, effort, and market conditions. We do offer a structured placement process with direct employer introductions and our 90-day pipeline commitment.",
+    q: 'How does interview preparation and career support work?',
+    a: "Career support is integrated throughout the Fellowship. Fellows receive portfolio reviews, interview preparation, hiring-readiness guidance, employer introductions, and access to opportunities through Menler's hiring network.",
   },
   {
-    q: 'What is the fee and are there scholarships?',
-    a: "Fellowship fees, payment plans, and ISA options are on the Apply page. Need-based scholarships up to 50% off are available. Kickstarter alumni get a 30% scholarship automatically.",
+    q: 'What is the program fee and are there payment options?',
+    a: "Flexible payment plans are available. Program fees, payment schedules, and available scholarship opportunities are shared during the application process and counselling session.",
+  },
+  {
+    q: 'What is the refund and cancellation policy?',
+    a: "Refunds are only applicable if program access has not been provided. Once access to the Fellowship platform, curriculum, or learning resources has been granted, fees become non-refundable and cancellations are not eligible for a refund.",
   },
 ];
 
 export const ENGINEERING_FAQS = [
   {
-    q: 'What Python level do I need?',
-    a: "Comfort with functions, loops, dictionaries, and async basics. Many participants are juniors or career-switchers with 1–3 years of experience.",
+    q: 'Who is this Fellowship designed for?',
+    a: 'This Fellowship is built for engineers and technical professionals. Prior coding experience is required. The program is designed for software engineers, data scientists, ML practitioners, platform engineers, and technical builders looking to specialize in AI Engineering.',
   },
   {
-    q: 'Does the program cover the Claude API and Anthropic SDK?',
-    a: "Yes, in depth. Phase 1 covers the full API spec — tool use, streaming, structured outputs, prompt caching, cost optimisation, multimodal, and Claude on Bedrock & Vertex AI.",
+    q: 'What will I build during the Fellowship?',
+    a: "You'll build production-grade AI systems. From RAG pipelines and agentic workflows to MCP integrations, evaluations, deployment, and AI infrastructure, every project is designed to reflect how modern AI products are built in industry.",
   },
   {
-    q: 'What is MCP and why is it in the curriculum?',
-    a: "Model Context Protocol (MCP) is Anthropic's open protocol for connecting Claude to external tools, databases, and APIs. You'll build and deploy a production MCP server in Week 7. It's the infrastructure layer for serious AI applications.",
+    q: 'How technical is the program?',
+    a: "You'll work with code, APIs, frameworks, deployment workflows, and production engineering practices used by AI-native companies.",
   },
   {
-    q: 'Will I build things I can put in a portfolio?',
-    a: "Yes. You'll ship 5 production-grade projects: a Claude API wrapper, a RAG pipeline, an MCP server, a multi-agent system, and a full-stack capstone — all deployed, evaluated, and pushed to GitHub.",
+    q: 'How much time should I expect to commit each week?',
+    a: 'Approximately 10–12 hours per week. This includes live sessions, engineering assignments, capstone development, code reviews, and project implementation.',
+  },
+  {
+    q: 'Who teaches the Fellowship?',
+    a: 'AI Engineers in production today. Every mentor has hands-on experience deploying AI systems, working with LLM infrastructure, building AI products, or leading AI engineering initiatives inside startups and enterprises.',
+  },
+  {
+    q: 'Will I receive interview opportunities and career support?',
+    a: "Yes. Fellows receive portfolio reviews, technical interview preparation, resume optimization, hiring association introductions, and access to AI Engineering opportunities through Menler's employer network.",
+  },
+  {
+    q: 'What is the refund and cancellation policy?',
+    a: 'Refunds are only applicable if Fellowship access has not been provided. Once access to the platform, curriculum, recordings, or learning resources has been granted, fees become non-refundable and cancellations are not eligible for a refund.',
+  },
+  {
+    q: 'What is the program fee and are there payment options?',
+    a: 'Flexible payment plans are available. Program fees, payment schedules, and available scholarship opportunities are shared during the application process and counselling session.',
   },
 ];
 

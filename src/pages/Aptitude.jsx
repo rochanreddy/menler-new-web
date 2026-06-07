@@ -11,7 +11,7 @@ const TRUST_CARDS = [
   { title: 'What it tests', desc: 'AI readiness across three core dimensions: problem-solving, execution ability, and role alignment.' },
   { title: 'How it\'s scored', desc: '0–15 readiness score, broken into sub-scores and benchmarked against real-world performance indicators.' },
   { title: 'What you\'ll receive', desc: 'A personalised readiness report, learning roadmap, and placement-readiness insights.' },
-  { title: 'Why it matters', desc: 'Most people don\'t know where they stand with AI. This assessment gives you a clear baseline before you invest time, effort, or money.' },
+  { title: 'Why it matters', desc: 'Most people dont know where they stand with AI. This assessment gives you a clear baseline before you invest resources.' },
 ];
 
 const QB_FILTERS = ['All', 'RAG', 'MCP', 'Agents', 'Evals', 'Tool use', 'Prompts', 'Foundations', 'Senior'];
@@ -27,28 +27,41 @@ const QB_QUESTIONS = [
 
 // Three readiness dimensions, mapped to question ranges.
 const DIMENSIONS = [
-  { label: 'Problem-solving', from: 0, to: 4 },
-  { label: 'Execution ability', from: 4, to: 8 },
-  { label: 'Role alignment', from: 8, to: 10 },
+  { label: 'Problem-solving', from: 0, to: 5 },
+  { label: 'Execution ability', from: 5, to: 10 },
+  { label: 'Role alignment', from: 10, to: 15 },
 ];
 
 const blankAnswers = () => Array(APTITUDE_QUESTIONS.length).fill(null);
-const INIT = { view: 'landing', cluster: null, setIdx: 0, idx: 0, answers: blankAnswers() };
+const blankMarks = () => Array(APTITUDE_QUESTIONS.length).fill(false);
+const INIT = { view: 'landing', cluster: null, setIdx: 0, idx: 0, answers: blankAnswers(), marked: blankMarks() };
 
 function reducer(state, action) {
   switch (action.type) {
     case 'PICK_CLUSTER': return { ...state, view: 'sets', cluster: action.cluster };
-    case 'PICK_SET': return { ...state, view: 'runner', setIdx: action.setIdx, idx: 0, answers: blankAnswers() };
+    case 'PICK_SET': return { ...state, view: 'runner', setIdx: action.setIdx, idx: 0, answers: blankAnswers(), marked: blankMarks() };
     case 'SELECT': {
       const answers = [...state.answers];
       answers[state.idx] = action.optIdx;
       return { ...state, answers };
     }
+    case 'CLEAR': {
+      const answers = [...state.answers];
+      answers[state.idx] = null;
+      return { ...state, answers };
+    }
+    case 'TOGGLE_REVIEW': {
+      const marked = [...state.marked];
+      marked[state.idx] = !marked[state.idx];
+      return { ...state, marked };
+    }
+    case 'GOTO': return { ...state, idx: action.idx };
     case 'NEXT':
       return state.idx < APTITUDE_QUESTIONS.length - 1 ? { ...state, idx: state.idx + 1 } : { ...state, view: 'report' };
     case 'BACK':
       return state.idx > 0 ? { ...state, idx: state.idx - 1 } : { ...state, view: 'sets' };
-    case 'RETAKE': return { ...state, view: 'runner', idx: 0, answers: blankAnswers() };
+    case 'SUBMIT': return { ...state, view: 'report' };
+    case 'RETAKE': return { ...state, view: 'runner', idx: 0, answers: blankAnswers(), marked: blankMarks() };
     case 'TO_SETS': return { ...state, view: 'sets' };
     case 'TO_CLUSTERS': return { ...INIT };
     default: return state;
@@ -63,6 +76,23 @@ export default function Aptitude() {
   const navigate = useNavigate();
   const go = (path) => { navigate(path); window.scrollTo(0, 0); };
   const [state, dispatch] = useReducer(reducer, INIT);
+
+  // Jump to the top of the page whenever the view changes (landing → sets → runner → report).
+  useEffect(() => { window.scrollTo(0, 0); }, [state.view]);
+
+  // 15-minute countdown for the test runner. Resets when a new set starts.
+  const TEST_SECONDS = 15 * 60;
+  const [elapsed, setElapsed] = useState(0);
+  useEffect(() => {
+    if (state.view !== 'runner') return;
+    setElapsed(0);
+    const t = setInterval(() => setElapsed(e => e + 1), 1000);
+    return () => clearInterval(t);
+  }, [state.view, state.setIdx]);
+  // Auto-submit when time runs out.
+  useEffect(() => {
+    if (state.view === 'runner' && elapsed >= TEST_SECONDS) dispatch({ type: 'SUBMIT' });
+  }, [elapsed, state.view, TEST_SECONDS]);
 
   // Keyboard support while taking the test.
   useEffect(() => {
@@ -112,26 +142,63 @@ export default function Aptitude() {
   if (state.view === 'runner') {
     const q = APTITUDE_QUESTIONS[state.idx];
     const selected = state.answers[state.idx];
-    const pct = (state.idx / APTITUDE_QUESTIONS.length) * 100;
+    const total = APTITUDE_QUESTIONS.length;
+    const answeredCount = state.answers.filter(a => a !== null).length;
+    const markedCount = state.marked.filter(Boolean).length;
+    const pct = (answeredCount / total) * 100;
+    const remaining = Math.max(0, TEST_SECONDS - elapsed);
+    const mm = String(Math.floor(remaining / 60)).padStart(2, '0');
+    const ss = String(remaining % 60).padStart(2, '0');
+    const lowTime = remaining <= 60;
     return (
       <section className="apt-runner">
-        <div className="runner-shell">
-          <p className="runner-set-tag">{state.cluster} · Set {state.setIdx + 1}</p>
-          <div className="runner-progress"><div className="runner-progress-fill" style={{ width: `${pct}%` }} /></div>
-          <p className="runner-meta">Question {state.idx + 1} of {APTITUDE_QUESTIONS.length}</p>
-          <p className="runner-q">{q.q}</p>
-          <div className="runner-options">
-            {q.options.map((opt, i) => (
-              <button key={i} className={`runner-option${selected === i ? ' sel' : ''}`} aria-pressed={selected === i} onClick={() => dispatch({ type: 'SELECT', optIdx: i })}>
-                <span className="runner-option-key" aria-hidden="true">{i + 1}</span>{opt.t}
-              </button>
-            ))}
+        <div className="runner-layout">
+          <div className="runner-main">
+            <button className="runner-btn" style={{ color: 'var(--specialist)', marginBottom: 14 }} onClick={() => dispatch({ type: 'TO_SETS' })}>← Exit to sets</button>
+            <p className="runner-set-tag">Set {state.setIdx + 1} · {state.cluster}</p>
+            <div className="runner-progress"><div className="runner-progress-fill" style={{ width: `${pct}%` }} /></div>
+            <p className="runner-meta">Question {state.idx + 1} of {total} · {answeredCount} answered</p>
+            <p className="runner-q">{q.q}</p>
+            <div className="runner-options">
+              {q.options.map((opt, i) => (
+                <button key={i} className={`runner-option${selected === i ? ' sel' : ''}`} aria-pressed={selected === i} onClick={() => dispatch({ type: 'SELECT', optIdx: i })}>
+                  <span className="runner-option-key" aria-hidden="true">{i + 1}</span>{opt.t}
+                </button>
+              ))}
+            </div>
+            <div className="runner-actions">
+              <button className="runner-btn runner-btn-back" disabled={state.idx === 0} onClick={() => dispatch({ type: 'BACK' })}>← Prev</button>
+              <button className="runner-btn-ghost" disabled={selected === null} onClick={() => dispatch({ type: 'CLEAR' })}>Clear</button>
+              <button className={`runner-btn-ghost${state.marked[state.idx] ? ' on' : ''}`} onClick={() => dispatch({ type: 'TOGGLE_REVIEW' })}>{state.marked[state.idx] ? '★ Marked' : '☆ Mark'}</button>
+              {state.idx === total - 1
+                ? <button className="runner-btn runner-btn-next" onClick={() => dispatch({ type: 'SUBMIT' })}>Submit test</button>
+                : <button className="runner-btn runner-btn-next" onClick={() => dispatch({ type: 'NEXT' })}>Next →</button>}
+            </div>
+            <p className="runner-hint">Tip: press <kbd>1</kbd>–<kbd>{q.options.length}</kbd> to choose · <kbd>Enter</kbd> for next</p>
           </div>
-          <p className="runner-hint">Tip: press <kbd>1</kbd>–<kbd>{q.options.length}</kbd> to choose · <kbd>Enter</kbd> for next</p>
-          <div className="runner-actions">
-            <button className="runner-btn runner-btn-back" onClick={() => dispatch({ type: 'BACK' })}>Back</button>
-            <button className="runner-btn runner-btn-next" disabled={selected === null} onClick={() => dispatch({ type: 'NEXT' })}>{state.idx === APTITUDE_QUESTIONS.length - 1 ? 'See my report' : 'Next'}</button>
-          </div>
+
+          <aside className="runner-nav">
+            <div className={`runner-timer${lowTime ? ' low' : ''}`}>
+              <span className="runner-timer-label">Time left</span>
+              <span className="runner-timer-val">{mm}:{ss}</span>
+            </div>
+            <p className="runner-nav-title">Questions</p>
+            <div className="runner-nav-grid">
+              {APTITUDE_QUESTIONS.map((_, i) => {
+                const ans = state.answers[i] !== null;
+                const mk = state.marked[i];
+                const cur = i === state.idx;
+                const cls = cur ? 'cur' : mk ? 'mark' : ans ? 'done' : 'todo';
+                return <button key={i} className={`runner-dot ${cls}`} onClick={() => dispatch({ type: 'GOTO', idx: i })} aria-label={`Go to question ${i + 1}`}>{i + 1}</button>;
+              })}
+            </div>
+            <div className="runner-legend">
+              <span><i className="lg done" /> Answered · {answeredCount}</span>
+              <span><i className="lg mark" /> Marked · {markedCount}</span>
+              <span><i className="lg todo" /> Left · {total - answeredCount}</span>
+            </div>
+            <button className="runner-submit" onClick={() => dispatch({ type: 'SUBMIT' })}>Submit test</button>
+          </aside>
         </div>
       </section>
     );
@@ -152,7 +219,7 @@ export default function Aptitude() {
       <>
         <section className="apt-runner">
           <div className="runner-shell apt-report">
-            <p className="runner-meta">{state.cluster} · Set {state.setIdx + 1} · Your report</p>
+            <p className="runner-meta">Set {state.setIdx + 1} · {state.cluster} · Your report</p>
             <p className="runner-score">{score}<em>/{MAX_SCORE}</em></p>
             <p className="runner-band">{rec.band}</p>
 
@@ -231,19 +298,48 @@ export default function Aptitude() {
     const cluster = CLUSTERS.find(c => c.name === state.cluster) ?? CLUSTERS[0];
     return (
       <>
-        <section className="section" style={{ background: 'var(--parchment)', minHeight: '60vh' }}>
-          <button className="runner-btn" style={{ color: 'var(--specialist)', marginBottom: 18 }} onClick={() => dispatch({ type: 'TO_CLUSTERS' })}>All clusters</button>
+        <section className="section" style={{ background: 'var(--parchment)', minHeight: '60vh', paddingTop: 24, textAlign: 'center' }}>
+          <div style={{ textAlign: 'left' }}>
+            <button className="runner-btn" style={{ color: 'var(--specialist)', marginBottom: 18 }} onClick={() => dispatch({ type: 'TO_CLUSTERS' })}>← Back</button>
+          </div>
           <p className="section-label">{cluster.name}</p>
           <h2 className="section-h2">Pick a set<br /><em>to begin.</em></h2>
-          <p className="section-sub">Five sets, 15 questions each. Choose any — your report and 14-day roadmap come at the end.</p>
-          <div className="cluster-grid">
+          <p className="section-sub" style={{ margin: '0 auto' }}>Five sets, 15 questions each. Choose any — your report and 14-day roadmap come at the end.</p>
+          <div className="cluster-grid cluster-grid--sets">
             {cluster.sets.map((s, i) => (
               <div key={i} className="cluster-card">
-                <p className="cluster-name">{s.label}</p>
+                <p className="cluster-name">{s.label} · {cluster.name}</p>
                 <p className="cluster-sets">{s.questions.length} questions · ~10 min</p>
                 <button className="cluster-btn" onClick={() => dispatch({ type: 'PICK_SET', setIdx: i })}>Start test</button>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* ── EXPLORE MENLER PROGRAMS ── */}
+        <section className="section" style={{ background: 'white', paddingTop: 28, paddingBottom: 40 }}>
+          <p className="section-label" style={{ textAlign: 'center' }}>Explore Menler Programs</p>
+          <h2 className="section-h2" style={{ textAlign: 'center' }}>Continue your <em>AI journey.</em></h2>
+          <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto' }}>Ready to go beyond assessment? Explore the Menler programs designed to help you build capability, portfolio, and career momentum.</p>
+          <div className="cluster-grid" style={{ marginTop: 28 }}>
+            <div className="cluster-card cluster-card--kick">
+              <p className="cluster-num">For beginners &amp; explorers</p>
+              <p className="cluster-name">Menler Kickstarter</p>
+              <p className="cluster-sets">Learn AI fundamentals, build your first portfolio, and become AI fluent in just 14 days.</p>
+              <button className="cluster-btn" onClick={() => go('/kickstarter')}>Explore Kickstarter</button>
+            </div>
+            <div className="cluster-card cluster-card--gen">
+              <p className="cluster-num">College students &amp; professionals</p>
+              <p className="cluster-name">Menler Generalist Fellowship</p>
+              <p className="cluster-sets">Apply AI inside marketing, finance operations, product management, HR operations, consulting, and business workflows.</p>
+              <button className="cluster-btn" onClick={() => go('/generalist')}>Explore Fellowship</button>
+            </div>
+            <div className="cluster-card cluster-card--eng">
+              <p className="cluster-num">Engineers &amp; technical builders</p>
+              <p className="cluster-name">Menler AI Engineering Fellowship</p>
+              <p className="cluster-sets">Build production-grade AI systems, agents, RAG applications, MCP integrations, and AI infrastructure.</p>
+              <button className="cluster-btn" onClick={() => go('/engineering')}>Explore Engineering</button>
+            </div>
           </div>
         </section>
         <Footer />
@@ -258,20 +354,21 @@ export default function Aptitude() {
         <div className="apt-hero-inner">
           <p className="apt-eyebrow">Free · No signup to start</p>
           <h1 className="apt-h1">Where do you stand<br /><em>on the AI Curve?</em></h1>
-          <p className="apt-sub">A 15-question diagnostic that scores your AI readiness, recommends the right AI learning pathway, and gives you a 14-day learning roadmap. Built by operators, not consultants.</p>
+          <p className="apt-sub">A 15 question a AI Aptitude Test designed to assess your AI readiness and recommend the most relevant learning pathway for your goals.</p>
           <button className="apt-cta-big" onClick={() => dispatch({ type: 'PICK_CLUSTER', cluster: CLUSTERS[0].name })}>Start the test</button>
-          <p className="apt-trust-line">No email required to start. Save your result at the end.</p>
         </div>
       </section>
 
-      <section className="section" style={{ background: 'white' }}>
+      <section className="section" style={{ background: 'white', paddingTop: 28, paddingBottom: 0 }}>
         <p className="section-label" style={{ textAlign: 'center' }}>The assessment</p>
         <h2 className="section-h2" style={{ textAlign: 'center' }}>What this test is<br /><em>and why it matters.</em></h2>
         <div className="apt-trust-grid">
           {TRUST_CARDS.map((t, i) => (
             <div key={i} className="apt-trust-card">
-              <span className="apt-trust-num">{String(i + 1).padStart(2, '0')}</span>
-              <p className="apt-trust-title">{t.title}</p>
+              <div className="apt-trust-head">
+                <span className="apt-trust-num">{String(i + 1).padStart(2, '0')}</span>
+                <p className="apt-trust-title">{t.title}</p>
+              </div>
               <p className="apt-trust-desc">{t.desc}</p>
             </div>
           ))}
@@ -279,10 +376,10 @@ export default function Aptitude() {
       </section>
 
       {/* ── CLUSTERS ── */}
-      <section className="section" style={{ background: 'var(--parchment)' }}>
+      <section className="section" style={{ background: 'var(--parchment)', paddingTop: 28, paddingBottom: 28 }}>
         <p className="section-label">Choose your cluster</p>
         <h2 className="section-h2">Pick a track.<br /><em>Take a set.</em></h2>
-        <p className="section-sub">Nine readiness clusters — each with 5 question sets. Start any set and get your report, score, answer sheet, and a 14-day learning roadmap.</p>
+        <p className="section-sub">Every track benchmarks a different AI capability from agentic thinking to engineering workflows.</p>
         <div className="cluster-grid">
           {CLUSTERS.map((c, i) => (
             <div key={c.name} className="cluster-card">
@@ -296,7 +393,7 @@ export default function Aptitude() {
       </section>
 
       {/* ── QUESTION BANK ── */}
-      <section className="section" style={{ background: 'white' }}>
+      <section className="section" style={{ background: 'white', paddingBottom: 28 }}>
         <p className="section-label">Section 3 · Question bank</p>
         <h2 className="section-h2">AI Interview QB.<br /><em>200+ questions from real loops.</em></h2>
         <p className="section-sub">Asked at top Indian and global companies. Select a topic and get a PDF of the Q&amp;A asked in real interview rounds.</p>
@@ -316,6 +413,35 @@ export default function Aptitude() {
           <button className="btn-primary" onClick={downloadQB} disabled={!filteredQB.length}>
             Download Question Bank{qbFilter !== 'All' ? ` — ${qbFilter}` : ''} ({filteredQB.length})
           </button>
+        </div>
+      </section>
+
+      <hr style={{ border: 'none', borderTop: '1px solid rgba(38,33,92,0.12)', maxWidth: 1080, margin: '0 auto' }} />
+
+      {/* ── EXPLORE MENLER PROGRAMS ── */}
+      <section className="section" style={{ background: 'white', paddingTop: 28, paddingBottom: 40 }}>
+        <p className="section-label" style={{ textAlign: 'center' }}>Explore Menler Programs</p>
+        <h2 className="section-h2" style={{ textAlign: 'center' }}>Continue your <em>AI journey.</em></h2>
+        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto' }}>Ready to go beyond assessment? Explore the Menler programs designed to help you build capability, portfolio, and career momentum.</p>
+        <div className="cluster-grid" style={{ marginTop: 28 }}>
+          <div className="cluster-card cluster-card--kick">
+            <p className="cluster-num">For beginners &amp; explorers</p>
+            <p className="cluster-name">Menler Kickstarter</p>
+            <p className="cluster-sets">Learn AI fundamentals, build your first portfolio, and become AI fluent in just 14 days.</p>
+            <button className="cluster-btn" onClick={() => go('/kickstarter')}>Explore Kickstarter</button>
+          </div>
+          <div className="cluster-card cluster-card--gen">
+            <p className="cluster-num">College students &amp; professionals</p>
+            <p className="cluster-name">Menler Generalist Fellowship</p>
+            <p className="cluster-sets">Apply AI inside marketing, finance operations, product management, HR operations, consulting, and business workflows.</p>
+            <button className="cluster-btn" onClick={() => go('/generalist')}>Explore Fellowship</button>
+          </div>
+          <div className="cluster-card cluster-card--eng">
+            <p className="cluster-num">Engineers &amp; technical builders</p>
+            <p className="cluster-name">Menler AI Engineering Fellowship</p>
+            <p className="cluster-sets">Build production-grade AI systems, agents, RAG applications, MCP integrations, and AI infrastructure.</p>
+            <button className="cluster-btn" onClick={() => go('/engineering')}>Explore Engineering</button>
+          </div>
         </div>
       </section>
 

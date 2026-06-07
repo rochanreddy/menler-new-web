@@ -7,7 +7,6 @@ import { ApplyProvider } from './components/common/ApplyContext';
 import { supabase } from './lib/supabase';
 
 const Home = lazy(() => import('./pages/Home'));
-const Programs = lazy(() => import('./pages/Programs'));
 const Kickstarter = lazy(() => import('./pages/Kickstarter'));
 const Generalist = lazy(() => import('./pages/Generalist'));
 const Engineering = lazy(() => import('./pages/Engineering'));
@@ -62,7 +61,6 @@ export default function App() {
         <Suspense fallback={<PageLoader />}>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/programs" element={<Programs />} />
             <Route path="/kickstarter" element={<Kickstarter />} />
             <Route path="/generalist" element={<Generalist />} />
             <Route path="/engineering" element={<Engineering />} />

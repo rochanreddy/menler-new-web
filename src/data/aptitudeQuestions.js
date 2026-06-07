@@ -93,6 +93,51 @@ export const APTITUDE_QUESTIONS = [
       { t: 'Hire a developer to build it from scratch', s: 1 },
     ],
   },
+  {
+    q: 'You want Claude to turn a messy spreadsheet into a clean summary. The best first move is:',
+    options: [
+      { t: 'Paste the raw data and ask "summarise this"', s: 2 },
+      { t: 'Describe the columns, the metric that matters, and the output format you want', s: 4 },
+      { t: 'Ask Claude to guess what the data means', s: 1 },
+      { t: 'Export it to PDF first, then upload', s: 1 },
+    ],
+  },
+  {
+    q: 'Which prompt is most likely to get a reliable, structured output?',
+    options: [
+      { t: '"Give me some ideas"', s: 1 },
+      { t: '"Return exactly 5 ideas as a numbered list, each with a one-line rationale"', s: 4 },
+      { t: '"Be creative and detailed"', s: 2 },
+      { t: '"Help me brainstorm"', s: 1 },
+    ],
+  },
+  {
+    q: 'You draft client emails with Claude every day. To make this repeatable, you should:',
+    options: [
+      { t: 'Rewrite the prompt from scratch each time', s: 1 },
+      { t: 'Save a reusable prompt or Skill with placeholders for the variable details', s: 4 },
+      { t: 'Copy an old email and edit it manually', s: 2 },
+      { t: 'Memorise the perfect prompt', s: 1 },
+    ],
+  },
+  {
+    q: 'Claude returns a long answer when you needed a quick decision. The fix is to:',
+    options: [
+      { t: 'Read the whole thing anyway', s: 2 },
+      { t: 'Add a constraint: "Answer in one sentence with a clear recommendation"', s: 4 },
+      { t: 'Ask the same question again', s: 1 },
+      { t: 'Switch to a different model', s: 2 },
+    ],
+  },
+  {
+    q: 'When connecting Claude to your tools (email, docs, calendar) via MCP/connectors, what matters most?',
+    options: [
+      { t: 'Giving it full access to everything immediately', s: 1 },
+      { t: 'Scoping permissions to only what the task needs and reviewing its actions', s: 4 },
+      { t: 'Turning off all confirmation prompts for speed', s: 1 },
+      { t: 'Avoiding connectors entirely', s: 2 },
+    ],
+  },
 ];
 
 export const MAX_SCORE = APTITUDE_QUESTIONS.reduce(

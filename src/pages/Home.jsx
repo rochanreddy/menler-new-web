@@ -193,7 +193,7 @@ export default function Home() {
       <AccredSection />
 
       {/* ── PROGRAMS ── */}
-      <section className="section" style={{ background: 'var(--parchment)' }} ref={programsRef}>
+      <section className="section" style={{ background: 'var(--parchment)', paddingTop: 48, paddingBottom: 32 }} ref={programsRef}>
         <p className="section-label">Choose your program</p>
         <h2 className="section-h2">Two Paths, One Outcome <br /><em>AI Native You!</em></h2>
         <p className="section-sub">Both fellowships lead to a recognised AI Specialist credential and active career support. Pick the one that fits your background.</p>
@@ -241,7 +241,7 @@ export default function Home() {
       </section>
 
       {/* ── WHAT YOU BUILD ── */}
-      <section className="section" style={{ background: 'white' }}>
+      <section className="section" style={{ background: 'white', paddingTop: 48, paddingBottom: 32 }}>
         <p className="section-label">What you build</p>
         <h2 className="section-h2">Real Projects.<br /><em>Across Every Domain.</em></h2>
         <p className="section-sub">Every Menler fellow ships a portfolio of domain-specific projects.<br />Not toy demos — actual systems built for real use cases.</p>
@@ -316,10 +316,10 @@ export default function Home() {
       </section>
 
       {/* ── MENTORS ── */}
-      <MentorsRail />
+      <MentorsRail style={{ paddingTop: 48, paddingBottom: 32 }} />
 
       {/* ── HIRING PARTNERS & ROLES ── */}
-      <section className="section jobs-section" style={{ paddingBottom: 28 }}>
+      <section className="section jobs-section" style={{ paddingTop: 48, paddingBottom: 32 }}>
         <p className="section-label">Hiring associations &amp; roles</p>
         <h2 className="section-h2">The jobs<br /><em>AI specialists are landing.</em></h2>
         <p className="section-sub">India's AI hiring market is splitting in two: companies buying generic AI and companies hiring people who can actually deploy Claude inside a domain. Menler fellows are built for the second list.</p>
@@ -366,7 +366,7 @@ export default function Home() {
       </section>
 
       {/* ── WHAT YOU LEAVE WITH ── */}
-      <section className="section" style={{ background: 'white', paddingBottom: 28 }}>
+      <section className="section" style={{ background: 'white', paddingTop: 48, paddingBottom: 32 }}>
         <p className="section-label">What you leave with</p>
         <h2 className="section-h2">Every fellow graduates<br /><em>with all five.</em></h2>
         <div className="outcomes-grid">
@@ -399,7 +399,7 @@ export default function Home() {
       </section>
 
       {/* ── WHY MENLER METRICS ── */}
-      <section className="section" style={{ background: 'white' }}>
+      <section className="section" style={{ background: 'white', paddingTop: 48, paddingBottom: 32 }}>
         <p className="section-label">Why Menler</p>
         <h2 className="section-h2">Built around outcomes,<br /><em>measured against them.</em></h2>
         <p className="section-sub"> Every technological shift creates a new class of professionals. Menler exists to build the AI-native generation.</p>
@@ -446,7 +446,7 @@ export default function Home() {
       </section>
 
       {/* ── SUCCESS STORIES ── */}
-      <section className="section" style={{ background: 'var(--parchment)' }}>
+      <section className="section" style={{ background: 'var(--parchment)', paddingTop: 48, paddingBottom: 32 }}>
         <p className="section-label">Voices · Fellows &amp; Advisors</p>
         <h2 className="section-h2">Why<br /><em>chose Menler.</em></h2>
         <p className="section-sub">These quotes are from our beta fellows and advisory voices — AI operators, builders, curriculum reviewers, and hiring associations.</p>

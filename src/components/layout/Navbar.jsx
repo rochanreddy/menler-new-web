@@ -69,21 +69,15 @@ export default function Navbar() {
       </button>
 
       <div className="nav-links">
-        {/* Programs mega-menu */}
-        <div className={`nav-item${openDropdown === 'programs' ? ' open' : ''}`}>
-          <button className="nav-link" onClick={() => toggleDropdown('programs')}>
-            Programs
+        {/* Fellowship dropdown */}
+        <div className={`nav-item${openDropdown === 'fellowship' ? ' open' : ''}`}>
+          <button className="nav-link" onClick={() => toggleDropdown('fellowship')}>
+            Fellowship
             <svg className="nav-chevron" viewBox="0 0 10 10" fill="none">
               <path d="M2 3.5L5 6.5L8 3.5" stroke="#888780" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
           <div className="dropdown dropdown-mega" role="menu">
-            <button className="dd-item dd-kick" role="menuitem" onClick={() => go('/kickstarter')}>
-              <span className="dd-badge" style={{ background: '#FAEEDA', color: '#854F0B' }}>14 days · Entry</span>
-              <span className="dd-title">Gen AI Kickstarter</span>
-              <span className="dd-desc">14-day AI fluency program for school, college students, and Gen AI aspirants. Five mini-builds, one capstone.</span>
-            </button>
-            <div className="dd-divider" />
             <button className="dd-item dd-gen" role="menuitem" onClick={() => go('/generalist')}>
               <span className="dd-badge">12 weeks · No code</span>
               <span className="dd-title">Claude AI Generalist</span>
@@ -95,13 +89,12 @@ export default function Navbar() {
               <span className="dd-title">Claude AI Engineering</span>
               <span className="dd-desc">For software engineers, DS, ML, IT. Build production Claude systems — API, RAG, MCP, agents.</span>
             </button>
-            <div className="dd-divider" />
-            <button className="dd-item" role="menuitem" onClick={() => go('/programs')}>
-              <span className="dd-title" style={{ fontStyle: 'italic', color: 'var(--specialist)' }}>Compare programs</span>
-              <span className="dd-desc">Side-by-side feature, fee, and outcome matrix.</span>
-            </button>
           </div>
         </div>
+        <button className={`nav-link${isActive('/kickstarter') ? ' active' : ''}`} onClick={() => go('/kickstarter')}>AI Kickstarter</button>
+
+        
+        
 
         <button className={`nav-link${isActive('/aptitude') ? ' active' : ''}`} onClick={() => go('/aptitude')}>AI Aptitude Test</button>
         <button className={`nav-link${isActive('/resources') ? ' active' : ''}`} onClick={() => go('/resources')}>Library</button>
@@ -129,11 +122,10 @@ export default function Navbar() {
 
       {/* ── MOBILE DRAWER ── */}
       <div className={`mobile-menu${mobileOpen ? ' open' : ''}`} aria-hidden={!mobileOpen}>
-        <div className="mm-section-label">Programs</div>
         <button className="mm-link" onClick={() => go('/kickstarter')}>Gen AI Kickstarter</button>
+        <div className="mm-section-label">Fellowship</div>
         <button className="mm-link" onClick={() => go('/generalist')}>Claude AI Generalist</button>
         <button className="mm-link" onClick={() => go('/engineering')}>Claude AI Engineering</button>
-        <button className="mm-link sub" onClick={() => go('/programs')}>Compare programs</button>
         <div className="mm-divider" />
         <button className={`mm-link${isActive('/aptitude') ? ' active' : ''}`} onClick={() => go('/aptitude')}>AI Aptitude Test</button>
         <button className={`mm-link${isActive('/resources') ? ' active' : ''}`} onClick={() => go('/resources')}>Library</button>

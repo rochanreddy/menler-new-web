@@ -149,7 +149,7 @@ export default function Kickstarter() {
       </section>
 
       {/* ── WHO THIS IS FOR ── */}
-      <section className="section" style={{ background: '#FFFBF1' }}>
+      <section className="section" style={{ background: '#FFFBF1', paddingTop: 40 }}>
         <p className="section-label" style={{ color: '#854F0B' }}>Who this is for</p>
         <h2 className="section-h2">Built for the curious.<br /><em>Welcome, beginners.</em></h2>
         <p className="section-sub">No prerequisites. No gatekeeping. If you can use a smartphone, you can do this.</p>
@@ -163,7 +163,7 @@ export default function Kickstarter() {
       </section>
 
       {/* ── TIMELINE ── */}
-      <section className="timeline-wrap">
+      <section className="timeline-wrap" style={{ paddingTop: 40 }}>
         <p className="section-label" style={{ textAlign: 'center', color: '#854F0B' }}>14-day timeline</p>
         <h2 className="section-h2" style={{ textAlign: 'center' }}>From curious<br /><em>to fluent in two weeks.</em></h2>
         <div className="timeline-grid">
@@ -178,7 +178,7 @@ export default function Kickstarter() {
       </section>
 
       {/* ── MODULES ── */}
-      <section className="section" style={{ background: '#FFFBF1', paddingBottom: 32 }}>
+      <section className="section" style={{ background: '#FFFBF1', paddingTop: 40, paddingBottom: 32 }}>
         <p className="section-label" style={{ color: '#854F0B' }}>Course modules</p>
         <h2 className="section-h2">Four modules.<br /><em>Click to open the plan.</em></h2>
         <p className="section-sub">Each module opens its lesson plan, the tool stack you'll use, and the project you'll build.</p>
@@ -221,7 +221,7 @@ export default function Kickstarter() {
       </section>
 
       {/* ── WHAT YOU BUILD ── */}
-      <section className="section" style={{ background: '#FFFBF1', paddingTop: 24 }}>
+      <section className="section" style={{ background: '#FFFBF1', paddingTop: 40 }}>
         <p className="section-label" style={{ color: '#854F0B' }}>What you'll build</p>
         <h2 className="section-h2">Five mini-builds.<br /><em>One personal capstone.</em></h2>
         <div className="proj-grid">
@@ -248,7 +248,7 @@ export default function Kickstarter() {
       </section>
 
       {/* ── TOOLS ── */}
-      <section className="section toolstack-section">
+      <section className="section toolstack-section" style={{ paddingTop: 40 }}>
         <h2 className="toolstack-title">Your GenAI toolstack</h2>
         <p className="toolstack-sub">Get hands-on with AI tools — from your first prompt to your first real project.</p>
         <div className="toolstack-grid">
@@ -266,7 +266,7 @@ export default function Kickstarter() {
       </section>
 
       {/* ── LEAD (brochure) ── */}
-      <section className="mini-lead">
+      <section className="mini-lead" style={{ paddingTop: 40 }}>
         <div className="mini-lead-inner">
           <div className="mini-lead-copy">
             <h3>Get the Kickstarter <em>brochure.</em></h3>
@@ -292,16 +292,16 @@ export default function Kickstarter() {
       </section>
 
       {/* ── MENTORS ── */}
-      <MentorsRail />
+      <MentorsRail style={{ paddingTop: 40 }} />
 
       {/* ── HIRING PARTNERS & ROLES ── */}
-      <HiringJobs sectionStyle={{ paddingTop: 24 }} />
+      <HiringJobs sectionStyle={{ paddingTop: 40 }} />
       <div style={{ textAlign: 'center', padding: '0 40px 56px', background: '#ffffff' }}>
         <button className="btn-primary" style={{ background: '#BA7517', minWidth: 200 }} onClick={openApply}>Book a call</button>
       </div>
 
       {/* ── OUTCOMES ── */}
-      <section className="hiring-section outcome-section" style={{ background: 'var(--parchment)' }}>
+      <section className="hiring-section outcome-section" style={{ background: 'var(--parchment)', paddingTop: 40 }}>
         <p className="section-label" style={{ textAlign: 'center' }}>Outcome</p>
         <h2 className="section-h2" style={{ textAlign: 'center' }}>What you leave with<br /><em>after 14 days.</em></h2>
         <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto' }}>The first assests of your AI-fluent professional identity</p>
@@ -316,7 +316,7 @@ export default function Kickstarter() {
       </section>
 
       {/* ── FAQ ── */}
-      <section className="section faq-section" style={{ background: 'white', textAlign: 'center' }}>
+      <section className="section faq-section" style={{ background: 'white', textAlign: 'center', paddingTop: 40 }}>
         <p className="section-label">FAQ</p>
         <h2 className="section-h2">Common questions.<br /><em>Quick answers.</em></h2>
         <FaqList items={KICKSTARTER_FAQS} />

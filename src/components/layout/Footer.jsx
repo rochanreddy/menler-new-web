@@ -20,7 +20,6 @@ export default function Footer() {
             <li><a onClick={() => go('/kickstarter')}>Gen AI Kickstarter</a></li>
             <li><a onClick={() => go('/generalist')}>Claude AI Generalist</a></li>
             <li><a onClick={() => go('/engineering')}>Claude AI Engineering</a></li>
-            <li><a onClick={() => go('/programs')}>Compare programs</a></li>
           </ul>
         </div>
         <div>

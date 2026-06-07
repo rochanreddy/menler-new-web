@@ -103,9 +103,9 @@ function CaptainRow({ list, dir, tint }) {
   );
 }
 
-export default function MentorsRail() {
+export default function MentorsRail({ style } = {}) {
   return (
-    <section className="captains-section">
+    <section className="captains-section" style={style}>
       <div className="captains-head">
         <p className="captains-label">Instructors / Mentors</p>
         <h2 className="captains-title">The People Behind Menler</h2>
