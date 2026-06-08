@@ -37,10 +37,9 @@ const CURRICULUM = [
     label: 'Phase 3', weeks: 'Weeks 9–12', title: 'Domain specialisation, capstone & placement',
     domains: [
       { name: "Founder's Office", modules: ['Decision-intelligence agent', 'Weekly briefing automation', 'Exec reporting'], tools: ['Claude', 'MCP', 'Slack', 'Notion'], projects: ['CEO weekly briefing agent'] },
-      { name: 'Venture Capital', modules: ['Deal sourcing', 'Memo writing', 'Thesis-grounded screening'], tools: ['Cowork', 'Web search', 'Projects'], projects: ['Deal-flow triage agent'] },
       { name: 'Marketing', modules: ['Brand-voice Skill', 'Content engine', 'Campaign automation'], tools: ['Skills', 'Canva', 'Buffer'], projects: ['Always-on content engine'] },
       { name: 'Analyst', modules: ['Research synthesis', 'Insight memos', 'Multimodal tables'], tools: ['Claude API', 'Web search', 'Excel'], projects: ['Research insight engine'] },
-      { name: 'Finance', modules: ['Budget variance', 'Claude in Excel', 'CFO decks'], tools: ['Excel', 'Claude', 'PowerPoint'], projects: ['Budget variance commentator'] },
+      { name: 'Finance', modules: ['Deal sourcing', 'Memo writing', 'Thesis-grounded screening', 'Budget variance', 'Claude in Excel', 'CFO decks'], tools: ['Excel', 'Claude', 'PowerPoint', 'Cowork', 'Web search', 'Projects'], projects: ['Deal-flow triage agent', 'Budget variance commentator'] },
       { name: 'Operations', modules: ['SOP automation', 'Triage & routing', 'Audit logs'], tools: ['MCP', 'Cowork', 'Slack'], projects: ['SOP automation agent'] },
       { name: 'Technology', modules: ['No-code app builder', 'Artifacts', 'Internal tools'], tools: ['Artifacts', 'Projects', 'Cowork'], projects: ['No-code internal tool'] },
     ],
@@ -86,7 +85,7 @@ const TRACKS = [
 
 const PROJECTS = [
   { track: "Founder's office", title: 'CEO weekly briefing agent', meta: 'Week 6 · Skills + MCP · Live deployment', desc: "A Claude Skill that pulls metrics from connected tools, summarises wins/blockers, and publishes a Monday brief to the founder's inbox.", stack: 'Stack: Claude Projects · Skills · Gmail MCP' },
-  { track: 'Venture capital', title: 'Deal-sourcing research agent', meta: 'Week 7 · Cowork · Multi-doc', desc: 'Cowork-driven workflow that screens decks, writes investment memos, and flags red-flags grounded in your fund thesis.', stack: 'Stack: Cowork · Projects · Web search' },
+  { track: 'Finance', title: 'Deal-sourcing research agent', meta: 'Week 7 · Cowork · Multi-doc', desc: 'Cowork-driven workflow that screens decks, writes investment memos, and flags red-flags grounded in your fund thesis.', stack: 'Stack: Cowork · Projects · Web search' },
   { track: 'Marketing', title: 'Always-on content engine', meta: 'Week 5 · Skills · Brand voice', desc: 'Brand-trained Claude Skill generating blog, LinkedIn, and ad copy with on-brand tone — drafts ready for review in minutes.', stack: 'Stack: Skills · Style guides · Prompt library' },
   { track: 'Analyst', title: 'Earnings call insight engine', meta: 'Week 8 · Multimodal · Tables', desc: 'Transcript + financials in, structured insight memo out — competitive read, sentiment, and KPI delta in a single Claude run.', stack: 'Stack: Multimodal · Excel · Skills' },
   { track: 'Finance', title: 'Budget variance commentator', meta: 'Week 9 · Excel + Claude · Templates', desc: 'Claude in Excel that reads actual vs. plan, writes management commentary, and drafts the CFO review deck.', stack: 'Stack: Claude in Excel · PPT · Skills' },
@@ -335,7 +334,6 @@ export default function Generalist() {
               <select required aria-label="Track of interest" value={form.track} onChange={e => set('track', e.target.value)}>
                 <option value="">Choose a track…</option>
                 <option>Founder's Office</option>
-                <option>Venture Capital</option>
                 <option>Marketing</option>
                 <option>Analyst</option>
                 <option>Finance</option>

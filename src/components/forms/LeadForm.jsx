@@ -86,7 +86,6 @@ export default function LeadForm({ defaultProgram = '' }) {
         <select value={form.track} onChange={e => set('track', e.target.value)}>
           <option value="">Select a track…</option>
           <option>Founder's Office</option>
-          <option>Venture Capital</option>
           <option>Marketing</option>
           <option>Analyst</option>
           <option>Finance</option>

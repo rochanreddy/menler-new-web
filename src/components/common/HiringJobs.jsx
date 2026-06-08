@@ -60,11 +60,14 @@ export default function HiringJobs({
   companies = DEFAULT_COMPANIES,
   partnersLabel = 'Hiring associations · India · 25+ companies',
   sectionStyle = {},
+  labelStyle = {},
+  titleStyle = {},
+  titleEmStyle = {},
 } = {}) {
   return (
     <section className="section jobs-section" style={sectionStyle}>
-      <p className="section-label">{label}</p>
-      <h2 className="section-h2">{title}<br /><em>{titleEm}</em></h2>
+      <p className="section-label" style={labelStyle}>{label}</p>
+      <h2 className="section-h2" style={titleStyle}>{title}<br /><em style={titleEmStyle}>{titleEm}</em></h2>
       <p className="section-sub">{sub}</p>
       <div className="jobs-roles">
         <div className="role-card gen-side">

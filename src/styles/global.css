@@ -266,7 +266,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .gen .prog-card-badge { color: var(--specialist); }
 .eng .prog-card-badge { color: var(--forest); }
 .prog-card-title { font-family: 'DM Serif Display', serif; font-size: 26px; font-weight: 400; line-height: 1.12; margin-bottom: 10px; color: var(--ink); }
-.prog-card-desc { min-height: 96px; margin-bottom: 22px; padding-bottom: 20px; border-bottom: 1px solid rgba(38,33,92,0.08); }
+.prog-card-desc { margin-bottom: 22px; padding-bottom: 20px; border-bottom: 1px solid rgba(38,33,92,0.08); }
 .prog-card-sub { font-size: 13px; line-height: 1.65; color: var(--text-muted); margin-bottom: 8px; }
 .prog-card-sub:last-child { margin-bottom: 0; }
 .prog-card-for { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px; color: var(--text-muted); }
@@ -276,6 +276,15 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .prog-card-logos .partner-logo-img { height: 24px; max-width: 90px; width: auto; object-fit: contain; }
 .prog-card-logos .partner-logo-img[alt="McKinsey"] { height: 42px; max-width: 175px; }
 .prog-card-logos .partner-name { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+/* Engineering card ("Coding experience required") — slightly larger builder logos. */
+.prog-card.eng .prog-card-logos .partner-logo-img { height: 30px; max-width: 112px; }
+.prog-card.eng .prog-card-logos .partner-logo-img[alt="Google"],
+.prog-card.eng .prog-card-logos .partner-logo-img[alt="Fractal"] { height: 42px; max-width: 150px; }
+/* Generalist card ("No coding required") — slightly larger builder logos, with extra gap. */
+.prog-card.gen .prog-card-logos { gap: 16px 30px; }
+.prog-card.gen .prog-card-logos .partner-logo-img:not([alt="McKinsey"]) { height: 28px; max-width: 100px; }
+.prog-card.gen .prog-card-logos .partner-logo-img[alt="Flipkart"] { height: 40px; max-width: 130px; }
+.prog-card.gen .prog-card-logos .partner-logo-img[alt="McKinsey"] { height: 52px; max-width: 200px; }
 .prog-card-list { list-style: none; }
 .prog-card-list li { font-size: 12px; line-height: 1.7; padding-left: 12px; position: relative; color: var(--text-muted); }
 .prog-card-list li::before { content: '·'; position: absolute; left: 0; }
@@ -599,6 +608,33 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lf-submit:hover { background: var(--ink); }
 .lf-fineprint { font-size: 10px; color: var(--text-muted); text-align: center; margin-top: 12px; line-height: 1.5; }
 .lf-success { padding: 32px 16px; text-align: center; background: #E1F5EE; border-radius: 12px; border: 0.5px solid rgba(29,158,117,0.3); }
+
+/* ── TESTIMONIALS COLUMNS (scrolling) ── */
+.tmc-section { background: var(--parchment); padding: 48px var(--gutter) 40px; }
+.tmc-head { max-width: var(--content-max); margin: 0 auto 36px; }
+.tmc-columns {
+  display: flex; gap: 20px; justify-content: center;
+  max-height: 720px; overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+  max-width: 1200px; margin: 0 auto;
+}
+.tmc-col { flex: 0 0 340px; min-width: 0; overflow: hidden; }
+.tmc-col--md { display: none; }
+.tmc-col--lg { display: none; }
+@media (min-width: 768px)  { .tmc-col--md { display: block; } }
+@media (min-width: 1024px) { .tmc-col--lg { display: block; } }
+.tmc-track { display: flex; flex-direction: column; gap: 18px; padding-bottom: 18px; }
+.tmc-card {
+  background: white; border-radius: 18px; padding: 28px;
+  border: 0.5px solid rgba(175,169,236,0.28);
+  box-shadow: 0 4px 18px rgba(38,33,92,0.06);
+}
+.tmc-text { font-size: 13.5px; color: var(--text-muted); line-height: 1.7; margin-bottom: 18px; font-style: italic; }
+.tmc-author { display: flex; align-items: center; gap: 12px; padding-top: 14px; border-top: 0.5px solid rgba(175,169,236,0.2); }
+.tmc-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.tmc-name { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.3; }
+.tmc-role { font-size: 11.5px; color: var(--lavender); line-height: 1.4; margin-top: 1px; }
 
 /* ── SUCCESS STORIES ── */
 .stories-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 32px; }
@@ -1412,6 +1448,9 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .res-tags--nowrap .res-tag { font-size: 9px; padding: 3px 7px; white-space: nowrap; flex-shrink: 0; }
 .res-tag { font-size: 11px; font-weight: 500; letter-spacing: 0.01em; padding: 5px 11px; background: rgba(83,74,183,0.08); color: var(--specialist); border-radius: 20px; transition: background 0.2s; }
 .res-card:hover .res-tag { background: rgba(83,74,183,0.13); }
+.res-btn { align-self: center; margin-top: 16px; padding: 9px 44px; border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; color: #fff; cursor: pointer; background: linear-gradient(90deg, var(--specialist), #6A5FE0); box-shadow: 0 8px 18px rgba(83,74,183,0.28); transition: filter .2s, transform .2s; }
+.res-card:hover .res-btn { filter: brightness(1.06); }
+.res-btn:active { transform: scale(0.98); }
 @media (max-width: 860px) { .res-grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 900px) {
   .res-grid--4 {

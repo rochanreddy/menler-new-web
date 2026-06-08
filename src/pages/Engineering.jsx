@@ -15,6 +15,9 @@ const ENG_HIRING = {
   label: 'Hiring associations & roles',
   title: 'The jobs',
   titleEm: 'Claude AI Engineers are landing.',
+  labelStyle: { color: 'var(--forest)' },
+  titleStyle: { color: 'var(--forest)' },
+  titleEmStyle: { color: 'var(--placed)' },
   sub: 'Companies are hiring engineers who can build and ship Claude-native systems in production.',
   genLabel: 'AI Engineering',
   engLabel: 'Advanced AI Systems',
@@ -103,7 +106,7 @@ export default function Engineering() {
       </section>
 
       {/* ── MENTORS ── */}
-      <MentorsRail />
+      <MentorsRail labelStyle={{ color: 'var(--forest)' }} titleStyle={{ color: 'var(--forest)' }} />
 
       {/* ── HIRING PARTNERS & ROLES ── */}
       <HiringJobs {...ENG_HIRING} />
@@ -112,7 +115,7 @@ export default function Engineering() {
       <section className="mini-lead">
         <div className="mini-lead-inner">
           <div className="mini-lead-copy">
-            <h3>Get the Engineering <em>brochure & syllabus</em>.</h3>
+            <h3 style={{ color: 'var(--forest)' }}>Get the Engineering <em style={{ color: 'var(--placed)' }}>brochure & syllabus</em>.</h3>
             <p>Full Claude engineering stack — API, RAG, MCP, agents, evals — plus mentor list, fee structure, and Cohort 01 timeline.</p>
           </div>
           {done ? (
@@ -138,8 +141,8 @@ export default function Engineering() {
 
       {/* ── FAQ ── */}
       <section className="section" style={{ background: 'var(--parchment)', textAlign: 'center' }}>
-        <p className="section-label">FAQ</p>
-        <h2 className="section-h2">Engineering program FAQ</h2>
+        <p className="section-label" style={{ color: 'var(--forest)' }}>FAQ</p>
+        <h2 className="section-h2" style={{ color: 'var(--forest)' }}>Engineering program FAQ</h2>
         <FaqList items={ENGINEERING_FAQS} />
       </section>
 

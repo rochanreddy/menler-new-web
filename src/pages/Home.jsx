@@ -14,6 +14,7 @@ import { submitLead } from '../services/leadService';
 import { PROJECTS } from '../data/projectsData';
 import { BrandLogo } from '../components/common/PartnersMarquee';
 import HiringRail from '../components/common/HiringRail';
+import TestimonialsColumns from '../components/common/TestimonialsColumns';
 
 // Hiring-association companies. Each chip tries the local logo file first
 // (drop official PNG/SVGs in /public/logos with the names below), then the
@@ -453,26 +454,7 @@ export default function Home() {
       </section>
 
       {/* ── SUCCESS STORIES ── */}
-      <section className="section" style={{ background: 'var(--parchment)', paddingTop: 48, paddingBottom: 32 }}>
-        <p className="section-label">Voices · Fellows &amp; Advisors</p>
-        <h2 className="section-h2">Why<br /><em>chose Menler.</em></h2>
-        <p className="section-sub">These quotes are from our beta fellows and advisory voices — AI operators, builders, curriculum reviewers, and hiring associations.</p>
-        <div className="stories-grid" style={{ marginTop: 28 }}>
-          {STORIES.map((s, i) => (
-            <Reveal as="article" key={i} delay={Math.min(i, 5) * 60} className={`story-card${s.cls ? ` ${s.cls}` : ''}`}>
-              <p className="story-quote">{s.quote}</p>
-              <div className="story-meta">
-                <div className="story-avatar" style={s.avatarStyle}>{s.initials}</div>
-                <div>
-                  <p className="story-name">{s.name}</p>
-                  <p className="story-transition">{s.trans}</p>
-                </div>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-        <p className="stories-disclaimer">Quotes shown are anonymised excerpts from Menler beta participants and advisory partners. Named placement stories will be published post Demo Day.</p>
-      </section>
+      <TestimonialsColumns />
 
       {/* ── FAQ ── */}
       <section className="section" style={{ background: 'white', textAlign: 'center' }}>

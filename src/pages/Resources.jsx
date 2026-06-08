@@ -6,7 +6,7 @@ import { PROJECTS } from '../data/projectsData';
 import { submitLead } from '../services/leadService';
 
 const LIBRARY_CARDS = [
-  { num: '01', name: 'Prompt Library', desc: '120+ tested prompts across business, engineering, and beginner tracks.', tags: ['All programs', '120+ prompts'], pdf: null },
+  { num: '01', name: 'Prompt Library', desc: '120+ tested prompts across business, engineering, and beginner tracks.', tags: ['All programs', '120+ prompts'], pdf: '/pdfs/Menler_100_Prompts_Playbook.pdf' },
   { num: '02', name: 'AI stack map', desc: 'Visual guide to the best AI tools by category.', tags: ['All programs', 'Q2 2026'], pdf: null },
   { num: '03', name: 'Project connectors docs', desc: '18 hands-on project walkthroughs led by the program instructors.', tags: ['Generalist', 'Engineering', 'Kickstarter'], tagsNowrap: true, pdf: '/pdfs/Menler_Connector_Projects.pdf' },
   { num: '04', name: 'AI glossary', desc: '100+ AI terms explained in simple, beginner-friendly language.', tags: ['Beginners', '100+ terms'], pdf: '/pdfs/Menler_AI_Glossary_AtoZ.pdf' },
@@ -22,31 +22,52 @@ const TEMPLATE_CARDS = [
 ];
 
 const PLAYBOOK = [
-  { logo: '/logos/claude_code-removebg-preview.png', thumb: '120+ Code Prompts', badge: 'Claude Code', cat: 'Engineering', title: 'Menler Claude Code Playbook', desc: 'Build, refactor, and ship real code with Claude in your terminal and editor.', pdf: '/pdfs/Menler_Claude_Code_Playbook.pdf' },
-  { logo: '/logos/claude.svg', thumb: '200+ Chat Prompts', badge: 'Claude Chat', cat: 'Generalist', title: 'Menler Claude Chat Playbook', desc: 'Everyday prompting — research, writing, analysis, and fast answers.', pdf: '/pdfs/Menler_Claude_Chat_Playbook.pdf' },
-  { logo: '/logos/claude_cowork.png', thumb: '50+ Cowork Flows', badge: 'Claude Cowork', cat: 'Workflows', title: 'Menler Claude Cowork Playbook', desc: 'Multi-document, multi-step work that turns raw inputs into finished deliverables.', pdf: '/pdfs/Menler_Claude_Cowork_Playbook.pdf' },
-  { logo: '/logos/claude_design.png', thumb: '80+ Design Prompts', badge: 'Claude Design', cat: 'Design', title: 'Menler Claude Design Playbook', desc: 'Generate visuals, mockups, and on-brand design assets with Claude.', pdf: '/pdfs/Menler_Claude_Design_Playbook.pdf' },
-  { logo: '/logos/claude.svg', ms: '/logos/microsoft.png', thumb: '100+ prompts', badge: 'Claude MS', cat: 'Microsoft 365', title: 'Claude in MS', desc: 'Use Claude across Microsoft 365 — Word, Excel, PowerPoint, and Teams.', pdf: null },
+  { logo: '/logos/claude_code-removebg-preview.png', thumb: '120+ Code Prompts', badge: 'Claude Code', cat: 'Engineering', title: 'Claude Code Playbook', desc: 'Build, refactor, and ship real code with Claude in your terminal and editor.', pdf: '/pdfs/Menler_Claude_Code_Playbook.pdf' },
+  { logo: '/logos/claude.svg', thumb: '200+ Chat Prompts', badge: 'Claude Chat', cat: 'Generalist', title: 'Claude Chat Playbook', desc: 'Everyday prompting — research, writing, analysis, and fast answers.', pdf: '/pdfs/Menler_Claude_Chat_Playbook.pdf' },
+  { logo: '/logos/claude_cowork.png', thumb: '50+ Cowork Flows', badge: 'Claude Cowork', cat: 'Workflows', title: 'Claude Cowork Playbook', desc: 'Multi-document, multi-step work that turns raw inputs into finished deliverables.', pdf: '/pdfs/Menler_Claude_Cowork_Playbook.pdf' },
+  { logo: '/logos/claude_design.png', thumb: '80+ Design Prompts', badge: 'Claude Design', cat: 'Design', title: 'Claude Design Playbook', desc: 'Generate visuals, mockups, and on-brand design assets with Claude.', pdf: '/pdfs/Menler_Claude_Design_Playbook.pdf' },
+  { logo: '/logos/claude.svg', ms: '/logos/microsoft.png', thumb: '100+ prompts', badge: 'Claude MS', cat: 'Microsoft 365', title: 'Claude in MS', desc: 'Use Claude across Microsoft 365 — Word, Excel, PowerPoint, and Teams.', pdf: '/pdfs/Menler_Claude_Microsoft_Playbook.pdf' },
 ];
 
 // Group every project's tag class into a small set of filterable domains for
 // the Project builds filter. Keeps near-duplicate tag labels under one chip.
-const PROJECT_DOMAIN = {
-  't-eng': 'Engineering',
-  't-tech': 'Engineering',
-  't-analyst': 'Data & Analytics',
-  't-ops': 'Operations',
-  't-marketing': 'Sales & Marketing',
-  't-finance': 'Sales & Marketing',
-  't-pm': 'Product',
-  't-pjm': 'Product',
-  't-founder': 'Strategy & Leadership',
-  't-vc': 'Strategy & Leadership',
+const PROJECT_DOMAIN_MAP = {
+  't-eng': 'engineering',
+  't-tech': 'engineering',
+  't-analyst': 'analytics',
+  't-ops': 'founders office', // default fallback for t-ops
+  't-marketing': 'marketing and sales',
+  't-finance': 'marketing and sales',
+  't-pm': 'product',
+  't-pjm': 'product',
+  't-founder': 'founders office',
+  't-vc': 'finance operation',
 };
-const PROJECT_FILTERS = ['All', 'Engineering', 'Product', 'Data & Analytics', 'Operations', 'Finance Operations', 'HR Operations', 'Sales & Marketing', 'Strategy & Leadership'];
 
-// A project's filter domain: explicit `domain` field wins, else mapped by tag class.
-const projectDomain = (p) => p.domain || PROJECT_DOMAIN[p.tagCls];
+const PROJECT_FILTERS = [
+  'All',
+  'analytics',
+  'engineering',
+  'finance operation',
+  'founders office',
+  'human resource',
+  'marketing and sales',
+  'product'
+];
+
+// A project's filter domain: explicit overrides win, else mapped by tag class.
+const projectDomain = (p) => {
+  const tag = (p.tag || '').toLowerCase();
+  const domain = (p.domain || '').toLowerCase();
+
+  if (domain.includes('hr') || tag.includes('hr') || tag.includes('human')) {
+    return 'human resource';
+  }
+  if (domain.includes('finance') || tag.includes('finance') || tag.includes('venture') || tag.includes('vc')) {
+    return 'finance operation';
+  }
+  return PROJECT_DOMAIN_MAP[p.tagCls] || 'founders office';
+};
 
 export default function Resources() {
   const navigate = useNavigate();
@@ -117,6 +138,7 @@ export default function Resources() {
                   <p className="res-name">{r.name}</p>
                   <p className="res-desc">{r.desc}</p>
                   <div className={`res-tags${r.tagsNowrap ? ' res-tags--nowrap' : ''}`}>{r.tags.map((t, j) => <span key={j} className="res-tag">{t}</span>)}</div>
+                  <button className="res-btn" onClick={(e) => { e.stopPropagation(); open(); }}>Access Now</button>
                 </div>
               );
             })}
@@ -137,7 +159,7 @@ export default function Resources() {
                 onClick={() => setProjFilter(f)}
                 aria-pressed={projFilter === f}
               >
-                {f}
+                {f === 'All' ? 'All' : f.split(' ').map(w => w === 'and' ? 'and' : w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
               </button>
             ))}
           </div>

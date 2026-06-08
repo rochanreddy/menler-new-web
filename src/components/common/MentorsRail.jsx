@@ -103,7 +103,7 @@ function CaptainRow({ list, dir, tint }) {
   );
 }
 
-export default function MentorsRail({ style, rows = ROWS.length, bare = false } = {}) {
+export default function MentorsRail({ style, rows = ROWS.length, bare = false, labelStyle = {}, titleStyle = {} } = {}) {
   // `rows` caps how many scrolling rows render (default: all). `bare` skips the
   // section wrapper + heading so the rail can sit inside another section.
   const shown = ROWS.slice(0, Math.max(1, rows));
@@ -121,8 +121,8 @@ export default function MentorsRail({ style, rows = ROWS.length, bare = false } 
   return (
     <section className="captains-section" style={style}>
       <div className="captains-head">
-        <p className="captains-label">Instructors / Mentors</p>
-        <h2 className="captains-title">The People Behind Menler</h2>
+        <p className="captains-label" style={labelStyle}>Instructors / Mentors</p>
+        <h2 className="captains-title" style={titleStyle}>The People Behind Menler</h2>
         <p className="captains-sub">Instructors, mentors, and leaders from industry who shape what you learn and how you grow.</p>
       </div>
 
