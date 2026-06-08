@@ -1,8 +1,5 @@
-import { APTITUDE_QUESTIONS } from './aptitudeQuestions';
+import { APTITUDE_QUESTIONS, SET_QUESTIONS } from './aptitudeQuestions';
 
-// 9 readiness clusters, each with 5 sets. SCAFFOLD: every set currently shares
-// the same question pool (APTITUDE_QUESTIONS) so the full flow works end-to-end.
-// Replace `questions` per set with real cluster-specific questions later.
 const CLUSTER_NAMES = [
   'Agentic AI',
   'AI Agent Workflows',
@@ -15,13 +12,30 @@ const CLUSTER_NAMES = [
   'RAG Knowledge Systems',
 ];
 
-export const CLUSTERS = CLUSTER_NAMES.map(name => ({
-  name,
-  sets: Array.from({ length: 5 }, (_, i) => ({
+function buildSets(clusterName) {
+  const custom = SET_QUESTIONS[clusterName];
+  if (custom?.length) {
+    return custom.map((questions, i) => ({
+      label: `Set ${i + 1}`,
+      questions,
+    }));
+  }
+  // Fallback: same default pool for all 5 sets until you add SET_QUESTIONS[clusterName].
+  return Array.from({ length: 5 }, (_, i) => ({
     label: `Set ${i + 1}`,
     questions: APTITUDE_QUESTIONS,
-  })),
+  }));
+}
+
+export const CLUSTERS = CLUSTER_NAMES.map(name => ({
+  name,
+  sets: buildSets(name),
 }));
+
+export function getSetQuestions(clusterName, setIdx) {
+  const cluster = CLUSTERS.find(c => c.name === clusterName);
+  return cluster?.sets[setIdx]?.questions ?? APTITUDE_QUESTIONS;
+}
 
 // A 14-day learning roadmap. Lightly tailored by the recommended program.
 export function buildRoadmap(program) {
@@ -41,7 +55,6 @@ export function buildRoadmap(program) {
     'Polish your portfolio project',
     'Capstone demo + your next step',
   ];
-  // Swap the final day's CTA to match the recommended program.
   const last = program === 'Claude AI Engineering'
     ? 'Capstone demo + start the Engineering track'
     : program === 'Claude AI Generalist'

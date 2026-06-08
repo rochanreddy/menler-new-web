@@ -53,6 +53,9 @@ export default function Navbar() {
     return () => subscription.unsubscribe();
   }, []);
 
+  // The admin panel is a standalone, chrome-free area — no public navbar.
+  if (location.pathname.startsWith('/admin')) return null;
+
   return (
     <nav className="nav" ref={navRef}>
       <button className="nav-logo" onClick={() => go('/')} aria-label="menler — home">

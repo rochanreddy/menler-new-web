@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Footer from '../components/layout/Footer';
 import FaqList from '../components/common/FaqList';
 import { submitLead } from '../services/leadService';
-import { APTITUDE_QUESTIONS, MAX_SCORE, getRecommendation } from '../data/aptitudeQuestions';
-import { CLUSTERS, buildRoadmap } from '../data/aptitudeClusters';
+import { getRecommendation, maxScoreForQuestions } from '../data/aptitudeQuestions';
+import { CLUSTERS, buildRoadmap, getSetQuestions } from '../data/aptitudeClusters';
 import { APTITUDE_FAQS } from '../data/faqData';
 
 const TRUST_CARDS = [
@@ -26,20 +26,33 @@ const QB_QUESTIONS = [
 ];
 
 // Three readiness dimensions, mapped to question ranges.
-const DIMENSIONS = [
-  { label: 'Problem-solving', from: 0, to: 5 },
-  { label: 'Execution ability', from: 5, to: 10 },
-  { label: 'Role alignment', from: 10, to: 15 },
-];
+function buildDimensions(length) {
+  const size = Math.floor(length / 3);
+  return [
+    { label: 'Problem-solving', from: 0, to: size },
+    { label: 'Execution ability', from: size, to: size * 2 },
+    { label: 'Role alignment', from: size * 2, to: length },
+  ];
+}
 
-const blankAnswers = () => Array(APTITUDE_QUESTIONS.length).fill(null);
-const blankMarks = () => Array(APTITUDE_QUESTIONS.length).fill(false);
-const INIT = { view: 'landing', cluster: null, setIdx: 0, idx: 0, answers: blankAnswers(), marked: blankMarks() };
+const blankArr = (len, fill) => Array(len).fill(fill);
+const INIT = { view: 'landing', cluster: null, setIdx: 0, idx: 0, questions: [], answers: [], marked: [] };
 
 function reducer(state, action) {
   switch (action.type) {
     case 'PICK_CLUSTER': return { ...state, view: 'sets', cluster: action.cluster };
-    case 'PICK_SET': return { ...state, view: 'runner', setIdx: action.setIdx, idx: 0, answers: blankAnswers(), marked: blankMarks() };
+    case 'PICK_SET': {
+      const questions = getSetQuestions(state.cluster, action.setIdx);
+      return {
+        ...state,
+        view: 'runner',
+        setIdx: action.setIdx,
+        idx: 0,
+        questions,
+        answers: blankArr(questions.length, null),
+        marked: blankArr(questions.length, false),
+      };
+    }
     case 'SELECT': {
       const answers = [...state.answers];
       answers[state.idx] = action.optIdx;
@@ -57,19 +70,25 @@ function reducer(state, action) {
     }
     case 'GOTO': return { ...state, idx: action.idx };
     case 'NEXT':
-      return state.idx < APTITUDE_QUESTIONS.length - 1 ? { ...state, idx: state.idx + 1 } : { ...state, view: 'report' };
+      return state.idx < state.questions.length - 1 ? { ...state, idx: state.idx + 1 } : { ...state, view: 'report' };
     case 'BACK':
       return state.idx > 0 ? { ...state, idx: state.idx - 1 } : { ...state, view: 'sets' };
     case 'SUBMIT': return { ...state, view: 'report' };
-    case 'RETAKE': return { ...state, view: 'runner', idx: 0, answers: blankAnswers(), marked: blankMarks() };
+    case 'RETAKE': return {
+      ...state,
+      view: 'runner',
+      idx: 0,
+      answers: blankArr(state.questions.length, null),
+      marked: blankArr(state.questions.length, false),
+    };
     case 'TO_SETS': return { ...state, view: 'sets' };
     case 'TO_CLUSTERS': return { ...INIT };
     default: return state;
   }
 }
 
-function calcScore(answers) {
-  return answers.reduce((acc, a, i) => (a === null ? acc : acc + APTITUDE_QUESTIONS[i].options[a].s), 0);
+function calcScore(answers, questions) {
+  return answers.reduce((acc, a, i) => (a === null ? acc : acc + questions[i].options[a].s), 0);
 }
 
 export default function Aptitude() {
@@ -98,7 +117,7 @@ export default function Aptitude() {
   useEffect(() => {
     if (state.view !== 'runner') return;
     const onKey = (e) => {
-      const n = APTITUDE_QUESTIONS[state.idx].options.length;
+      const n = state.questions[state.idx].options.length;
       const sel = state.answers[state.idx];
       if (e.key >= '1' && e.key <= String(n)) { dispatch({ type: 'SELECT', optIdx: Number(e.key) - 1 }); e.preventDefault(); }
       else if (e.key === 'ArrowDown') { dispatch({ type: 'SELECT', optIdx: sel === null ? 0 : Math.min(sel + 1, n - 1) }); e.preventDefault(); }
@@ -107,7 +126,7 @@ export default function Aptitude() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [state.view, state.idx, state.answers]);
+  }, [state.view, state.idx, state.answers, state.questions]);
 
   const [leadForm, setLeadForm] = useState({ name: '', email: '' });
   const [leadDone, setLeadDone] = useState(false);
@@ -134,15 +153,15 @@ export default function Aptitude() {
   };
   const saveReport = async (e) => {
     e.preventDefault();
-    try { await submitLead({ ...leadForm, cluster: state.cluster, set: state.setIdx + 1, score: calcScore(state.answers), source: 'aptitude-report' }); } catch { /* non-blocking */ }
+    try { await submitLead({ ...leadForm, cluster: state.cluster, set: state.setIdx + 1, score: calcScore(state.answers, state.questions), source: 'aptitude-report' }); } catch { /* non-blocking */ }
     setLeadDone(true);
   };
 
   // ── QUIZ RUNNER ──
   if (state.view === 'runner') {
-    const q = APTITUDE_QUESTIONS[state.idx];
+    const q = state.questions[state.idx];
     const selected = state.answers[state.idx];
-    const total = APTITUDE_QUESTIONS.length;
+    const total = state.questions.length;
     const answeredCount = state.answers.filter(a => a !== null).length;
     const markedCount = state.marked.filter(Boolean).length;
     const pct = (answeredCount / total) * 100;
@@ -184,7 +203,7 @@ export default function Aptitude() {
             </div>
             <p className="runner-nav-title">Questions</p>
             <div className="runner-nav-grid">
-              {APTITUDE_QUESTIONS.map((_, i) => {
+              {state.questions.map((_, i) => {
                 const ans = state.answers[i] !== null;
                 const mk = state.marked[i];
                 const cur = i === state.idx;
@@ -206,11 +225,13 @@ export default function Aptitude() {
 
   // ── REPORT CARD ──
   if (state.view === 'report') {
-    const score = calcScore(state.answers);
-    const rec = getRecommendation(score);
+    const { questions } = state;
+    const maxScore = maxScoreForQuestions(questions);
+    const score = calcScore(state.answers, questions);
+    const rec = getRecommendation(score, maxScore);
     const roadmap = buildRoadmap(rec.program);
-    const dims = DIMENSIONS.map(d => {
-      const slice = APTITUDE_QUESTIONS.slice(d.from, d.to);
+    const dims = buildDimensions(questions.length).map(d => {
+      const slice = questions.slice(d.from, d.to);
       const max = slice.reduce((a, qq) => a + Math.max(...qq.options.map(o => o.s)), 0);
       const got = state.answers.slice(d.from, d.to).reduce((a, ans, i) => (ans === null ? a : a + slice[i].options[ans].s), 0);
       return { ...d, pct: Math.round((got / max) * 100) };
@@ -220,7 +241,7 @@ export default function Aptitude() {
         <section className="apt-runner">
           <div className="runner-shell apt-report">
             <p className="runner-meta">Set {state.setIdx + 1} · {state.cluster} · Your report</p>
-            <p className="runner-score">{score}<em>/{MAX_SCORE}</em></p>
+            <p className="runner-score">{score}<em>/{maxScore}</em></p>
             <p className="runner-band">{rec.band}</p>
 
             <div className="apt-dims">
@@ -236,7 +257,7 @@ export default function Aptitude() {
             <details className="apt-answers">
               <summary>View answer sheet</summary>
               <div className="apt-answers-body">
-                {APTITUDE_QUESTIONS.map((qq, i) => {
+                {questions.map((qq, i) => {
                   const ans = state.answers[i];
                   const best = qq.options.reduce((bi, o, oi, arr) => (o.s > arr[bi].s ? oi : bi), 0);
                   return (

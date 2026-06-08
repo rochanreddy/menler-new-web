@@ -90,8 +90,8 @@ export default function Engineering() {
 
       {/* ── CURRICULUM ── */}
       <section className="section" style={{ background: 'white' }}>
-        <p className="section-label">12-week curriculum</p>
-        <h2 className="section-h2">From engineer<br /><em>to Claude Specialist.</em></h2>
+        <p className="section-label" style={{ color: 'var(--forest)' }}>12-week curriculum</p>
+        <h2 className="section-h2" style={{ color: 'var(--forest)' }}>From engineer<br /><em style={{ color: 'var(--placed)' }}>to Claude Specialist.</em></h2>
         <p className="section-sub">The full Claude engineering stack — API, RAG, MCP, agents, evaluation, LLMOps. Shipped to production.</p>
         <div className="curric curric-eng" style={{ display: 'block' }}>
           <div className="curric-detail curric-soon">

@@ -1,16 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../components/layout/Footer';
+import PlaybookModal from '../components/common/PlaybookModal';
 import { PROJECTS } from '../data/projectsData';
 import { submitLead } from '../services/leadService';
 
 const LIBRARY_CARDS = [
-  { num: '01', name: 'Prompt Library', desc: 'Curated, searchable prompts by domain — Generalist tracks, Engineering scenarios, and Kickstarter beginners. Every prompt is versioned and tested on Claude Sonnet 4.6.', tags: ['All programs', '120+ prompts'] },
-  { num: '02', name: 'Tool setup guides', desc: 'Step-by-step setup for Claude.ai, Claude Desktop, Claude Cowork, Claude Code, Claude in Excel, and MCP server configuration. Screenshots included.', tags: ['All programs', '22 guides'] },
-  { num: '03', name: 'Project build docs', desc: 'Full walkthroughs for 8 Generalist + 5 Engineering + 5 Kickstarter projects. From the same instructors who built the program.', tags: ['Generalist', 'Engineering', 'Kickstarter'] },
-  { num: '04', name: 'AI stack map', desc: 'A one-page visual of best-in-class AI tools by category — writing, coding, research, design, audio, agents. Updated quarterly.', tags: ['All programs', 'Q2 2026'] },
-  { num: '05', name: 'Templates & cheat sheets', desc: 'Prompt-engineering one-pager, MCP server starter, Claude in Excel templates, AI evals checklist, and more. Free PDFs and GitHub repos.', tags: ['All programs', 'Free PDFs'] },
-  { num: '06', name: 'AI glossary', desc: 'Plain-English glossary of 100+ AI terms in the Indian context — no academic jargon, no assumed knowledge. Sorted by difficulty.', tags: ['Beginners', '100+ terms'] },
+  { num: '01', name: 'Prompt Library', desc: '120+ tested prompts across business, engineering, and beginner tracks.', tags: ['All programs', '120+ prompts'], pdf: null },
+  { num: '02', name: 'AI stack map', desc: 'Visual guide to the best AI tools by category.', tags: ['All programs', 'Q2 2026'], pdf: null },
+  { num: '03', name: 'Project connectors docs', desc: '18 hands-on project walkthroughs led by the program instructors.', tags: ['Generalist', 'Engineering', 'Kickstarter'], tagsNowrap: true, pdf: '/pdfs/Menler_Connector_Projects.pdf' },
+  { num: '04', name: 'AI glossary', desc: '100+ AI terms explained in simple, beginner-friendly language.', tags: ['Beginners', '100+ terms'], pdf: '/pdfs/Menler_AI_Glossary_AtoZ.pdf' },
 ];
 
 const TEMPLATE_CARDS = [
@@ -22,9 +21,18 @@ const TEMPLATE_CARDS = [
   { title: 'Prompt pattern flashcards', type: 'PDF', desc: '40 double-sided flashcards covering all major prompting patterns. Print or Anki import.' },
 ];
 
+const PLAYBOOK = [
+  { logo: '/logos/claude_code-removebg-preview.png', thumb: '120+ Code Prompts', badge: 'Claude Code', cat: 'Engineering', title: 'Menler Claude Code Playbook', desc: 'Build, refactor, and ship real code with Claude in your terminal and editor.', pdf: '/pdfs/Menler_Claude_Code_Playbook.pdf' },
+  { logo: '/logos/claude.svg', thumb: '200+ Chat Prompts', badge: 'Claude Chat', cat: 'Generalist', title: 'Menler Claude Chat Playbook', desc: 'Everyday prompting — research, writing, analysis, and fast answers.', pdf: '/pdfs/Menler_Claude_Chat_Playbook.pdf' },
+  { logo: '/logos/claude_cowork.png', thumb: '50+ Cowork Flows', badge: 'Claude Cowork', cat: 'Workflows', title: 'Menler Claude Cowork Playbook', desc: 'Multi-document, multi-step work that turns raw inputs into finished deliverables.', pdf: '/pdfs/Menler_Claude_Cowork_Playbook.pdf' },
+  { logo: '/logos/claude_design.png', thumb: '80+ Design Prompts', badge: 'Claude Design', cat: 'Design', title: 'Menler Claude Design Playbook', desc: 'Generate visuals, mockups, and on-brand design assets with Claude.', pdf: '/pdfs/Menler_Claude_Design_Playbook.pdf' },
+  { logo: '/logos/claude.svg', ms: '/logos/microsoft.png', thumb: '100+ prompts', badge: 'Claude MS', cat: 'Microsoft 365', title: 'Claude in MS', desc: 'Use Claude across Microsoft 365 — Word, Excel, PowerPoint, and Teams.', pdf: null },
+];
+
 export default function Resources() {
   const navigate = useNavigate();
   const go = (path) => { navigate(path); window.scrollTo(0, 0); };
+  const [pbItem, setPbItem] = useState(null);
   const [email, setEmail] = useState('');
   const [done, setDone] = useState(false);
   const handleNewsletter = async (e) => {
@@ -36,44 +44,73 @@ export default function Resources() {
   return (
     <>
       {/* ── HERO ── */}
-      <section className="hero hero-centered">
+      <section className="hero hero-centered" style={{ paddingTop: 56 }}>
         <div className="hero-ring r1" /><div className="hero-ring r2" />
         <div className="hero-inner">
-          <p className="hero-eyebrow">Resources · Free · Updated weekly</p>
           <h1 className="hero-h1">The Menler library.<br /><em>Free. Forever.</em></h1>
-          <p className="hero-sub">Every guide, prompt, template, and tool walkthrough is maintained and updated weekly by the same instructors who built the Fellowship. No waitlist. No paywall. Just the best free Claude AI resources in India.</p>
+          <p className="hero-sub">The knowledge layer for the AI-native workforce. Guides, prompts, templates, and frameworks designed for real-world execution.</p>
         </div>
       </section>
-
-      {/* ── LIBRARY CARDS ── */}
-      <section className="res-preview" style={{ background: 'var(--parchment)' }}>
+      {/* ── CLAUDE PLAYBOOK ── */}
+      <section className="res-preview" style={{ background: 'white', paddingTop: 40, paddingBottom: 40 }}>
         <div className="preview-shell">
-          <p className="section-label">The Menler library</p>
-          <h2 className="section-h2">Six resources.<br /><em>All free.</em></h2>
-          <div className="res-grid">
-            {LIBRARY_CARDS.map((r, i) => (
-              <div key={i} className="res-card">
-                <p className="res-num">{r.num}</p>
-                <p className="res-name">{r.name}</p>
-                <p className="res-desc">{r.desc}</p>
-                <div className="res-tags">{r.tags.map((t, j) => <span key={j} className="res-tag">{t}</span>)}</div>
+          <p className="section-label">Claude Playbook</p>
+          <h2 className="section-h2">Master every<br /><em>Claude surface.</em></h2>
+          <div className="playbook-grid">
+            {PLAYBOOK.map((p, i) => (
+              <div key={i} className="pb-card" role="button" tabIndex={0} onClick={() => setPbItem(p)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setPbItem(p); } }}>
+                <div className="pb-thumb">
+                  <span className="pb-badge">{p.badge}</span>
+                  <h3 className="pb-thumb-title">{p.thumb}</h3>
+                </div>
+                <div className="pb-logos">
+                  <img className="pb-logo" src={p.logo} alt="" aria-hidden="true" />
+                  {p.ms && <img className="pb-logo" src={p.ms} alt="" aria-hidden="true" />}
+                </div>
+                <div className="pb-body">
+                  <span className="pb-cat">{p.cat}</span>
+                  <p className="pb-title">{p.title}</p>
+                  <p className="pb-sub">{p.desc}</p>
+                  <button className="pb-btn" onClick={(e) => { e.stopPropagation(); setPbItem(p); }}>Access Now</button>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
-
+      {/* ── LIBRARY CARDS ── */}
+      <section className="res-preview" style={{ background: 'var(--parchment)', paddingBottom: 28 }}>
+        <div className="preview-shell">
+          <p className="section-label">The Menler library</p>
+          <h2 className="section-h2">Knowledge Layer.<br /><em>Learn free</em></h2>
+          <div className="res-grid res-grid--4">
+            {LIBRARY_CARDS.map((r, i) => {
+              const open = () => setPbItem({ badge: 'Free resource', title: r.name, desc: r.desc, pdf: r.pdf });
+              return (
+                <div key={i} className="res-card" role="button" tabIndex={0} onClick={open}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } }}>
+                  <p className="res-num">{r.num}</p>
+                  <p className="res-name">{r.name}</p>
+                  <p className="res-desc">{r.desc}</p>
+                  <div className={`res-tags${r.tagsNowrap ? ' res-tags--nowrap' : ''}`}>{r.tags.map((t, j) => <span key={j} className="res-tag">{t}</span>)}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
       {/* ── PROJECT BUILDS ── */}
-      <section className="res-preview alt" style={{ background: 'var(--parchment)' }}>
+      <section id="project-builds" className="res-preview alt" style={{ background: 'white' }}>
         <div className="preview-shell">
           <p className="section-label">Library 03 · Project builds</p>
           <h2 className="section-h2">Every project.<br /><em>One place.</em></h2>
           <p className="section-sub">The full set of fellow-built projects across domains. Open any one for the build doc, stack, and outcome.</p>
-          <div className="proj-grid">
+          <div className="proj-grid proj-grid--4 proj-grid--library">
             {PROJECTS.map((p) => (
               <article
                 key={p.slug}
-                className="proj-card proj-card--clickable"
+                className="proj-card proj-card--clickable proj-card--library"
                 role="button"
                 tabIndex={0}
                 onClick={() => go(`/projects/${p.slug}`)}
@@ -82,7 +119,6 @@ export default function Resources() {
                 {p.image && <div className="proj-card-img"><img src={p.image} alt={p.title} loading="lazy" /></div>}
                 <span className={`proj-domain-tag ${p.tagCls}`}>{p.tag}</span>
                 <h3 className="proj-card-title">{p.title}</h3>
-                <p className="proj-card-desc">{p.desc}</p>
                 <div className="proj-stack">{p.stack.map(s => <span key={s}>{s}</span>)}</div>
                 <p className="proj-outcome">{p.outcome}</p>
                 <span className="proj-card-link">View preview</span>
@@ -93,21 +129,6 @@ export default function Resources() {
       </section>
 
       {/* ── TEMPLATES ── */}
-      <section className="res-preview" style={{ background: 'white' }}>
-        <div className="preview-shell">
-          <p className="section-label">Library 05 · Templates</p>
-          <h2 className="section-h2">Six templates.<br /><em>Copy, fork, ship.</em></h2>
-          <div className="proj-grid">
-            {TEMPLATE_CARDS.map((t, i) => (
-              <div key={i} className="proj-card">
-                <span className="proj-track">{t.type}</span>
-                <p className="proj-name">{t.title}</p>
-                <p className="proj-desc">{t.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ── NEWSLETTER ── */}
       <section className="mini-lead">
@@ -126,6 +147,35 @@ export default function Resources() {
           )}
         </div>
       </section>
+
+      {/* ── EXPLORE MENLER PROGRAMS ── */}
+      <section className="section" style={{ background: 'white', paddingTop: 28, paddingBottom: 40 }}>
+        <p className="section-label" style={{ textAlign: 'center' }}>Explore Menler Programs</p>
+        <h2 className="section-h2" style={{ textAlign: 'center' }}>Continue your <em>AI journey.</em></h2>
+        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto' }}>Ready to go beyond assessment? Explore the Menler programs designed to help you build capability, portfolio, and career momentum.</p>
+        <div className="cluster-grid" style={{ marginTop: 28 }}>
+          <div className="cluster-card cluster-card--kick">
+            <p className="cluster-num">For beginners &amp; explorers</p>
+            <p className="cluster-name">Menler Kickstarter</p>
+            <p className="cluster-sets">Learn AI fundamentals, build your first portfolio, and become AI fluent in just 14 days.</p>
+            <button className="cluster-btn" onClick={() => go('/kickstarter')}>Explore Kickstarter</button>
+          </div>
+          <div className="cluster-card cluster-card--gen">
+            <p className="cluster-num">College students &amp; professionals</p>
+            <p className="cluster-name">Menler Generalist Fellowship</p>
+            <p className="cluster-sets">Apply AI inside marketing, finance operations, product management, HR operations, consulting, and business workflows.</p>
+            <button className="cluster-btn" onClick={() => go('/generalist')}>Explore Fellowship</button>
+          </div>
+          <div className="cluster-card cluster-card--eng">
+            <p className="cluster-num">Engineers &amp; technical builders</p>
+            <p className="cluster-name">Menler AI Engineering Fellowship</p>
+            <p className="cluster-sets">Build production-grade AI systems, agents, RAG applications, MCP integrations, and AI infrastructure.</p>
+            <button className="cluster-btn" onClick={() => go('/engineering')}>Explore Engineering</button>
+          </div>
+        </div>
+      </section>
+
+      <PlaybookModal item={pbItem} onClose={() => setPbItem(null)} />
 
       <Footer />
     </>

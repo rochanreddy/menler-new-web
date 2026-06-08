@@ -21,7 +21,7 @@ export default function NotFound() {
         </div>
         <div className="notfound-inner">
           <p className="notfound-code">404</p>
-          <h1 className="notfound-h1">This page is <em>off the meridian.</em></h1>
+          <h1 className="notfound-h1">This page is <em>off the menler.</em></h1>
           <p className="notfound-sub">The link you followed doesn't exist — but everything that matters is one tap away.</p>
           <div className="notfound-actions">
             <button className="btn-primary" onClick={() => go('/')}>Back to home</button>

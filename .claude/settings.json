@@ -5,7 +5,16 @@
       "Bash(npm run *)",
       "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\(JSON.stringify\\({...p.dependencies, ...p.devDependencies}, null, 0\\)\\)\")",
       "Bash(npm install *)",
-      "Bash(xargs -I{} sed -n '{}p' src/styles/global.css)"
+      "Bash(xargs -I{} sed -n '{}p' src/styles/global.css)",
+      "Bash(sed -n '1,40p' src/data/blogData.js)",
+      "Bash(sed -n '1,30p' src/data/faqData.js)",
+      "Bash(sed -n '1,30p' src/data/projectsData.js)",
+      "Bash(sed -n '1,30p' src/data/curriculumData.js)",
+      "Bash(tasklist)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill //PID 24408 //F)",
+      "Bash(npx eslint *)",
+      "Bash(echo \"exit: $?\")"
     ]
   }
 }

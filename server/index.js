@@ -10,6 +10,7 @@ import authRoutes from './routes/auth.js';
 import googleRoutes from './routes/google.js';
 import profileRoutes from './routes/profile.js';
 import leadRoutes from './routes/leads.js';
+import adminRoutes from './routes/admin.js';
 
 const app = express();
 const port = Number(process.env.PORT || 4000);
@@ -25,6 +26,7 @@ app.use('/auth', authRoutes);
 app.use('/auth/google', googleRoutes);
 app.use('/profile', profileRoutes);
 app.use('/leads', leadRoutes);
+app.use('/admin', adminRoutes);
 
 async function start() {
   try {

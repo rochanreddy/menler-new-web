@@ -1,0 +1,522 @@
+import { useState, useEffect, useCallback } from 'react';
+import { adminApi } from '../lib/adminApi';
+
+/* ── helpers ─────────────────────────────────────────────────────────────── */
+
+function fmtDate(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return String(iso);
+  return d.toLocaleString('en-IN', {
+    day: '2-digit', month: 'short', year: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  });
+}
+
+const dash = (v) => (v === undefined || v === null || v === '' ? '—' : v);
+
+/* ── Login ───────────────────────────────────────────────────────────────── */
+
+function AdminLogin({ onSuccess }) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  const submit = async (e) => {
+    e.preventDefault();
+    if (busy) return;
+    setBusy(true);
+    setError('');
+    try {
+      await adminApi.login(username, password);
+      onSuccess();
+    } catch (err) {
+      setError(err.message || 'Login failed.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="admin-login-wrap">
+      <form className="admin-login-card" onSubmit={submit} noValidate>
+        <p className="admin-login-brand">menler · admin</p>
+        <h1 className="admin-login-title">Sign in</h1>
+        <p className="admin-login-sub">Restricted area. Authorized staff only.</p>
+
+        <label className="admin-field">
+          <span>Username</span>
+          <input
+            type="text"
+            autoComplete="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            autoFocus
+          />
+        </label>
+        <label className="admin-field">
+          <span>Password</span>
+          <input
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </label>
+
+        {error && <p className="admin-login-error">{error}</p>}
+
+        <button type="submit" className="admin-btn admin-btn--primary" disabled={busy}>
+          {busy ? 'Signing in…' : 'Sign in'}
+        </button>
+      </form>
+    </div>
+  );
+}
+
+/* ── Detail drawer ───────────────────────────────────────────────────────── */
+
+function Row({ label, value }) {
+  const isObj = value && typeof value === 'object';
+  return (
+    <div className="admin-detail-row">
+      <span className="admin-detail-key">{label}</span>
+      <span className="admin-detail-val">
+        {isObj
+          ? <pre className="admin-detail-pre">{JSON.stringify(value, null, 2)}</pre>
+          : dash(value)}
+      </span>
+    </div>
+  );
+}
+
+function Drawer({ title, fields, onClose }) {
+  useEffect(() => {
+    const onKey = (e) => e.key === 'Escape' && onClose();
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  return (
+    <div className="admin-drawer-backdrop" onClick={onClose}>
+      <aside className="admin-drawer" onClick={(e) => e.stopPropagation()}>
+        <div className="admin-drawer-head">
+          <h2>{title}</h2>
+          <button className="admin-drawer-close" onClick={onClose} aria-label="Close">×</button>
+        </div>
+        <div className="admin-drawer-body">
+          {fields.map(([label, value]) => (
+            <Row key={label} label={label} value={value} />
+          ))}
+        </div>
+      </aside>
+    </div>
+  );
+}
+
+/* ── Overview ────────────────────────────────────────────────────────────── */
+
+function StatCard({ label, value, accent }) {
+  return (
+    <div className="admin-stat" style={accent ? { borderTopColor: accent } : undefined}>
+      <div className="admin-stat-value">{value}</div>
+      <div className="admin-stat-label">{label}</div>
+    </div>
+  );
+}
+
+function BreakdownList({ title, rows }) {
+  const max = Math.max(1, ...rows.map((r) => r.count));
+  return (
+    <div className="admin-panel-card">
+      <p className="admin-card-title">{title}</p>
+      {rows.length === 0 && <p className="admin-empty">No data yet.</p>}
+      <ul className="admin-breakdown">
+        {rows.map((r) => (
+          <li key={r.label}>
+            <span className="admin-breakdown-label">{r.label}</span>
+            <span className="admin-breakdown-bar">
+              <span style={{ width: `${(r.count / max) * 100}%` }} />
+            </span>
+            <span className="admin-breakdown-count">{r.count}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function Overview() {
+  const [stats, setStats] = useState(null);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    adminApi.getStats().then(setStats).catch((e) => setError(e.message));
+  }, []);
+
+  if (error) return <p className="admin-empty">{error}</p>;
+  if (!stats) return <p className="admin-empty">Loading…</p>;
+
+  const t = stats.totals;
+  const maxDay = Math.max(1, ...stats.byDay.map((d) => d.count));
+
+  return (
+    <div className="admin-overview">
+      <div className="admin-stat-grid">
+        <StatCard label="Total leads" value={t.leads} accent="var(--specialist)" />
+        <StatCard label="Leads · last 7 days" value={t.leads7} accent="var(--placed)" />
+        <StatCard label="Leads · last 30 days" value={t.leads30} accent="var(--placed)" />
+        <StatCard label="Registered users" value={t.users} accent="var(--ink)" />
+        <StatCard label="Verified users" value={t.verifiedUsers} accent="var(--ink)" />
+        <StatCard label="Profiles" value={t.profiles} accent="var(--lavender)" />
+      </div>
+
+      <div className="admin-panel-card">
+        <p className="admin-card-title">Leads · last 14 days</p>
+        <div className="admin-chart">
+          {stats.byDay.map((d) => (
+            <div className="admin-chart-col" key={d.date} title={`${d.date}: ${d.count}`}>
+              <div className="admin-chart-bar" style={{ height: `${(d.count / maxDay) * 100}%` }}>
+                {d.count > 0 && <span className="admin-chart-num">{d.count}</span>}
+              </div>
+              <span className="admin-chart-x">{d.date.slice(8)}/{d.date.slice(5, 7)}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="admin-two-col">
+        <BreakdownList title="Leads by program" rows={stats.byProgram} />
+        <BreakdownList title="Leads by source" rows={stats.bySource} />
+      </div>
+
+      <div className="admin-panel-card">
+        <p className="admin-card-title">Most recent leads</p>
+        {stats.recentLeads.length === 0 && <p className="admin-empty">No leads yet.</p>}
+        <ul className="admin-recent">
+          {stats.recentLeads.map((l) => (
+            <li key={l._id}>
+              <strong>{dash(l.name)}</strong>
+              <span>{dash(l.email)}</span>
+              <span className="admin-pill">{dash(l.program || l.source)}</span>
+              <time>{fmtDate(l.createdAt)}</time>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+/* ── Generic paginated table ─────────────────────────────────────────────── */
+
+function Pager({ page, limit, total, onPage }) {
+  const pages = Math.max(1, Math.ceil(total / limit));
+  return (
+    <div className="admin-pager">
+      <span>
+        {total === 0 ? '0' : (page - 1) * limit + 1}–{Math.min(page * limit, total)} of {total}
+      </span>
+      <div className="admin-pager-btns">
+        <button disabled={page <= 1} onClick={() => onPage(page - 1)}>← Prev</button>
+        <span>Page {page} / {pages}</span>
+        <button disabled={page >= pages} onClick={() => onPage(page + 1)}>Next →</button>
+      </div>
+    </div>
+  );
+}
+
+/* ── Leads tab ───────────────────────────────────────────────────────────── */
+
+const LEAD_SORTS = [
+  { value: '-createdAt', label: 'Newest first' },
+  { value: 'createdAt', label: 'Oldest first' },
+  { value: 'name', label: 'Name A–Z' },
+  { value: 'program', label: 'Program A–Z' },
+];
+
+function LeadsTab() {
+  const [search, setSearch] = useState('');
+  const [program, setProgram] = useState('');
+  const [source, setSource] = useState('');
+  const [sort, setSort] = useState('-createdAt');
+  const [page, setPage] = useState(1);
+  const [data, setData] = useState({ rows: [], total: 0, page: 1, limit: 25 });
+  const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState(null);
+  const [facets, setFacets] = useState({ programs: [], sources: [] });
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const d = await adminApi.getLeads({ search, program, source, sort, page, limit: 25 });
+      setData(d);
+    } finally {
+      setLoading(false);
+    }
+  }, [search, program, source, sort, page]);
+
+  useEffect(() => { load(); }, [load]);
+
+  // Build filter dropdown options once from the overview stats.
+  useEffect(() => {
+    adminApi.getStats()
+      .then((s) => setFacets({
+        programs: s.byProgram.map((x) => x.label).filter((x) => x && x !== '—'),
+        sources: s.bySource.map((x) => x.label).filter((x) => x && x !== '—'),
+      }))
+      .catch(() => {});
+  }, []);
+
+  const onSearch = (e) => { setPage(1); setSearch(e.target.value); };
+
+  return (
+    <div>
+      <div className="admin-toolbar">
+        <input
+          className="admin-search"
+          type="search"
+          placeholder="Search name, email, phone, message…"
+          value={search}
+          onChange={onSearch}
+        />
+        <select value={program} onChange={(e) => { setPage(1); setProgram(e.target.value); }}>
+          <option value="">All programs</option>
+          {facets.programs.map((p) => <option key={p} value={p}>{p}</option>)}
+        </select>
+        <select value={source} onChange={(e) => { setPage(1); setSource(e.target.value); }}>
+          <option value="">All sources</option>
+          {facets.sources.map((s) => <option key={s} value={s}>{s}</option>)}
+        </select>
+        <select value={sort} onChange={(e) => { setPage(1); setSort(e.target.value); }}>
+          {LEAD_SORTS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+        </select>
+        <button
+          className="admin-btn"
+          onClick={() => adminApi.downloadCsv('leads', { search, program, source })}
+        >
+          ⭳ Export CSV
+        </button>
+      </div>
+
+      <div className="admin-table-wrap">
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th><th>Email</th><th>Phone</th>
+              <th>Program</th><th>Source</th><th>Page</th><th>Created</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading && <tr><td colSpan={7} className="admin-empty">Loading…</td></tr>}
+            {!loading && data.rows.length === 0 && (
+              <tr><td colSpan={7} className="admin-empty">No leads found.</td></tr>
+            )}
+            {!loading && data.rows.map((l) => (
+              <tr key={l._id} onClick={() => setSelected(l)}>
+                <td>{dash(l.name)}</td>
+                <td>{dash(l.email)}</td>
+                <td>{dash(l.phone)}</td>
+                <td>{l.program ? <span className="admin-pill">{l.program}</span> : '—'}</td>
+                <td>{dash(l.source)}</td>
+                <td className="admin-muted">{dash(l.page)}</td>
+                <td className="admin-muted">{fmtDate(l.createdAt)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <Pager page={data.page} limit={data.limit} total={data.total} onPage={setPage} />
+
+      {selected && (
+        <Drawer
+          title="Lead detail"
+          onClose={() => setSelected(null)}
+          fields={[
+            ['Name', selected.name],
+            ['Email', selected.email],
+            ['Phone', selected.phone],
+            ['Program', selected.program],
+            ['Track', selected.track],
+            ['Background', selected.background],
+            ['Message', selected.message],
+            ['Source', selected.source],
+            ['Page', selected.page],
+            ['UTM Source', selected.utm_source],
+            ['UTM Medium', selected.utm_medium],
+            ['UTM Campaign', selected.utm_campaign],
+            ['UTM Content', selected.utm_content],
+            ['Extra fields', selected.extra && Object.keys(selected.extra).length ? selected.extra : '—'],
+            ['Created', fmtDate(selected.createdAt)],
+            ['Updated', fmtDate(selected.updatedAt)],
+            ['Record ID', selected._id],
+          ]}
+        />
+      )}
+    </div>
+  );
+}
+
+/* ── Users tab ───────────────────────────────────────────────────────────── */
+
+function UsersTab() {
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [data, setData] = useState({ rows: [], total: 0, page: 1, limit: 25 });
+  const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      setData(await adminApi.getUsers({ search, page, limit: 25 }));
+    } finally {
+      setLoading(false);
+    }
+  }, [search, page]);
+
+  useEffect(() => { load(); }, [load]);
+
+  return (
+    <div>
+      <div className="admin-toolbar">
+        <input
+          className="admin-search"
+          type="search"
+          placeholder="Search name, email, phone…"
+          value={search}
+          onChange={(e) => { setPage(1); setSearch(e.target.value); }}
+        />
+        <button className="admin-btn" onClick={() => adminApi.downloadCsv('users', { search })}>
+          ⭳ Export CSV
+        </button>
+      </div>
+
+      <div className="admin-table-wrap">
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th><th>Email</th><th>Phone</th>
+              <th>Provider</th><th>Verified</th><th>Created</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading && <tr><td colSpan={6} className="admin-empty">Loading…</td></tr>}
+            {!loading && data.rows.length === 0 && (
+              <tr><td colSpan={6} className="admin-empty">No users found.</td></tr>
+            )}
+            {!loading && data.rows.map((u) => (
+              <tr key={u._id} onClick={() => setSelected(u)}>
+                <td>{dash(u.fullName)}</td>
+                <td>{dash(u.email)}</td>
+                <td>{dash(u.phone)}</td>
+                <td><span className="admin-pill">{dash(u.provider)}</span></td>
+                <td>
+                  {u.emailVerified
+                    ? <span className="admin-badge admin-badge--ok">Verified</span>
+                    : <span className="admin-badge">Pending</span>}
+                </td>
+                <td className="admin-muted">{fmtDate(u.createdAt)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <Pager page={data.page} limit={data.limit} total={data.total} onPage={setPage} />
+
+      {selected && (
+        <Drawer
+          title="User detail"
+          onClose={() => setSelected(null)}
+          fields={[
+            ['Name', selected.fullName],
+            ['Email', selected.email],
+            ['Phone', selected.phone],
+            ['Provider', selected.provider],
+            ['Email verified', selected.emailVerified ? 'Yes' : 'No'],
+            ['Created', fmtDate(selected.createdAt)],
+            ['Updated', fmtDate(selected.updatedAt)],
+            ['User ID', selected._id],
+            ['— Profile —', selected.profile ? '' : 'No profile saved'],
+            ...(selected.profile ? [
+              ['Degree', selected.profile.degree],
+              ['Field of study', selected.profile.fieldOfStudy],
+              ['Passout year', selected.profile.passoutYear],
+              ['College', selected.profile.collegeName],
+              ['Currently studying', selected.profile.currentlyStudying ? 'Yes' : 'No'],
+              ['Designation', selected.profile.designation],
+              ['Company', selected.profile.companyName],
+              ['Location', selected.profile.location],
+            ] : []),
+          ]}
+        />
+      )}
+    </div>
+  );
+}
+
+/* ── Shell ───────────────────────────────────────────────────────────────── */
+
+const TABS = [
+  { key: 'overview', label: 'Overview' },
+  { key: 'leads', label: 'Leads' },
+  { key: 'users', label: 'Users' },
+];
+
+function AdminPanel({ onLogout }) {
+  const [tab, setTab] = useState('overview');
+
+  return (
+    <div className="admin-shell">
+      <header className="admin-topbar">
+        <div className="admin-topbar-brand">
+          menler <span>admin</span>
+        </div>
+        <nav className="admin-tabs">
+          {TABS.map((t) => (
+            <button
+              key={t.key}
+              className={`admin-tab${tab === t.key ? ' is-active' : ''}`}
+              onClick={() => setTab(t.key)}
+            >
+              {t.label}
+            </button>
+          ))}
+        </nav>
+        <button className="admin-btn admin-logout" onClick={onLogout}>Log out</button>
+      </header>
+
+      <main className="admin-main">
+        {tab === 'overview' && <Overview />}
+        {tab === 'leads' && <LeadsTab />}
+        {tab === 'users' && <UsersTab />}
+      </main>
+    </div>
+  );
+}
+
+/* ── Entry ───────────────────────────────────────────────────────────────── */
+
+export default function Admin() {
+  const [authed, setAuthed] = useState(null); // null = checking, false/true known
+
+  useEffect(() => {
+    adminApi.getSession()
+      .then(() => setAuthed(true))
+      .catch(() => setAuthed(false));
+  }, []);
+
+  const logout = async () => {
+    try { await adminApi.logout(); } catch { /* ignore */ }
+    setAuthed(false);
+  };
+
+  if (authed === null) {
+    return <div className="admin-login-wrap"><p className="admin-empty">Loading…</p></div>;
+  }
+  if (!authed) return <AdminLogin onSuccess={() => setAuthed(true)} />;
+  return <AdminPanel onLogout={logout} />;
+}

@@ -133,7 +133,7 @@ export default function Home() {
   }, [location]);
 
   // "What you build" — show a subset; "Explore more" opens the full library page.
-  const PROJECTS_PREVIEW = 6;
+  const PROJECTS_PREVIEW = 8;
   const visibleProjects = PROJECTS.slice(0, PROJECTS_PREVIEW);
 
   // "Apply to the Fellowship" opens the lead form in a popup.
@@ -245,7 +245,7 @@ export default function Home() {
         <p className="section-label">What you build</p>
         <h2 className="section-h2">Real Projects.<br /><em>Across Every Domain.</em></h2>
         <p className="section-sub">Every Menler fellow ships a portfolio of domain-specific projects.<br />Not toy demos — actual systems built for real use cases.</p>
-        <div className="proj-grid">
+        <div className="proj-grid proj-grid--4">
           {visibleProjects.map((p, i) => (
             <Reveal
               as="article"
