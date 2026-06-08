@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Footer from '../components/layout/Footer';
 import PlaybookModal from '../components/common/PlaybookModal';
 import { PROJECTS } from '../data/projectsData';
@@ -71,7 +71,22 @@ const projectDomain = (p) => {
 
 export default function Resources() {
   const navigate = useNavigate();
+  const location = useLocation();
   const go = (path) => { navigate(path); window.scrollTo(0, 0); };
+
+  // When arriving with #project-builds (e.g. Home's "Explore more"), scroll to
+  // that section. The slight delay lets App's ScrollToTop finish jumping to top
+  // first, so we land on the section rather than getting yanked back up.
+  useEffect(() => {
+    if (location.hash !== '#project-builds') return;
+    const el = document.getElementById('project-builds');
+    if (!el) return;
+    const t = setTimeout(() => {
+      if (window.__lenis) window.__lenis.scrollTo(el, { offset: -70 });
+      else el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 140);
+    return () => clearTimeout(t);
+  }, [location.hash, location.pathname]);
   const [pbItem, setPbItem] = useState(null);
   const [projFilter, setProjFilter] = useState('All');
   const [email, setEmail] = useState('');

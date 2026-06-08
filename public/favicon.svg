@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 90" width="90" height="90">
+  <!-- Menler 02-A · Icon B · Specialist "Spec fill variant" (from the 06 — Icon Reductions sheet) -->
+  <rect width="90" height="90" rx="20" fill="#534AB7"/>
+  <text x="10" y="68" font-family="'DM Sans', Arial, sans-serif" font-size="60" font-weight="900" fill="#F1EFE8" letter-spacing="-3">m</text>
+  <circle cx="74" cy="18" r="9" fill="#1D9E75" stroke="#FFFFFF" stroke-width="2"/>
+  <rect x="10" y="74" width="44" height="3.5" rx="2" fill="#F1EFE8" opacity="0.5"/>
+</svg>

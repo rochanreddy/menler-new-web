@@ -253,7 +253,7 @@ export default function Home() {
         <p className="section-label">What you build</p>
         <h2 className="section-h2">Real Projects.<br /><em>Across Every Domain.</em></h2>
         <p className="section-sub">Every Menler fellow ships a portfolio of domain-specific projects.<br />Not toy demos — actual systems built for real use cases.</p>
-        <div className="proj-grid proj-grid--4">
+        <div className="proj-grid proj-grid--4 proj-grid--home">
           {visibleProjects.map((p, i) => (
             <Reveal
               as="article"
@@ -279,7 +279,7 @@ export default function Home() {
         </div>
         {PROJECTS.length > PROJECTS_PREVIEW && (
           <div style={{ textAlign: 'center', marginTop: 32 }}>
-            <button className="btn-outline" style={{ color: 'var(--specialist)', borderColor: 'rgba(83,74,183,0.5)', minWidth: 200 }} onClick={() => go('/resources')}>
+            <button className="btn-outline" style={{ color: 'var(--specialist)', borderColor: 'rgba(83,74,183,0.5)', minWidth: 200 }} onClick={() => go('/resources#project-builds')}>
               Explore more
             </button>
           </div>

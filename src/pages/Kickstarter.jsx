@@ -257,7 +257,14 @@ export default function Kickstarter() {
               <p className="proj-desc">{p.desc}</p>
             </div>
           ))}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div
+            className="proj-card proj-card--clickable"
+            role="button"
+            tabIndex={0}
+            style={{ background: 'white', borderColor: 'rgba(186,117,23,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            onClick={() => go('/resources')}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go('/resources'); } }}
+          >
             <button className="btn-primary" style={{ background: '#BA7517', minWidth: 160 }} onClick={() => go('/resources')}>See more</button>
           </div>
         </div>
@@ -320,7 +327,7 @@ export default function Kickstarter() {
       <section className="hiring-section outcome-section" style={{ background: 'var(--parchment)', paddingTop: 48 }}>
         <p className="section-label" style={{ textAlign: 'center' }}>Outcome</p>
         <h2 className="section-h2" style={{ textAlign: 'center' }}>What you leave with<br /><em>after 14 days.</em></h2>
-        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto' }}>The first assests of your AI-fluent professional identity</p>
+        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto 28px' }}>The first assets of your AI-fluent professional identity</p>
         <div className="roles-grid">
           <div className="role-card"><p className="role-name">AI Fluency Certificate</p><p className="role-comp">Issued by Menler</p><p className="role-desc">Verifiable credential. Proof that you're Gen AI fluent — across 10+ tools and 4 builds.</p></div>
           <div className="role-card"><p className="role-name">Portfolio of 4 builds</p><p className="role-comp">Public + shareable</p><p className="role-desc">Four real AI mini-projects on a personal portfolio page. Show in interviews, on LinkedIn, on your CV.</p></div>
