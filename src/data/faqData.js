@@ -21,7 +21,7 @@ export const HOME_FAQS = [
   },
   {
     q: 'Is Menler Fellowship online, in-person, or hybrid?',
-    a: "Menler runs an online fellowship. Demo Day is held online . Live sessions happen on India-friendly timezones, all sessions are recorded.",
+    a: "Menler runs an online fellowship. Demo Day is held online. Live sessions happen on India-friendly timezones, and all sessions are recorded.",
   },
   {
     q: 'What is the program fee and are scholarships available?',

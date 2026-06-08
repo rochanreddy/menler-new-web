@@ -91,7 +91,7 @@ TRANSCRIPT:
         </div>
       </article>
 
-      <div style={{ padding: '32px 40px', maxWidth: 760, margin: '0 auto' }}>
+      <div style={{ padding: '32px clamp(20px, 5vw, 40px)', maxWidth: 760, margin: '0 auto' }}>
         <button className="btn-ghost" onClick={() => go('/blog')} style={{ color: 'var(--specialist)', fontWeight: 500 }}>Back to Blog</button>
       </div>
 

@@ -120,14 +120,21 @@ export default function Home() {
   const navigate = useNavigate();
   const toast = useToast();
   const go = (path) => { navigate(path); window.scrollTo(0, 0); };
+  // Smooth-scroll to a section ref, driving Lenis when it's active (Lenis sets
+  // scroll-behavior:auto, so native scrollIntoView would otherwise jump).
+  const smoothTo = (el) => {
+    if (!el) return;
+    if (window.__lenis) window.__lenis.scrollTo(el);
+    else el.scrollIntoView({ behavior: 'smooth' });
+  };
   const interestRef = useRef(null);
-  const scrollToInterest = () => interestRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToInterest = () => smoothTo(interestRef.current);
   const programsRef = useRef(null);
-  const scrollToPrograms = () => programsRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToPrograms = () => smoothTo(programsRef.current);
   const location = useLocation();
   useEffect(() => {
     if (location.hash === '#programs') {
-      const t = setTimeout(() => programsRef.current?.scrollIntoView({ behavior: 'smooth' }), 120);
+      const t = setTimeout(() => smoothTo(programsRef.current), 120);
       return () => clearTimeout(t);
     }
   }, [location]);
@@ -211,7 +218,7 @@ export default function Home() {
             </div>
             <div className="next-batch">
               <p className="nb-label">Batch starts</p>
-              <p className="nb-when"><strong>August 2026</strong>  ·  12 weeks  ·  60 hour live  · Online  </p>
+              <p className="nb-when"><strong>August 2026</strong> · 12 weeks · 60 hour live · Online</p>
               <p className="nb-deadline">Applications close 25 July 2026</p>
             </div>
             <button className="prog-card-cta" onClick={() => go('/generalist')}>Explore Generalist Program</button>
@@ -229,7 +236,7 @@ export default function Home() {
             </div>
             <div className="next-batch">
               <p className="nb-label">Upcoming batch</p>
-              <p className="nb-when"><strong>September 2026</strong>  ·  12 weeks  ·  60 hour live  · Online</p>
+              <p className="nb-when"><strong>September 2026</strong> · 12 weeks · 60 hour live · Online</p>
               <p className="nb-deadline">Applications open July 2026</p>
             </div>
             <button className="prog-card-cta" onClick={() => go('/engineering')}>Explore Engineering Program</button>
@@ -295,7 +302,7 @@ export default function Home() {
       <section className="mini-lead">
         <div className="mini-lead-inner">
           <div className="mini-lead-copy">
-            <h3>Get the MENLER fellowship <em>brochure.</em></h3>
+            <h3>Get the Menler fellowship <em>brochure.</em></h3>
             <p>Syllabus, schedule, fees, scholarships, and ISA options — straight to your inbox.</p>
           </div>
           {miniDone ? (

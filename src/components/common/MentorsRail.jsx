@@ -103,7 +103,21 @@ function CaptainRow({ list, dir, tint }) {
   );
 }
 
-export default function MentorsRail({ style } = {}) {
+export default function MentorsRail({ style, rows = ROWS.length, bare = false } = {}) {
+  // `rows` caps how many scrolling rows render (default: all). `bare` skips the
+  // section wrapper + heading so the rail can sit inside another section.
+  const shown = ROWS.slice(0, Math.max(1, rows));
+
+  const railRows = (
+    <div className="captains-rows">
+      {shown.map((r, i) => (
+        <CaptainRow key={i} list={r.list} dir={r.dir} tint={r.tint} />
+      ))}
+    </div>
+  );
+
+  if (bare) return railRows;
+
   return (
     <section className="captains-section" style={style}>
       <div className="captains-head">
@@ -112,11 +126,7 @@ export default function MentorsRail({ style } = {}) {
         <p className="captains-sub">Instructors, mentors, and leaders from industry who shape what you learn and how you grow.</p>
       </div>
 
-      <div className="captains-rows">
-        {ROWS.map((r, i) => (
-          <CaptainRow key={i} list={r.list} dir={r.dir} tint={r.tint} />
-        ))}
-      </div>
+      {railRows}
     </section>
   );
 }

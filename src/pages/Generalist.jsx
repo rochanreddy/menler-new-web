@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FaqList from '../components/common/FaqList';
 import CtaBanner from '../components/common/CtaBanner';
@@ -50,7 +50,7 @@ const CURRICULUM = [
 // Hiring section content for the Generalist page only — edit freely, it does
 // NOT affect the Engineering / Kickstarter hiring sections.
 const GEN_HIRING = {
-  sectionStyle: { paddingTop: 40 },
+  sectionStyle: { paddingTop: 48 },
   label: 'Hiring associations & roles',
   title: 'The jobs',
   titleEm: 'AI specialists are landing.',
@@ -137,6 +137,21 @@ export default function Generalist() {
   const [activePhase, setActivePhase] = useState(0);
   const [activeDomain, setActiveDomain] = useState(0);
   const [openWeek, setOpenWeek] = useState(null);
+  const weekDetailRef = useRef(null);
+
+  // Select a week. On mobile, the week description stacks below the week list,
+  // so scroll it into view (after re-render) — same UX as the phases above.
+  const pickWeek = (i, wi) => {
+    setOpenWeek(`${i}-${wi}`);
+    if (window.matchMedia('(max-width: 760px)').matches) {
+      requestAnimationFrame(() => {
+        const el = weekDetailRef.current;
+        if (!el) return;
+        if (window.__lenis) window.__lenis.scrollTo(el, { offset: -90 });
+        else el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+  };
   const openApply = useApply();
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
   const handleSubmit = async (e) => {
@@ -153,7 +168,7 @@ export default function Generalist() {
         <div className="hero-inner">
           <p className="hero-eyebrow">Claude AI Generalist Fellowship · India</p>
           <h1 className="hero-h1">Master Claude AI.<br /><em>Transform your domain.</em></h1>
-          <p className="hero-sub">India's Only Claude AI Specialist Fellowship.<strong style={{ color: '#EEEDFE', fontWeight: 500 }}><br />Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
+          <p className="hero-sub">India's only Claude AI Specialist Fellowship.<strong style={{ color: '#EEEDFE', fontWeight: 500 }}><br />Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
           <div className="hero-actions">
             <button className="btn-primary" style={{ minWidth: 220, textAlign: 'center' }} onClick={openApply}>Apply Now</button>
             <button className="btn-outline" style={{ minWidth: 220, textAlign: 'center' }}>Download Brochure</button>
@@ -170,7 +185,7 @@ export default function Generalist() {
       </section>
 
       {/* ── WHO THIS IS FOR ── */}
-      <section className="section" style={{ background: 'var(--parchment)', paddingTop: 40 }}>
+      <section className="section" style={{ background: 'var(--parchment)', paddingTop: 48 }}>
         <p className="section-label">Who this is for</p>
         <h2 className="section-h2">Any background.<br /><em>Any domain. Zero code.</em></h2>
         <p className="section-sub">The AI-native workforce won't be made up of engineers alone. It will be built by professionals across every domain.</p>
@@ -184,7 +199,7 @@ export default function Generalist() {
       </section>
 
       {/* ── CURRICULUM ── */}
-      <section className="section" style={{ background: 'white', paddingTop: 40 }}>
+      <section className="section" style={{ background: 'white', paddingTop: 48 }}>
         <p className="section-label">12-week curriculum</p>
         <h2 className="section-h2">From curious<br /><em>to Claude Specialist.</em></h2>
         <p className="section-sub">Three phases, no code — just Claude mastery applied to your domain. Pick a phase to open its modules, tools, and projects.</p>
@@ -199,6 +214,7 @@ export default function Generalist() {
                   if (willOpen) {
                     const el = e.currentTarget;
                     setTimeout(() => {
+                      if (window.__lenis) { window.__lenis.scrollTo(el, { offset: -90 }); return; }
                       const y = el.getBoundingClientRect().top + window.scrollY - 90;
                       window.scrollTo({ top: y, behavior: 'smooth' });
                     }, 70);
@@ -221,7 +237,7 @@ export default function Generalist() {
                           <ul className="curric-weeks">
                             {p.modules.map((m, wi) => (
                               <li key={m.w} className={`curric-week${selWeek === wi ? ' on' : ''}`}>
-                                <button className="curric-week-head" onClick={() => setOpenWeek(`${i}-${wi}`)} aria-pressed={selWeek === wi}>
+                                <button className="curric-week-head" onClick={() => pickWeek(i, wi)} aria-pressed={selWeek === wi}>
                                   <span className="curric-week-title">{m.w}</span>
                                   <span className="curric-week-caret">›</span>
                                 </button>
@@ -229,7 +245,7 @@ export default function Generalist() {
                             ))}
                           </ul>
                         </div>
-                        <div className="curric-detail-tools">
+                        <div className="curric-detail-tools" ref={weekDetailRef} style={{ scrollMarginTop: 90 }}>
                           <p className="curric-label">{week.w}</p>
                           <p className="curric-week-desc">{week.d}</p>
                           <p className="curric-label" style={{ marginTop: 26 }}>Projects you'll build</p>
@@ -290,7 +306,7 @@ export default function Generalist() {
       </section>
 
       {/* ── DOMAIN TRACKS ── */}
-      <section className="section tracks-dark" style={{ paddingTop: 40 }}>
+      <section className="section tracks-dark" style={{ paddingTop: 48 }}>
         <p className="section-label" style={{ color: 'var(--lavender)' }}>Domain tracks</p>
         <h2 className="section-h2" style={{ color: '#EEEDFE' }}>Your Claude skills,<br /><em>applied to your career.</em></h2>
         <p className="section-sub" style={{ color: 'rgba(238,237,254,0.5)' }}>Choose your track in Week 8. Capstone, certification module, and job matching are all domain-specific.</p>
@@ -305,7 +321,7 @@ export default function Generalist() {
       </section>
 
       {/* ── LEAD FORM (brochure) ── */}
-      <section className="mini-lead" style={{ paddingTop: 40 }}>
+      <section className="mini-lead" style={{ paddingTop: 48 }}>
         <div className="mini-lead-inner">
           <div className="mini-lead-copy">
             <h3>Get the Generalist <em>brochure & syllabus</em>.</h3>
@@ -335,13 +351,13 @@ export default function Generalist() {
       </section>
 
       {/* ── MENTORS ── */}
-      <MentorsRail style={{ paddingTop: 40 }} />
+      <MentorsRail style={{ paddingTop: 48 }} />
 
       {/* ── HIRING PARTNERS ── */}
       <HiringJobs {...GEN_HIRING} />
 
       {/* ── FAQ ── */}
-      <section className="section" style={{ background: 'var(--parchment)', textAlign: 'center', paddingTop: 40 }}>
+      <section className="section" style={{ background: 'var(--parchment)', textAlign: 'center', paddingTop: 48 }}>
         <p className="section-label">FAQ</p>
         <h2 className="section-h2">Your questions answered</h2>
         <FaqList items={GENERALIST_FAQS} />

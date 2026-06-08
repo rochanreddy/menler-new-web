@@ -14,7 +14,15 @@
       "Bash(netstat -ano)",
       "Bash(taskkill //PID 24408 //F)",
       "Bash(npx eslint *)",
-      "Bash(echo \"exit: $?\")"
+      "Bash(echo \"exit: $?\")",
+      "Bash(sed -n '499,501p' src/data/aptitudeQuestions.js)",
+      "Bash(sed -n '967,969p' src/data/aptitudeQuestions.js)",
+      "Bash(node --input-type=module -e ' *)",
+      "Bash(node -e \"console.log\\(require\\('./node_modules/lenis/package.json'\\).version\\)\")",
+      "Bash(Get-ChildItem \"d:\\\\menler_web\\\\merdian-\\\\src\\\\pages\" -Recurse -Filter \"*.jsx\" -o Name)",
+      "Bash(echo \"exit=$?\")",
+      "Bash(git add *)",
+      "Bash(git commit *)"
     ]
   }
 }

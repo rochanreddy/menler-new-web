@@ -94,7 +94,7 @@ export default function Navbar() {
             </button>
           </div>
         </div>
-        <button className={`nav-link${isActive('/kickstarter') ? ' active' : ''}`} onClick={() => go('/kickstarter')}>AI Kickstarter</button>
+        <button className={`nav-link${isActive('/kickstarter') ? ' active' : ''}`} onClick={() => go('/kickstarter')}>Gen AI Kickstarter</button>
 
         
         

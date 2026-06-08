@@ -51,6 +51,13 @@ img, svg { max-width: 100%; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
 
+/* ── Lenis (site-wide momentum smooth scrolling) ── */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
+
 /* ── NAV ── */
 .nav {
   position: sticky; top: 0; z-index: 200;
@@ -243,7 +250,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .hero-stat-lbl { font-size: 11px; color: var(--lavender); display: block; margin-top: 2px; }
 
 /* ── SECTION BASE ── */
-.section { padding: 72px var(--gutter); }
+.section { padding: 48px var(--gutter) 32px; }
 .section-label { font-size: 10px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--specialist); margin-bottom: 10px; }
 .section-h2 { font-family: 'DM Serif Display', serif; font-size: clamp(25px, 4.8vw, 34px); font-weight: 400; color: var(--ink); line-height: 1.2; margin-bottom: 8px; }
 .section-h2 em { color: var(--specialist); font-style: italic; }
@@ -647,6 +654,12 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .captain-card { flex-basis: 320px; width: 320px; height: 200px; }
 }
 
+/* Project builds — domain filter chips */
+.proj-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 22px; }
+.proj-filter { flex: 0 0 auto; white-space: nowrap; font-family: inherit; font-size: 11.5px; font-weight: 500; color: var(--text-muted); background: var(--parchment); border: 1px solid rgba(38,33,92,0.1); padding: 6px 12px; border-radius: 20px; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
+.proj-filter:hover { color: var(--ink); border-color: rgba(83,74,183,0.4); }
+.proj-filter.on { background: var(--specialist); color: #fff; border-color: var(--specialist); }
+
 .proj-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 32px; }
 .proj-grid--4 { grid-template-columns: repeat(4, 1fr); }
 @media (max-width: 980px) { .proj-grid--4 { grid-template-columns: repeat(2, 1fr); } }
@@ -701,11 +714,11 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .proj-domain-tag.t-vc        { background: #E1F5EE; color: var(--forest); }
 .proj-domain-tag.t-ops       { background: #FCEBEB; color: #A32D2D; }
 .proj-domain-tag.t-tech      { background: #E0E5F4; color: #26215C; }
-.proj-domain-tag.t-eng       { background: var(--forest); color: #9FE1CB; }
+.proj-domain-tag.t-eng       { background: #E1F4EA; color: #1F7A52; }
 .proj-domain-tag.t-analyst   { background: var(--parchment); color: #5F5E5A; }
-.proj-domain-tag.t-founder   { background: var(--ink); color: var(--lavender); }
+.proj-domain-tag.t-founder   { background: #E3ECFB; color: #2456A6; }
 .proj-domain-tag.t-pm        { background: #EEEDFE; color: #443BA3; }
-.proj-domain-tag.t-pjm       { background: #FFF6E1; color: #BA7517; }
+.proj-domain-tag.t-pjm       { background: #EEEDFE; color: #443BA3; }
 .proj-card-img { margin: -28px -28px 18px; height: 230px; overflow: hidden; border-radius: 14px 14px 0 0; background: var(--cloud); }
 .proj-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .35s ease; }
 .proj-card--clickable:hover .proj-card-img img { transform: scale(1.05); }
@@ -734,7 +747,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .proj-card--library .proj-card-img {
   margin: -16px -16px 12px; height: 132px; border-radius: 12px 12px 0 0;
 }
-.proj-card--library .proj-domain-tag { margin-bottom: 8px; font-size: 9px; padding: 2px 8px; }
+.proj-card--library .proj-domain-tag { align-self: flex-start; margin-bottom: 8px; font-size: 9px; padding: 2px 8px; }
 .proj-card--library .proj-card-title {
   font-size: 16px; margin-bottom: 8px;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
@@ -1128,8 +1141,10 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 /* ── Runner two-column layout: question + navigator sidebar ── */
 .runner-layout { width: 100%; max-width: 1160px; display: grid; grid-template-columns: 1fr 360px; gap: 24px; align-items: start; }
 .runner-main { background: white; border-radius: 18px; padding: 32px 36px; box-shadow: 0 24px 56px rgba(38,33,92,0.08); }
-.runner-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding-top: 18px; border-top: 0.5px solid rgba(83,74,183,0.12); }
-.runner-actions .runner-btn-next { margin-left: auto; }
+.runner-actions { display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; gap: 12px; padding-top: 16px; border-top: 0.5px solid rgba(83,74,183,0.12); }
+.runner-actions .runner-btn-next { margin: 0; align-self: stretch; text-align: center; }
+.runner-actions .runner-hint { margin: 0; }
+.runner-actions-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .runner-btn-ghost { background: transparent; border: 1px solid rgba(83,74,183,0.3); color: var(--ink); font-family: inherit; font-size: 13px; font-weight: 500; padding: 9px 16px; border-radius: 22px; cursor: pointer; transition: background .15s, border-color .15s, color .15s; }
 .runner-btn-ghost:hover { background: var(--cloud); }
 .runner-btn-ghost:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -1163,6 +1178,24 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .runner-main { padding: 26px 22px; }
   .runner-nav { position: static; order: -1; }
   .runner-nav-grid { grid-template-columns: repeat(8, 1fr); }
+}
+
+/* ── Exam runner: fit the whole test screen in the viewport (no page scroll) ──
+   Scoped to .apt-runner--exam so the long report view (plain .apt-runner) still
+   scrolls normally. On desktop the screen is a fixed height below the navbar;
+   the question + navigator are pinned and only the OPTIONS list scrolls inside
+   itself if a question is unusually long — the page itself never scrolls. */
+.apt-runner--exam { min-height: calc(100dvh - 54px); padding-top: 20px; padding-bottom: 20px; align-items: flex-start; }
+@media (min-width: 861px) {
+  .apt-runner--exam { height: calc(100dvh - 54px); min-height: 500px; overflow: hidden; align-items: stretch; }
+  .apt-runner--exam .runner-layout { height: 100%; align-items: stretch; }
+  .apt-runner--exam .runner-main { display: flex; flex-direction: column; min-height: 0; padding: 24px 30px; }
+  .apt-runner--exam .runner-q { font-size: 22px; margin-bottom: 14px; }
+  .apt-runner--exam .runner-progress { margin-bottom: 14px; }
+  .apt-runner--exam .runner-options { flex: 1 1 auto; min-height: 0; overflow-y: auto; margin-bottom: 14px; padding-right: 4px; }
+  .apt-runner--exam .runner-actions { margin-top: auto; }
+  .apt-runner--exam .runner-hint { margin-bottom: 0; }
+  .apt-runner--exam .runner-nav { position: static; top: auto; align-self: stretch; max-height: 100%; overflow-y: auto; }
 }
 .runner-result { text-align: center; }
 .runner-score { font-family: 'DM Serif Display', serif; font-size: 96px; line-height: 1; color: var(--specialist); margin: 18px 0 4px; }
@@ -1254,11 +1287,32 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .apt-answers > summary { cursor: pointer; padding: 14px 16px; font-size: 13px; font-weight: 600; color: var(--specialist); list-style: none; }
 .apt-answers > summary::-webkit-details-marker { display: none; }
 .apt-answers-body { padding: 4px 16px 16px; }
-.apt-answer-item { padding: 12px 0; border-top: 0.5px solid var(--border); }
-.apt-answer-q { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
-.apt-answer-yours { font-size: 12px; color: var(--text-muted); }
-.apt-answer-yours em { color: var(--specialist); font-style: normal; font-weight: 600; }
-.apt-answer-best { font-size: 12px; color: var(--placed); margin-top: 2px; }
+.apt-answer-tally { font-size: 13px; font-weight: 700; color: var(--ink); padding: 8px 0 12px; }
+
+/* Per-question result card (answer sheet) */
+.apt-qcard { border: 2px solid var(--border); border-radius: 16px; margin: 0 0 16px; overflow: hidden; background: var(--white); }
+.apt-qcard.is-correct { border-color: rgba(29,158,117,0.55); }
+.apt-qcard.is-wrong { border-color: rgba(208,71,58,0.6); }
+.apt-qcard-body { padding: 22px 24px; }
+.apt-qcard-num { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 8px; }
+.apt-qcard-q { font-size: 15.5px; font-weight: 700; color: var(--ink); line-height: 1.45; margin: 0 0 10px; }
+.apt-qcard-status { font-size: 13px; font-weight: 600; margin: 0 0 16px; }
+.apt-qcard-status.ok { color: var(--placed); }
+.apt-qcard-status.no { color: #d0473a; }
+.apt-qcard-opts { display: flex; flex-direction: column; gap: 10px; }
+.apt-opt-row { display: flex; align-items: center; gap: 12px; }
+.apt-opt-box { flex: none; width: 24px; height: 24px; border-radius: 7px; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: transparent; }
+.apt-opt-row.wrong .apt-opt-box { border-color: #d0473a; color: #d0473a; }
+.apt-opt-row.key .apt-opt-box { border-color: rgba(29,158,117,0.55); color: var(--placed); }
+.apt-opt-pill { padding: 6px 14px; border-radius: 8px; border: 1px solid transparent; font-size: 13px; font-weight: 500; color: var(--ink); }
+.apt-opt-row.wrong .apt-opt-pill { background: #FBE9E7; border-color: rgba(208,71,58,0.4); color: #c0392b; }
+.apt-opt-row.key .apt-opt-pill { background: #E4F6EE; border-color: rgba(29,158,117,0.4); color: #0d7a55; }
+.apt-qcard-exp { border-top: 1px solid var(--border); background: var(--parchment); }
+.apt-qcard-exp > summary { cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; font-size: 14px; font-weight: 700; color: var(--ink); }
+.apt-qcard-exp > summary::-webkit-details-marker { display: none; }
+.apt-exp-chevron { width: 14px; height: 14px; color: var(--text-muted); transition: transform 0.2s ease; }
+.apt-qcard-exp[open] .apt-exp-chevron { transform: rotate(180deg); }
+.apt-qcard-exp > p { font-size: 13px; line-height: 1.65; color: var(--text-muted); margin: 0; padding: 0 24px 20px; }
 .apt-roadmap-label { font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--specialist); margin: 8px 0 12px; }
 .apt-roadmap { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .apt-roadmap-item { display: flex; gap: 10px; align-items: baseline; padding: 9px 12px; background: var(--parchment); border-radius: 8px; }
@@ -1385,10 +1439,12 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .scholar-stat-num em { color: var(--placed); font-style: italic; }
 .scholar-stat-lbl { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(38,33,92,0.55); }
 .qualify-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 1080px; margin: 28px auto 0; }
-.qualify-card { padding: 22px 20px; background: var(--parchment); border-radius: 12px; cursor: default; }
+.qualify-card { padding: 22px 20px; background: var(--parchment); border-radius: 12px; cursor: default; display: flex; flex-direction: column; }
 .qualify-card .ic { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 24px; color: var(--specialist); line-height: 1; margin-bottom: 8px; }
 .qualify-name { font-size: 14px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
 .qualify-desc { font-size: 12.5px; color: rgba(38,33,92,0.6); line-height: 1.45; }
+.qualify-cta { margin-top: auto; padding-top: 16px; display: inline-block; font-size: 12.5px; font-weight: 600; color: var(--specialist); text-decoration: none; }
+.qualify-cta:hover { color: var(--ink); text-decoration: underline; }
 
 /* ── BLOG/MAGAZINE ── */
 .mag-hero { padding: 72px 40px 44px; background: white; border-bottom: 0.5px solid rgba(83,74,183,0.1); }
@@ -1459,6 +1515,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 }
 @media (max-width: 880px) {
   .proj-grid, .mentors-grid, .stories-grid, .blog-grid, .metrics-strip { grid-template-columns: 1fr 1fr; }
+  .why-grid, .values-grid { grid-template-columns: 1fr 1fr; }
   .jobs-roles, .lead-grid, .placement-stories { grid-template-columns: 1fr; }
   .roles-grid { grid-template-columns: 1fr 1fr; }
   .lf-row { grid-template-columns: 1fr; }
@@ -1472,6 +1529,8 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .tracks-grid { grid-template-columns: 1fr 1fr; }
   .outcomes-grid { grid-template-columns: 1fr; }
   .audience-grid { grid-template-columns: 1fr 1fr; }
+  .about-grid { grid-template-columns: 1fr; }
+  .scholar-stats { grid-template-columns: repeat(3, 1fr); }
   .timeline-grid { grid-template-columns: repeat(2, 1fr) !important; }
   .hero-stats, .hero-stats.hero-stats-6 { grid-template-columns: repeat(3, 1fr); max-width: none; }
 }
@@ -1504,13 +1563,14 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 }
 @media (max-width: 540px) {
   .proj-grid, .mentors-grid, .stories-grid, .blog-grid, .metrics-strip { grid-template-columns: 1fr; }
+  .why-grid, .values-grid, .accred-grid, .tracks-grid, .audience-grid, .curric-techs, .roles-grid { grid-template-columns: 1fr; }
   .nav { padding: 11px 18px; }
   .hero { padding: 56px 22px 44px; }
   .section { padding: 48px 22px; }
   .hero-stats { gap: 16px 22px; }
   .hero-stat-num { font-size: 26px !important; }
   .hero-actions { gap: 10px; }
-  .hero-actions .btn-primary { width: 100%; text-align: center; }
+  .hero-actions .btn-primary, .hero-actions .btn-outline, .hero-actions .btn-ghost { width: 100%; text-align: center; }
   .accred-section, .timeline-wrap, .hiring-section, .compare-section, .res-preview, .apt-trust-grid { padding-left: 22px; padding-right: 22px; }
   .partners-strip { padding: 20px 16px; }
   .partners-logos { gap: 8px 14px; }

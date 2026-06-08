@@ -1,5 +1,6 @@
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, lazy, Suspense } from 'react';
+import Lenis from 'lenis';
 import Navbar from './components/layout/Navbar';
 import PageLoader from './components/common/PageLoader';
 import { ToastProvider } from './components/common/Toast';
@@ -30,7 +31,10 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // Jump to top instantly on navigation. Use Lenis if it's running so its
+    // internal scroll state stays in sync; otherwise fall back to the native API.
+    if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true });
+    else window.scrollTo(0, 0);
     // Move focus to main on navigation so keyboard / screen-reader users
     // land at the start of the new page's content.
     const main = document.getElementById('main');
@@ -41,6 +45,30 @@ function ScrollToTop() {
 
 export default function App() {
   const navigate = useNavigate();
+
+  // ── Site-wide momentum smooth scrolling (Lenis) ──
+  // Honours prefers-reduced-motion (skips entirely → native scroll). The
+  // instance is exposed on window.__lenis so navigation + in-page scrolls
+  // (e.g. scroll-into-view on the Kickstarter/Generalist curriculums) can drive it.
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const lenis = new Lenis({
+      duration: 1.5,
+      smoothWheel: true,
+      // Gentle ease-out for a longer, softer glide.
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      wheelMultiplier: 0.9,
+    });
+    window.__lenis = lenis;
+    let raf;
+    const loop = (time) => { lenis.raf(time); raf = requestAnimationFrame(loop); };
+    raf = requestAnimationFrame(loop);
+    return () => {
+      cancelAnimationFrame(raf);
+      lenis.destroy();
+      delete window.__lenis;
+    };
+  }, []);
 
   // Handle email confirmation link redirect → send to /profile
   useEffect(() => {

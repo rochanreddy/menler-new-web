@@ -4,7 +4,7 @@ import Footer from '../components/layout/Footer';
 import FaqList from '../components/common/FaqList';
 import { submitLead } from '../services/leadService';
 import { getRecommendation, maxScoreForQuestions } from '../data/aptitudeQuestions';
-import { CLUSTERS, buildRoadmap, getSetQuestions } from '../data/aptitudeClusters';
+import { CLUSTERS, buildRoadmap, getSetQuestions, getAllAboutAIQuestions } from '../data/aptitudeClusters';
 import { APTITUDE_FAQS } from '../data/faqData';
 
 const TRUST_CARDS = [
@@ -41,6 +41,23 @@ const INIT = { view: 'landing', cluster: null, setIdx: 0, idx: 0, questions: [],
 function reducer(state, action) {
   switch (action.type) {
     case 'PICK_CLUSTER': return { ...state, view: 'sets', cluster: action.cluster };
+    case 'START_TEST': {
+      // Skip the set picker — drop straight into the runner. Use explicit
+      // questions when provided (e.g. the mixed "All About AI" test),
+      // otherwise pull the given domain's set (default = first set).
+      const setIdx = action.setIdx ?? 0;
+      const questions = action.questions ?? getSetQuestions(action.cluster, setIdx);
+      return {
+        ...state,
+        view: 'runner',
+        cluster: action.cluster,
+        setIdx,
+        idx: 0,
+        questions,
+        answers: blankArr(questions.length, null),
+        marked: blankArr(questions.length, false),
+      };
+    }
     case 'PICK_SET': {
       const questions = getSetQuestions(state.cluster, action.setIdx);
       return {
@@ -170,7 +187,7 @@ export default function Aptitude() {
     const ss = String(remaining % 60).padStart(2, '0');
     const lowTime = remaining <= 60;
     return (
-      <section className="apt-runner">
+      <section className="apt-runner apt-runner--exam">
         <div className="runner-layout">
           <div className="runner-main">
             <button className="runner-btn" style={{ color: 'var(--specialist)', marginBottom: 14 }} onClick={() => dispatch({ type: 'TO_SETS' })}>← Exit to sets</button>
@@ -186,14 +203,16 @@ export default function Aptitude() {
               ))}
             </div>
             <div className="runner-actions">
-              <button className="runner-btn runner-btn-back" disabled={state.idx === 0} onClick={() => dispatch({ type: 'BACK' })}>← Prev</button>
-              <button className="runner-btn-ghost" disabled={selected === null} onClick={() => dispatch({ type: 'CLEAR' })}>Clear</button>
-              <button className={`runner-btn-ghost${state.marked[state.idx] ? ' on' : ''}`} onClick={() => dispatch({ type: 'TOGGLE_REVIEW' })}>{state.marked[state.idx] ? '★ Marked' : '☆ Mark'}</button>
               {state.idx === total - 1
                 ? <button className="runner-btn runner-btn-next" onClick={() => dispatch({ type: 'SUBMIT' })}>Submit test</button>
                 : <button className="runner-btn runner-btn-next" onClick={() => dispatch({ type: 'NEXT' })}>Next →</button>}
+              <p className="runner-hint">Tip: press <kbd>1</kbd>–<kbd>{q.options.length}</kbd> to choose · <kbd>Enter</kbd> for next</p>
+              <div className="runner-actions-row">
+                <button className="runner-btn runner-btn-back" disabled={state.idx === 0} onClick={() => dispatch({ type: 'BACK' })}>← Prev</button>
+                <button className="runner-btn-ghost" disabled={selected === null} onClick={() => dispatch({ type: 'CLEAR' })}>Clear</button>
+                <button className={`runner-btn-ghost${state.marked[state.idx] ? ' on' : ''}`} onClick={() => dispatch({ type: 'TOGGLE_REVIEW' })}>{state.marked[state.idx] ? '★ Marked' : '☆ Mark'}</button>
+              </div>
             </div>
-            <p className="runner-hint">Tip: press <kbd>1</kbd>–<kbd>{q.options.length}</kbd> to choose · <kbd>Enter</kbd> for next</p>
           </div>
 
           <aside className="runner-nav">
@@ -257,14 +276,53 @@ export default function Aptitude() {
             <details className="apt-answers">
               <summary>View answer sheet</summary>
               <div className="apt-answers-body">
+                {(() => {
+                  const correctCount = questions.reduce((acc, qq, i) => {
+                    const ci = qq.options.reduce((bi, o, oi, arr) => (o.s > arr[bi].s ? oi : bi), 0);
+                    return acc + (state.answers[i] === ci ? 1 : 0);
+                  }, 0);
+                  return <p className="apt-answer-tally">{correctCount} / {questions.length} correct</p>;
+                })()}
                 {questions.map((qq, i) => {
                   const ans = state.answers[i];
-                  const best = qq.options.reduce((bi, o, oi, arr) => (o.s > arr[bi].s ? oi : bi), 0);
+                  const correct = qq.options.reduce((bi, o, oi, arr) => (o.s > arr[bi].s ? oi : bi), 0);
+                  const unanswered = ans === null;
+                  const isCorrect = !unanswered && ans === correct;
                   return (
-                    <div key={i} className="apt-answer-item">
-                      <p className="apt-answer-q">{i + 1}. {qq.q}</p>
-                      <p className="apt-answer-yours">Your answer: {ans === null ? '—' : qq.options[ans].t} <em>({ans === null ? 0 : qq.options[ans].s} pts)</em></p>
-                      {ans !== best && <p className="apt-answer-best">Best answer: {qq.options[best].t}</p>}
+                    <div key={i} className={`apt-qcard${isCorrect ? ' is-correct' : ' is-wrong'}`}>
+                      <div className="apt-qcard-body">
+                        <p className="apt-qcard-num">Question {i + 1}</p>
+                        <p className="apt-qcard-q">{qq.q}</p>
+                        <p className={`apt-qcard-status ${isCorrect ? 'ok' : 'no'}`}>
+                          {unanswered ? 'Not answered' : isCorrect ? 'Correct' : 'Incorrect'}
+                        </p>
+                        <div className="apt-qcard-opts" role="list">
+                          {qq.options.map((o, oi) => {
+                            const isPick = ans === oi;
+                            const isKey = oi === correct;
+                            const tone = isKey ? 'key' : isPick ? 'wrong' : '';
+                            return (
+                              <div key={oi} className={`apt-opt-row ${tone}`} role="listitem">
+                                <span className="apt-opt-box" aria-hidden="true">
+                                  {isPick && (isKey ? '✓' : '✕')}
+                                </span>
+                                <span className="apt-opt-pill">{o.t}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                      {qq.explanation && (
+                        <details className="apt-qcard-exp">
+                          <summary>
+                            <span>Explanation</span>
+                            <svg className="apt-exp-chevron" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                              <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </summary>
+                          <p>{qq.explanation}</p>
+                        </details>
+                      )}
                     </div>
                   );
                 })}
@@ -319,7 +377,7 @@ export default function Aptitude() {
     const cluster = CLUSTERS.find(c => c.name === state.cluster) ?? CLUSTERS[0];
     return (
       <>
-        <section className="section" style={{ background: 'var(--parchment)', minHeight: '60vh', paddingTop: 24, textAlign: 'center' }}>
+        <section className="section" style={{ background: 'var(--parchment)', minHeight: '60vh', paddingTop: 48, textAlign: 'center' }}>
           <div style={{ textAlign: 'left' }}>
             <button className="runner-btn" style={{ color: 'var(--specialist)', marginBottom: 18 }} onClick={() => dispatch({ type: 'TO_CLUSTERS' })}>← Back</button>
           </div>
@@ -330,7 +388,7 @@ export default function Aptitude() {
             {cluster.sets.map((s, i) => (
               <div key={i} className="cluster-card">
                 <p className="cluster-name">{s.label} · {cluster.name}</p>
-                <p className="cluster-sets">{s.questions.length} questions · ~10 min</p>
+                <p className="cluster-sets">{s.questions.length} questions · ~15 min</p>
                 <button className="cluster-btn" onClick={() => dispatch({ type: 'PICK_SET', setIdx: i })}>Start test</button>
               </div>
             ))}
@@ -338,7 +396,7 @@ export default function Aptitude() {
         </section>
 
         {/* ── EXPLORE MENLER PROGRAMS ── */}
-        <section className="section" style={{ background: 'white', paddingTop: 28, paddingBottom: 40 }}>
+        <section className="section" style={{ background: 'white', paddingTop: 48, paddingBottom: 32 }}>
           <p className="section-label" style={{ textAlign: 'center' }}>Explore Menler Programs</p>
           <h2 className="section-h2" style={{ textAlign: 'center' }}>Continue your <em>AI journey.</em></h2>
           <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto' }}>Ready to go beyond assessment? Explore the Menler programs designed to help you build capability, portfolio, and career momentum.</p>
@@ -376,11 +434,11 @@ export default function Aptitude() {
           <p className="apt-eyebrow">Free · No signup to start</p>
           <h1 className="apt-h1">Where do you stand<br /><em>on the AI Curve?</em></h1>
           <p className="apt-sub">A 15 question a AI Aptitude Test designed to assess your AI readiness and recommend the most relevant learning pathway for your goals.</p>
-          <button className="apt-cta-big" onClick={() => dispatch({ type: 'PICK_CLUSTER', cluster: CLUSTERS[0].name })}>Start the test</button>
+          <button className="apt-cta-big" onClick={() => dispatch({ type: 'START_TEST', cluster: 'All About AI', questions: getAllAboutAIQuestions(15) })}>Start the test</button>
         </div>
       </section>
 
-      <section className="section" style={{ background: 'white', paddingTop: 28, paddingBottom: 0 }}>
+      <section className="section" style={{ background: 'white', paddingTop: 48, paddingBottom: 0 }}>
         <p className="section-label" style={{ textAlign: 'center' }}>The assessment</p>
         <h2 className="section-h2" style={{ textAlign: 'center' }}>What this test is<br /><em>and why it matters.</em></h2>
         <div className="apt-trust-grid">
@@ -397,7 +455,7 @@ export default function Aptitude() {
       </section>
 
       {/* ── CLUSTERS ── */}
-      <section className="section" style={{ background: 'var(--parchment)', paddingTop: 28, paddingBottom: 28 }}>
+      <section className="section" style={{ background: 'var(--parchment)', paddingTop: 48, paddingBottom: 32 }}>
         <p className="section-label">Choose your cluster</p>
         <h2 className="section-h2">Pick a track.<br /><em>Take a set.</em></h2>
         <p className="section-sub">Every track benchmarks a different AI capability from agentic thinking to engineering workflows.</p>
@@ -414,7 +472,7 @@ export default function Aptitude() {
       </section>
 
       {/* ── QUESTION BANK ── */}
-      <section className="section" style={{ background: 'white', paddingBottom: 28 }}>
+      <section className="section" style={{ background: 'white', paddingBottom: 32 }}>
         <p className="section-label">Section 3 · Question bank</p>
         <h2 className="section-h2">AI Interview QB.<br /><em>200+ questions from real loops.</em></h2>
         <p className="section-sub">Asked at top Indian and global companies. Select a topic and get a PDF of the Q&amp;A asked in real interview rounds.</p>
@@ -440,7 +498,7 @@ export default function Aptitude() {
       <hr style={{ border: 'none', borderTop: '1px solid rgba(38,33,92,0.12)', maxWidth: 1080, margin: '0 auto' }} />
 
       {/* ── EXPLORE MENLER PROGRAMS ── */}
-      <section className="section" style={{ background: 'white', paddingTop: 28, paddingBottom: 40 }}>
+      <section className="section" style={{ background: 'white', paddingTop: 48, paddingBottom: 32 }}>
         <p className="section-label" style={{ textAlign: 'center' }}>Explore Menler Programs</p>
         <h2 className="section-h2" style={{ textAlign: 'center' }}>Continue your <em>AI journey.</em></h2>
         <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto' }}>Ready to go beyond assessment? Explore the Menler programs designed to help you build capability, portfolio, and career momentum.</p>

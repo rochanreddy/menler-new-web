@@ -45,7 +45,7 @@ export default function Outcomes() {
   return (
     <>
       {/* ── HERO ── */}
-      <section className="hero hero-centered" style={{ background: '#1A1647', padding: '64px 40px 40px' }}>
+      <section className="hero hero-centered" style={{ background: '#1A1647', padding: '64px clamp(22px, 6vw, 40px) 40px' }}>
         <div className="hero-ring r1" style={{ borderColor: 'rgba(175,169,236,0.12)' }} />
         <div className="hero-ring r2" style={{ borderColor: 'rgba(175,169,236,0.08)' }} />
         <div className="hero-inner">

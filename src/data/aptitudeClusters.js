@@ -37,6 +37,52 @@ export function getSetQuestions(clusterName, setIdx) {
   return cluster?.sets[setIdx]?.questions ?? APTITUDE_QUESTIONS;
 }
 
+// Fisher–Yates shuffle (returns a new array; client-only, so Math.random is fine).
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Every unique question in a cluster, across all of its sets (deduped by text).
+function collectClusterQuestions(cluster) {
+  const seen = new Set();
+  const out = [];
+  for (const set of cluster.sets) {
+    for (const q of set.questions ?? []) {
+      if (q?.q && !seen.has(q.q)) { seen.add(q.q); out.push(q); }
+    }
+  }
+  return out;
+}
+
+// "All About AI" — a mixed test drawn from the FULL question bank: every domain,
+// every set. Pools are shuffled and round-robined so all nine domains are
+// represented and each attempt gets a fresh mix.
+export function getAllAboutAIQuestions(count = 15) {
+  const pools = CLUSTERS.map(c => shuffle(collectClusterQuestions(c)));
+  const out = [];
+  let round = 0;
+  let guard = 0;
+  while (out.length < count && guard < 1000) {
+    let added = false;
+    for (const pool of pools) {
+      if (pool[round]) {
+        out.push(pool[round]);
+        added = true;
+        if (out.length === count) break;
+      }
+    }
+    if (!added) break; // all pools exhausted
+    round++;
+    guard++;
+  }
+  return out;
+}
+
 // A 14-day learning roadmap. Lightly tailored by the recommended program.
 export function buildRoadmap(program) {
   const base = [

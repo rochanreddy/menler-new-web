@@ -29,12 +29,35 @@ const PLAYBOOK = [
   { logo: '/logos/claude.svg', ms: '/logos/microsoft.png', thumb: '100+ prompts', badge: 'Claude MS', cat: 'Microsoft 365', title: 'Claude in MS', desc: 'Use Claude across Microsoft 365 — Word, Excel, PowerPoint, and Teams.', pdf: null },
 ];
 
+// Group every project's tag class into a small set of filterable domains for
+// the Project builds filter. Keeps near-duplicate tag labels under one chip.
+const PROJECT_DOMAIN = {
+  't-eng': 'Engineering',
+  't-tech': 'Engineering',
+  't-analyst': 'Data & Analytics',
+  't-ops': 'Operations',
+  't-marketing': 'Sales & Marketing',
+  't-finance': 'Sales & Marketing',
+  't-pm': 'Product',
+  't-pjm': 'Product',
+  't-founder': 'Strategy & Leadership',
+  't-vc': 'Strategy & Leadership',
+};
+const PROJECT_FILTERS = ['All', 'Engineering', 'Product', 'Data & Analytics', 'Operations', 'Finance Operations', 'HR Operations', 'Sales & Marketing', 'Strategy & Leadership'];
+
+// A project's filter domain: explicit `domain` field wins, else mapped by tag class.
+const projectDomain = (p) => p.domain || PROJECT_DOMAIN[p.tagCls];
+
 export default function Resources() {
   const navigate = useNavigate();
   const go = (path) => { navigate(path); window.scrollTo(0, 0); };
   const [pbItem, setPbItem] = useState(null);
+  const [projFilter, setProjFilter] = useState('All');
   const [email, setEmail] = useState('');
   const [done, setDone] = useState(false);
+  const visibleProjects = projFilter === 'All'
+    ? PROJECTS
+    : PROJECTS.filter(p => projectDomain(p) === projFilter);
   const handleNewsletter = async (e) => {
     e.preventDefault();
     try { await submitLead({ email, source: 'resources-newsletter' }); } catch {}
@@ -52,7 +75,7 @@ export default function Resources() {
         </div>
       </section>
       {/* ── CLAUDE PLAYBOOK ── */}
-      <section className="res-preview" style={{ background: 'white', paddingTop: 40, paddingBottom: 40 }}>
+      <section className="res-preview" style={{ background: 'white', paddingTop: 48, paddingBottom: 32 }}>
         <div className="preview-shell">
           <p className="section-label">Claude Playbook</p>
           <h2 className="section-h2">Master every<br /><em>Claude surface.</em></h2>
@@ -80,7 +103,7 @@ export default function Resources() {
         </div>
       </section>
       {/* ── LIBRARY CARDS ── */}
-      <section className="res-preview" style={{ background: 'var(--parchment)', paddingBottom: 28 }}>
+      <section className="res-preview" style={{ background: 'var(--parchment)', paddingBottom: 32 }}>
         <div className="preview-shell">
           <p className="section-label">The Menler library</p>
           <h2 className="section-h2">Knowledge Layer.<br /><em>Learn free</em></h2>
@@ -106,8 +129,20 @@ export default function Resources() {
           <p className="section-label">Library 03 · Project builds</p>
           <h2 className="section-h2">Every project.<br /><em>One place.</em></h2>
           <p className="section-sub">The full set of fellow-built projects across domains. Open any one for the build doc, stack, and outcome.</p>
+          <div className="proj-filters" role="group" aria-label="Filter projects by domain">
+            {PROJECT_FILTERS.map((f) => (
+              <button
+                key={f}
+                className={`proj-filter${projFilter === f ? ' on' : ''}`}
+                onClick={() => setProjFilter(f)}
+                aria-pressed={projFilter === f}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
           <div className="proj-grid proj-grid--4 proj-grid--library">
-            {PROJECTS.map((p) => (
+            {visibleProjects.map((p) => (
               <article
                 key={p.slug}
                 className="proj-card proj-card--clickable proj-card--library"
@@ -149,7 +184,7 @@ export default function Resources() {
       </section>
 
       {/* ── EXPLORE MENLER PROGRAMS ── */}
-      <section className="section" style={{ background: 'white', paddingTop: 28, paddingBottom: 40 }}>
+      <section className="section" style={{ background: 'white', paddingTop: 48, paddingBottom: 32 }}>
         <p className="section-label" style={{ textAlign: 'center' }}>Explore Menler Programs</p>
         <h2 className="section-h2" style={{ textAlign: 'center' }}>Continue your <em>AI journey.</em></h2>
         <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto' }}>Ready to go beyond assessment? Explore the Menler programs designed to help you build capability, portfolio, and career momentum.</p>

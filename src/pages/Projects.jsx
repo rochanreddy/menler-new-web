@@ -44,30 +44,48 @@ export default function Projects() {
       {/* ── DESCRIPTION & PROBLEM STATEMENT ── */}
       <section className="section" style={{ background: 'white' }}>
         <div className="proj-doc proj-doc--page">
-          <p className="proj-doc-lead">{doc.overview}</p>
+          {doc ? (
+            <>
+              <p className="proj-doc-lead">{doc.overview}</p>
 
-          <h4 className="proj-doc-h">The problem</h4>
-          <p className="proj-doc-p">{doc.problem}</p>
+              <h4 className="proj-doc-h">The problem</h4>
+              <p className="proj-doc-p">{doc.problem}</p>
 
-          <h4 className="proj-doc-h">How it works</h4>
-          <ol className="proj-doc-steps">
-            {doc.howItWorks.map((s, j) => <li key={j}>{s}</li>)}
-          </ol>
+              <h4 className="proj-doc-h">How it works</h4>
+              <ol className="proj-doc-steps">
+                {doc.howItWorks.map((s, j) => <li key={j}>{s}</li>)}
+              </ol>
 
-          <h4 className="proj-doc-h">Key features</h4>
-          <ul className="proj-doc-list">
-            {doc.features.map((f, j) => <li key={j}>{f}</li>)}
-          </ul>
+              <h4 className="proj-doc-h">Key features</h4>
+              <ul className="proj-doc-list">
+                {doc.features.map((f, j) => <li key={j}>{f}</li>)}
+              </ul>
 
-          <h4 className="proj-doc-h">Architecture</h4>
-          <p className="proj-doc-p">{doc.architecture}</p>
-          <div className="proj-stack" style={{ marginTop: 10 }}>{project.stack.map(s => <span key={s}>{s}</span>)}</div>
+              <h4 className="proj-doc-h">Architecture</h4>
+              <p className="proj-doc-p">{doc.architecture}</p>
+              <div className="proj-stack" style={{ marginTop: 10 }}>{project.stack.map(s => <span key={s}>{s}</span>)}</div>
 
-          <h4 className="proj-doc-h">Results &amp; impact</h4>
-          <ul className="proj-doc-list">
-            {doc.results.map((r, j) => <li key={j}>{r}</li>)}
-          </ul>
-          <p className="proj-outcome" style={{ marginTop: 12 }}>{project.outcome}</p>
+              <h4 className="proj-doc-h">Results &amp; impact</h4>
+              <ul className="proj-doc-list">
+                {doc.results.map((r, j) => <li key={j}>{r}</li>)}
+              </ul>
+              <p className="proj-outcome" style={{ marginTop: 12 }}>{project.outcome}</p>
+            </>
+          ) : (
+            <>
+              <p className="proj-doc-lead">{project.desc}</p>
+
+              <h4 className="proj-doc-h">Tools &amp; stack</h4>
+              <div className="proj-stack" style={{ marginTop: 10 }}>{project.stack.map(s => <span key={s}>{s}</span>)}</div>
+
+              <h4 className="proj-doc-h">Outcome</h4>
+              <p className="proj-outcome" style={{ marginTop: 4 }}>{project.outcome}</p>
+
+              <p className="proj-doc-p" style={{ marginTop: 24, color: 'var(--text-muted)' }}>
+                A full build doc for this project is on the way. It's drawn from a real respondent in the AI-at-Work survey — the project type, tools, and domain reflect what they described building.
+              </p>
+            </>
+          )}
 
           <div style={{ marginTop: 36 }}>
             <button className="btn-primary" onClick={() => navigate(-1)}>Back</button>

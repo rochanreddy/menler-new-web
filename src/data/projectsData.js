@@ -17,7 +17,7 @@ export const PROJECTS = [
   },
   {
     slug: 'deal-flow-triage-agent', image: '/projects/vc.jpg',
-    tag: 'VC', tagCls: 't-vc', title: 'Deal-flow triage agent',
+    tag: 'Venture Capital', tagCls: 't-vc', title: 'Deal-flow triage agent',
     desc: 'Ingests pitch decks, founder emails, and public data — outputs a partner-ready memo on fit, market, traction, and follow-up questions.',
     stack: ['Claude API', 'Tool use', 'RAG'], outcome: 'Cuts initial screening time by 70%',
     doc: {
@@ -45,7 +45,7 @@ export const PROJECTS = [
   },
   {
     slug: 'pmo-status-agent', image: '/projects/pmo.jpg',
-    tag: 'Project Management', tagCls: 't-pjm', title: 'PMO status agent',
+    tag: 'Product Management', tagCls: 't-pjm', title: 'PMO status agent',
     desc: 'Reads sprint boards, code commits, and stand-up notes — drafts the weekly leadership update with risks, slippage, and the asks for next week.',
     stack: ['MCP', 'Cowork', 'Skills'], outcome: 'Saves 6+ hrs/PM/week of status writing',
     doc: {
@@ -112,5 +112,87 @@ export const PROJECTS = [
       architecture: "Prompt patterns plus a brand-voice Skill, with MCP connectors into the publishing and scheduling tools.",
       results: ["3× content output velocity", "A single, consistent author voice", "Faster brief-to-live turnaround"],
     },
+  },
+
+  // ── AI-at-Work portfolio projects (grouped by domain on the Library page).
+  // Grounded in real survey respondents; outcome lines are operator-portfolio
+  // framing, not survey-reported figures. These are preview-only (no full doc).
+  {
+    slug: 'retail-support-rag-service', image: '/projects/eng.jpg', tag: 'Engineering', tagCls: 't-eng',
+    title: 'Retail support RAG service',
+    desc: 'Ingests product catalogs, SOPs and past tickets into a vector store, serving a grounded Claude assistant that answers retail ops queries with sources attached.',
+    stack: ['Python', 'Claude', 'Pinecone', 'FastAPI', 'Git'], outcome: '~55% fewer escalations to senior engineers',
+  },
+  {
+    slug: 'api-doc-summariser-agent', image: '/projects/eng.jpg', tag: 'Engineering', tagCls: 't-eng',
+    title: 'API doc summariser agent',
+    desc: 'Crawls internal API references and changelogs, then drafts integration guides and flags breaking changes for downstream engineering teams.',
+    stack: ['Claude', 'Python', 'MCP', 'GitHub'], outcome: 'Integration ramp-up cut from days to hours',
+  },
+  {
+    slug: 'internal-engineering-copilot', image: '/projects/data.jpg', tag: 'Engineering', tagCls: 't-eng',
+    title: 'Internal engineering copilot',
+    desc: 'An agent over internal repos and docs that scaffolds code, runs retrieval-grounded reviews, and drafts design notes without leaving the IDE.',
+    stack: ['Claude CLI', 'Cursor', 'Python', 'RAG'], outcome: 'Design-to-first-PR time down ~40%',
+  },
+  {
+    slug: 'quote-to-order-automation-engine', image: '/projects/data.jpg', tag: 'Finance Operations', tagCls: 't-analyst', domain: 'Finance Operations',
+    title: 'Quote-to-order automation engine',
+    desc: 'Reads inbound quotes, validates them against catalog and pricing rules, auto-creates clean orders, and raises Jira stories only for the exceptions.',
+    stack: ['Salesforce Agentforce', 'Claude', 'Python'], outcome: '~70% of standard quotes processed untouched',
+  },
+  {
+    slug: 'requirement-to-dashboard-pipeline', image: '/projects/pmo.jpg', tag: 'Business Analytics', tagCls: 't-analyst',
+    title: 'Requirement-to-dashboard pipeline',
+    desc: 'Turns raw stakeholder notes and source tables into a structured BRD, then scaffolds the BI dashboard spec and a first-pass EDA for review.',
+    stack: ['Claude Projects', 'Clay', 'HubSpot', 'BigQuery'], outcome: 'Requirement-to-dashboard cycle roughly halved',
+  },
+  {
+    slug: 'incident-management-auto-sync', image: '/projects/ops.jpg', tag: 'Operations', tagCls: 't-ops',
+    title: 'Incident management auto-sync',
+    desc: 'Connects ServiceNow to Google Sheets via API and Apps Script, classifies incidents, and refreshes live dashboards with no analyst input.',
+    stack: ['ServiceNow', 'Google Apps Script', 'Gemini', 'Data Studio'], outcome: '~10 hrs/week of manual logging eliminated',
+  },
+  {
+    slug: 'ai-job-matching-workflow', image: '/projects/ops.jpg', tag: 'HR Operations', tagCls: 't-ops', domain: 'HR Operations',
+    title: 'AI job-matching workflow',
+    desc: 'Parses candidate resumes against open roles, scores fit with reasoning, and routes ranked shortlists straight into the recruiter queue.',
+    stack: ['Claude', 'Make', 'Lovable'], outcome: 'Shortlisting effort per role down ~80%',
+  },
+  {
+    slug: 'account-research-solutioning-agent', image: '/projects/marketing.jpg', tag: 'Sales', tagCls: 't-finance',
+    title: 'Account research & solutioning agent',
+    desc: 'Gathers public company signals, synthesises an account brief, and drafts a tailored solution narrative plus a first-cut sales deck for the deal team.',
+    stack: ['Claude', 'ChatGPT', 'Python'], outcome: 'Pre-meeting prep cut from ~4 hours to 30 mins',
+  },
+  {
+    slug: 'crm-hygiene-autopilot', image: '/projects/marketing.jpg', tag: 'Sales', tagCls: 't-finance',
+    title: 'CRM hygiene autopilot',
+    desc: 'Captures call and meeting transcripts, summarises outcomes, and updates CRM fields and next-step tasks without any rep data entry.',
+    stack: ['Gong', 'Zapier', 'Konnector.io'], outcome: '~5 hrs/week recovered from CRM admin per rep',
+  },
+  {
+    slug: 'end-to-end-seo-content-agent', image: '/projects/pm.jpg', tag: 'Product Management', tagCls: 't-pm',
+    title: 'End-to-end SEO content agent',
+    desc: 'Takes a topic brief, researches and drafts on-brand articles, then publishes straight to the CMS with metadata and internal links in place.',
+    stack: ['Claude', 'OpenRouter', 'n8n'], outcome: 'Content output 4× with no added headcount',
+  },
+  {
+    slug: 'inbound-email-triage-agent', image: '/projects/pm.jpg', tag: 'Product Management', tagCls: 't-pm',
+    title: 'Inbound email triage agent',
+    desc: 'Screens incoming emails, classifies intent, drafts context-aware replies, and queues CRM follow-ups for one-click human approval.',
+    stack: ['Claude', 'n8n', 'HubSpot'], outcome: 'First-response handling automated for ~90% of inbound',
+  },
+  {
+    slug: 'insight-on-demand-data-agent', image: '/projects/ceo.png', tag: 'Strategy & Consulting', tagCls: 't-founder',
+    title: 'Insight-on-demand data agent',
+    desc: 'Turns plain-English business questions into SQL, runs them against the warehouse, and returns narrated insights and charts for leadership.',
+    stack: ['Claude', 'BigQuery', 'Comet'], outcome: "Self-serve analytics for the CEO's office — zero wait",
+  },
+  {
+    slug: 'claude-built-in-app-marketplace', image: '/projects/vc.jpg', tag: 'Strategy & Consulting', tagCls: 't-founder',
+    title: 'Claude-built in-app marketplace',
+    desc: 'Designed, built and shipped an in-app marketplace — frontend, backend and design — through an agentic coding workflow, end to end.',
+    stack: ['Claude Code', 'React', 'Postgres'], outcome: 'Full marketplace shipped in days, not sprints',
   },
 ];
