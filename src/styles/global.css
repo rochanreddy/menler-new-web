@@ -295,7 +295,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .prog-card.eng .prog-card-logos .partner-logo-img[alt="Google"] { height: 42px; max-width: 150px; }
 .prog-card.eng .prog-card-logos .partner-logo-img[alt="Razorpay"] { height: 26px; max-width: 100px; }
 /* Generalist card ("No coding required") — slightly larger builder logos, with extra gap. */
-.prog-card.gen .prog-card-logos { gap: 16px 30px; }
+.prog-card.gen .prog-card-logos { gap: 16px 22px; }
 .prog-card.gen .prog-card-logos .partner-logo-img:not([alt="McKinsey"]) { height: 28px; max-width: 100px; }
 .prog-card.gen .prog-card-logos .partner-logo-img[alt="Flipkart"] { height: 40px; max-width: 130px; }
 .prog-card.gen .prog-card-logos .partner-logo-img[alt="McKinsey"] { height: 52px; max-width: 200px; }

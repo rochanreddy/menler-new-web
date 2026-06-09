@@ -140,10 +140,7 @@ export default function Navbar() {
             <button className="mm-cta" onClick={apply}>Apply Now</button>
           </>
         ) : (
-          <>
-            <button className="mm-link" onClick={() => go('/login')}>Log in</button>
-            <button className="mm-cta" onClick={apply}>Apply Now</button>
-          </>
+          <button className="mm-cta" onClick={apply}>Apply Now</button>
         )}
       </div>
       <div className={`mobile-overlay${mobileOpen ? ' open' : ''}`} onClick={() => setMobileOpen(false)} aria-hidden="true" />
