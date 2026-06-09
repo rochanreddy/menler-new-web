@@ -20,10 +20,13 @@ export function verifyAdmin(token) {
 }
 
 export function adminCookieOptions() {
+  // Cross-domain in production (frontend and API on different hosts) needs
+  // SameSite=None + Secure; locally we keep Lax/non-secure for http://localhost.
+  const isProd = process.env.NODE_ENV === 'production';
   return {
     httpOnly: true,
-    sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
+    sameSite: isProd ? 'none' : 'lax',
+    secure: isProd,
     maxAge: ADMIN_MAX_AGE_MS,
     path: '/',
   };
