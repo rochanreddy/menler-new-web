@@ -25,7 +25,9 @@
       "Bash(git commit *)",
       "Bash(git push *)",
       "Bash(ls -la public/favicon.svg)",
-      "Bash(sed -n '1,15p' index.html)"
+      "Bash(sed -n '1,15p' index.html)",
+      "Bash(grep -nA6 \"^\\\\.hero \\\\{\" src/styles/global.css)",
+      "Bash(grep -nA3 \"\\\\.about-hero\" src/styles/global.css)"
     ]
   }
 }

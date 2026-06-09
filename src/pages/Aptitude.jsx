@@ -403,13 +403,13 @@ export default function Aptitude() {
           <div className="cluster-grid" style={{ marginTop: 28 }}>
             <div className="cluster-card cluster-card--kick">
               <p className="cluster-num">For beginners &amp; explorers</p>
-              <p className="cluster-name">Menler Kickstarter</p>
+              <p className="cluster-name">Menler AI Kickstarter</p>
               <p className="cluster-sets">Learn AI fundamentals, build your first portfolio, and become AI fluent in just 14 days.</p>
               <button className="cluster-btn" onClick={() => go('/kickstarter')}>Explore Kickstarter</button>
             </div>
             <div className="cluster-card cluster-card--gen">
               <p className="cluster-num">College students &amp; professionals</p>
-              <p className="cluster-name">Menler Generalist Fellowship</p>
+              <p className="cluster-name">Menler AI Generalist Fellowship</p>
               <p className="cluster-sets">Apply AI inside marketing, finance operations, product management, HR operations, consulting, and business workflows.</p>
               <button className="cluster-btn" onClick={() => go('/generalist')}>Explore Fellowship</button>
             </div>
@@ -505,13 +505,13 @@ export default function Aptitude() {
         <div className="cluster-grid" style={{ marginTop: 28 }}>
           <div className="cluster-card cluster-card--kick">
             <p className="cluster-num">For beginners &amp; explorers</p>
-            <p className="cluster-name">Menler Kickstarter</p>
+            <p className="cluster-name">Menler AI Kickstarter</p>
             <p className="cluster-sets">Learn AI fundamentals, build your first portfolio, and become AI fluent in just 14 days.</p>
             <button className="cluster-btn" onClick={() => go('/kickstarter')}>Explore Kickstarter</button>
           </div>
           <div className="cluster-card cluster-card--gen">
             <p className="cluster-num">College students &amp; professionals</p>
-            <p className="cluster-name">Menler Generalist Fellowship</p>
+            <p className="cluster-name">Menler AI Generalist Fellowship</p>
             <p className="cluster-sets">Apply AI inside marketing, finance operations, product management, HR operations, consulting, and business workflows.</p>
             <button className="cluster-btn" onClick={() => go('/generalist')}>Explore Fellowship</button>
           </div>

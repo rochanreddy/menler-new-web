@@ -63,7 +63,7 @@ const TOOL_LOGO = {
 
 // "Builders from" company logos shown on the program cards.
 const GEN_BUILDERS = [
-  { name: 'Flipkart', domain: 'flipkart.com', logo: '/logos/flipkart.png' },
+  { name: 'Flipkart', domain: 'flipkart.com', logo: '/logos/flipkart-new-logo.png' },
   { name: 'McKinsey', domain: 'mckinsey.com', logo: '/logos/mckinsey.png' },
   { name: 'Black Tiger Cement', domain: 'blacktigercement.com', logo: '/logos/black_tiger_cement.png' },
   { name: 'Zendesk', domain: 'zendesk.com' },
@@ -71,7 +71,7 @@ const GEN_BUILDERS = [
 ];
 const ENG_BUILDERS = [
   { name: 'Google', domain: 'google.com' },
-  { name: 'Fractal', domain: 'fractal.ai' },
+  { name: 'Razorpay', domain: 'razorpay.com', logo: '/logos/razorpay.png' },
   { name: 'Autodesk', domain: 'autodesk.com', logo: '/logos/autodesk.png' },
   { name: 'Microsoft', domain: 'microsoft.com' },
   { name: 'Samsung', domain: 'samsung.com' },
@@ -140,9 +140,23 @@ export default function Home() {
     }
   }, [location]);
 
-  // "What you build" — show a subset; "Explore more" opens the full library page.
-  const PROJECTS_PREVIEW = 8;
-  const visibleProjects = PROJECTS.slice(0, PROJECTS_PREVIEW);
+  // "What you build" — a curated set of 8 (one per domain) shown on Home only;
+  // "Explore more" opens the full library page. Editing this list does NOT change
+  // the Library page (it renders the full PROJECTS array).
+  // Ordered alphabetically by domain name (the tag shown on each card).
+  const HOME_PROJECT_SLUGS = [
+    'research-synthesis-insight-engine',   // Data & Business Analysts
+    'production-rag-pipeline-custom-mcp',  // Engineering
+    'retail-support-rag-service',          // Engineering
+    'deal-flow-triage-agent',              // Finance Operations
+    'ceo-decision-intelligence-agent',     // Founder's Office
+    'ai-job-matching-workflow',            // HR Operations
+    'always-on-content-outreach-engine',   // Marketing & Sales
+    'pmo-status-agent',                    // Product Management
+  ];
+  const visibleProjects = HOME_PROJECT_SLUGS
+    .map(slug => PROJECTS.find(p => p.slug === slug))
+    .filter(Boolean);
 
   // "Apply to the Fellowship" opens the lead form in a popup.
   const [showApply, setShowApply] = useState(false);
@@ -244,7 +258,7 @@ export default function Home() {
           </div>
         </div>
         <div style={{ textAlign: 'center', marginTop: 28 }}>
-          <button className="btn-primary" style={{ background: 'var(--ink)', color: '#fff', border: 'none', minWidth: 200 }} onClick={() => setShowApply(true)}>Book a call</button>
+          <button className="btn-primary" style={{ background: 'var(--placed)', color: '#fff', border: 'none', minWidth: 200 }} onClick={() => setShowApply(true)}>Book a call</button>
         </div>
       </section>
 
@@ -270,14 +284,14 @@ export default function Home() {
               <h3 className="proj-card-title">{p.title}</h3>
               <p className="proj-card-desc">{p.desc}</p>
               <div className="proj-stack">{p.stack.map(s => (
-                <span key={s}>{TOOL_LOGO[s] && <img className="tool-logo" src={TOOL_LOGO[s]} alt="" aria-hidden="true" />}{s}</span>
+                <span key={s}>{s}</span>
               ))}</div>
               <p className="proj-outcome">{p.outcome}</p>
               <span className="proj-card-link">View preview</span>
             </Reveal>
           ))}
         </div>
-        {PROJECTS.length > PROJECTS_PREVIEW && (
+        {PROJECTS.length > visibleProjects.length && (
           <div style={{ textAlign: 'center', marginTop: 32 }}>
             <button className="btn-outline" style={{ color: 'var(--specialist)', borderColor: 'rgba(83,74,183,0.5)', minWidth: 200 }} onClick={() => go('/resources#project-builds')}>
               Explore more
@@ -369,7 +383,7 @@ export default function Home() {
           <HiringRail companies={HIRING_COMPANIES} rows={2} />
         </div>
         <div style={{ textAlign: 'center', marginTop: 32 }}>
-          <button className="btn-primary" style={{ background: 'var(--ink)', color: '#fff', border: 'none', minWidth: 200 }} onClick={() => setShowApply(true)}>Book a call</button>
+          <button className="btn-primary" style={{ background: 'var(--placed)', color: '#fff', border: 'none', minWidth: 200 }} onClick={() => setShowApply(true)}>Book a call</button>
         </div>
       </section>
 

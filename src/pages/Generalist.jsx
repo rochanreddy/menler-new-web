@@ -54,8 +54,8 @@ const GEN_HIRING = {
   title: 'The jobs',
   titleEm: 'AI specialists are landing.',
   sub: "AI adoption is accelerating. Demand for AI-native professionals is accelerating faster.",
-  genLabel: 'Domain roles',
-  engLabel: 'AI-native roles',
+  genLabel: 'AI-native roles',
+  engLabel: 'Domain roles',
   genRoles: [
     { name: 'AI Strategist', band: '₹15–28L · Consulting & in-house' },
     { name: 'AI Product Manager', band: '₹16–30L · SaaS & platforms' },
@@ -353,6 +353,9 @@ export default function Generalist() {
 
       {/* ── HIRING PARTNERS ── */}
       <HiringJobs {...GEN_HIRING} />
+      <div style={{ background: '#ffffff', textAlign: 'center', padding: '0 var(--gutter) 48px' }}>
+        <button className="btn-primary" style={{ minWidth: 220 }} onClick={openApply}>Book a call</button>
+      </div>
 
       {/* ── FAQ ── */}
       <section className="section" style={{ background: 'var(--parchment)', textAlign: 'center', paddingTop: 48 }}>

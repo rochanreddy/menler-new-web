@@ -318,7 +318,7 @@ export default function Kickstarter() {
       <MentorsRail style={{ paddingTop: 48 }} />
 
       {/* ── HIRING PARTNERS & ROLES ── */}
-      <HiringJobs sectionStyle={{ paddingTop: 48 }} />
+      <HiringJobs label="Internship opportunities" title="The internships" sectionStyle={{ paddingTop: 48 }} />
       <div style={{ textAlign: 'center', padding: '0 clamp(22px, 6vw, 40px) 56px', background: '#ffffff' }}>
         <button className="btn-primary" style={{ background: '#BA7517', minWidth: 200 }} onClick={openApply}>Book a call</button>
       </div>

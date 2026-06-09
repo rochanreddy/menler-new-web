@@ -85,8 +85,8 @@ export default function Footer() {
         <div>
           <p className="footer-col-title">For partners</p>
           <ul className="footer-links">
-            <li><a onClick={() => go('/outcomes')}>Hire from us</a></li>
-            <li><a onClick={() => go('/about')}>Partner with us</a></li>
+            <li><a onClick={() => go('/about#working-with-us')}>Hire from us</a></li>
+            <li><a onClick={() => go('/about#working-with-us')}>Partner with us</a></li>
           </ul>
         </div>
         <div>

@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import CtaBanner from '../components/common/CtaBanner';
 import Footer from '../components/layout/Footer';
 import MentorsRail from '../components/common/MentorsRail';
@@ -14,12 +16,26 @@ const VALUES = [
 
 export default function About() {
   const openApply = useApply();
+  const location = useLocation();
+
+  // Footer "Hire from us" / "Partner with us" link here with #working-with-us;
+  // scroll to that section once the page lands (after the global scroll-to-top).
+  useEffect(() => {
+    if (location.hash !== '#working-with-us') return;
+    const el = document.getElementById('working-with-us');
+    if (!el) return;
+    const t = setTimeout(() => {
+      if (window.__lenis) window.__lenis.scrollTo(el, { offset: -70 });
+      else el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 140);
+    return () => clearTimeout(t);
+  }, [location.hash, location.key]);
 
   return (
     <>
       {/* ── HERO ── */}
       <section className="about-hero hero hero-centered" style={{ padding: '64px clamp(22px, 6vw, 40px) 56px' }}>
-        <div className="hero-ring r1" /><div className="hero-ring r2" />
+        <div className="hero-ring r1" /><div className="hero-ring r2" /><div className="hero-ring rl1" />
         <div className="hero-inner">
           <p className="hero-eyebrow" style={{ color: 'var(--lavender)' }}>About Menler · India</p>
           <h1 className="hero-h1">AI learning, built for<br /><em>the people doing the work.</em></h1>
@@ -77,7 +93,7 @@ export default function About() {
       </section>
 
       {/* ── WORKING WITH US ── */}
-      <section className="section" style={{ background: 'white' }}>
+      <section id="working-with-us" className="section" style={{ background: 'white' }}>
         <p className="section-label">Working with us</p>
         <h2 className="section-h2">Three ways to<br /><em>work with Menler.</em></h2>
         <div className="qualify-grid">

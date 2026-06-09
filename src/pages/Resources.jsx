@@ -104,7 +104,7 @@ export default function Resources() {
     <>
       {/* ── HERO ── */}
       <section className="hero hero-centered" style={{ paddingTop: 56 }}>
-        <div className="hero-ring r1" /><div className="hero-ring r2" />
+        <div className="hero-ring r1" /><div className="hero-ring r2" /><div className="hero-ring rl1" />
         <div className="hero-inner">
           <h1 className="hero-h1">The Menler library.<br /><em>Free. Forever.</em></h1>
           <p className="hero-sub">The knowledge layer for the AI-native workforce. Guides, prompts, templates, and frameworks designed for real-world execution.</p>
@@ -228,13 +228,13 @@ export default function Resources() {
         <div className="cluster-grid" style={{ marginTop: 28 }}>
           <div className="cluster-card cluster-card--kick">
             <p className="cluster-num">For beginners &amp; explorers</p>
-            <p className="cluster-name">Menler Kickstarter</p>
+            <p className="cluster-name">Menler AI Kickstarter</p>
             <p className="cluster-sets">Learn AI fundamentals, build your first portfolio, and become AI fluent in just 14 days.</p>
             <button className="cluster-btn" onClick={() => go('/kickstarter')}>Explore Kickstarter</button>
           </div>
           <div className="cluster-card cluster-card--gen">
             <p className="cluster-num">College students &amp; professionals</p>
-            <p className="cluster-name">Menler Generalist Fellowship</p>
+            <p className="cluster-name">Menler AI Generalist Fellowship</p>
             <p className="cluster-sets">Apply AI inside marketing, finance operations, product management, HR operations, consulting, and business workflows.</p>
             <button className="cluster-btn" onClick={() => go('/generalist')}>Explore Fellowship</button>
           </div>

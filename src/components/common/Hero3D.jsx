@@ -86,39 +86,48 @@ export default function Hero3D() {
     const labels = [];
 
     const makeLabel = (text) => {
-      const pad = 34, fs = 46;
+      // Supersample the canvas (SS×) so the text stays crisp on the spinning ring
+      // instead of looking soft when the 1× texture is scaled up.
+      const SS = 2;
+      const fs = 46, padX = 56, padY = 26;
       const c = document.createElement('canvas');
       let cx = c.getContext('2d');
       cx.font = `700 ${fs}px 'DM Sans', sans-serif`;
-      const w = Math.ceil(cx.measureText(text).width);
-      c.width = w + pad * 2; c.height = fs + pad * 2;
+      // Measure + a safety buffer so bold glyphs (or a font that loads late) are
+      // never clipped at the left/right edges.
+      const w = Math.ceil(cx.measureText(text).width) + 8;
+      const lw = w + padX * 2, lh = fs + padY * 2; // logical (display) size
+      c.width = lw * SS; c.height = lh * SS;        // backing store at SS resolution
       cx = c.getContext('2d');
+      cx.scale(SS, SS);                             // draw in logical coords, render at SS
       cx.font = `700 ${fs}px 'DM Sans', sans-serif`;
       cx.textAlign = 'center'; cx.textBaseline = 'middle';
-      const mx = c.width / 2, my = c.height / 2;
-      // Lavender glow halo (multiple passes build up the glow)
-      cx.shadowColor = 'rgba(175,169,236,0.95)';
-      cx.shadowBlur = 18; cx.shadowOffsetY = 0;
-      cx.fillStyle = '#CFC9FF';
-      cx.fillText(text, mx, my);
-      cx.fillText(text, mx, my);
-      cx.shadowBlur = 0;
-      // Dark outline so the text stays readable over the bright globe/ring
-      cx.lineJoin = 'round';
-      cx.lineWidth = 7;
-      cx.strokeStyle = 'rgba(8,6,16,0.92)';
-      cx.strokeText(text, mx, my);
-      // Crisp bright core on top
+      const mx = lw / 2, my = lh / 2;
+      // Solid dark pill behind the text gives consistent contrast over the bright
+      // globe and ring, so the name stays readable wherever it sits on the orbit.
+      // The pill hugs the text; the wider canvas (padX) is just a safe buffer so
+      // bold glyphs are never clipped at the edges.
+      const pillPadX = 16, pillH = lh - 34;
+      const pillW = w + pillPadX * 2;
+      const rr = pillH / 2;
+      cx.beginPath();
+      cx.roundRect(mx - pillW / 2, my - pillH / 2, pillW, pillH, rr);
+      cx.fillStyle = 'rgba(11,8,20,0.6)';
+      cx.fill();
+      cx.lineWidth = 1.5;
+      cx.strokeStyle = 'rgba(175,169,236,0.45)';
+      cx.stroke();
+      // Crisp bright text on top
       cx.fillStyle = '#FFFFFF';
       cx.fillText(text, mx, my);
       const tex = new THREE.CanvasTexture(c);
-      tex.minFilter = THREE.LinearFilter; tex.anisotropy = 4;
+      tex.minFilter = THREE.LinearFilter; tex.anisotropy = 8;
       labelTex.push(tex);
       const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false, depthWrite: false });
       dotMats.push(mat);
       const sp = new THREE.Sprite(mat);
       const s = 0.0046;
-      sp.scale.set(c.width * s, c.height * s, 1);
+      sp.scale.set(lw * s, lh * s, 1);             // display size unchanged
       return sp;
     };
 
@@ -173,12 +182,23 @@ export default function Hero3D() {
       group.rotation.x = rotX;
       group.rotation.y = rotY;
       dotsSpin.rotation.z += 0.006; // dots travel along the ring line
-      // Hide labels that pass behind the globe (camera is on +z looking at origin):
-      // occluded when the label is behind centre (z < 0) and within the sphere's silhouette.
+      // Hide a label exactly when the sphere sits between it and the camera.
+      // Test the camera→label segment against the sphere (centred at the world
+      // origin, radius RADIUS): if its closest point to the centre falls inside
+      // the sphere and in front of the label, the label is occluded.
       group.updateWorldMatrix(true, true);
+      const cam = camera.position;
       for (const lb of labels) {
         lb.getWorldPosition(tmpV);
-        lb.visible = !(tmpV.z < 0 && Math.hypot(tmpV.x, tmpV.y) < RADIUS * 0.96);
+        const dx = tmpV.x - cam.x, dy = tmpV.y - cam.y, dz = tmpV.z - cam.z;
+        const len2 = dx * dx + dy * dy + dz * dz;
+        const t = -(cam.x * dx + cam.y * dy + cam.z * dz) / len2; // closest-point param on the segment
+        let occluded = false;
+        if (t > 0 && t < 1) {
+          const px = cam.x + dx * t, py = cam.y + dy * t, pz = cam.z + dz * t;
+          occluded = (px * px + py * py + pz * pz) < RADIUS * RADIUS;
+        }
+        lb.visible = !occluded;
       }
       renderer.render(scene, camera);
       raf = requestAnimationFrame(animate);

@@ -72,14 +72,24 @@ html.lenis, html.lenis body { height: auto; }
 .nav-links { display: flex; gap: 4px; align-items: center; }
 .nav-item { position: relative; }
 .nav-link {
+  position: relative;
   font-size: 13px; color: var(--text-muted); text-decoration: none;
   padding: 7px 12px; border-radius: 8px; cursor: pointer;
   display: flex; align-items: center; gap: 5px;
-  transition: color .15s, background .15s; white-space: nowrap;
+  transition: color .2s ease; white-space: nowrap;
   border: none; background: none; font-family: inherit;
 }
-.nav-link:hover { color: var(--ink); background: rgba(175,169,236,0.12); }
+/* Hover/active: a brand-gradient underline sweeps in from the left. */
+.nav-link::after {
+  content: ''; position: absolute; left: 12px; right: 12px; bottom: 3px;
+  height: 2px; border-radius: 2px;
+  background: linear-gradient(90deg, var(--specialist), var(--lavender));
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .28s cubic-bezier(0.22,1,0.36,1);
+}
+.nav-link:hover { color: var(--ink); }
 .nav-link.active { color: var(--ink); }
+.nav-link:hover::after, .nav-link.active::after { transform: scaleX(1); }
 .nav-chevron { width: 10px; height: 10px; transition: transform .2s; }
 .nav-item.open .nav-chevron { transform: rotate(180deg); }
 
@@ -214,6 +224,10 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .hero-ring.r1 { width: 560px; height: 560px; top: -180px; right: -180px; }
 .hero-ring.r2 { width: 360px; height: 360px; top: -80px; right: -80px; }
 .hero-ring.r3 { width: 180px; height: 180px; top: 10px; right: 10px; }
+/* Mirrored pair on the bottom-left (used on the Library hero). */
+.hero-ring.rl1 { width: 420px; height: 420px; bottom: -150px; left: -150px; top: auto; right: auto; }
+.hero-ring.rl2 { width: 360px; height: 360px; bottom: -100px; left: -100px; top: auto; right: auto; }
+@media (max-width: 760px) { .hero-ring.rl2 { display: none; } }
 .hero-inner { grid-column: 1; grid-row: 1; max-width: 560px; position: relative; z-index: 2; }
 /* Single-column secondary heroes (Programs / Outcomes / Resources / About):
    center the content like the AI Aptitude Test hero. */
@@ -278,8 +292,8 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .prog-card-logos .partner-name { font-size: 12px; font-weight: 600; color: var(--text-muted); }
 /* Engineering card ("Coding experience required") — slightly larger builder logos. */
 .prog-card.eng .prog-card-logos .partner-logo-img { height: 30px; max-width: 112px; }
-.prog-card.eng .prog-card-logos .partner-logo-img[alt="Google"],
-.prog-card.eng .prog-card-logos .partner-logo-img[alt="Fractal"] { height: 42px; max-width: 150px; }
+.prog-card.eng .prog-card-logos .partner-logo-img[alt="Google"] { height: 42px; max-width: 150px; }
+.prog-card.eng .prog-card-logos .partner-logo-img[alt="Razorpay"] { height: 26px; max-width: 100px; }
 /* Generalist card ("No coding required") — slightly larger builder logos, with extra gap. */
 .prog-card.gen .prog-card-logos { gap: 16px 30px; }
 .prog-card.gen .prog-card-logos .partner-logo-img:not([alt="McKinsey"]) { height: 28px; max-width: 100px; }
@@ -703,6 +717,14 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 /* Mobile: the Home "What you build" preview shows only the first 3 projects; the
    "Explore more" button below takes users to the full set on the Library page. */
 @media (max-width: 560px) { .proj-grid--home > *:nth-child(n+4) { display: none; } }
+/* Home "What you build": make every card identical — equal height, with the
+   stack + outcome + link block pinned to the bottom so they line up across cards. */
+@media (min-width: 561px) { .proj-grid--home { grid-auto-rows: 1fr; } }
+.proj-grid--home .proj-card { display: flex; flex-direction: column; height: 100%; }
+.proj-grid--home .proj-stack { margin-top: auto; }
+/* Flex-column stretches children full-width by default — keep the tag pill and
+   the link sized to their text so the tag colour ends after the label. */
+.proj-grid--home .proj-domain-tag, .proj-grid--home .proj-card-link { align-self: flex-start; }
 .proj-card { background: white; border: 0.5px solid rgba(175,169,236,0.28); border-radius: 14px; padding: 28px; transition: transform .2s, border-color .2s; }
 .proj-card:hover { transform: translateY(-3px); border-color: rgba(175,169,236,0.5); }
 .proj-card--clickable { cursor: pointer; }

@@ -17,7 +17,7 @@ export const PROJECTS = [
   },
   {
     slug: 'deal-flow-triage-agent', image: '/projects/vc.jpg',
-    tag: 'Finance', tagCls: 't-vc', title: 'Deal-flow triage agent',
+    tag: 'Finance Operations', tagCls: 't-vc', title: 'Deal-flow triage agent',
     desc: 'Ingests pitch decks, founder emails, and public data — outputs a partner-ready memo on fit, market, traction, and follow-up questions.',
     stack: ['Claude API', 'Tool use', 'RAG'], outcome: 'Cuts initial screening time by 70%',
     doc: {
@@ -160,7 +160,7 @@ export const PROJECTS = [
     },
   },
   {
-    slug: 'quote-to-order-automation-engine', image: '/projects/data.jpg', tag: 'Finance', tagCls: 't-finance', domain: 'Finance Operations',
+    slug: 'quote-to-order-automation-engine', image: '/projects/data.jpg', tag: 'Finance Operations', tagCls: 't-finance', domain: 'Finance Operations',
     title: 'Quote-to-order automation engine',
     desc: 'Reads inbound quotes, validates them against catalog and pricing rules, auto-creates clean orders, and raises Jira stories only for the exceptions.',
     stack: ['Salesforce Agentforce', 'Claude', 'Python'], outcome: '~70% of standard quotes processed untouched',
