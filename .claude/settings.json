@@ -58,7 +58,8 @@
       "Bash(curl -s -m 30 -i -X OPTIONS https://menler-new-web.onrender.com/leads -H \"Origin: https://menler-new-web.vercel.app\" -H \"Access-Control-Request-Method: POST\" -H \"Access-Control-Request-Headers: content-type\")",
       "Bash(curl -s -m 40 -i -X OPTIONS https://menler-new-web.onrender.com/leads -H \"Origin: https://menler-new-web.vercel.app\" -H \"Access-Control-Request-Method: POST\" -H \"Access-Control-Request-Headers: content-type\")",
       "Bash(curl -s -m 30 https://menler-new-web.vercel.app/)",
-      "Bash(curl -s -m 30 -o /dev/null -w \"HTTP %{http_code}  type=%{content_type}  size=%{size_download}\\\\n\" https://menler-new-web.vercel.app/favicon.svg)"
+      "Bash(curl -s -m 30 -o /dev/null -w \"HTTP %{http_code}  type=%{content_type}  size=%{size_download}\\\\n\" https://menler-new-web.vercel.app/favicon.svg)",
+      "Bash(awk 'NR>=1560 && NR<=1600 && /@media/ {print NR\": \"$0}' src/styles/global.css)"
     ]
   }
 }

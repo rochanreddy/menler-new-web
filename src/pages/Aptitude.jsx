@@ -14,7 +14,19 @@ const TRUST_CARDS = [
   { title: 'Why it matters', desc: 'Most people dont know where they stand with AI. This assessment gives you a clear baseline before you invest resources.' },
 ];
 
-const QB_FILTERS = ['All', 'RAG', 'MCP', 'Agents', 'Evals', 'Tool use', 'Prompts', 'Foundations', 'Senior'];
+// Question-bank topics → downloadable PDF (in /public/question_banks).
+// `pdf: null` = not uploaded yet; the pill shows but download is disabled.
+const QB_BANKS = [
+  { key: 'All About AI', pdf: '/question_banks/Menler_All_About_AI_Question_Bank.pdf' },
+  { key: 'RAG', pdf: '/question_banks/Menler_RAG_Knowledge_Systems_Question_Bank.pdf' },
+  { key: 'MCP', pdf: null },
+  { key: 'Agents', pdf: '/question_banks/Menler_Agentic_AI_Question_Bank.pdf' },
+  { key: 'Evals', pdf: null },
+  { key: 'Tools', pdf: '/question_banks/Menler_AI_Tools_Ecosystem_Question_Bank.pdf' },
+  { key: 'Prompts', pdf: '/question_banks/Menler_Prompt_Engineering_Question_Bank.pdf' },
+  { key: 'LLM', pdf: '/question_banks/Menler_LLM_Fundamentals_Question_Bank.pdf' },
+  { key: 'Engineering', pdf: '/question_banks/Menler_AI_Engineering_Thinking_Question_Bank.pdf' },
+];
 
 const QB_QUESTIONS = [
   { company: 'Razorpay', level: 'Senior', topic: 'RAG', q: 'You are building a RAG system for Razorpay\'s internal policy docs. The system gives confident wrong answers. What is the most likely root cause and how do you fix it?', a: 'Likely cause: chunk size too large or lack of re-ranking, causing irrelevant passages to dominate context. Fix: smaller, overlapping chunks + cross-encoder re-ranking + source-grounding evaluation (RAGAS).' },
@@ -114,7 +126,12 @@ export default function Aptitude() {
   const [state, dispatch] = useReducer(reducer, INIT);
 
   // Jump to the top of the page whenever the view changes (landing → sets → runner → report).
-  useEffect(() => { window.scrollTo(0, 0); }, [state.view]);
+  // Jump to the top on every view change. Use Lenis if it's running (plain
+  // window.scrollTo is ignored while Lenis owns the scroll), else native.
+  useEffect(() => {
+    if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true });
+    else window.scrollTo(0, 0);
+  }, [state.view]);
 
   // 15-minute countdown for the test runner. Resets when a new set starts.
   const TEST_SECONDS = 15 * 60;
@@ -149,24 +166,19 @@ export default function Aptitude() {
   const [leadDone, setLeadDone] = useState(false);
   const setL = (k, v) => setLeadForm(f => ({ ...f, [k]: v }));
 
-  // Question-bank filter + filtered download.
-  const [qbFilter, setQbFilter] = useState('All');
-  const filteredQB = QB_QUESTIONS.filter(q => qbFilter === 'All' || q.topic === qbFilter || q.level === qbFilter);
+  // Question-bank topic selector + per-topic PDF download.
+  const [qbFilter, setQbFilter] = useState('All About AI');
+  const qbBank = QB_BANKS.find(b => b.key === qbFilter) || QB_BANKS[0];
   const downloadQB = () => {
-    if (!filteredQB.length) return;
-    const header = `Menler — AI Interview Question Bank\nFilter: ${qbFilter}\nQuestions: ${filteredQB.length}\n\n`;
-    const body = filteredQB.map((q, i) =>
-      `${i + 1}. [${q.company} · ${q.level} · ${q.topic}]\nQ: ${q.q}\nA: ${q.a}\n`
-    ).join('\n');
-    const blob = new Blob([header + body], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
+    if (!qbBank.pdf) return;
     const a = document.createElement('a');
-    a.href = url;
-    a.download = `menler-question-bank-${qbFilter.toLowerCase().replace(/\s+/g, '-')}.txt`;
+    a.href = encodeURI(qbBank.pdf);
+    a.download = '';
+    a.target = '_blank';
+    a.rel = 'noopener';
     document.body.appendChild(a);
     a.click();
     a.remove();
-    URL.revokeObjectURL(url);
   };
   const saveReport = async (e) => {
     e.preventDefault();
@@ -236,6 +248,7 @@ export default function Aptitude() {
               <span><i className="lg todo" /> Left · {total - answeredCount}</span>
             </div>
             <button className="runner-submit" onClick={() => dispatch({ type: 'SUBMIT' })}>Submit test</button>
+            <p className="runner-nav-note">Answers save as you go. Mark any question to revisit it before you submit.</p>
           </aside>
         </div>
       </section>
@@ -430,10 +443,11 @@ export default function Aptitude() {
   return (
     <>
       <section className="apt-hero">
+        <div className="apt-hero-ring-left" aria-hidden="true" />
         <div className="apt-hero-inner">
           <p className="apt-eyebrow">Free · No signup to start</p>
           <h1 className="apt-h1">Where do you stand<br /><em>on the AI Curve?</em></h1>
-          <p className="apt-sub">A 15 question a AI Aptitude Test designed to assess your AI readiness and recommend the most relevant learning pathway for your goals.</p>
+          <p className="apt-sub">A 15 question AI Aptitude Test designed to assess your AI readiness and recommend the most relevant learning pathway for your goals.</p>
           <button className="apt-cta-big" onClick={() => dispatch({ type: 'START_TEST', cluster: 'All About AI', questions: getAllAboutAIQuestions(15) })}>Start the test</button>
         </div>
       </section>
@@ -477,20 +491,20 @@ export default function Aptitude() {
         <h2 className="section-h2">AI Interview QB.<br /><em>200+ questions from real loops.</em></h2>
         <p className="section-sub">Asked at top Indian and global companies. Select a topic and get a PDF of the Q&amp;A asked in real interview rounds.</p>
         <div className="qb-filters">
-          {QB_FILTERS.map(f => (
+          {QB_BANKS.map(b => (
             <button
-              key={f}
-              className={`qb-filter-pill${qbFilter === f ? ' active' : ''}`}
-              onClick={() => setQbFilter(f)}
-              aria-pressed={qbFilter === f}
+              key={b.key}
+              className={`qb-filter-pill${qbFilter === b.key ? ' active' : ''}`}
+              onClick={() => setQbFilter(b.key)}
+              aria-pressed={qbFilter === b.key}
             >
-              {f}
+              {b.key}
             </button>
           ))}
         </div>
         <div style={{ textAlign: 'center', marginTop: 32 }}>
-          <button className="btn-primary" onClick={downloadQB} disabled={!filteredQB.length}>
-            Download Question Bank{qbFilter !== 'All' ? ` — ${qbFilter}` : ''} ({filteredQB.length})
+          <button className="btn-primary" onClick={downloadQB} disabled={!qbBank.pdf}>
+            {qbBank.pdf ? `Download Question Bank — ${qbBank.key}` : `${qbBank.key} — coming soon`}
           </button>
         </div>
       </section>

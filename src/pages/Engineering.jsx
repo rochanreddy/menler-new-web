@@ -147,7 +147,7 @@ export default function Engineering() {
       </section>
 
       <CtaBanner
-        badge="Applications open · Cohort 01 · 30 seats"
+        badge="Applications open · 30 seats"
         title="Ready to build Claude-native systems?"
         subtitle="Python required. Ambition mandatory. 12 weeks to production."
         buttonText="Sign up"

@@ -94,7 +94,7 @@ export default function Navbar() {
             </button>
           </div>
         </div>
-        <button className={`nav-link${isActive('/kickstarter') ? ' active' : ''}`} onClick={() => go('/kickstarter')}>Gen AI Kickstarter</button>
+        <button className={`nav-link${isActive('/kickstarter') ? ' active' : ''}`} onClick={() => go('/kickstarter')}>AI Kickstarter</button>
 
         
         
@@ -125,7 +125,7 @@ export default function Navbar() {
 
       {/* ── MOBILE DRAWER ── */}
       <div className={`mobile-menu${mobileOpen ? ' open' : ''}`} aria-hidden={!mobileOpen}>
-        <button className="mm-link" onClick={() => go('/kickstarter')}>Gen AI Kickstarter</button>
+        <button className="mm-link" onClick={() => go('/kickstarter')}>AI Kickstarter</button>
         <div className="mm-section-label">Fellowship</div>
         <button className="mm-link" onClick={() => go('/generalist')}>Claude AI Generalist</button>
         <button className="mm-link" onClick={() => go('/engineering')}>Claude AI Engineering</button>

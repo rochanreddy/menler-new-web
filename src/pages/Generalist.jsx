@@ -14,10 +14,10 @@ const CURRICULUM = [
   {
     label: 'Phase 1', weeks: 'Weeks 1–4', title: 'AI fluency & Claude foundations',
     modules: [
-      { w: 'Week 1 — AI & LLM Foundations', d: 'Learn how modern AI works, how Large Language Models generate responses, and why prompting matters. Understand key concepts like tokens, context windows, embeddings, and the current AI ecosystem. By the end of the week, you\'ll have a strong foundation for working with AI tools confidently.' },
-      { w: 'Week 2 — Claude Mastery & Prompt Engineering', d: 'Master Claude\'s core features and learn how to communicate effectively with AI. You\'ll create reusable prompt systems, organize AI workspaces, and learn techniques that consistently produce high-quality results for work, study, and projects.' },
-      { w: 'Week 3 — Advanced Prompting & AI Productivity', d: 'Explore advanced prompting frameworks, research workflows, and AI-powered productivity systems. Learn how to use AI for content creation, research, note-taking, meeting summaries, and knowledge management while building your own personal AI workflow.' },
-      { w: 'Week 4 — AI Creativity & No-Code Building', d: 'Learn to create images, videos, audio, presentations, and simple applications using AI. Explore creative AI tools and build real projects without coding, turning ideas into usable products and media assets.' },
+      { w: 'Week 1 — AI & LLM Foundations', lessons: ['How modern AI & Large Language Models work', 'Tokens, context windows & embeddings explained', 'Why prompting matters and how it shapes output', 'Mapping the current AI ecosystem'] },
+      { w: 'Week 2 — Claude Mastery & Prompt Engineering', lessons: ["Claude's core features, end to end", 'Communicating effectively with AI', 'Building reusable prompt systems', 'Organising AI workspaces for work & study'] },
+      { w: 'Week 3 — Advanced Prompting & AI Productivity', lessons: ['Advanced prompting frameworks', 'AI research & knowledge-management workflows', 'Content, note-taking & meeting summaries', 'Designing your personal AI productivity system'] },
+      { w: 'Week 4 — AI Creativity & No-Code Building', lessons: ['Generating images, audio & video with AI', 'AI-built presentations & media assets', 'No-code app-building fundamentals', 'Turning ideas into usable products'] },
     ],
     tools: ['Make', 'OpenAI', 'Canva', 'Zapier', 'Typedream', 'Airtable', 'Claude', 'Notion'],
     projects: ['Personal AI assistant', 'No-code landing page', 'First automation workflow'],
@@ -25,10 +25,10 @@ const CURRICULUM = [
   {
     label: 'Phase 2', weeks: 'Weeks 5–8', title: 'Agentic workflows & real builds',
     modules: [
-      { w: 'Week 5 — AI Agents & Automation', d: 'Understand how AI agents work and learn to automate repetitive tasks. Connect different tools and services together to create workflows that can collect information, make decisions, and perform actions automatically.' },
-      { w: 'Week 6 — Voice AI & Intelligent Systems', d: 'Build voice-enabled AI experiences using speech recognition and voice generation technologies. Learn how conversational AI systems work and create assistants that can listen, respond, and perform tasks through voice interactions.' },
-      { w: 'Week 7 — AI App Development', d: 'Use AI-assisted development tools to build web applications faster. Learn how to turn ideas into functional products, connect databases and APIs, and create real-world AI-powered applications with minimal coding.' },
-      { w: 'Week 8 — Capstone Project & Product Launch', d: 'Bring everything together by building and launching a complete AI-powered project. Focus on product refinement, deployment, presentation skills, and creating a portfolio-worthy solution that demonstrates your AI capabilities.' },
+      { w: 'Week 5 — AI Agents & Automation', lessons: ['How AI agents work', 'Automating repetitive tasks', 'Connecting tools & services into workflows', 'Workflows that collect, decide & act automatically'] },
+      { w: 'Week 6 — Voice AI & Intelligent Systems', lessons: ['Speech recognition & voice generation', 'How conversational AI systems work', 'Building voice-enabled assistants', 'Assistants that listen, respond & act'] },
+      { w: 'Week 7 — AI App Development', lessons: ['AI-assisted development tools', 'Turning ideas into functional products', 'Connecting databases & APIs', 'Real AI-powered apps with minimal code'] },
+      { w: 'Week 8 — Capstone Project & Product Launch', lessons: ['Building a complete AI-powered project', 'Product refinement & deployment', 'Presentation & demo skills', 'Creating a portfolio-worthy solution'] },
     ],
     tools: ['Claude Cowork', 'MCP', 'Make', 'Zapier', 'n8n', 'Slack', 'Gmail', 'Excel'],
     projects: ['Domain automation agent', 'Multi-tool MCP workflow', 'Live cohort build'],
@@ -36,12 +36,60 @@ const CURRICULUM = [
   {
     label: 'Phase 3', weeks: 'Weeks 9–12', title: 'Domain specialisation, capstone & placement',
     domains: [
-      { name: "Founder's Office", modules: ['Decision-intelligence agent', 'Weekly briefing automation', 'Exec reporting'], tools: ['Claude', 'MCP', 'Slack', 'Notion'], projects: ['CEO weekly briefing agent'] },
-      { name: 'Marketing', modules: ['Brand-voice Skill', 'Content engine', 'Campaign automation'], tools: ['Skills', 'Canva', 'Buffer'], projects: ['Always-on content engine'] },
-      { name: 'Analyst', modules: ['Research synthesis', 'Insight memos', 'Multimodal tables'], tools: ['Claude API', 'Web search', 'Excel'], projects: ['Research insight engine'] },
-      { name: 'Finance', modules: ['Deal sourcing', 'Memo writing', 'Thesis-grounded screening', 'Budget variance', 'Claude in Excel', 'CFO decks'], tools: ['Excel', 'Claude', 'PowerPoint', 'Cowork', 'Web search', 'Projects'], projects: ['Deal-flow triage agent', 'Budget variance commentator'] },
-      { name: 'Operations', modules: ['SOP automation', 'Triage & routing', 'Audit logs'], tools: ['MCP', 'Cowork', 'Slack'], projects: ['SOP automation agent'] },
-      { name: 'Technology', modules: ['No-code app builder', 'Artifacts', 'Internal tools'], tools: ['Artifacts', 'Projects', 'Cowork'], projects: ['No-code internal tool'] },
+      { name: "Founder's Office",
+        weeks: [
+          { w: 'Week 1 — Strategic Intelligence', lessons: ['CoS / EIR / FO roles vs the job title', 'The three operating modes of a founder', 'Founder psychology & how trust decisions are made', 'AI-native strategic intelligence a founder would use'] },
+          { w: 'Week 2 — Founder Communication', lessons: ['Anatomy of an investor update founders actually send', 'Pitch narrative vs pitch deck', 'Stakeholder communication maps', 'Writing for a founder who edits in 90 seconds'] },
+          { w: 'Week 3 — Operations Layer', lessons: ['GTM coordination from the FO seat', 'Startup metrics that matter (ARR, NDR, CAC:LTV, burn)', 'Dashboards that trigger decisions, not just report', 'Notion as the operational source of truth'] },
+          { w: "Week 4 — Ship the Founder's OS", lessons: ['AI operator vs AI user', 'Agentic workflow architecture', 'Voice-briefing systems for the founder', 'Presenting a systems handover to a founder'] },
+        ],
+        tools: ['Claude', 'Perplexity', 'NotebookLM', 'Gamma', 'Notion', 'N8N', 'ElevenLabs', 'Slack', 'Replit'],
+        projects: ["Founder's OS — research + comms + ops, integrated", 'Live voice-briefing system on a real startup'] },
+      { name: 'Marketing',
+        weeks: [
+          { w: 'Week 1 — AI-native GTM Strategy', lessons: ['Marketing strategy vs marketing activity', 'Customer journey — trust is the conversion problem', 'Positioning without the biggest budget', 'GTM motion: product-, sales- or marketing-led'] },
+          { w: 'Week 2 — Brand & Content System', lessons: ['Content strategy vs content calendar', 'Storytelling architecture (spine, POV, arc)', 'Platform logic: Instagram, LinkedIn, YouTube, WhatsApp', 'Reach content vs trust content'] },
+          { w: 'Week 3 — Growth & Sales', lessons: ['Paid acquisition: ROAS vs CAC vs LTV vs payback', 'CRM thinking (HubSpot vs Zoho)', 'Retention stack: email + WhatsApp + push', 'AI lead qualification & outreach at volume'] },
+          { w: 'Week 4 — Ship the Marketing & Sales OS', lessons: ['Where AI creates leverage vs destroys brand', 'Campaign operations as a repeatable system', 'Brand-voice integrity at scale', 'Presenting an AI marketing system to a CMO'] },
+        ],
+        tools: ['Claude', 'Gamma', 'Canva AI', 'Midjourney', 'HubSpot', 'Meta Ads', 'GA4', 'WhatsApp Business', 'N8N', 'Runway'],
+        projects: ['Marketing OS — GTM + content + growth, integrated', 'Brand audio + video ad with live CRM pipeline'] },
+      { name: 'Analyst',
+        weeks: [
+          { w: 'Week 1 — Business Diagnostics', lessons: ['BA lifecycle: problem definition → recommendation', 'KPI design vs KPI reporting', 'Problem framing: 5 Whys, issue tree, MECE', 'The so-what test on every insight'] },
+          { w: 'Week 2 — Analytics & Reporting', lessons: ['Dashboards that drive decisions', 'Metric hierarchy: leading vs lagging', 'Data storytelling: SCQA in under 60 seconds', 'Cohort, funnel & segmentation analysis'] },
+          { w: 'Week 3 — Automate the Analytics Layer', lessons: ['Operational analytics in Indian qcom', 'Report vs decision system', 'SQL for analysts — how Claude changes access', 'Data quality in Indian businesses'] },
+          { w: 'Week 4 — Ship the BI OS', lessons: ['AI leverage vs confident wrong answers', 'Verifying hallucinated metrics & benchmarks', 'BI OS architecture — the four layers', 'BI OS as a career asset'] },
+        ],
+        tools: ['Claude', 'Perplexity', 'Google Sheets AI', 'Looker Studio', 'Gamma', 'N8N', 'SQL', 'Notion', 'Slack'],
+        projects: ['BI OS — diagnosis + analytics + automation, deployed', 'Looker Studio dashboard + board narrative'] },
+      { name: 'Finance Operations',
+        weeks: [
+          { w: 'Week 1 — Financial Analysis & Modelling', lessons: ['Unit economics in consumer & fintech', 'The model a CFO reads in 90 seconds', 'Chain-of-thought for statement analysis', 'Scenario analysis: base / bull / bear'] },
+          { w: 'Week 2 — FP&A & Business Partnering', lessons: ['The three real FP&A mandates', 'Budget vs forecast vs reforecast', 'Variance decomposition: volume, rate & mix', 'Driver-based vs line-item modelling'] },
+          { w: 'Week 3 — Risk, Fraud & Compliance', lessons: ['Credit risk fundamentals: SMA-0/1/2 & NPA', 'RBI regulatory reporting calendar', 'Financial fraud types & AML / KYC under PMLA', 'Where AI adds genuine leverage in BFSI risk'] },
+          { w: 'Week 4 — Ship the Finance OS', lessons: ['What an AI-native finance function looks like', 'The RBI FREE-AI framework (2025)', 'Model risk governance in Indian BFSI', 'Finance OS as an intelligence layer on ERP'] },
+        ],
+        tools: ['Claude', 'Google Sheets AI', 'Gamma', 'Notion', 'N8N', 'Airtable', 'Excel', 'Slack', 'Replit'],
+        projects: ['Finance OS — analysis + FP&A + risk & compliance', 'Automated credit-risk & CFO reporting pipeline'] },
+      { name: 'Human Resource',
+        weeks: [
+          { w: 'Week 1 — Talent Acquisition System', lessons: ['How TA differs across startup, enterprise & GCC', 'JD design that attracts vs repels', 'The iceberg model of competency', 'The ATS problem & offer management'] },
+          { w: 'Week 2 — HRBP Execution & PMS', lessons: ['What HRBPs actually own', 'Attrition diagnosis: TTM, push vs pull factors', 'Designing a PMS from scratch', 'OKR vs KRA vs BSC vs MBO'] },
+          { w: 'Week 3 — Payroll, Analytics & L&D', lessons: ['Indian payroll complexity: PF, ESI, TDS, PT', 'The statutory compliance calendar', 'HR analytics as a decision layer', 'L&D ROI & content design that sticks'] },
+          { w: 'Week 4 — Ship the HR OS', lessons: ['What an AI-native HR function looks like', 'The HR data fragmentation problem', 'AI in hiring — legal exposure (DPDP, Equal Remuneration)', 'Employee relations & grievance management'] },
+        ],
+        tools: ['Claude', 'Notion', 'Keka', 'Darwinbox', 'N8N', 'Gamma', 'Airtable', 'Slack', 'Gmail'],
+        projects: ['HR OS — TA + HRBP + payroll + L&D, deployed', 'Automated hiring + offer + compliance command centre'] },
+      { name: 'Product Management',
+        weeks: [
+          { w: 'Week 1 — Discovery & Problem Framing', lessons: ['What PMs actually do vs the JD', 'JTBD vs feature requests vs user complaints', 'AI-native discovery & user synthesis', "Framing a problem statement that doesn't get ignored"] },
+          { w: 'Week 2 — PRDs, Backlogs & Roadmaps', lessons: ['What makes a PRD shippable', 'RICE, ICE, MoSCoW — when each breaks down', 'Roadmaps that survive stakeholder review', 'Saying no with data, not opinion'] },
+          { w: 'Week 3 — Product Decisions with Data', lessons: ['North Star vs vanity metrics', 'Funnel thinking (AARRR) as a diagnostic', 'Experiment design without a data team', 'A metrics narrative a CFO reads in 60 seconds'] },
+          { w: 'Week 4 — Ship an AI-native Feature', lessons: ["What's different about AI-native products", 'AI UX patterns: graceful degradation, confirmation', 'Writing specs engineering will respect', 'Pitching an AI feature to a founder or investor'] },
+        ],
+        tools: ['Claude', 'Jira', 'Notion', 'Figma', 'Gamma', 'GA4', 'Mixpanel', 'Lovable', 'Replit'],
+        projects: ['PM Case File — discovery → PRD → analytics', 'Shipped AI-native prototype + spec + pitch deck'] },
     ],
   },
 ];
@@ -111,16 +159,37 @@ const TOOL_LOGO_SRC = {
   'Artifacts': '/logos/claude.svg', 'MCP': '/logos/mcp.svg', 'OpenAI': '/logos/openai.png',
   'Canva': '/logos/canva.png', 'Notion': '/logos/notion.png', 'Make': '/logos/make.png',
   'Zapier': '/logos/zapier.png', 'Airtable': '/logos/airtable.png', 'Typedream': '/logos/typedream.png',
-  'n8n': '/logos/n8n.png', 'Slack': '/logos/slack.png', 'Gmail': '/logos/gmail.png',
+  'n8n': '/logos/n8n.png', 'N8N': '/logos/n8n.png', 'Slack': '/logos/slack.png', 'Gmail': '/logos/gmail.png',
   'Excel': '/logos/excel.png', 'PowerPoint': '/logos/powerpoint.png', 'Buffer': '/logos/buffer.png',
+  // Phase 3 domain-track tools (match the exact names used in the data).
+  'Perplexity': '/logos/perplexity.svg', 'NotebookLM': '/logos/notebooklm.png', 'Gamma': '/logos/gamma.png',
+  'ElevenLabs': '/logos/elevenlabs.png', 'Canva AI': '/logos/canva.png', 'Midjourney': '/logos/midjourney.png',
+  'Runway': '/logos/runway.png', 'Lovable': '/logos/lovable-logo.png', 'Emergent': '/logos/emergent.png',
+  'Gemini': '/logos/gemini.png', 'Gemini (image)': '/logos/gemini.png', 'ChatGPT': '/logos/chatgpt.png',
+};
+
+// Tools without a local logo file — fall back to the brand's favicon by domain.
+const TOOL_DOMAIN = {
+  'Replit': 'replit.com', 'HubSpot': 'hubspot.com', 'Meta Ads': 'facebook.com', 'GA4': 'google.com',
+  'WhatsApp Business': 'whatsapp.com', 'Google Sheets AI': 'google.com', 'Looker Studio': 'google.com',
+  'Jira': 'atlassian.com', 'Figma': 'figma.com', 'Mixpanel': 'mixpanel.com', 'Keka': 'keka.com',
+  'Darwinbox': 'darwinbox.com', 'Web search': 'google.com', 'Multimodal': 'claude.ai',
 };
 
 function ToolChip({ name }) {
-  const src = TOOL_LOGO_SRC[name];
-  const [ok, setOk] = useState(!!src);
+  // Prefer a local logo; otherwise fall back to the brand's favicon by domain.
+  const local = TOOL_LOGO_SRC[name];
+  const domain = TOOL_DOMAIN[name];
+  const sources = [
+    local,
+    domain && `https://logo.clearbit.com/${domain}`,
+    domain && `https://www.google.com/s2/favicons?domain=${domain}&sz=64`,
+  ].filter(Boolean);
+  const [i, setI] = useState(0);
+  const src = sources[i];
   return (
     <span className="curric-tool">
-      {ok && <img className="curric-tool-logo" src={src} alt="" onError={() => setOk(false)} />}
+      {src && <img className="curric-tool-logo" src={src} alt="" onError={() => setI(i + 1)} />}
       {name}
     </span>
   );
@@ -135,6 +204,7 @@ export default function Generalist() {
   const [activeProject, setActiveProject] = useState(null);
   const [activePhase, setActivePhase] = useState(0);
   const [activeDomain, setActiveDomain] = useState(0);
+  const [domainWeek, setDomainWeek] = useState(0);
   const [openWeek, setOpenWeek] = useState(null);
   const weekDetailRef = useRef(null);
 
@@ -230,7 +300,7 @@ export default function Generalist() {
                         const selWeek = (openWeek && openWeek.startsWith(`${i}-`)) ? Number(openWeek.split('-')[1]) : 0;
                         const week = p.modules[selWeek];
                         return (
-                      <div className="curric-detail--split">
+                      <div className="curric-detail--split curric-detail--triple">
                         <div className="curric-detail-main">
                           <p className="curric-label">Modules · week by week</p>
                           <ul className="curric-weeks">
@@ -244,14 +314,18 @@ export default function Generalist() {
                             ))}
                           </ul>
                         </div>
-                        <div className="curric-detail-tools" ref={weekDetailRef} style={{ scrollMarginTop: 90 }}>
-                          <p className="curric-label">{week.w}</p>
-                          <p className="curric-week-desc">{week.d}</p>
-                          <p className="curric-label" style={{ marginTop: 26 }}>Projects you'll build</p>
+                        <div className="curric-detail-mid" ref={weekDetailRef} style={{ scrollMarginTop: 90 }}>
+                          <p className="curric-label">Lesson plan</p>
+                          <ul className="curric-modules">
+                            {week.lessons.map(l => <li key={l}>{l}</li>)}
+                          </ul>
+                          <p className="curric-label" style={{ marginTop: 28 }}>Project you'll build</p>
                           <ul className="curric-modules">
                             {p.projects.map(pr => <li key={pr}>{pr}</li>)}
                           </ul>
-                          <p className="curric-label" style={{ marginTop: 26 }}>Tools</p>
+                        </div>
+                        <div className="curric-detail-tools">
+                          <p className="curric-label">Tool stack</p>
                           <div className="curric-tools">
                             {p.tools.map(t => <ToolChip key={t} name={t} />)}
                           </div>
@@ -260,6 +334,10 @@ export default function Generalist() {
                         );
                       })()
                     ) : (
+                      (() => {
+                        const dom = p.domains[activeDomain];
+                        const dWeek = dom.weeks[domainWeek] || dom.weeks[0];
+                        return (
                       <>
                         <p className="curric-label">Choose a domain track</p>
                         <div className="curric-domains">
@@ -267,31 +345,46 @@ export default function Generalist() {
                             <button
                               key={d.name}
                               className={`curric-domain${activeDomain === di ? ' on' : ''}`}
-                              onClick={() => setActiveDomain(di)}
+                              onClick={() => { setActiveDomain(di); setDomainWeek(0); }}
                             >
                               {d.name}<span className="curric-domain-caret">{activeDomain === di ? '▾' : '▸'}</span>
                             </button>
                           ))}
                         </div>
-                        <div className="curric-detail--split" style={{ marginTop: 22 }}>
+                        <div className="curric-detail--split curric-detail--triple" style={{ marginTop: 22 }}>
                           <div className="curric-detail-main">
-                            <p className="curric-label">Modules · {p.domains[activeDomain].name}</p>
-                            <ul className="curric-modules">
-                              {p.domains[activeDomain].modules.map(m => <li key={m}>{m}</li>)}
+                            <p className="curric-label">Modules · week by week</p>
+                            <ul className="curric-weeks">
+                              {dom.weeks.map((m, wi) => (
+                                <li key={m.w} className={`curric-week${domainWeek === wi ? ' on' : ''}`}>
+                                  <button className="curric-week-head" onClick={() => setDomainWeek(wi)} aria-pressed={domainWeek === wi}>
+                                    <span className="curric-week-title">{m.w}</span>
+                                    <span className="curric-week-caret">›</span>
+                                  </button>
+                                </li>
+                              ))}
                             </ul>
-                            <p className="curric-label" style={{ marginTop: 24 }}>Projects you'll build</p>
+                          </div>
+                          <div className="curric-detail-mid">
+                            <p className="curric-label">Lesson plan</p>
                             <ul className="curric-modules">
-                              {p.domains[activeDomain].projects.map(pr => <li key={pr}>{pr}</li>)}
+                              {dWeek.lessons.map(l => <li key={l}>{l}</li>)}
+                            </ul>
+                            <p className="curric-label" style={{ marginTop: 28 }}>Project you'll build</p>
+                            <ul className="curric-modules">
+                              {dom.projects.map(pr => <li key={pr}>{pr}</li>)}
                             </ul>
                           </div>
                           <div className="curric-detail-tools">
-                            <p className="curric-label">Tools</p>
+                            <p className="curric-label">Tool stack</p>
                             <div className="curric-tools">
-                              {p.domains[activeDomain].tools.map(t => <ToolChip key={t} name={t} />)}
+                              {dom.tools.map(t => <ToolChip key={t} name={t} />)}
                             </div>
                           </div>
                         </div>
                       </>
+                        );
+                      })()
                     )}
                   </div>
                 )}
@@ -365,7 +458,7 @@ export default function Generalist() {
       </section>
 
       <CtaBanner
-        badge="Applications open · Cohort 01 · 30 seats"
+        badge="Applications open · 30 seats"
         title="Ready to become a Claude AI Generalist?"
         subtitle="No coding experience. Just 12 weeks and real ambition."
         buttonText="Sign up"

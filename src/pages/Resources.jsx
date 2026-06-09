@@ -7,7 +7,7 @@ import { submitLead } from '../services/leadService';
 
 const LIBRARY_CARDS = [
   { num: '01', name: 'Prompt Library', desc: '120+ tested prompts across business, engineering, and beginner tracks.', tags: ['All programs', '120+ prompts'], pdf: '/pdfs/Menler_100_Prompts_Playbook.pdf' },
-  { num: '02', name: 'AI stack map', desc: 'Visual guide to the best AI tools by category.', tags: ['All programs', 'Q2 2026'], pdf: null },
+  { num: '02', name: 'AI stack map', desc: 'Visual guide to the best AI tools by category.', tags: ['All programs', 'Q2 2026'], pdf: '/pdfs/Menler_AI_Stack_Map.pdf' },
   { num: '03', name: 'Project connectors docs', desc: '18 hands-on project walkthroughs led by the program instructors.', tags: ['Generalist', 'Engineering', 'Kickstarter'], tagsNowrap: true, pdf: '/pdfs/Menler_Connector_Projects.pdf' },
   { num: '04', name: 'AI glossary', desc: '100+ AI terms explained in simple, beginner-friendly language.', tags: ['Beginners', '100+ terms'], pdf: '/pdfs/Menler_AI_Glossary_AtoZ.pdf' },
 ];

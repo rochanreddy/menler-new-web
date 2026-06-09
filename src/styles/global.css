@@ -304,11 +304,20 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .prog-card-list li::before { content: '·'; position: absolute; left: 0; }
 .gen .prog-card-list li::before { color: var(--specialist); }
 .eng .prog-card-list li::before { color: var(--placed); }
-.prog-card-cta { position: relative; isolation: isolate; margin-top: auto; align-self: flex-start; display: inline-flex; align-items: center; justify-content: center; font-size: 13.5px; font-weight: 600; padding: 12px 24px; border-radius: 10px; border: none; text-decoration: none; cursor: pointer; font-family: inherit; transition: opacity .15s, transform .15s; }
+.prog-card-cta { position: relative; isolation: isolate; margin-top: auto; align-self: flex-start; justify-self: start; display: inline-flex; align-items: center; justify-content: center; font-size: 13.5px; font-weight: 600; padding: 12px 24px; border-radius: 10px; border: none; text-decoration: none; cursor: pointer; font-family: inherit; transition: opacity .15s, transform .15s; }
 .prog-card-cta::before { content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1.6px; background: conic-gradient(from var(--ts-angle), transparent 58%, var(--beam, #fff) 80%, var(--beam-hot, #fff) 88%, var(--beam, #fff) 95%, transparent 100%); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; animation: ts-rotate 4s linear infinite; pointer-events: none; }
 .prog-card-cta:hover { opacity: .9; transform: translateY(-1px); }
 .gen .prog-card-cta { background: var(--specialist); color: #fff; --beam: var(--specialist); --beam-hot: #AFA9EC; }
 .eng .prog-card-cta { background: var(--forest); color: #E1F5EE; --beam: var(--forest); --beam-hot: #5DCAA5; }
+/* Align the two program cards row-by-row (badge, title, desc divider, "Builders
+   from", logos, batch box, CTA) so they read as a matched pair on desktop. Uses
+   subgrid where supported; older browsers fall back to the flex layout above. */
+@media (min-width: 761px) {
+  @supports (grid-template-rows: subgrid) {
+    .prog-compare { grid-template-rows: repeat(7, auto); row-gap: 0; }
+    .prog-card { display: grid; grid-template-rows: subgrid; grid-row: span 7; }
+  }
+}
 
 /* ── WHY GRID ── */
 .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 36px; }
@@ -373,9 +382,13 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .curric-detail--split { display: grid; grid-template-columns: 340px 1fr; gap: 36px; align-items: stretch; }
 .curric-detail-main { display: flex; flex-direction: column; }
 .curric-detail-tools { border-left: 1px solid rgba(175,169,236,0.14); padding-left: 36px; }
+/* 3-column variant: week list · lesson plan + project · tool stack (right side). */
+.curric-detail--triple { grid-template-columns: 240px 1fr 1.2fr; }
+.curric-detail-mid { display: flex; flex-direction: column; border-left: 1px solid rgba(175,169,236,0.14); padding-left: 36px; }
 @media (max-width: 900px) {
   .curric-detail--split { grid-template-columns: 1fr; gap: 28px; }
-  .curric-detail-tools { border-left: none; padding-left: 0; }
+  .curric-detail--triple { grid-template-columns: 1fr; }
+  .curric-detail-tools, .curric-detail-mid { border-left: none; padding-left: 0; }
 }
 .curric-techs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
 .curric-tech { display: flex; flex-direction: column; gap: 10px; }
@@ -775,11 +788,11 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .proj-domain-tag.t-vc        { background: #E1F5EE; color: var(--forest); }
 .proj-domain-tag.t-ops       { background: #FCEBEB; color: #A32D2D; }
 .proj-domain-tag.t-tech      { background: #E0E5F4; color: #26215C; }
-.proj-domain-tag.t-eng       { background: #E1F4EA; color: #1F7A52; }
+.proj-domain-tag.t-eng       { background: var(--forest); color: #9FE1CB; }
 .proj-domain-tag.t-analyst   { background: var(--parchment); color: #5F5E5A; }
-.proj-domain-tag.t-founder   { background: #E3ECFB; color: #2456A6; }
+.proj-domain-tag.t-founder   { background: var(--ink); color: var(--lavender); }
 .proj-domain-tag.t-pm        { background: #EEEDFE; color: #443BA3; }
-.proj-domain-tag.t-pjm       { background: #EEEDFE; color: #443BA3; }
+.proj-domain-tag.t-pjm       { background: #FFF6E1; color: #BA7517; }
 .proj-card-img { margin: -28px -28px 18px; height: 230px; overflow: hidden; border-radius: 14px 14px 0 0; background: var(--cloud); }
 .proj-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .35s ease; }
 .proj-card--clickable:hover .proj-card-img img { transform: scale(1.05); }
@@ -1162,8 +1175,9 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 /* ── APTITUDE ── */
 .apt-hero { background: linear-gradient(135deg, var(--ink) 0%, #1A1647 100%); color: white; padding: 32px 40px 36px; text-align: center; position: relative; overflow: hidden; }
 .apt-hero::before, .apt-hero::after { content: ''; position: absolute; border: 0.5px solid rgba(175,169,236,0.15); border-radius: 999px; pointer-events: none; }
-.apt-hero::before { width: 600px; height: 600px; top: -200px; right: -100px; }
-.apt-hero::after { width: 380px; height: 380px; bottom: -100px; left: -80px; }
+.apt-hero::before { width: 600px; height: 600px; top: -200px; right: -120px; }
+.apt-hero::after { width: 380px; height: 380px; top: -90px; right: -10px; }
+.apt-hero-ring-left { position: absolute; width: 420px; height: 420px; bottom: -180px; left: -150px; border: 0.5px solid rgba(175,169,236,0.15); border-radius: 999px; pointer-events: none; }
 .apt-hero-inner { max-width: 760px; margin: 0 auto; position: relative; z-index: 1; }
 .apt-eyebrow { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--lavender); margin-bottom: 18px; font-weight: 500; }
 .apt-h1 { font-family: 'DM Serif Display', serif; font-size: clamp(34px, 7vw, 56px); line-height: 1.05; color: #EEEDFE; margin-bottom: 18px; }
@@ -1246,18 +1260,25 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
    scrolls normally. On desktop the screen is a fixed height below the navbar;
    the question + navigator are pinned and only the OPTIONS list scrolls inside
    itself if a question is unusually long — the page itself never scrolls. */
-.apt-runner--exam { min-height: calc(100dvh - 54px); padding-top: 20px; padding-bottom: 20px; align-items: flex-start; }
+.apt-runner--exam { min-height: calc(100dvh - 54px); padding-top: 18px; padding-bottom: 18px; align-items: center; }
 @media (min-width: 861px) {
-  .apt-runner--exam { height: calc(100dvh - 54px); min-height: 500px; overflow: hidden; align-items: stretch; }
-  .apt-runner--exam .runner-layout { height: 100%; align-items: stretch; }
-  .apt-runner--exam .runner-main { display: flex; flex-direction: column; min-height: 0; padding: 24px 30px; }
-  .apt-runner--exam .runner-q { font-size: 22px; margin-bottom: 14px; }
-  .apt-runner--exam .runner-progress { margin-bottom: 14px; }
-  .apt-runner--exam .runner-options { flex: 1 1 auto; min-height: 0; overflow-y: auto; margin-bottom: 14px; padding-right: 4px; }
-  .apt-runner--exam .runner-actions { margin-top: auto; }
-  .apt-runner--exam .runner-hint { margin-bottom: 0; }
-  .apt-runner--exam .runner-nav { position: static; top: auto; align-self: stretch; max-height: 100%; overflow-y: auto; }
+  /* Compact every part so the question + all 4 options + actions fit on one
+     screen with NO scrollbars (neither the page nor an internal options scroll). */
+  .apt-runner--exam .runner-main { padding: 22px 28px; }
+  .apt-runner--exam .runner-q { font-size: 20px; line-height: 1.25; margin-bottom: 12px; }
+  .apt-runner--exam .runner-progress { margin-bottom: 12px; }
+  .apt-runner--exam .runner-options { gap: 8px; margin-bottom: 14px; }
+  .apt-runner--exam .runner-option { padding: 11px 16px; }
+  .apt-runner--exam .runner-actions { padding-top: 12px; gap: 10px; }
+  /* Make the left (question) and right (navigator) boxes equal height, a touch taller. */
+  .apt-runner--exam .runner-layout { align-items: stretch; }
+  .apt-runner--exam .runner-main,
+  .apt-runner--exam .runner-nav { min-height: 540px; }
+  .apt-runner--exam .runner-nav { position: static; top: auto; display: flex; flex-direction: column; }
+  /* Submit sits just below the legend (lifted up), with the note section beneath it. */
+  .apt-runner--exam .runner-submit { margin-top: 22px; }
 }
+.runner-nav-note { margin: 14px 0 0; font-size: 11.5px; line-height: 1.55; color: var(--text-muted); text-align: center; }
 .runner-result { text-align: center; }
 .runner-score { font-family: 'DM Serif Display', serif; font-size: 96px; line-height: 1; color: var(--specialist); margin: 18px 0 4px; }
 .runner-score em { color: var(--ink); font-style: italic; }
@@ -1383,8 +1404,8 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .apt-report-actions .runner-btn { color: var(--specialist); }
 @media (max-width: 600px) { .apt-roadmap { grid-template-columns: 1fr; } }
 
-.qb-filters { display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; max-width: 760px; margin: 24px auto 0; }
-.qb-filter-pill { background: #fff; border: 1px solid rgba(83,74,183,0.22); color: var(--ink); font-family: inherit; font-size: 13px; font-weight: 500; padding: 8px 16px; border-radius: 20px; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
+.qb-filters { display: flex; flex-wrap: nowrap; justify-content: center; gap: 8px; max-width: none; margin: 24px auto 0; }
+.qb-filter-pill { flex: 0 0 auto; white-space: nowrap; background: #fff; border: 1px solid rgba(83,74,183,0.22); color: var(--ink); font-family: inherit; font-size: 12px; font-weight: 500; padding: 7px 13px; border-radius: 20px; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
 .qb-filter-pill:hover { background: var(--cloud); border-color: var(--specialist); }
 .qb-filter-pill.active { background: var(--specialist); border-color: var(--specialist); color: #fff; }
 .qb-empty { grid-column: 1 / -1; text-align: center; color: var(--text-muted); font-size: 14px; padding: 24px 0; }

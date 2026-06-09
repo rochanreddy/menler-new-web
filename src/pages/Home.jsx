@@ -258,7 +258,7 @@ export default function Home() {
           </div>
         </div>
         <div style={{ textAlign: 'center', marginTop: 28 }}>
-          <button className="btn-primary" style={{ background: 'var(--placed)', color: '#fff', border: 'none', minWidth: 200 }} onClick={() => setShowApply(true)}>Book a call</button>
+          <button className="prog-card-cta" style={{ background: 'var(--ink)', color: '#fff', minWidth: 200, '--beam': '#26215C', '--beam-hot': '#AFA9EC' }} onClick={() => setShowApply(true)}>Book a call</button>
         </div>
       </section>
 
@@ -344,7 +344,7 @@ export default function Home() {
       <section className="section jobs-section" style={{ paddingTop: 48, paddingBottom: 32 }}>
         <p className="section-label">Hiring associations &amp; roles</p>
         <h2 className="section-h2">The jobs<br /><em>AI specialists are landing.</em></h2>
-        <p className="section-sub">India's AI hiring market is splitting in two: companies buying generic AI and companies hiring people who can actually deploy Claude inside a domain. Menler fellows are built for the second list.</p>
+        <p className="section-sub">A new category of professional is emerging: AI-native, domain-aware, and outcome-driven. Menler is built to develop them.</p>
         <div className="jobs-roles">
           <div className="role-card gen-side">
             <p className="role-card-program">Claude AI Generalist · Open roles</p>
@@ -383,7 +383,7 @@ export default function Home() {
           <HiringRail companies={HIRING_COMPANIES} rows={2} />
         </div>
         <div style={{ textAlign: 'center', marginTop: 32 }}>
-          <button className="btn-primary" style={{ background: 'var(--placed)', color: '#fff', border: 'none', minWidth: 200 }} onClick={() => setShowApply(true)}>Book a call</button>
+          <button className="prog-card-cta" style={{ background: 'var(--ink)', color: '#fff', minWidth: 200, '--beam': '#26215C', '--beam-hot': '#AFA9EC' }} onClick={() => setShowApply(true)}>Book a call</button>
         </div>
       </section>
 
