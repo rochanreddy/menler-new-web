@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import FaqList from '../components/common/FaqList';
 import CtaBanner from '../components/common/CtaBanner';
 import Footer from '../components/layout/Footer';
+import Seo from '../components/common/Seo';
 import MentorsRail from '../components/common/MentorsRail';
 import ProjectModal from '../components/common/ProjectModal';
 import { useApply } from '../components/common/ApplyContext';
@@ -143,6 +144,13 @@ export default function Kickstarter() {
 
   return (
     <>
+      <Seo
+        title="Gen AI Kickstarter — AI Bootcamp India for Beginners | Menler"
+        description="A 14-day beginner AI bootcamp. Get hands-on with 10+ AI tools, build your first AI projects, and become AI-fluent — no prerequisites."
+        keywords="AI bootcamp India, beginner AI course, Gen AI Kickstarter, AI tools onboarding, AI upskilling, learn AI India"
+        path="/kickstarter"
+        jsonLd={{ '@context': 'https://schema.org', '@type': 'Course', name: 'Gen AI Kickstarter', description: '14-day beginner AI bootcamp — hands-on with 10+ AI tools and first real AI projects, no prerequisites.', provider: { '@type': 'Organization', name: 'Menler', sameAs: 'https://menler.in' } }}
+      />
       {/* ── HERO ── */}
       <section className="hero" style={{ background: 'linear-gradient(135deg,#1A1647 0%,#854F0B 100%)', padding: '64px clamp(22px, 6vw, 40px) 56px' }}>
         <div className="hero-ring r1" style={{ borderColor: 'rgba(250,238,218,0.12)' }} />

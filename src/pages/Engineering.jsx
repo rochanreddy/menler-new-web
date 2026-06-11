@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import FaqList from '../components/common/FaqList';
 import CtaBanner from '../components/common/CtaBanner';
 import Footer from '../components/layout/Footer';
+import Seo from '../components/common/Seo';
 import MentorsRail from '../components/common/MentorsRail';
 import { useApply } from '../components/common/ApplyContext';
 import HiringJobs from '../components/common/HiringJobs';
@@ -55,6 +56,13 @@ export default function Engineering() {
 
   return (
     <>
+      <Seo
+        title="Claude AI Engineering Fellowship — AI Specialist Program India | Menler"
+        description="A 12-week Claude AI engineering fellowship for developers. Build production AI systems — API, RAG, MCP, agents, evals & LLMOps — with placement support."
+        keywords="Claude AI engineering fellowship, AI specialist program India, AI engineering course India, agentic AI engineering, RAG engineering, MCP"
+        path="/engineering"
+        jsonLd={{ '@context': 'https://schema.org', '@type': 'Course', name: 'Claude AI Engineering Fellowship', description: '12-week Claude AI engineering fellowship — production AI systems: API, RAG, MCP, agents, evals and LLMOps, with placement support.', provider: { '@type': 'Organization', name: 'Menler', sameAs: 'https://menler.in' } }}
+      />
       {/* ── HERO ── */}
       <section className="hero" style={{ background: '#085041', paddingTop: 64 }}>
         <div className="hero-ring r1" style={{ borderColor: 'rgba(93,202,165,0.1)' }} />

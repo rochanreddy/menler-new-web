@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /login
+Disallow: /signup
+Disallow: /register
+Disallow: /verify-email
+Disallow: /forgot-password
+Disallow: /reset-password
+
+Sitemap: https://menler.in/sitemap.xml

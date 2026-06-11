@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CtaBanner from '../components/common/CtaBanner';
 import Footer from '../components/layout/Footer';
+import Seo from '../components/common/Seo';
 import { useApply } from '../components/common/ApplyContext';
 
 const PRODUCT_FILTERS = ['all', 'kickstarter', 'generalist', 'engineering'];
@@ -44,6 +45,12 @@ export default function Outcomes() {
 
   return (
     <>
+      <Seo
+        title="AI Placement & Outcomes — AI Jobs After the Fellowship | Menler"
+        description="Placement outcomes from the Menler AI fellowship — salary bands, hiring partners, fellow portfolios and AI jobs after the program."
+        keywords="AI placement programs, AI jobs after AI course, AI career outcomes India, AI fellowship placement, AI salaries India"
+        path="/outcomes"
+      />
       {/* ── HERO ── */}
       <section className="hero hero-centered" style={{ background: '#1A1647', padding: '64px clamp(22px, 6vw, 40px) 40px' }}>
         <div className="hero-ring r1" style={{ borderColor: 'rgba(175,169,236,0.12)' }} />

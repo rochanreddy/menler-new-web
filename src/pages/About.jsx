@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import CtaBanner from '../components/common/CtaBanner';
 import Footer from '../components/layout/Footer';
+import Seo from '../components/common/Seo';
 import MentorsRail from '../components/common/MentorsRail';
 import { useApply } from '../components/common/ApplyContext';
 
@@ -33,6 +34,12 @@ export default function About() {
 
   return (
     <>
+      <Seo
+        title="About Menler — AI Learning Company India"
+        description="Menler is India's Claude-native AI learning company. Our vision: depth over breadth, outcomes over completion — turning learners into AI-native specialists."
+        keywords="About Menler, AI learning company India, Menler AI, AI fellowship India"
+        path="/about"
+      />
       {/* ── HERO ── */}
       <section className="about-hero hero hero-centered" style={{ padding: '64px clamp(22px, 6vw, 40px) 56px' }}>
         <div className="hero-ring r1" /><div className="hero-ring r2" /><div className="hero-ring rl1" />

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import FaqList from '../components/common/FaqList';
 import CtaBanner from '../components/common/CtaBanner';
 import Footer from '../components/layout/Footer';
+import Seo from '../components/common/Seo';
 import MentorsRail from '../components/common/MentorsRail';
 import ProjectModal from '../components/common/ProjectModal';
 import { useApply } from '../components/common/ApplyContext';
@@ -231,6 +232,13 @@ export default function Generalist() {
 
   return (
     <>
+      <Seo
+        title="Claude AI Generalist Fellowship — No-Code AI Course India | Menler"
+        description="A 12-week no-code Claude AI fellowship for non-tech professionals and students. Master AI workflows across marketing, finance, product, HR & ops — with placement support."
+        keywords="Claude AI Generalist course, no-code AI fellowship, AI generalist program India, AI fellowship for non-tech, AI course India"
+        path="/generalist"
+        jsonLd={{ '@context': 'https://schema.org', '@type': 'Course', name: 'Claude AI Generalist Fellowship', description: '12-week no-code Claude AI fellowship for non-technical professionals — domain AI workflows, real projects and placement support.', provider: { '@type': 'Organization', name: 'Menler', sameAs: 'https://menler.in' } }}
+      />
       {/* ── HERO ── */}
       <section className="hero" style={{ paddingTop: 64 }}>
         <div className="hero-ring r1" /><div className="hero-ring r2" />
@@ -460,7 +468,7 @@ export default function Generalist() {
       <CtaBanner
         badge="Applications open · 30 seats"
         title="Ready to become a Claude AI Generalist?"
-        subtitle="No coding experience. Just 12 weeks and real ambition."
+        subtitle={<><span style={{ whiteSpace: 'nowrap' }}>No coding experience.</span> <span style={{ whiteSpace: 'nowrap' }}>Just 12 weeks and real ambition.</span></>}
         buttonText="Sign up"
         onButtonClick={openApply}
       />

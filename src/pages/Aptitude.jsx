@@ -1,6 +1,7 @@
 import { useReducer, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../components/layout/Footer';
+import Seo from '../components/common/Seo';
 import FaqList from '../components/common/FaqList';
 import { submitLead } from '../services/leadService';
 import { getRecommendation, maxScoreForQuestions } from '../data/aptitudeQuestions';
@@ -442,6 +443,13 @@ export default function Aptitude() {
   // ── LANDING ──
   return (
     <>
+      <Seo
+        title="AI Aptitude Test — Free AI Readiness Assessment | Menler"
+        description="Take the free AI Aptitude Test — a 15-question AI readiness assessment. Get a personalised score, learning roadmap and a downloadable question bank. No signup to start."
+        keywords="AI aptitude test, AI readiness test, AI assessment, free AI test, AI career test, AI skills assessment"
+        path="/aptitude"
+        jsonLd={{ '@context': 'https://schema.org', '@type': 'Quiz', name: 'AI Aptitude Test', about: 'AI readiness assessment', educationalLevel: 'Beginner to Advanced', provider: { '@type': 'Organization', name: 'Menler', sameAs: 'https://menler.in' } }}
+      />
       <section className="apt-hero">
         <div className="apt-hero-ring-left" aria-hidden="true" />
         <div className="apt-hero-inner">

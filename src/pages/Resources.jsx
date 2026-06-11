@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Footer from '../components/layout/Footer';
+import Seo from '../components/common/Seo';
 import PlaybookModal from '../components/common/PlaybookModal';
 import { PROJECTS } from '../data/projectsData';
 import { submitLead } from '../services/leadService';
@@ -102,6 +103,12 @@ export default function Resources() {
 
   return (
     <>
+      <Seo
+        title="AI Learning Resources — Prompts, Templates & Guides | Menler"
+        description="Free AI learning resources: a Claude prompt library, AI stack map, templates, cheat sheets and an AI glossary. The knowledge layer for the AI-native workforce."
+        keywords="AI learning resources, free AI resources, AI prompts library, Claude prompts, AI templates, AI cheat sheets, AI glossary, AI stack map"
+        path="/resources"
+      />
       {/* ── HERO ── */}
       <section className="hero hero-centered" style={{ paddingTop: 56 }}>
         <div className="hero-ring r1" /><div className="hero-ring r2" /><div className="hero-ring rl1" />

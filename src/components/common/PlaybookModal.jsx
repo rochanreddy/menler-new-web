@@ -13,11 +13,13 @@ export default function PlaybookModal({ item, onClose }) {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [pdfReady, setPdfReady] = useState(null); // null = checking, true/false
+  const [formOpen, setFormOpen] = useState(false); // mobile: reveal form after tapping Download
 
   useEffect(() => {
     if (!item) return;
     setForm({ name: '', email: '', phone: '' });
     setDone(false);
+    setFormOpen(false);
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
     document.addEventListener('keydown', onKey);
     document.body.style.overflow = 'hidden';
@@ -98,7 +100,12 @@ export default function PlaybookModal({ item, onClose }) {
               <span className="pb-modal-badge">{item.badge}</span>
               <h3 className="pb-modal-title">{item.title}</h3>
               <p className="pb-modal-sub">{item.desc}</p>
-              <form className="pb-form" onSubmit={handleSubmit}>
+              {!formOpen && (
+                <button type="button" className="pb-modal-btn pb-gate-btn" onClick={() => setFormOpen(true)} disabled={!item.pdf}>
+                  {item.pdf ? 'Download PDF' : 'Coming soon'}
+                </button>
+              )}
+              <form className={`pb-form${formOpen ? ' open' : ''}`} onSubmit={handleSubmit}>
                 <div className="lf-field full">
                   <label>Full name</label>
                   <input type="text" required value={form.name} onChange={(e) => set('name', e.target.value)} placeholder="Your name" autoComplete="name" />

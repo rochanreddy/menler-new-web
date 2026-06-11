@@ -5,6 +5,7 @@ import FaqList from '../components/common/FaqList';
 import CtaBanner from '../components/common/CtaBanner';
 import LeadForm from '../components/forms/LeadForm';
 import Footer from '../components/layout/Footer';
+import Seo from '../components/common/Seo';
 import Reveal from '../components/common/Reveal';
 import MentorsRail from '../components/common/MentorsRail';
 import { useToast } from '../components/common/Toast';
@@ -184,6 +185,12 @@ export default function Home() {
 
   return (
     <>
+      <Seo
+        title="Menler — AI Learning India · Claude AI Fellowship & Courses"
+        description="India's Claude-native AI learning. AI courses & fellowships — Generalist (no-code), Engineering, and the Gen AI Kickstarter. Real projects, real placement."
+        keywords="AI learning India, AI courses India, AI fellowship India, Claude AI fellowship, AI upskilling India, AI bootcamp India"
+        path="/"
+      />
       {/* ── HERO ── */}
       <section className="hero" aria-label="Hero — Menler Fellowship">
         <div className="hero-ring r1" /><div className="hero-ring r2" /><div className="hero-ring r3" />
@@ -481,7 +488,7 @@ export default function Home() {
       <CtaBanner
         badge="Applications open · Limited seats per program"
         title="Your Menler starts here."
-        subtitle="Choose your program. Build your credential. Get placed."
+        subtitle={<><span style={{ whiteSpace: 'nowrap' }}>Choose your program.</span> <span style={{ whiteSpace: 'nowrap' }}>Build your credential.</span> <span style={{ whiteSpace: 'nowrap' }}>Get placed.</span></>}
         buttonText="Apply to the Fellowship"
         onButtonClick={() => setShowApply(true)}
       />

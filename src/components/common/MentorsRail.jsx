@@ -3,16 +3,16 @@ import { useRef, useEffect } from 'react';
 // NOTE: photos are portrait placeholders and company shows as a text wordmark —
 // swap `img` for real instructor photos (and add `logo`) when available.
 const MENTORS = [
-  { name: 'Anutham G', role: 'Product Manager at Flipkart', company: 'Flipkart', img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=500&q=80' },
-  { name: 'Shashank K', role: 'AI-Operations Analytics at Equifax', company: 'Equifax', img: 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?auto=format&fit=crop&w=500&q=80' },
-  { name: 'Sumit K', role: 'Senior Principal Software Engineer at Autodesk', company: 'Autodesk', img: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=500&q=80' },
-  { name: 'Abhinay', role: 'Director — Engineering at Kernel Theory', company: 'Kernel Theory', img: 'https://images.unsplash.com/photo-1545167622-3a6ac756afa4?auto=format&fit=crop&w=500&q=80' },
-  { name: 'Vishal Kumar', role: 'Senior Software Engineer at Fractal', company: 'Fractal', img: 'https://images.unsplash.com/photo-1557862921-37829c790f19?auto=format&fit=crop&w=500&q=80' },
-  { name: 'Rohit', role: "CEO-Office · Business Manager at Zolve", company: 'Zolve', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&q=80' },
-  { name: 'Abhishek D', role: 'Product Manager at Imarticus Learning', company: 'Imarticus', img: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=500&q=80' },
-  { name: 'Deepak K', role: 'Educator', company: '', img: 'https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?auto=format&fit=crop&w=500&q=80' },
-  { name: 'Ravi Kumar', role: 'Sr. AI Business Analyst at Cadmium', company: 'Cadmium', img: 'https://images.unsplash.com/photo-1507591064344-4c6ce005b128?auto=format&fit=crop&w=500&q=80' },
-  { name: 'Nitin K Sethi', role: 'AI-DS Expert at McKinsey', company: 'McKinsey', img: 'https://images.unsplash.com/photo-1463453091185-61582044d556?auto=format&fit=crop&w=500&q=80' },
+  { name: 'Anutham G', role: 'Product Manager at Flipkart', company: 'Flipkart', img: '/mentors/Anuttam.png' },
+  { name: 'Shashank K', role: 'AI-Operations Analytics at Equifax', company: 'Equifax', img: '/mentors/Shashank.png' },
+  { name: 'Abhinay', role: 'Director — Engineering at Kernel Theory', company: 'Kernel Theory', img: '/mentors/Abhinay.png' },
+  { name: 'Rohit', role: 'CEO-Office · Business Manager at Zolve', company: 'Zolve', img: '/mentors/ROHIT.png' },
+  { name: 'Nitin K Sethi', role: 'AI-DS Expert at McKinsey', company: 'McKinsey', img: '/mentors/Nitin.png' },
+  { name: 'Deepak K', role: 'Educator', company: '', img: '/mentors/Deepak.png' },
+  { name: 'Manish Yadav', role: 'AI Engineering Mentor', company: '', img: '/mentors/Manish.png' },
+  { name: 'Pranay', role: 'AI Specialist Mentor', company: '', img: '/mentors/Pranay.jpeg' },
+  { name: 'Salimullah', role: 'AI Mentor', company: '', img: '/mentors/Salimullah.png' },
+  { name: 'Sachin', role: 'AI Specialist Mentor', company: '', img: '/mentors/Sachin.png' },
 ];
 
 // Full-card gradient placeholders (no photo yet — add `img` back later).
@@ -89,9 +89,11 @@ function CaptainRow({ list, dir, tint }) {
       <div className="captains-track">
         {items.map((m, i) => (
           <article className="captain-card" key={i} aria-label={`${m.name}, ${m.role}`}>
-            {/* Photo slot — add a real photo later: set m.img and restore the
-                <img className="captain-photo-img" src={m.img} .../> tag here. */}
-            <div className="captain-overlay" style={{ backgroundImage: OVERLAYS[(tint + i) % OVERLAYS.length] }}>
+            {/* Gradient fills the card; the photo (if any) sits on top, with a
+                dark scrim over it so the name/role/company stay readable. */}
+            <div className="captain-bg" style={{ backgroundImage: OVERLAYS[(tint + i) % OVERLAYS.length] }} />
+            {m.img && <img className="captain-photo-img" src={encodeURI(m.img)} alt={m.name} loading="lazy" />}
+            <div className={`captain-overlay${m.img ? ' captain-overlay--photo' : ''}`}>
               <p className="captain-name">{m.name}</p>
               <p className="captain-role">{m.role}</p>
               {m.company && <span className="captain-company">{m.company}</span>}
