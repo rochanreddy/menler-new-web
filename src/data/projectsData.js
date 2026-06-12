@@ -285,18 +285,4 @@ export const PROJECTS = [
       results: ["Self-serve analytics for the CEO's office with zero wait", "The data team freed from ad-hoc pulls", "Faster leadership decisions"],
     },
   },
-  {
-    slug: 'claude-built-in-app-marketplace', image: '/projects/claud_built.png', tag: 'Product', tagCls: 't-pm',
-    title: 'Claude-built in-app marketplace',
-    desc: 'Designed, built and shipped an in-app marketplace — frontend, backend and design — through an agentic coding workflow, end to end.',
-    stack: ['Claude Code', 'React', 'Postgres'], outcome: 'Full marketplace shipped in days, not sprints',
-    doc: {
-      overview: "A complete in-app marketplace — frontend, backend and design — designed and shipped end to end through an agentic coding workflow.",
-      problem: "Standing up a real marketplace usually means weeks of coordinated frontend, backend and design work across a team.",
-      howItWorks: ["Specs the marketplace requirements and data model.", "Generates the React frontend and the backend services agentically.", "Wires up the Postgres schema and APIs.", "Iterates design and features in the same agentic loop until shipped."],
-      features: ["Full-stack generation from a spec", "React storefront and seller flows", "Postgres-backed catalog and transactions", "Design produced in the same workflow"],
-      architecture: "Built with Claude Code driving a React frontend and a Postgres-backed backend, end to end.",
-      results: ["A full marketplace shipped in days, not sprints", "One agentic workflow across frontend, backend and design", "Far less coordination overhead"],
-    },
-  },
 ];

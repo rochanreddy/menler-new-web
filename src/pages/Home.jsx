@@ -34,7 +34,7 @@ const HIRING_COMPANIES = [
   { name: 'Figr', domain: 'figr.design', logo: '/logos/figr.png' },
   { name: 'Mercor', domain: 'mercor.com', logo: '/logos/mercor.png' },
   { name: 'Adobe', domain: 'adobe.com', logo: '/logos/adobe.png' },
-  { name: 'OpenAI', domain: 'openai.com', logo: '/logos/openai.png' },
+  { name: 'Sarvam AI', domain: 'sarvam.ai', logo: '/logos/sarvam_ai_logo.png' },
   { name: 'Anthropic', domain: 'anthropic.com', logo: '/logos/anthropic.png' },
   { name: 'PwC', domain: 'pwc.com', logo: '/logos/pwc.png' },
   { name: 'Cognizant', domain: 'cognizant.com', logo: '/logos/cognizant.png' },
@@ -273,7 +273,7 @@ export default function Home() {
       <section className="section" style={{ background: 'white', paddingTop: 48, paddingBottom: 32 }}>
         <p className="section-label">What you build</p>
         <h2 className="section-h2">Real Projects.<br /><em>Across Every Domain.</em></h2>
-        <p className="section-sub">Every Menler fellow ships a portfolio of domain-specific projects.<br />Not toy demos — actual systems built for real use cases.</p>
+        <p className="section-sub"><span style={{ whiteSpace: 'nowrap' }}>Every Menler fellow ships a portfolio of domain specific projects.</span><br />Not toy demos actual systems built for real use cases.</p>
         <div className="proj-grid proj-grid--4 proj-grid--home">
           {visibleProjects.map((p, i) => (
             <Reveal

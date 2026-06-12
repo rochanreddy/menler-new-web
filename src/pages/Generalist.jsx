@@ -13,29 +13,27 @@ import { submitLead } from '../services/leadService';
 
 const CURRICULUM = [
   {
-    label: 'Phase 1', weeks: 'Weeks 1–4', title: 'AI fluency & Claude foundations',
+    label: 'Phase 1', weeks: 'Weeks 1–3', title: 'AI foundations & Claude mastery',
     modules: [
-      { w: 'Week 1 — AI & LLM Foundations', lessons: ['How modern AI & Large Language Models work', 'Tokens, context windows & embeddings explained', 'Why prompting matters and how it shapes output', 'Mapping the current AI ecosystem'] },
-      { w: 'Week 2 — Claude Mastery & Prompt Engineering', lessons: ["Claude's core features, end to end", 'Communicating effectively with AI', 'Building reusable prompt systems', 'Organising AI workspaces for work & study'] },
-      { w: 'Week 3 — Advanced Prompting & AI Productivity', lessons: ['Advanced prompting frameworks', 'AI research & knowledge-management workflows', 'Content, note-taking & meeting summaries', 'Designing your personal AI productivity system'] },
-      { w: 'Week 4 — AI Creativity & No-Code Building', lessons: ['Generating images, audio & video with AI', 'AI-built presentations & media assets', 'No-code app-building fundamentals', 'Turning ideas into usable products'] },
+      { w: 'Week 1 — Understand AI: See the Landscape Clearly', lessons: ['How LLMs work: next-token prediction, tokens, parameters, RLHF', 'Key terms: context windows, embeddings, temperature, fine-tuning', 'Live 3-way comparison: Claude vs ChatGPT vs Gemini', 'The 6 Gen AI categories — text, image, video, audio, code, agents', 'Tool landscape & why Claude leads for generalists'] },
+      { w: 'Week 2 — Talk with AI: Claude Mastery', lessons: ['Claude Projects, Skills, Connectors, MCPs & APIs', 'System-prompt architecture & best practices', 'Claude Chat vs Cowork vs Code — live comparison', 'Schedules, Plugins & Routines', 'Claude for PowerPoint, Word & Excel; Notion as external memory'] },
+      { w: 'Week 3 — Think + Create with AI: Prompt Engineering & Creative Studio', lessons: ['16 prompt frameworks (Zero/Few-shot, CoT, ToT, RAG, chaining…)', 'Claude Skills as prompt libraries; Routines for chained sequences', 'How diffusion models work; image prompt architecture', 'AI video, voice (STT/TTS/cloning) & 3D with Claude'] },
     ],
-    tools: ['Make', 'OpenAI', 'Canva', 'Zapier', 'Typedream', 'Airtable', 'Claude', 'Notion'],
-    projects: ['Personal AI assistant', 'No-code landing page', 'First automation workflow'],
+    tools: ['Claude', 'ChatGPT', 'Gemini', 'Perplexity', 'NotebookLM', 'Canva AI', 'ElevenLabs', 'Runway', 'Gamma'],
+    projects: ['Project 1 — My Claude OS (configured workspace)', 'Project 2 — AI Media Kit (images, video, audio, deck)'],
   },
   {
-    label: 'Phase 2', weeks: 'Weeks 5–8', title: 'Agentic workflows & real builds',
+    label: 'Phase 2', weeks: 'Weeks 4–6', title: 'Automate, build & ship',
     modules: [
-      { w: 'Week 5 — AI Agents & Automation', lessons: ['How AI agents work', 'Automating repetitive tasks', 'Connecting tools & services into workflows', 'Workflows that collect, decide & act automatically'] },
-      { w: 'Week 6 — Voice AI & Intelligent Systems', lessons: ['Speech recognition & voice generation', 'How conversational AI systems work', 'Building voice-enabled assistants', 'Assistants that listen, respond & act'] },
-      { w: 'Week 7 — AI App Development', lessons: ['AI-assisted development tools', 'Turning ideas into functional products', 'Connecting databases & APIs', 'Real AI-powered apps with minimal code'] },
-      { w: 'Week 8 — Capstone Project & Product Launch', lessons: ['Building a complete AI-powered project', 'Product refinement & deployment', 'Presentation & demo skills', 'Creating a portfolio-worthy solution'] },
+      { w: 'Week 4 — Automate with AI: Voice Agents, Routines & Workflows', lessons: ['STT/TTS from scratch; voice cloning', 'Voice-agent deployment (VAPI, Bland, Retell)', 'Claude Routines + MCPs; the agent loop', 'N8N architecture; Claude as the intelligence node; Make & Zapier'] },
+      { w: 'Week 5 — Build with AI: Vibecoding & Agentic App Development', lessons: ['How code generation differs from text', 'Vibecoding: describe → generate → test → iterate → ship', 'Claude Code, Cursor, Lovable, Bolt.new & Replit', 'Agentic apps: Claude API + MCP tool calls; capstone scoping'] },
+      { w: 'Week 6 — AI Native: Ship It — Demo Day', lessons: ['Capstone build sprint on the full Claude stack', 'Product polish: UX, error handling, MCP reliability', 'Gamma deck + presentation coaching', 'Demo Day & AI Generalist certification'] },
     ],
-    tools: ['Claude Cowork', 'MCP', 'Make', 'Zapier', 'n8n', 'Slack', 'Gmail', 'Excel'],
-    projects: ['Domain automation agent', 'Multi-tool MCP workflow', 'Live cohort build'],
+    tools: ['Claude Code', 'Cursor', 'Lovable', 'Replit', 'Emergent', 'N8N', 'Make', 'Zapier', 'ElevenLabs', 'GitHub', 'Gamma'],
+    projects: ['Project 3 — My Automated AI System (voice + automation)', 'Project 4 — Ship It capstone (live app or agent)'],
   },
   {
-    label: 'Phase 3', weeks: 'Weeks 9–12', title: 'Domain specialisation, capstone & placement',
+    label: 'Phase 3', weeks: 'Weeks 7–10', title: 'Domain specialisation, capstone & placement',
     domains: [
       { name: "Founder's Office",
         weeks: [
@@ -140,7 +138,7 @@ const PROJECTS = [
   { track: 'Finance', title: 'Budget variance commentator', meta: 'Week 9 · Excel + Claude · Templates', desc: 'Claude in Excel that reads actual vs. plan, writes management commentary, and drafts the CFO review deck.', stack: 'Stack: Claude in Excel · PPT · Skills' },
   { track: 'Operations', title: 'SOP automation agent', meta: 'Week 6 · MCP · Workflow', desc: 'Turn a messy SOP into a Claude-driven workflow that handles intake, triage, and routing with audit-ready logs.', stack: 'Stack: MCP · Cowork · Slack' },
   { track: 'Technology', title: 'No-code AI app builder', meta: 'Week 10 · Artifacts · Forms', desc: 'Build a working internal tool — input form, Claude reasoning layer, output dashboard — without writing a line of Python.', stack: 'Stack: Artifacts · Projects · Cowork' },
-  { track: 'Capstone', title: 'Domain Specialist capstone', meta: 'Weeks 11–12 · Demo Day · Cert', desc: 'A real, deployed automation for a real organisation — judged by industry mentors. Powers your Claude Specialist certification.', stack: 'Outcome: Claude Specialist — [Your domain]', isCap: true },
+  { track: 'Capstone', title: 'Domain Specialist capstone', meta: 'Weeks 9–10 · Demo Day · Cert', desc: 'A real, deployed automation for a real organisation — judged by industry mentors. Powers your Claude Specialist certification.', stack: 'Outcome: Claude Specialist — [Your domain]', isCap: true },
 ];
 
 
@@ -167,12 +165,14 @@ const TOOL_LOGO_SRC = {
   'ElevenLabs': '/logos/elevenlabs.png', 'Canva AI': '/logos/canva.png', 'Midjourney': '/logos/midjourney.png',
   'Runway': '/logos/runway.png', 'Lovable': '/logos/lovable-logo.png', 'Emergent': '/logos/emergent.png',
   'Gemini': '/logos/gemini.png', 'Gemini (image)': '/logos/gemini.png', 'ChatGPT': '/logos/chatgpt.png',
+  'Claude Code': '/logos/claude_code-removebg-preview.png', 'Cursor': '/logos/cursor.png',
 };
 
 // Tools without a local logo file — fall back to the brand's favicon by domain.
 const TOOL_DOMAIN = {
   'Replit': 'replit.com', 'HubSpot': 'hubspot.com', 'Meta Ads': 'facebook.com', 'GA4': 'google.com',
   'WhatsApp Business': 'whatsapp.com', 'Google Sheets AI': 'google.com', 'Looker Studio': 'google.com',
+  'GitHub': 'github.com', 'Bolt.new': 'bolt.new', 'VAPI': 'vapi.ai',
   'Jira': 'atlassian.com', 'Figma': 'figma.com', 'Mixpanel': 'mixpanel.com', 'Keka': 'keka.com',
   'Darwinbox': 'darwinbox.com', 'Web search': 'google.com', 'Multimodal': 'claude.ai',
 };
@@ -234,10 +234,10 @@ export default function Generalist() {
     <>
       <Seo
         title="Claude AI Generalist Fellowship — No-Code AI Course India | Menler"
-        description="A 12-week no-code Claude AI fellowship for non-tech professionals and students. Master AI workflows across marketing, finance, product, HR & ops — with placement support."
+        description="A 10-week no-code Claude AI fellowship for non-tech professionals and students. Master AI workflows across marketing, finance, product, HR & ops — with placement support."
         keywords="Claude AI Generalist course, no-code AI fellowship, AI generalist program India, AI fellowship for non-tech, AI course India"
         path="/generalist"
-        jsonLd={{ '@context': 'https://schema.org', '@type': 'Course', name: 'Claude AI Generalist Fellowship', description: '12-week no-code Claude AI fellowship for non-technical professionals — domain AI workflows, real projects and placement support.', provider: { '@type': 'Organization', name: 'Menler', sameAs: 'https://menler.in' } }}
+        jsonLd={{ '@context': 'https://schema.org', '@type': 'Course', name: 'Claude AI Generalist Fellowship', description: '10-week no-code Claude AI fellowship for non-technical professionals — domain AI workflows, real projects and placement support.', provider: { '@type': 'Organization', name: 'Menler', sameAs: 'https://menler.in' } }}
       />
       {/* ── HERO ── */}
       <section className="hero" style={{ paddingTop: 64 }}>
@@ -254,7 +254,7 @@ export default function Generalist() {
             <div><span className="hero-stat-num">90%</span><span className="hero-stat-lbl">Interview pipeline<br />target</span></div>
             <div><span className="hero-stat-num">25+</span><span className="hero-stat-lbl">Hiring<br />associations</span></div>
             <div><span className="hero-stat-num">20+</span><span className="hero-stat-lbl">AI Builders<br />& Operators</span></div>
-            <div><span className="hero-stat-num">12</span><span className="hero-stat-lbl">Weeks intensive<br />fellowship</span></div>
+            <div><span className="hero-stat-num">10</span><span className="hero-stat-lbl">Weeks intensive<br />fellowship</span></div>
             <div><span className="hero-stat-num">7+</span><span className="hero-stat-lbl">Domain<br />tracks</span></div>
             <div><span className="hero-stat-num">5+</span><span className="hero-stat-lbl">Shipped<br />projects</span></div>
           </div>
@@ -277,7 +277,7 @@ export default function Generalist() {
 
       {/* ── CURRICULUM ── */}
       <section className="section" style={{ background: 'white', paddingTop: 48 }}>
-        <p className="section-label">12-week curriculum</p>
+        <p className="section-label">10-week curriculum</p>
         <h2 className="section-h2">From curious<br /><em>to Claude Specialist.</em></h2>
         <p className="section-sub">Three phases, no code — just Claude mastery applied to your domain. Pick a phase to open its modules, tools, and projects.</p>
         <div className="curric-acc">
@@ -409,7 +409,7 @@ export default function Generalist() {
       <section className="section tracks-dark" style={{ paddingTop: 48 }}>
         <p className="section-label" style={{ color: 'var(--lavender)' }}>Domain tracks</p>
         <h2 className="section-h2" style={{ color: '#EEEDFE' }}>Your Claude skills,<br /><em>applied to your career.</em></h2>
-        <p className="section-sub" style={{ color: 'rgba(238,237,254,0.5)' }}>Choose your track in Week 8. Capstone, certification module, and job matching are all domain-specific.</p>
+        <p className="section-sub" style={{ color: 'rgba(238,237,254,0.5)' }}>Choose your track in Week 7. Capstone, certification module, and job matching are all domain-specific.</p>
         <div className="tracks-grid">
           {TRACKS.map((t, i) => (
             <div key={i} className="track" style={t.dashed ? { borderStyle: 'dashed' } : {}}>
@@ -425,7 +425,7 @@ export default function Generalist() {
         <div className="mini-lead-inner">
           <div className="mini-lead-copy">
             <h3>Get the Generalist <em>brochure & syllabus</em>.</h3>
-            <p>Full 12-week curriculum, mentor list, fee structure, scholarships, and Cohort 01 timeline — straight to your inbox.</p>
+            <p>Full 10-week curriculum, mentor list, fee structure, scholarships, and Cohort 01 timeline — straight to your inbox.</p>
           </div>
           {done ? (
             <div className="mini-lead-success">✓ Brochure on its way.</div>
@@ -468,7 +468,7 @@ export default function Generalist() {
       <CtaBanner
         badge="Applications open · 30 seats"
         title="Ready to become a Claude AI Generalist?"
-        subtitle={<><span style={{ whiteSpace: 'nowrap' }}>No coding experience.</span> <span style={{ whiteSpace: 'nowrap' }}>Just 12 weeks and real ambition.</span></>}
+        subtitle={<><span style={{ whiteSpace: 'nowrap' }}>No coding experience.</span> <span style={{ whiteSpace: 'nowrap' }}>Just 10 weeks and real ambition.</span></>}
         buttonText="Sign up"
         onButtonClick={openApply}
       />

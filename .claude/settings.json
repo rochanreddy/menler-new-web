@@ -89,7 +89,11 @@
       "Bash(sed -i \"s#/projects/RESEARCHSYNTH.png#/projects/Research_synsthesis.png#\" src/data/projectsData.js)",
       "Bash(sed -i \"s#/projects/pmo-status.png#/projects/pmo_status.png#\" src/data/projectsData.js)",
       "Bash(sed -i \"s#/projects/account-research.png#/projects/Account_research.png#\" src/data/projectsData.js)",
-      "Bash(sed -i \"s#/projects/claude-built.png#/projects/claud_built.png#\" src/data/projectsData.js)"
+      "Bash(sed -i \"s#/projects/claude-built.png#/projects/claud_built.png#\" src/data/projectsData.js)",
+      "Bash(grep -nA6 \"<Seo\" src/pages/Home.jsx)",
+      "Bash(grep -nA8 \"<Seo\" src/pages/Generalist.jsx)",
+      "Bash(ls -la public/policy/)",
+      "Bash(find public *)"
     ]
   }
 }

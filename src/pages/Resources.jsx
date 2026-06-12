@@ -90,6 +90,8 @@ export default function Resources() {
   }, [location.hash, location.pathname]);
   const [pbItem, setPbItem] = useState(null);
   const [projFilter, setProjFilter] = useState('All');
+  // Mobile-only: collapse the project grid to the first few cards until "See more".
+  const [projExpanded, setProjExpanded] = useState(false);
   const [email, setEmail] = useState('');
   const [done, setDone] = useState(false);
   const visibleProjects = projFilter === 'All'
@@ -178,14 +180,14 @@ export default function Resources() {
               <button
                 key={f}
                 className={`proj-filter${projFilter === f ? ' on' : ''}`}
-                onClick={() => setProjFilter(f)}
+                onClick={() => { setProjFilter(f); setProjExpanded(false); }}
                 aria-pressed={projFilter === f}
               >
                 {f === 'All' ? 'All' : f.split(' ').map(w => w === 'and' ? 'and' : w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
               </button>
             ))}
           </div>
-          <div className="proj-grid proj-grid--4 proj-grid--library">
+          <div className={`proj-grid proj-grid--4 proj-grid--library${projExpanded ? '' : ' proj-grid--collapsed'}`}>
             {visibleProjects.map((p) => (
               <article
                 key={p.slug}
@@ -204,6 +206,11 @@ export default function Resources() {
               </article>
             ))}
           </div>
+          {!projExpanded && visibleProjects.length > 4 && (
+            <button className="proj-see-more" onClick={() => setProjExpanded(true)}>
+              See more projects
+            </button>
+          )}
         </div>
       </section>
 

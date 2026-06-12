@@ -173,15 +173,17 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 
 /* ── HERO ── */
 .hero {
-  background: var(--ink); padding: 0 40px 100px;
+  background: var(--ink); padding: 0 40px 40px;
   position: relative; overflow: hidden;
 }
-/* Centered two-column composition: copy left, orbit graphic right. */
+/* Centered two-column composition: copy left, orbit graphic right.
+   min-height fills the viewport (minus navbar) so the whole hero shows in one
+   view, with align-items:center keeping the content vertically balanced. */
 .hero-grid {
   position: relative; z-index: 2;
   max-width: var(--content-max); margin: 0 auto;
   display: grid; grid-template-columns: 1fr 1.1fr; gap: 48px;
-  align-items: center; min-height: 560px;
+  align-items: center; min-height: min(560px, calc(100dvh - 110px));
 }
 .hero-visual {
   grid-column: 2; grid-row: 1; justify-self: center;
@@ -237,7 +239,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .hero-centered .hero-actions { justify-content: center; }
 .hero-centered .hero-stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 22px 44px; max-width: none; }
 .hero-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--lavender); margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
-.hero-h1 { font-family: 'DM Serif Display', serif; font-size: clamp(30px, 6.4vw, 48px); font-weight: 400; color: #EEEDFE; line-height: 1.1; margin-bottom: 14px; }
+.hero-h1 { font-family: 'DM Serif Display', serif; font-size: clamp(32px, 6.8vw, 54px); font-weight: 400; color: #EEEDFE; line-height: 1.1; margin-bottom: 14px; }
 .hero-h1 em {
   background: linear-gradient(100deg, var(--lavender) 0%, #EEEDFE 45%, var(--lavender) 90%);
   background-size: 220% auto;
@@ -250,7 +252,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   0%, 100% { filter: drop-shadow(0 0 1px rgba(175,169,236,0.12)); }
   50% { filter: drop-shadow(0 0 7px rgba(175,169,236,0.5)); }
 }
-.hero-sub { font-size: 16px; color: rgba(238,237,254,0.58); line-height: 1.7; max-width: 700px; margin-bottom: 32px; }
+.hero-sub { font-size: 17px; color: rgba(238,237,254,0.58); line-height: 1.65; max-width: 700px; margin-bottom: 24px; }
 .hero-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .btn-primary { background: var(--specialist); color: white; padding: 11px 22px; border-radius: 22px; font-size: 13px; font-weight: 500; text-decoration: none; transition: background .2s; display: inline-block; cursor: pointer; border: none; font-family: inherit; }
 .btn-primary:hover { background: #6B62CC; }
@@ -392,7 +394,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .curric-weeks { list-style: none; margin: 0; padding: 0; border: 1px solid rgba(175,169,236,0.16); border-radius: 12px; overflow: hidden; flex: 1; display: flex; flex-direction: column; }
 .curric-week { border-bottom: 1px solid rgba(175,169,236,0.12); flex: 1; display: flex; }
 .curric-week:last-child { border-bottom: none; }
-.curric-week-head { width: 100%; flex: 1; text-align: left; background: none; border: none; cursor: pointer; font-family: inherit; padding: 13px 16px; display: flex; align-items: center; gap: 12px; transition: background .15s; }
+.curric-week-head { width: 100%; flex: 1; text-align: left; background: none; border: none; cursor: default; font-family: inherit; padding: 13px 16px; display: flex; align-items: center; gap: 12px; transition: background .15s; }
 .curric-week-head:hover { background: rgba(175,169,236,0.06); }
 .curric-week.open .curric-week-head { background: rgba(175,169,236,0.10); }
 .curric-week.on .curric-week-head { background: rgba(175,169,236,0.16); }
@@ -415,11 +417,13 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .curric-techs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
 .curric-tech { display: flex; flex-direction: column; gap: 10px; }
 .curric-tech-label { font-size: 13.5px; color: rgba(238,237,254,0.8); line-height: 1.4; }
+/* Non-interactive detail panels — never show a clickable (pointer) cursor. */
+.curric-detail-mid, .curric-detail-tools, .curric-tool, .curric-modules, .curric-modules li { cursor: default; }
 .curric-modules { list-style: none; margin: 0; padding: 0; }
 .curric-modules li { position: relative; padding-left: 20px; font-size: 15px; color: rgba(238,237,254,0.8); line-height: 1.6; margin-bottom: 11px; }
 .curric-modules li::before { content: ''; position: absolute; left: 2px; top: 9px; width: 6px; height: 6px; border-radius: 50%; background: var(--lavender); }
 .curric-domains { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
-.curric-domain { background: rgba(255,255,255,0.04); border: 1px solid rgba(175,169,236,0.2); color: rgba(238,237,254,0.8); font-family: inherit; font-size: 13px; font-weight: 500; padding: 8px 14px; border-radius: 20px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: background .15s, border-color .15s; }
+.curric-domain { background: rgba(255,255,255,0.04); border: 1px solid rgba(175,169,236,0.2); color: rgba(238,237,254,0.8); font-family: inherit; font-size: 13px; font-weight: 500; padding: 8px 14px; border-radius: 20px; cursor: default; display: inline-flex; align-items: center; gap: 6px; transition: background .15s, border-color .15s; }
 .curric-domain:hover { background: rgba(175,169,236,0.1); }
 .curric-domain.on { background: rgba(175,169,236,0.18); border-color: var(--lavender); color: #EEEDFE; }
 .curric-domain-caret { font-size: 10px; opacity: 0.7; }
@@ -465,7 +469,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 /* ── TRACKS ── */
 .tracks-dark { background: var(--ink); }
 .tracks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 42px auto 0; max-width: 1200px; }
-.track { border-radius: 10px; padding: 22px 16px; min-height: 96px; display: flex; flex-direction: column; justify-content: center; border: 0.5px solid rgba(175,169,236,0.18); cursor: pointer; transition: border-color .2s, background .2s; }
+.track { border-radius: 10px; padding: 22px 16px; min-height: 96px; display: flex; flex-direction: column; justify-content: center; border: 0.5px solid rgba(175,169,236,0.18); cursor: default; transition: border-color .2s, background .2s; }
 .track:hover { border-color: rgba(175,169,236,0.45); background: rgba(175,169,236,0.06); }
 .track-name { font-size: 13px; font-weight: 500; color: #EEEDFE; margin-bottom: 3px; }
 .track-role { font-size: 11px; color: var(--lavender); line-height: 1.4; }
@@ -531,6 +535,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .footer-5 .footer-links a { color: rgba(238,237,254,0.65); font-size: 13px; cursor: pointer; transition: color 0.15s; text-decoration: none; }
 .footer-5 .footer-links a:hover { color: white; }
 .footer-5-trust { max-width: 1200px; margin: 36px auto 0; padding-top: 20px; border-top: 0.5px solid rgba(175,169,236,0.18); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; font-size: 12px; color: rgba(238,237,254,0.5); }
+.footer-5-trust--left { justify-content: flex-start; text-align: left; }
 
 /* ── FAQ ── */
 .faq-list { max-width: 760px; margin: 36px auto 0; display: flex; flex-direction: column; gap: 6px; }
@@ -721,18 +726,14 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .captains-rail:active { cursor: grabbing; }
 .captains-track { display: flex; gap: 18px; width: max-content; }
 .captain-card {
-  flex: 0 0 440px; width: 440px; height: 240px;
+  flex: 0 0 360px; width: 360px; height: 300px;
   border-radius: 14px; overflow: hidden; position: relative; background: #0a0c14;
 }
 .captain-bg { position: absolute; inset: 0; pointer-events: none; }
 .captain-photo-img {
   position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover; object-position: center 22%; pointer-events: none;
+  object-fit: cover; object-position: center top; pointer-events: none;
 }
-/* Per-photo framing tweaks (faces sit differently in these shots). */
-.captain-photo-img[alt="Nitin K Sethi"] { object-position: center 60%; }
-.captain-photo-img[alt="Abhinay"] { object-position: center 58%; }
-.captain-photo-img[alt="Manish Yadav"] { object-position: center 35%; }
 .captain-overlay {
   position: absolute; inset: 0; padding: 26px 28px;
   display: flex; flex-direction: column;
@@ -749,7 +750,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .captain-role { font-size: 13.5px; line-height: 1.45; color: rgba(255,255,255,0.82); margin-top: 10px; max-width: 240px; }
 .captain-company { margin-top: auto; font-size: 17px; font-weight: 700; color: #fff; letter-spacing: .01em; }
 @media (max-width: 540px) {
-  .captain-card { flex-basis: 320px; width: 320px; height: 200px; }
+  .captain-card { flex-basis: 260px; width: 260px; height: 260px; }
 }
 
 /* Project builds — domain filter chips */
@@ -848,6 +849,12 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 
 /* Library page — compact, even project cards */
 .proj-grid--library { gap: 14px; margin-top: 24px; align-items: stretch; }
+/* Mobile-only: show the first 4 project builds, reveal the rest via "See more". */
+.proj-see-more { display: none; }
+@media (max-width: 560px) {
+  .proj-grid--library.proj-grid--collapsed .proj-card--library:nth-child(n+5) { display: none; }
+  .proj-see-more { display: block; margin: 20px auto 0; background: var(--specialist); color: #fff; border: none; font-family: inherit; font-size: 14px; font-weight: 600; padding: 12px 30px; border-radius: 22px; cursor: pointer; }
+}
 .proj-card--library {
   display: flex; flex-direction: column; height: 100%;
   padding: 16px; border-radius: 12px;
@@ -1063,6 +1070,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .hiring-section .partners-strip { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 28px 0 36px; padding: 0; background: none; border-radius: 0; }
 .partner-chip { padding: 12px 22px; background: white; border: 0.5px solid rgba(83,74,183,0.18); border-radius: 12px; font-size: 13px; font-weight: 500; color: var(--ink); flex: 0 0 auto; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; min-width: 120px; height: 56px; }
 .partner-logo-img { height: 26px; width: auto; max-width: 120px; object-fit: contain; display: block; }
+.partner-logo-img[alt="Sarvam AI"] { height: 34px; max-width: 140px; }
 .partner-name { font-size: 14px; font-weight: 600; color: var(--ink); }
 /* Keep logo pills white even inside dark hiring sections (logos read on white). */
 .hiring-section.dark .partners-marquee .partner-chip { background: #fff; border-color: rgba(255,255,255,0.18); }
@@ -1868,6 +1876,20 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .empty-state .es-icon { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 40px; color: var(--lavender); line-height: 1; margin-bottom: 12px; }
 .empty-state h3 { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: 20px; color: var(--ink); margin-bottom: 6px; }
 .empty-state p { font-size: 13.5px; line-height: 1.6; max-width: 380px; margin: 0 auto; }
+
+/* ── Policy pages (in-site PDF) ── */
+.policy-page { background: var(--parchment); padding: 64px 40px 72px; min-height: 70vh; }
+.policy-shell { max-width: 980px; margin: 0 auto; }
+.policy-title { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: clamp(30px, 5vw, 44px); color: var(--ink); line-height: 1.1; margin: 6px 0 24px; letter-spacing: -0.01em; }
+.policy-doc { border: 1px solid rgba(38,33,92,0.12); border-radius: 14px; overflow: hidden; background: #fff; box-shadow: 0 10px 30px rgba(38,33,92,0.08); }
+.policy-doc iframe { display: block; width: 100%; height: 82vh; border: 0; }
+.policy-download { display: inline-block; margin-top: 18px; font-size: 13px; font-weight: 600; color: var(--specialist); text-decoration: none; }
+.policy-download:hover { text-decoration: underline; }
+.policy-back { margin-top: 20px; background: var(--specialist); color: #fff; border: none; font-family: inherit; font-size: 13px; font-weight: 600; padding: 11px 22px; border-radius: 22px; cursor: pointer; }
+@media (max-width: 600px) {
+  .policy-page { padding: 44px 20px 56px; }
+  .policy-doc iframe { height: 70vh; }
+}
 
 /* ── 404 ── */
 .notfound { position: relative; overflow: hidden; background: var(--ink); padding: 120px 40px; text-align: center; }

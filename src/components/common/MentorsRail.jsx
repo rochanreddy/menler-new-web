@@ -3,16 +3,16 @@ import { useRef, useEffect } from 'react';
 // NOTE: photos are portrait placeholders and company shows as a text wordmark —
 // swap `img` for real instructor photos (and add `logo`) when available.
 const MENTORS = [
-  { name: 'Anutham G', role: 'Product Manager at Flipkart', company: 'Flipkart', img: '/mentors/Anuttam.png' },
-  { name: 'Shashank K', role: 'AI-Operations Analytics at Equifax', company: 'Equifax', img: '/mentors/Shashank.png' },
-  { name: 'Abhinay', role: 'Director — Engineering at Kernel Theory', company: 'Kernel Theory', img: '/mentors/Abhinay.png' },
+  { name: 'Anuttam G', role: 'Product Manager', company: 'Flipkart, Ex-BigBasket', img: '/mentors/Anuttam.png' },
+  { name: 'Shashank Kumar', role: 'AI Automation — Operation & Analytics Lead', company: 'Equifax', img: '/mentors/Shashank.png' },
+  { name: 'Abhinay Kumar', role: 'CTO', company: 'Kernel Theory', img: '/mentors/Abhinay.png' },
   { name: 'Rohit', role: 'CEO-Office · Business Manager at Zolve', company: 'Zolve', img: '/mentors/ROHIT.png' },
-  { name: 'Nitin K Sethi', role: 'AI-DS Expert at McKinsey', company: 'McKinsey', img: '/mentors/Nitin.png' },
-  { name: 'Deepak K', role: 'Educator', company: '', img: '/mentors/Deepak.png' },
-  { name: 'Manish Yadav', role: 'AI Engineering Mentor', company: '', img: '/mentors/Manish.png' },
-  { name: 'Pranay', role: 'AI Specialist Mentor', company: '', img: '/mentors/Pranay.jpeg' },
-  { name: 'Salimullah', role: 'AI Mentor', company: '', img: '/mentors/Salimullah.png' },
-  { name: 'Sachin', role: 'AI Specialist Mentor', company: '', img: '/mentors/Sachin.png' },
+  { name: 'Nitin K Sethi', role: 'AI Engineer', company: 'McKinsey, Yusr L&F', img: '/mentors/Nitin.png' },
+  { name: 'Deepak K', role: 'AI Operations Lead', company: 'Testbook', img: '/mentors/Deepak.png' },
+  { name: 'Manish Yadav', role: 'AI Service Business Analyst', company: 'Zendesk', img: '/mentors/Manish.png' },
+  { name: 'Pranay W', role: 'AI Product Generalist', company: 'Wednesday Solution', img: '/mentors/Pranay.jpeg' },
+  { name: 'Salimullah Khan', role: 'AI Product Manager — Digital Solution', company: 'Black Tiger Cement', img: '/mentors/Salimullah.png' },
+  { name: 'Sachin Roy', role: 'Founder', company: 'Menler', img: '/mentors/Sachin.png' },
 ];
 
 // Full-card gradient placeholders (no photo yet — add `img` back later).
@@ -25,11 +25,13 @@ const OVERLAYS = [
   'linear-gradient(120deg, #160f2b 0%, #0c0818 100%)',
 ];
 
-// Three rows, distinct people, alternating scroll directions.
+// Each row shows every mentor (rotated to a different start so the rows look
+// distinct), so the same face never appears twice within one visible row.
+const rotate = (arr, n) => [...arr.slice(n), ...arr.slice(0, n)];
 const ROWS = [
-  { list: MENTORS.slice(0, 4), dir: 'rtl', tint: 0 },
-  { list: MENTORS.slice(4, 7), dir: 'ltr', tint: 4 },
-  { list: MENTORS.slice(7, 10), dir: 'rtl', tint: 2 },
+  { list: rotate(MENTORS, 0), dir: 'rtl', tint: 0 },
+  { list: rotate(MENTORS, 4), dir: 'ltr', tint: 4 },
+  { list: rotate(MENTORS, 7), dir: 'rtl', tint: 2 },
 ];
 
 function CaptainRow({ list, dir, tint }) {

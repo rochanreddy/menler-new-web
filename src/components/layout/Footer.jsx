@@ -94,11 +94,13 @@ export default function Footer() {
           <ul className="footer-links">
             <li><a onClick={() => go('/about')}>About</a></li>
             <li><a onClick={() => go('/about')}>Contact</a></li>
+            <li><a onClick={() => go('/policy/privacy')}>Privacy Policy</a></li>
+            <li><a onClick={() => go('/policy/refund')}>Refund Policy</a></li>
+            <li><a onClick={() => go('/policy/terms')}>Terms &amp; Conditions</a></li>
           </ul>
         </div>
       </div>
-      <div className="footer-5-trust">
-        <p>25+ hiring associations  ·  90% interview pipeline target  ·  Applications open</p>
+      <div className="footer-5-trust footer-5-trust--left">
         <p>© 2026 Menler. India's AI learning brand.</p>
       </div>
     </footer>
