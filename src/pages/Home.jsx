@@ -222,7 +222,7 @@ export default function Home() {
       <AccredSection />
 
       {/* ── PROGRAMS ── */}
-      <section className="section" style={{ background: 'var(--parchment)', paddingTop: 48, paddingBottom: 32 }} ref={programsRef}>
+      <section className="section prog-section" style={{ background: 'var(--parchment)', paddingTop: 40, paddingBottom: 28 }} ref={programsRef}>
         <p className="section-label">Choose your program</p>
         <h2 className="section-h2">Two Paths, One Outcome <br /><em>AI Native You!</em></h2>
         <p className="section-sub">Both fellowships lead to a recognised AI Specialist credential and active career support. Pick the one that fits your background.</p>
@@ -264,7 +264,7 @@ export default function Home() {
             <button className="prog-card-cta" onClick={() => go('/engineering')}>Explore Engineering Program</button>
           </div>
         </div>
-        <div style={{ textAlign: 'center', marginTop: 28 }}>
+        <div style={{ textAlign: 'center', marginTop: 16 }}>
           <button className="prog-card-cta" style={{ background: 'var(--ink)', color: '#fff', minWidth: 200, '--beam': '#26215C', '--beam-hot': '#AFA9EC' }} onClick={() => setShowApply(true)}>Book a call</button>
         </div>
       </section>
@@ -345,7 +345,7 @@ export default function Home() {
       </section>
 
       {/* ── MENTORS ── */}
-      <MentorsRail style={{ paddingTop: 48, paddingBottom: 32 }} />
+      <MentorsRail className="captains-screen" style={{ paddingTop: 40, paddingBottom: 28 }} />
 
       {/* ── HIRING PARTNERS & ROLES ── */}
       <section className="section jobs-section" style={{ paddingTop: 48, paddingBottom: 32 }}>

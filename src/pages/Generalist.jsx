@@ -124,10 +124,10 @@ const GEN_HIRING = {
 const TRACKS = [
   { name: "Founder's Office", role: 'Decision intelligence · Exec briefings' },
   { name: 'Product Management', role: 'Discovery · PRDs · Roadmaps' },
-  { name: 'Finance & Operations', role: 'financial analysis · risk management  · process automation' },
+  { name: 'Finance & Operations', role: 'Financial analysis · Risk management  · Process automation' },
   { name: 'Marketing & Sales', role: 'Content engines · GTM · CRM' },
-  { name: 'HR Operations', role: 'recruitment operation · employee experience · payroll automation' },
-  { name: 'Business Analysis', role: 'data storytelling · decision  · intelligent' },
+  { name: 'HR Operations', role: 'Recruitment operation · Employee experience · Payroll automation' },
+  { name: 'Business Analysis', role: 'Data storytelling · Decision  · Intelligent' },
 ];
 
 const PROJECTS = [
@@ -239,8 +239,10 @@ export default function Generalist() {
         path="/generalist"
         jsonLd={{ '@context': 'https://schema.org', '@type': 'Course', name: 'Claude AI Generalist Fellowship', description: '10-week no-code Claude AI fellowship for non-technical professionals — domain AI workflows, real projects and placement support.', provider: { '@type': 'Organization', name: 'Menler', sameAs: 'https://menler.in' } }}
       />
+      {/* ── HERO + WHO THIS IS FOR (one screen together) ── */}
+      <div className="hero-screen">
       {/* ── HERO ── */}
-      <section className="hero" style={{ paddingTop: 64 }}>
+      <section className="hero" style={{ padding: '34px clamp(20px, 6vw, 40px) 24px' }}>
         <div className="hero-ring r1" /><div className="hero-ring r2" />
         <div className="hero-inner">
           <p className="hero-eyebrow">Claude AI Generalist Fellowship · India</p>
@@ -262,7 +264,7 @@ export default function Generalist() {
       </section>
 
       {/* ── WHO THIS IS FOR ── */}
-      <section className="section" style={{ background: 'var(--parchment)', paddingTop: 48 }}>
+      <section className="section" style={{ background: 'var(--parchment)', paddingTop: 24, paddingBottom: 20 }}>
         <p className="section-label">Who this is for</p>
         <h2 className="section-h2">Any background.<br /><em>Any domain. Zero code.</em></h2>
         <p className="section-sub">The AI-native workforce won't be made up of engineers alone. It will be built by professionals across every domain.</p>
@@ -274,6 +276,7 @@ export default function Generalist() {
           <div className="audience-card"><div className="ava" style={{ background: '#F1EFE8', color: '#5F5E5A' }}>CS</div><p className="audience-role">Career switchers</p><p className="audience-desc">Move into AI-adjacent roles with a real credential.</p></div>
         </div>
       </section>
+      </div>
 
       {/* ── CURRICULUM ── */}
       <section className="section" style={{ background: 'white', paddingTop: 48 }}>

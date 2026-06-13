@@ -63,8 +63,10 @@ export default function Engineering() {
         path="/engineering"
         jsonLd={{ '@context': 'https://schema.org', '@type': 'Course', name: 'Claude AI Engineering Fellowship', description: '12-week Claude AI engineering fellowship — production AI systems: API, RAG, MCP, agents, evals and LLMOps, with placement support.', provider: { '@type': 'Organization', name: 'Menler', sameAs: 'https://menler.in' } }}
       />
+      {/* ── HERO + WHO THIS IS FOR (one screen together) ── */}
+      <div className="hero-screen">
       {/* ── HERO ── */}
-      <section className="hero" style={{ background: '#085041', paddingTop: 64 }}>
+      <section className="hero" style={{ background: '#085041', padding: '34px clamp(20px, 6vw, 40px) 24px' }}>
         <div className="hero-ring r1" style={{ borderColor: 'rgba(93,202,165,0.1)' }} />
         <div className="hero-ring r2" style={{ borderColor: 'rgba(93,202,165,0.08)' }} />
         <div className="hero-inner">
@@ -86,7 +88,7 @@ export default function Engineering() {
       </section>
 
       {/* ── WHO THIS IS FOR ── */}
-      <section className="section" style={{ background: '#E1F5EE' }}>
+      <section className="section" style={{ background: '#E1F5EE', paddingTop: 24, paddingBottom: 20 }}>
         <p className="section-label" style={{ color: 'var(--forest)' }}>Who this is for</p>
         <h2 className="section-h2" style={{ color: 'var(--forest)' }}>You already code.<br /><em style={{ color: 'var(--placed)' }}>Now build with Claude.</em></h2>
         <p className="section-sub">The AI-native products of the next decade will be built by engineers who know how to work with AI.</p>
@@ -98,6 +100,7 @@ export default function Engineering() {
           <div className="audience-card"><div className="ava" style={{ background: '#F1EFE8', color: '#5F5E5A' }}>DT</div><p className="audience-role">Deep tech</p><p className="audience-desc">Systems, infra, and production AI architecture.</p></div>
         </div>
       </section>
+      </div>
 
       {/* ── CURRICULUM ── */}
       <section className="section" style={{ background: 'white' }}>

@@ -16,17 +16,19 @@ const TRUST_CARDS = [
 ];
 
 // Question-bank topics → downloadable PDF (in /public/question_banks).
+// `label` = pill display name; `name` = short name shown on the download button.
 // `pdf: null` = not uploaded yet; the pill shows but download is disabled.
 const QB_BANKS = [
-  { key: 'All About AI', pdf: '/question_banks/Menler_All_About_AI_Question_Bank.pdf' },
-  { key: 'RAG', pdf: '/question_banks/Menler_RAG_Knowledge_Systems_Question_Bank.pdf' },
-  { key: 'MCP', pdf: null },
-  { key: 'Agents', pdf: '/question_banks/Menler_Agentic_AI_Question_Bank.pdf' },
-  { key: 'Evals', pdf: null },
-  { key: 'Tools', pdf: '/question_banks/Menler_AI_Tools_Ecosystem_Question_Bank.pdf' },
-  { key: 'Prompts', pdf: '/question_banks/Menler_Prompt_Engineering_Question_Bank.pdf' },
-  { key: 'LLM', pdf: '/question_banks/Menler_LLM_Fundamentals_Question_Bank.pdf' },
-  { key: 'Engineering', pdf: '/question_banks/Menler_AI_Engineering_Thinking_Question_Bank.pdf' },
+  { label: 'All about AI', name: 'All', pdf: '/question_banks/Menler_All_About_AI_Question_Bank.pdf' },
+  { label: 'Agentic AI', name: 'Agentic AI', pdf: '/question_banks/Menler_Agentic_AI_Question_Bank.pdf' },
+  { label: 'AI Agent Workflows', name: 'AI Agents', pdf: '/question_banks/Menler_AI_Agents_Workflows_Question_Bank.pdf' },
+  { label: 'AI Engineering Thinking', name: 'Engineering', pdf: '/question_banks/Menler_AI_Engineering_Thinking_Question_Bank.pdf' },
+  { label: 'AI Judgement', name: 'Evals', pdf: '/question_banks/Menler_AI_Judgment_Question_Bank.pdf' },
+  { label: 'AI Network Infrastructure', name: 'MCPs & Connectors', pdf: '/question_banks/Menler_AI_Networks_Infrastructure_Question_Bank.pdf' },
+  { label: 'AI Tools Ecosystem', name: 'AI Tools', pdf: '/question_banks/Menler_AI_Tools_Ecosystem_Question_Bank.pdf' },
+  { label: 'LLM Fundamentals', name: 'LLMs', pdf: '/question_banks/Menler_LLM_Fundamentals_Question_Bank.pdf' },
+  { label: 'Prompt Engineering', name: 'Prompts', pdf: '/question_banks/Menler_Prompt_Engineering_Question_Bank.pdf' },
+  { label: 'RAG Knowledge Systems', name: 'RAG', pdf: '/question_banks/Menler_RAG_Knowledge_Systems_Question_Bank.pdf' },
 ];
 
 const QB_QUESTIONS = [
@@ -168,8 +170,8 @@ export default function Aptitude() {
   const setL = (k, v) => setLeadForm(f => ({ ...f, [k]: v }));
 
   // Question-bank topic selector + per-topic PDF download.
-  const [qbFilter, setQbFilter] = useState('All About AI');
-  const qbBank = QB_BANKS.find(b => b.key === qbFilter) || QB_BANKS[0];
+  const [qbFilter, setQbFilter] = useState('All about AI');
+  const qbBank = QB_BANKS.find(b => b.label === qbFilter) || QB_BANKS[0];
   const downloadQB = () => {
     if (!qbBank.pdf) return;
     const a = document.createElement('a');
@@ -501,18 +503,18 @@ export default function Aptitude() {
         <div className="qb-filters">
           {QB_BANKS.map(b => (
             <button
-              key={b.key}
-              className={`qb-filter-pill${qbFilter === b.key ? ' active' : ''}`}
-              onClick={() => setQbFilter(b.key)}
-              aria-pressed={qbFilter === b.key}
+              key={b.label}
+              className={`qb-filter-pill${qbFilter === b.label ? ' active' : ''}`}
+              onClick={() => setQbFilter(b.label)}
+              aria-pressed={qbFilter === b.label}
             >
-              {b.key}
+              {b.label}
             </button>
           ))}
         </div>
         <div style={{ textAlign: 'center', marginTop: 32 }}>
           <button className="btn-primary" onClick={downloadQB} disabled={!qbBank.pdf}>
-            {qbBank.pdf ? `Download Question Bank — ${qbBank.key}` : `${qbBank.key} — coming soon`}
+            {qbBank.pdf ? `Download Question Bank — ${qbBank.name}` : `${qbBank.name} — coming soon`}
           </button>
         </div>
       </section>

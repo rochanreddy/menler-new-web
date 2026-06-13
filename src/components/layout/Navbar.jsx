@@ -57,6 +57,7 @@ export default function Navbar() {
   if (location.pathname.startsWith('/admin')) return null;
 
   return (
+    <>
     <nav className="nav" ref={navRef}>
       <button className="nav-logo" onClick={() => go('/')} aria-label="menler — home">
         <MenlerWordmark size={26} theme="light" />
@@ -82,7 +83,7 @@ export default function Navbar() {
           </button>
           <div className="dropdown dropdown-mega" role="menu">
             <button className="dd-item dd-gen" role="menuitem" onClick={() => go('/generalist')}>
-              <span className="dd-badge">12 weeks · No code</span>
+              <span className="dd-badge">10 weeks · No code</span>
               <span className="dd-title">Claude AI Generalist</span>
               <span className="dd-desc">For students, professionals, and business owners. Master Claude. Become a domain Specialist.</span>
             </button>
@@ -122,13 +123,16 @@ export default function Navbar() {
           <button className="nav-cta" onClick={apply}>Apply Now</button>
         )}
       </div>
+    </nav>
 
-      {/* ── MOBILE DRAWER ── */}
+      {/* ── MOBILE DRAWER (outside <nav> so position:fixed tracks the viewport,
+          not the navbar's backdrop-filter containing block) ── */}
       <div className={`mobile-menu${mobileOpen ? ' open' : ''}`} aria-hidden={!mobileOpen}>
-        <button className="mm-link" onClick={() => go('/kickstarter')}>AI Kickstarter</button>
         <div className="mm-section-label">Fellowship</div>
         <button className="mm-link" onClick={() => go('/generalist')}>Claude AI Generalist</button>
         <button className="mm-link" onClick={() => go('/engineering')}>Claude AI Engineering</button>
+        <div className="mm-divider" />
+        <button className="mm-link" onClick={() => go('/kickstarter')}>AI Kickstarter</button>
         <div className="mm-divider" />
         <button className={`mm-link${isActive('/aptitude') ? ' active' : ''}`} onClick={() => go('/aptitude')}>AI Aptitude Test</button>
         <button className={`mm-link${isActive('/resources') ? ' active' : ''}`} onClick={() => go('/resources')}>Library</button>
@@ -144,6 +148,6 @@ export default function Navbar() {
         )}
       </div>
       <div className={`mobile-overlay${mobileOpen ? ' open' : ''}`} onClick={() => setMobileOpen(false)} aria-hidden="true" />
-    </nav>
+    </>
   );
 }

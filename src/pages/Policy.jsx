@@ -33,10 +33,15 @@ export default function Policy() {
           <p className="section-label">Menler</p>
           <h1 className="policy-title">{policy.title}</h1>
           <div className="policy-doc">
-            <iframe src={`${policy.pdf}#view=FitH`} title={policy.title} />
+            {/* toolbar=0 hides the viewer's download/print bar; navpanes=0 hides
+                the left thumbnail/outline panel — show the PDF content only.
+                Hovering the document scrolls the document itself. */}
+            <iframe src={`${policy.pdf}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`} title={policy.title} scrolling="yes" />
           </div>
-          <a className="policy-download" href={policy.pdf} target="_blank" rel="noopener noreferrer">
-            Download PDF ↓
+          {/* Mobile browsers often can't scroll a PDF embedded in an iframe — give
+              them a reliable full-screen view where native scrolling always works. */}
+          <a className="policy-open-mobile" href={policy.pdf} target="_blank" rel="noopener noreferrer">
+            Open in full screen ↗
           </a>
         </div>
       </section>

@@ -93,7 +93,8 @@
       "Bash(grep -nA6 \"<Seo\" src/pages/Home.jsx)",
       "Bash(grep -nA8 \"<Seo\" src/pages/Generalist.jsx)",
       "Bash(ls -la public/policy/)",
-      "Bash(find public *)"
+      "Bash(find public *)",
+      "Bash(grep -rnE \"100vw|width: *[0-9]{3,}px|minWidth: *[0-9]{3,}\" src/styles/global.css src/pages/Home.jsx)"
     ]
   }
 }

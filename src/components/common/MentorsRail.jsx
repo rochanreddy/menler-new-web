@@ -25,13 +25,16 @@ const OVERLAYS = [
   'linear-gradient(120deg, #160f2b 0%, #0c0818 100%)',
 ];
 
-// Each row shows every mentor (rotated to a different start so the rows look
-// distinct), so the same face never appears twice within one visible row.
-const rotate = (arr, n) => [...arr.slice(n), ...arr.slice(0, n)];
+// Both rows show every mentor, but in genuinely different orders (row 2 is an
+// odd-then-even interleave, not a rotation) and scroll in opposite directions,
+// so the same face never lines up above/below itself while scrolling.
+const interleave = (arr) => [
+  ...arr.filter((_, i) => i % 2 === 1),
+  ...arr.filter((_, i) => i % 2 === 0),
+];
 const ROWS = [
-  { list: rotate(MENTORS, 0), dir: 'rtl', tint: 0 },
-  { list: rotate(MENTORS, 4), dir: 'ltr', tint: 4 },
-  { list: rotate(MENTORS, 7), dir: 'rtl', tint: 2 },
+  { list: MENTORS, dir: 'rtl', tint: 0 },
+  { list: interleave(MENTORS), dir: 'ltr', tint: 4 },
 ];
 
 function CaptainRow({ list, dir, tint }) {
@@ -44,24 +47,42 @@ function CaptainRow({ list, dir, tint }) {
     const el = railRef.current;
     if (!el) return;
     let raf;
-    const tick = () => {
-      const half = el.scrollWidth / 2;
+    // Cache the scroll width: reading el.scrollWidth every frame forces a
+    // synchronous layout reflow, which is the main source of jank on mobile.
+    let half = 0;
+    const measure = () => {
+      half = el.scrollWidth / 2;
       if (half > 0 && !inited.current) {
         el.scrollLeft = dir === 'ltr' ? half : 0;
         inited.current = true;
       }
-      if (!paused.current && !drag.current.down && half > 0) {
-        el.scrollLeft += dir === 'ltr' ? -0.5 : 0.5;
-        if (el.scrollLeft >= half) el.scrollLeft -= half;
-        else if (el.scrollLeft <= 0) el.scrollLeft += half;
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    // Only animate while the rail is on screen — no wasted frames (and no
+    // scroll writes competing with the page) while the user scrolls past it.
+    let visible = true;
+    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; }, { threshold: 0 });
+    io.observe(el);
+
+    const tick = () => {
+      if (visible && half > 0 && !paused.current && !drag.current.down) {
+        let next = el.scrollLeft + (dir === 'ltr' ? -0.5 : 0.5);
+        if (next >= half) next -= half;
+        else if (next <= 0) next += half;
+        el.scrollLeft = next;
       }
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); io.disconnect(); };
   }, [dir]);
 
   const onPointerDown = (e) => {
+    // Leave touch gestures alone so the page scrolls vertically without the rail
+    // capturing the pointer (which caused the stutter on mobile). Drag = mouse only.
+    if (e.pointerType === 'touch') return;
     const el = railRef.current;
     drag.current = { down: true, startX: e.clientX, startScroll: el.scrollLeft };
     el.setPointerCapture?.(e.pointerId);
@@ -107,7 +128,7 @@ function CaptainRow({ list, dir, tint }) {
   );
 }
 
-export default function MentorsRail({ style, rows = ROWS.length, bare = false, labelStyle = {}, titleStyle = {} } = {}) {
+export default function MentorsRail({ style, className = '', rows = ROWS.length, bare = false, labelStyle = {}, titleStyle = {} } = {}) {
   // `rows` caps how many scrolling rows render (default: all). `bare` skips the
   // section wrapper + heading so the rail can sit inside another section.
   const shown = ROWS.slice(0, Math.max(1, rows));
@@ -123,7 +144,7 @@ export default function MentorsRail({ style, rows = ROWS.length, bare = false, l
   if (bare) return railRows;
 
   return (
-    <section className="captains-section" style={style}>
+    <section className={`captains-section ${className}`} style={style}>
       <div className="captains-head">
         <p className="captains-label" style={labelStyle}>Instructors / Mentors</p>
         <h2 className="captains-title" style={titleStyle}>The People Behind Menler</h2>

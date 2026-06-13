@@ -151,8 +151,10 @@ export default function Kickstarter() {
         path="/kickstarter"
         jsonLd={{ '@context': 'https://schema.org', '@type': 'Course', name: 'Gen AI Kickstarter', description: '14-day beginner AI bootcamp — hands-on with 10+ AI tools and first real AI projects, no prerequisites.', provider: { '@type': 'Organization', name: 'Menler', sameAs: 'https://menler.in' } }}
       />
+      {/* ── HERO + WHO THIS IS FOR (one screen together) ── */}
+      <div className="hero-screen">
       {/* ── HERO ── */}
-      <section className="hero" style={{ background: 'linear-gradient(135deg,#1A1647 0%,#854F0B 100%)', padding: '64px clamp(22px, 6vw, 40px) 56px' }}>
+      <section className="hero" style={{ background: 'linear-gradient(135deg,#1A1647 0%,#854F0B 100%)', padding: '34px clamp(22px, 6vw, 40px) 24px' }}>
         <div className="hero-ring r1" style={{ borderColor: 'rgba(250,238,218,0.12)' }} />
         <div className="hero-ring r2" style={{ borderColor: 'rgba(250,238,218,0.08)' }} />
         <div className="hero-inner">
@@ -173,7 +175,7 @@ export default function Kickstarter() {
       </section>
 
       {/* ── WHO THIS IS FOR ── */}
-      <section className="section" style={{ background: '#FFFBF1', paddingTop: 48 }}>
+      <section className="section" style={{ background: '#FFFBF1', paddingTop: 24, paddingBottom: 20 }}>
         <p className="section-label" style={{ color: '#854F0B' }}>Who this is for</p>
         <h2 className="section-h2" style={{ color: '#854F0B' }}>Built for the curious.<br /><em style={{ color: '#BA7517' }}>Welcome, beginners.</em></h2>
         <p className="section-sub">No prerequisites. No gatekeeping. If you can use a smartphone, you can do this.</p>
@@ -185,6 +187,7 @@ export default function Kickstarter() {
           <div className="audience-card"><div className="ava" style={{ background: '#F1EFE8', color: '#5F5E5A' }}>PE</div><p className="audience-role">Parents & educators</p><p className="audience-desc">Be the AI guide for your kids and your classroom.</p></div>
         </div>
       </section>
+      </div>
 
       {/* ── TIMELINE ── */}
       <section className="timeline-wrap" style={{ paddingTop: 48 }}>
@@ -206,38 +209,53 @@ export default function Kickstarter() {
         <p className="section-label" style={{ color: '#854F0B' }}>Course modules</p>
         <h2 className="section-h2" style={{ color: '#854F0B' }}>Four modules.<br /><em style={{ color: '#BA7517' }}>Click to open the plan.</em></h2>
         <p className="section-sub">Each module opens its lesson plan, the tool stack you'll use, and the project you'll build.</p>
-        <div className="curric">
-          <div className="curric-terms">
-            {MODULES.map((m, i) => (
-              <button
-                key={i}
-                className={`curric-term${activeModule === i ? ' on' : ''}`}
-                onClick={() => pickModule(i)}
-              >
-                <span className="curric-term-no">{m.label} · {m.span}</span>
-                <span className="curric-term-title">{m.title}</span>
-              </button>
-            ))}
-          </div>
-          <div className="curric-detail curric-detail--split" ref={moduleDetailRef} style={{ scrollMarginTop: 16 }}>
-            <div className="curric-detail-main">
-              <p className="curric-week-desc" style={{ marginTop: 0, marginBottom: 28 }}>{MODULES[activeModule].desc}</p>
-              <p className="curric-label">Lesson plan</p>
-              <ul className="curric-modules">
-                {MODULES[activeModule].lessons.map(l => <li key={l}>{l}</li>)}
-              </ul>
-              <p className="curric-label" style={{ marginTop: 28 }}>Project you'll build</p>
-              <ul className="curric-modules">
-                <li>{MODULES[activeModule].project}</li>
-              </ul>
-            </div>
-            <div className="curric-detail-tools">
-              <p className="curric-label">Tool stack</p>
-              <div className="curric-tools">
-                {MODULES[activeModule].tools.map(t => <ToolChip key={t} name={t} />)}
+        <div className="curric-acc">
+          {MODULES.map((m, i) => {
+            const open = activeModule === i;
+            return (
+              <div className={`curric-acc-item${open ? ' open' : ''}`} key={i}>
+                <button className="curric-acc-head" onClick={(e) => {
+                  const willOpen = !open;
+                  setActiveModule(willOpen ? i : -1);
+                  if (willOpen) {
+                    const el = e.currentTarget;
+                    setTimeout(() => {
+                      if (window.__lenis) { window.__lenis.scrollTo(el, { offset: -90 }); return; }
+                      const y = el.getBoundingClientRect().top + window.scrollY - 90;
+                      window.scrollTo({ top: y, behavior: 'smooth' });
+                    }, 70);
+                  }
+                }} aria-expanded={open}>
+                  <span className="curric-acc-no">{m.label} · {m.span}</span>
+                  <span className="curric-acc-title">{m.title}</span>
+                  <span className="curric-acc-caret">{open ? '▾' : '▸'}</span>
+                </button>
+                {open && (
+                  <div className="curric-acc-body">
+                    <div className="curric-detail--split">
+                      <div className="curric-detail-main">
+                        <p className="curric-week-desc" style={{ marginTop: 0, marginBottom: 28 }}>{m.desc}</p>
+                        <p className="curric-label">Lesson plan</p>
+                        <ul className="curric-modules">
+                          {m.lessons.map(l => <li key={l}>{l}</li>)}
+                        </ul>
+                        <p className="curric-label" style={{ marginTop: 28 }}>Project you'll build</p>
+                        <ul className="curric-modules">
+                          <li>{m.project}</li>
+                        </ul>
+                      </div>
+                      <div className="curric-detail-tools">
+                        <p className="curric-label">Tool stack</p>
+                        <div className="curric-tools">
+                          {m.tools.map(t => <ToolChip key={t} name={t} />)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
-          </div>
+            );
+          })}
         </div>
         <div style={{ textAlign: 'center', marginTop: 28 }}>
           <button className="btn-primary" style={{ background: '#BA7517', minWidth: 200 }} onClick={openApply}>Download curriculum</button>

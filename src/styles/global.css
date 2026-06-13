@@ -33,6 +33,10 @@ body {
   font-family: 'DM Sans', sans-serif; background: var(--white); color: var(--ink); overflow-x: hidden;
   -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility;
 }
+/* Clip stray horizontal overflow (the "white line") on the page content only —
+   NOT on html/body, which would break the sticky navbar. The navbar sits
+   outside #main, so this never touches it. `clip` keeps in-page sticky working. */
+#main { overflow-x: clip; }
 img, svg { max-width: 100%; }
 :focus-visible { outline: 2px solid var(--specialist); outline-offset: 2px; border-radius: 4px; }
 
@@ -139,17 +143,20 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .nav-burger.open span:nth-child(2) { opacity: 0; }
 .nav-burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
+/* Right-side slide-in drawer. Transform-only animation (GPU-composited) so the
+   slide is smooth with no flicker; off-screen at translateX(100%) when closed. */
 .mobile-menu {
-  position: absolute; top: 100%; left: 0; right: 0;
+  position: fixed; top: 0; right: 0; bottom: 0;
+  width: min(82vw, 340px); max-width: 100%;
   background: #ffffff;
-  border-bottom: 0.5px solid rgba(175,169,236,0.3);
-  box-shadow: 0 18px 40px rgba(38,33,92,0.16);
-  padding: 8px 16px 20px; display: flex; flex-direction: column;
-  max-height: calc(100dvh - 56px); overflow-y: auto;
-  opacity: 0; transform: translateY(-10px); pointer-events: none;
-  transition: opacity .22s ease, transform .22s ease; z-index: 199;
+  border-left: 0.5px solid rgba(175,169,236,0.3);
+  box-shadow: -20px 0 50px rgba(38,33,92,0.18);
+  padding: 72px 18px 28px; display: flex; flex-direction: column;
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+  transform: translateX(100%); will-change: transform; pointer-events: none;
+  transition: transform .32s cubic-bezier(0.16, 1, 0.3, 1); z-index: 199;
 }
-.mobile-menu.open { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.mobile-menu.open { transform: translateX(0); pointer-events: auto; }
 .mm-section-label { font-size: 10px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--specialist); padding: 14px 10px 2px; }
 .mm-link {
   text-align: left; background: none; border: none; font-family: inherit;
@@ -335,6 +342,16 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
     .prog-compare { grid-template-rows: repeat(7, auto); row-gap: 0; }
     .prog-card { display: grid; grid-template-rows: subgrid; grid-row: span 7; }
   }
+  /* "Choose your program" fits the whole section — both cards + Book a call —
+     in one viewport on desktop by tightening the vertical rhythm. */
+  .prog-section .prog-compare { margin-top: 18px; }
+  .prog-section .prog-card { padding: 22px 26px; }
+  .prog-section .prog-card-badge { margin-bottom: 10px; }
+  .prog-section .prog-card-title { margin-bottom: 6px; }
+  .prog-section .prog-card-desc { margin-bottom: 14px; padding-bottom: 12px; }
+  .prog-section .prog-card-for { margin-bottom: 8px; }
+  .prog-section .prog-card-logos { margin-bottom: 14px; min-height: 38px; }
+  .prog-section .next-batch { margin-bottom: 14px; padding: 11px 14px; }
 }
 
 /* ── WHY GRID ── */
@@ -363,12 +380,27 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .curric-label { font-size: 19px; font-weight: 600; color: #EEEDFE; margin-bottom: 18px; }
 .curric-tools { display: flex; flex-wrap: wrap; gap: 14px; }
 .curric-tool { padding: 12px 20px; border-radius: 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(175,169,236,0.25); color: #EEEDFE; font-size: 15px; font-weight: 500; display: inline-flex; align-items: center; gap: 12px; }
+/* Kickstarter modules + Generalist phases: tool-stack chips as an even 3-column
+   grid — three per row, each the same equal width regardless of name length. */
+.curric .curric-detail-tools .curric-tools,
+.curric-acc .curric-detail-tools .curric-tools,
+.curric-detail--triple .curric-detail-tools .curric-tools { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); justify-content: start; gap: 12px; }
+.curric .curric-detail-tools .curric-tool,
+.curric-acc .curric-detail-tools .curric-tool,
+.curric-detail--triple .curric-detail-tools .curric-tool { width: 100%; justify-content: flex-start; }
 .curric-tool-logo { width: 36px; height: 36px; object-fit: contain; background: #fff; border-radius: 7px; padding: 4px; flex-shrink: 0; }
-/* Mobile (Kickstarter modules): show the tool stack two per row. */
+/* Mobile: tool stack drops to two per row so long names (e.g. "ElevenLabs")
+   don't get clipped; allow them to wrap inside the chip if still tight. */
 @media (max-width: 600px) {
   .curric .curric-tools { gap: 10px; }
   .curric .curric-tools .curric-tool { flex: 0 1 calc(50% - 5px); min-width: 0; padding: 10px 12px; font-size: 13px; gap: 9px; }
   .curric .curric-tools .curric-tool-logo { width: 28px; height: 28px; }
+  .curric-acc .curric-detail-tools .curric-tools,
+  .curric-detail--triple .curric-detail-tools .curric-tools { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .curric-acc .curric-detail-tools .curric-tool,
+  .curric-detail--triple .curric-detail-tools .curric-tool { padding: 10px 12px; font-size: 13px; gap: 8px; min-width: 0; overflow-wrap: anywhere; }
+  .curric-acc .curric-detail-tools .curric-tool-logo,
+  .curric-detail--triple .curric-detail-tools .curric-tool-logo { width: 26px; height: 26px; }
 }
 /* Split the module detail: lesson plan + project on the left, tool stack on the right */
 /* ── Curriculum accordion (Generalist 12-week) ── */
@@ -403,7 +435,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .curric-week-caret { font-size: 18px; color: rgba(238,237,254,0.4); flex-shrink: 0; }
 .curric-week.on .curric-week-caret { color: var(--lavender); }
 .curric-week-desc { font-size: 14px; color: rgba(238,237,254,0.75); line-height: 1.7; margin: 8px 0 0; animation: accOpen .2s ease; }
-.curric-detail--split { display: grid; grid-template-columns: 340px 1fr; gap: 36px; align-items: stretch; }
+.curric-detail--split { display: grid; grid-template-columns: 1.5fr 1fr; gap: 36px; align-items: stretch; }
 .curric-detail-main { display: flex; flex-direction: column; }
 .curric-detail-tools { border-left: 1px solid rgba(175,169,236,0.14); padding-left: 36px; }
 /* 3-column variant: week list · lesson plan + project · tool stack (right side). */
@@ -488,6 +520,20 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 
 /* ── AUDIENCE ── */
 .audience-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 32px; }
+/* Program pages (Kickstarter / Generalist / Engineering): the hero and the
+   "Who this is for" section share one viewport on desktop. */
+@media (min-width: 761px) {
+  .hero-screen .hero-eyebrow { margin-bottom: 10px; }
+  .hero-screen .hero-h1 { font-size: clamp(32px, 5.2vw, 46px); margin-bottom: 8px; }
+  .hero-screen .hero-sub { font-size: 16px; line-height: 1.55; margin-bottom: 16px; }
+  .hero-screen .hero-stats { margin-top: 14px !important; padding-top: 16px !important; }
+  .hero-screen .hero-stat-num { font-size: 25px; }
+  .hero-screen .section-label { margin-bottom: 10px; }
+  .hero-screen .section-h2 { font-size: clamp(26px, 4vw, 34px); margin-bottom: 8px; }
+  .hero-screen .audience-grid { margin-top: 20px; }
+  .hero-screen .audience-card { padding: 14px 10px; }
+  .hero-screen .ava { width: 38px; height: 38px; margin-bottom: 9px; }
+}
 .audience-card { background: white; border-radius: 10px; padding: 14px 10px; text-align: center; border: 0.5px solid rgba(175,169,236,0.22); }
 .ava { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 9px; font-size: 12px; font-weight: 500; }
 .audience-role { font-size: 12px; font-weight: 500; color: var(--ink); margin-bottom: 3px; }
@@ -536,6 +582,16 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .footer-5 .footer-links a:hover { color: white; }
 .footer-5-trust { max-width: 1200px; margin: 36px auto 0; padding-top: 20px; border-top: 0.5px solid rgba(175,169,236,0.18); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; font-size: 12px; color: rgba(238,237,254,0.5); }
 .footer-5-trust--left { justify-content: flex-start; text-align: left; }
+/* Responsive footer: brand spans the top, link columns stay aligned in a tidy
+   grid (4-up on tablet, 2-up on phones) instead of one long stacked column. */
+@media (max-width: 980px) {
+  .footer-5-inner { grid-template-columns: repeat(4, 1fr); gap: 30px 24px; }
+  .footer-5-brand { grid-column: 1 / -1; }
+}
+@media (max-width: 600px) {
+  .footer-5-inner { grid-template-columns: 1fr 1fr; gap: 26px 20px; }
+  .footer-5-brand { grid-column: 1 / -1; }
+}
 
 /* ── FAQ ── */
 .faq-list { max-width: 760px; margin: 36px auto 0; display: flex; flex-direction: column; gap: 6px; }
@@ -714,7 +770,16 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 /* ── PORTFOLIO PROJECTS ── */
 /* ── INSTRUCTORS / MENTORS RAIL (Scaler-style landscape cards) ── */
 .captains-section { background: #fff; padding: 64px var(--gutter); overflow: hidden; }
-.captains-head { max-width: var(--content-max); margin: 0 auto 34px; }
+/* Home: the mentors section fills exactly one viewport — heading on top, the two
+   scrolling rows sized to fit the remaining height. */
+@media (min-width: 761px) {
+  .captains-screen { min-height: 100vh; display: flex; flex-direction: column; }
+  .captains-screen .captains-head { margin-bottom: 20px; }
+  .captains-screen .captains-rows { flex: 1 1 auto; justify-content: center; gap: 14px; }
+  .captains-screen .captain-card { height: clamp(190px, calc((100vh - 260px) / 2), 300px); }
+  .captains-screen .captains-rail { display: flex; align-items: center; }
+}
+.captains-head { max-width: var(--content-max); margin: 0 0 34px; margin-right: auto; text-align: left; }
 .captains-label { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--specialist); margin-bottom: 12px; }
 .captains-title { font-family: 'DM Serif Display', serif; font-size: clamp(28px, 4.4vw, 40px); font-weight: 400; color: var(--ink); line-height: 1.1; margin-bottom: 12px; }
 .captains-sub { font-size: 15px; color: var(--text-muted); max-width: 560px; line-height: 1.6; }
@@ -722,6 +787,9 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .captains-rail {
   overflow: hidden; cursor: grab; user-select: none;
   margin: 0 calc(-1 * var(--gutter)); padding: 0 var(--gutter);
+  /* Let vertical page scroll pass through immediately on touch, and hint the
+     browser to keep the rail on its own compositor layer (less flicker). */
+  touch-action: pan-y; will-change: scroll-position;
 }
 .captains-rail:active { cursor: grabbing; }
 .captains-track { display: flex; gap: 18px; width: max-content; }
@@ -734,6 +802,10 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   position: absolute; inset: 0; width: 100%; height: 100%;
   object-fit: cover; object-position: center top; pointer-events: none;
 }
+/* These two headshots have extra space above the head — crop the top so the
+   face sits higher and fills more of the card. */
+.captain-photo-img[alt="Abhinay Kumar"],
+.captain-photo-img[alt="Nitin K Sethi"] { object-position: center 22%; }
 .captain-overlay {
   position: absolute; inset: 0; padding: 26px 28px;
   display: flex; flex-direction: column;
@@ -765,7 +837,9 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 @media (max-width: 560px) { .proj-grid--4 { grid-template-columns: 1fr; } }
 /* Mobile: the Home "What you build" preview shows only the first 3 projects; the
    "Explore more" button below takes users to the full set on the Library page. */
-@media (max-width: 560px) { .proj-grid--home > *:nth-child(n+4) { display: none; } }
+/* Mobile + tablet (single- and two-column layouts): show only the first 4
+   project cards, then the "Explore more" button. Full set shows on desktop. */
+@media (max-width: 980px) { .proj-grid--home .proj-card:nth-child(n+5) { display: none; } }
 /* Home "What you build": make every card identical — equal height, with the
    stack + outcome + link block pinned to the bottom so they line up across cards. */
 @media (min-width: 561px) { .proj-grid--home { grid-auto-rows: 1fr; } }
@@ -774,8 +848,8 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 /* Flex-column stretches children full-width by default — keep the tag pill and
    the link sized to their text so the tag colour ends after the label. */
 .proj-grid--home .proj-domain-tag, .proj-grid--home .proj-card-link { align-self: flex-start; }
-.proj-card { background: white; border: 0.5px solid rgba(175,169,236,0.28); border-radius: 14px; padding: 28px; transition: transform .2s, border-color .2s; }
-.proj-card:hover { transform: translateY(-3px); border-color: rgba(175,169,236,0.5); }
+.proj-card { background: white; border: 1px solid rgba(175,169,236,0.45); border-radius: 14px; padding: 28px; transition: transform .2s, border-color .2s; }
+.proj-card:hover { transform: translateY(-3px); border-color: rgba(175,169,236,0.65); }
 .proj-card--clickable { cursor: pointer; }
 .proj-card--clickable:focus-visible { outline: 2px solid var(--specialist); outline-offset: 2px; }
 .proj-card-link { display: inline-block; margin-top: 12px; font-size: 12px; font-weight: 500; color: var(--specialist); opacity: 0; transform: translateX(-4px); transition: opacity .2s, transform .2s; }
@@ -1427,7 +1501,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .apt-qcard-status.ok { color: var(--placed); }
 .apt-qcard-status.no { color: #d0473a; }
 .apt-qcard-opts { display: flex; flex-direction: column; gap: 10px; }
-.apt-opt-row { display: flex; align-items: center; gap: 12px; }
+.apt-opt-row { display: flex; align-items: flex-start; gap: 12px; }
 .apt-opt-box { flex: none; width: 24px; height: 24px; border-radius: 7px; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: transparent; }
 .apt-opt-row.wrong .apt-opt-box { border-color: #d0473a; color: #d0473a; }
 .apt-opt-row.key .apt-opt-box { border-color: rgba(29,158,117,0.55); color: var(--placed); }
@@ -1440,6 +1514,18 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .apt-exp-chevron { width: 14px; height: 14px; color: var(--text-muted); transition: transform 0.2s ease; }
 .apt-qcard-exp[open] .apt-exp-chevron { transform: rotate(180deg); }
 .apt-qcard-exp > p { font-size: 13px; line-height: 1.65; color: var(--text-muted); margin: 0; padding: 0 24px 20px; }
+/* Mobile: tighten the report cards so the boxes, option pills and explanation
+   text align cleanly within the narrow width (no overflow / off-centre boxes). */
+@media (max-width: 600px) {
+  .apt-answers-body { padding: 4px 10px 12px; }
+  .apt-qcard-body { padding: 16px 14px; }
+  .apt-qcard-q { font-size: 14.5px; }
+  .apt-opt-row { gap: 10px; }
+  .apt-opt-box { width: 22px; height: 22px; }
+  .apt-opt-pill { padding: 6px 11px; font-size: 12.5px; line-height: 1.4; }
+  .apt-qcard-exp > summary { padding: 14px 14px; }
+  .apt-qcard-exp > p { padding: 0 14px 16px; }
+}
 .apt-roadmap-label { font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--specialist); margin: 8px 0 12px; }
 .apt-roadmap { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .apt-roadmap-item { display: flex; gap: 10px; align-items: baseline; padding: 9px 12px; background: var(--parchment); border-radius: 8px; }
@@ -1648,7 +1734,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 
 /* ── RESPONSIVE ── */
 @media (max-width: 980px) {
-  .ladder, .products-grid, .bip-grid, .impact-stories, .res-grid, .qb-grid, .apt-trust-grid, .footer-5-inner, .mag-grid-inner, .qualify-grid, .impact-stats-strip, .outcomes-stats { grid-template-columns: 1fr !important; }
+  .ladder, .products-grid, .bip-grid, .impact-stories, .res-grid, .qb-grid, .apt-trust-grid, .mag-grid-inner, .qualify-grid, .impact-stats-strip, .outcomes-stats { grid-template-columns: 1fr !important; }
   .mag-hero-inner { grid-template-columns: 1fr; }
   .runner-q { font-size: 20px; }
   .article-shell { padding: 0 22px; }
@@ -1881,14 +1967,16 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .policy-page { background: var(--parchment); padding: 64px 40px 72px; min-height: 70vh; }
 .policy-shell { max-width: 980px; margin: 0 auto; }
 .policy-title { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: clamp(30px, 5vw, 44px); color: var(--ink); line-height: 1.1; margin: 6px 0 24px; letter-spacing: -0.01em; }
-.policy-doc { border: 1px solid rgba(38,33,92,0.12); border-radius: 14px; overflow: hidden; background: #fff; box-shadow: 0 10px 30px rgba(38,33,92,0.08); }
-.policy-doc iframe { display: block; width: 100%; height: 82vh; border: 0; }
+.policy-doc { border: 1px solid rgba(38,33,92,0.12); border-radius: 14px; overflow: auto; -webkit-overflow-scrolling: touch; background: #fff; box-shadow: 0 10px 30px rgba(38,33,92,0.08); }
+.policy-doc iframe { display: block; width: 100%; height: 82vh; border: 0; touch-action: pan-y; }
+.policy-open-mobile { display: none; }
 .policy-download { display: inline-block; margin-top: 18px; font-size: 13px; font-weight: 600; color: var(--specialist); text-decoration: none; }
 .policy-download:hover { text-decoration: underline; }
 .policy-back { margin-top: 20px; background: var(--specialist); color: #fff; border: none; font-family: inherit; font-size: 13px; font-weight: 600; padding: 11px 22px; border-radius: 22px; cursor: pointer; }
 @media (max-width: 600px) {
   .policy-page { padding: 44px 20px 56px; }
-  .policy-doc iframe { height: 70vh; }
+  .policy-doc iframe { height: 68vh; }
+  .policy-open-mobile { display: inline-block; margin-top: 16px; background: var(--specialist); color: #fff; font-family: inherit; font-size: 13px; font-weight: 600; padding: 11px 22px; border-radius: 22px; text-decoration: none; }
 }
 
 /* ── 404 ── */
