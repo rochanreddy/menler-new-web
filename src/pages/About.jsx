@@ -7,12 +7,12 @@ import MentorsRail from '../components/common/MentorsRail';
 import { useApply } from '../components/common/ApplyContext';
 
 const VALUES = [
-  { title: 'Depth over breadth', desc: 'We go deep on Claude — not a tour of 40 AI tools. One model, mastered. Across real professional domains.' },
-  { title: 'Outcomes over completion', desc: 'A certificate without a job is just paper. Every design decision in the program — projects, mentors, placement pipeline — is oriented around what comes after demo day.' },
-  { title: 'Specificity over vagueness', desc: 'MCP. Claude Code. RAGAS. We use the right words for things. No "the power of AI" — just what Claude can actually do for a finance analyst or a founding engineer.' },
-  { title: 'Domain-first thinking', desc: 'Claude mastery means nothing without domain context. The Generalist program is a Claude program. It\'s also a Finance program, a Marketing program, a VC program.' },
-  { title: 'Fellows, not students', desc: 'The program is a partnership. Fellows ship work, share it publicly, and contribute to the cohort\'s collective intelligence. We hold the bar high on both sides.' },
-  { title: 'The era is now', desc: "We don't prepare people for a future that might come. The AI era is already here. The question is whether you're building in it or watching it from outside." },
+  { title: 'Depth over breadth', desc: 'Master one AI ecosystem deeply instead of skimming dozens of tools.' },
+  { title: 'Outcomes over completion', desc: 'Learning only matters when it translates into real career outcomes.' },
+  { title: 'Specificity over vagueness', desc: 'We teach practical AI skills, not generic AI buzzwords.' },
+  { title: 'Domain-first thinking', desc: 'AI creates value only when paired with deep domain expertise.' },
+  { title: 'Fellows, not students', desc: 'Builders contribute, collaborate, and raise the bar together.' },
+  { title: 'The era is now', desc: 'The best time to become AI-native is today, not someday.' },
 ];
 
 export default function About() {
@@ -44,9 +44,9 @@ export default function About() {
       <section className="about-hero hero hero-centered" style={{ padding: '64px clamp(22px, 6vw, 40px) 56px' }}>
         <div className="hero-ring r1" /><div className="hero-ring r2" /><div className="hero-ring rl1" />
         <div className="hero-inner">
-          <p className="hero-eyebrow" style={{ color: 'var(--lavender)' }}>About Menler · India</p>
+          <p className="hero-eyebrow" style={{ color: 'var(--lavender)' }}>About Menler</p>
           <h1 className="hero-h1">AI learning, built for<br /><em>the people doing the work.</em></h1>
-          <p className="hero-sub" style={{ maxWidth: 650 }}>Menler is India's operator-led AI learning brand helping students & ambitious professionals become AI-native through practical learning, shipped projects, and a community of builders. The measure of learning isn't what you know , it's what you can build on Monday morning.</p>
+          <p className="hero-sub" style={{ maxWidth: 570 }}>Menler helps students and professionals become AI-native through<br />hands-on learning, shipped projects, and a builder-first community.<br />The true measure of learning is what you can build on Monday morning.</p>
         </div>
       </section>
       
@@ -106,26 +106,26 @@ export default function About() {
         <div className="qualify-grid">
           <div className="qualify-card">
             <p className="qualify-title">Hire from Menler</p>
-            <p className="qualify-desc">Access a pipeline of AI-native professionals trained to apply AI inside real business functions—from operations and finance to growth, product, and engineering.</p>
-            <a className="qualify-cta" href="mailto:team@menler.in">Email at team@menler.in</a>
+            <p className="qualify-desc">Access AI-native talent trained to drive impact across business and technology functions.</p>
+            <a className="qualify-cta" href="mailto:team@menler.in"><svg className="qualify-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>team@menler.in</a>
           </div>
           <div className="qualify-card">
-            <p className="qualify-title">Menler Teams <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-muted)' }}>· B2B</span></p>
-            <p className="qualify-desc">Operator-led AI enablement for teams adopting AI at work. Designed around your workflows, use cases, and business goals—not generic training.</p>
-            <a className="qualify-cta" href="mailto:team@menler.in">Email at team@menler.in</a>
+            <p className="qualify-title">Menler Teams <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-muted)' }}></span></p>
+            <p className="qualify-desc">Equip operator-led AI enablement designed around your workflows, teams, and business goals.</p>
+            <a className="qualify-cta" href="mailto:team@menler.in"><svg className="qualify-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>team@menler.in</a>
           </div>
           <div className="qualify-card">
             <p className="qualify-title">Careers at Menler</p>
-            <p className="qualify-desc">Join us in building India's AI-native workforce. We're looking for ambitious operators, educators, builders, and problem-solvers who want to shape the future of AI learning.</p>
-            <a className="qualify-cta" href="mailto:team@menler.in">Email at team@menler.in</a>
+            <p className="qualify-desc">Join us in building India's AI-native workforce alongside builders, operators, and educators.</p>
+            <a className="qualify-cta" href="mailto:team@menler.in"><svg className="qualify-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>team@menler.in</a>
           </div>
         </div>
       </section>
 
       <CtaBanner
-        badge="Cohort 01 open now"
+        badge="Applications open · Limited seats per program "
         title="This is your turning point."
-        subtitle="12 weeks. Claude-native. Domain-specialist. Placed."
+        subtitle="AI learning, built for the people doing the work."
         buttonText="Sign up"
         onButtonClick={openApply}
       />

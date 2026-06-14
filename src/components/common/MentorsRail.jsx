@@ -4,10 +4,10 @@ import { useRef, useEffect } from 'react';
 // swap `img` for real instructor photos (and add `logo`) when available.
 const MENTORS = [
   { name: 'Anuttam G', role: 'Product Manager', company: 'Flipkart, Ex-BigBasket', img: '/mentors/Anuttam.png' },
-  { name: 'Shashank Kumar', role: 'AI Automation — Operation & Analytics Lead', company: 'Equifax', img: '/mentors/Shashank.png' },
+  { name: 'Shashank Kumar', role: 'Technical Operations & Analytics Lead', company: 'Equifax', img: '/mentors/Shashank.png' },
   { name: 'Abhinay Kumar', role: 'CTO', company: 'Kernel Theory', img: '/mentors/Abhinay.png' },
   { name: 'Rohit', role: 'CEO-Office · Business Manager at Zolve', company: 'Zolve', img: '/mentors/ROHIT.png' },
-  { name: 'Nitin K Sethi', role: 'AI Engineer', company: 'McKinsey, Yusr L&F', img: '/mentors/Nitin.png' },
+  { name: 'Nitin K Sethi', role: 'AI Engineer', company: 'McKinsey ', img: '/mentors/Nitin.png' },
   { name: 'Deepak K', role: 'AI Operations Lead', company: 'Testbook', img: '/mentors/Deepak.png' },
   { name: 'Manish Yadav', role: 'AI Service Business Analyst', company: 'Zendesk', img: '/mentors/Manish.png' },
   { name: 'Pranay W', role: 'AI Product Generalist', company: 'Wednesday Solution', img: '/mentors/Pranay.jpeg' },
@@ -25,16 +25,13 @@ const OVERLAYS = [
   'linear-gradient(120deg, #160f2b 0%, #0c0818 100%)',
 ];
 
-// Both rows show every mentor, but in genuinely different orders (row 2 is an
-// odd-then-even interleave, not a rotation) and scroll in opposite directions,
-// so the same face never lines up above/below itself while scrolling.
-const interleave = (arr) => [
-  ...arr.filter((_, i) => i % 2 === 1),
-  ...arr.filter((_, i) => i % 2 === 0),
-];
+// Split the mentors into two non-overlapping halves — one per row. Because no
+// mentor is in both rows, the same face can never line up above/below itself
+// while the rows scroll in opposite directions. All mentors still appear.
+const HALF = Math.ceil(MENTORS.length / 2);
 const ROWS = [
-  { list: MENTORS, dir: 'rtl', tint: 0 },
-  { list: interleave(MENTORS), dir: 'ltr', tint: 4 },
+  { list: MENTORS.slice(0, HALF), dir: 'rtl', tint: 0 },
+  { list: MENTORS.slice(HALF), dir: 'ltr', tint: 4 },
 ];
 
 function CaptainRow({ list, dir, tint }) {
@@ -131,7 +128,11 @@ function CaptainRow({ list, dir, tint }) {
 export default function MentorsRail({ style, className = '', rows = ROWS.length, bare = false, labelStyle = {}, titleStyle = {} } = {}) {
   // `rows` caps how many scrolling rows render (default: all). `bare` skips the
   // section wrapper + heading so the rail can sit inside another section.
-  const shown = ROWS.slice(0, Math.max(1, rows));
+  // A single row has no "above/below" twin to worry about, so show every mentor
+  // there; multi-row uses the split halves so no face lines up with itself.
+  const shown = rows === 1
+    ? [{ list: MENTORS, dir: ROWS[0].dir, tint: ROWS[0].tint }]
+    : ROWS.slice(0, Math.max(1, rows));
 
   const railRows = (
     <div className="captains-rows">
@@ -146,7 +147,7 @@ export default function MentorsRail({ style, className = '', rows = ROWS.length,
   return (
     <section className={`captains-section ${className}`} style={style}>
       <div className="captains-head">
-        <p className="captains-label" style={labelStyle}>Instructors / Mentors</p>
+        <p className="captains-label" style={labelStyle}>Mentors</p>
         <h2 className="captains-title" style={titleStyle}>The People Behind Menler</h2>
         <p className="captains-sub">Instructors, mentors, and leaders from industry who shape what you learn and how you grow.</p>
       </div>

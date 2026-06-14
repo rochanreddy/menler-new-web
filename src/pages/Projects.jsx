@@ -32,7 +32,6 @@ export default function Projects() {
       {/* ── PROJECT PREVIEW HERO ── */}
       <section className="proj-detail-hero">
         <div className="proj-detail-inner">
-          <button className="proj-detail-back" onClick={() => navigate(-1)}>Back</button>
           <span className={`proj-domain-tag ${project.tagCls}`}>{project.tag}</span>
           <h1 className="proj-detail-title">{project.title}</h1>
           <p className="proj-detail-desc">{project.desc}</p>

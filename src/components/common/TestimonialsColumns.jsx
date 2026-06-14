@@ -18,8 +18,9 @@ const TESTIMONIALS = [
   {
     text: "I joined expecting another AI course. Instead, I left with a portfolio I could actually discuss in interviews and a much clearer understanding of how AI is used inside real businesses.",
     image: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&h=80&fit=crop&crop=face',
-    name: 'Beta Fellow',
-    role: 'Cohort 0',
+    name: 'Aditya Rao',
+    role: 'Beta Fellow',
+    fellow: true,
   },
   {
     text: "The strongest signal for us is proof of work. Menler's focus on projects, reviews, and operator mentorship aligns far better with how modern AI hiring decisions are made.",
@@ -36,8 +37,9 @@ const TESTIMONIALS = [
   {
     text: "The biggest difference was learning from practitioners who use AI every day. Every session felt connected to actual workflows rather than theory.",
     image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=face',
-    name: 'Beta Fellow',
-    role: 'Cohort 0',
+    name: 'Sneha Kulkarni',
+    role: 'Beta Fellow',
+    fellow: true,
   },
   {
     text: "Claude Cowork changed how I approach research. I can now synthesise and deliver insights in a fraction of the time. My manager noticed before I even mentioned the program.",
@@ -55,7 +57,7 @@ const TESTIMONIALS = [
     text: "I've hired from many bootcamps. Menler fellows are different — they come in with context on how AI actually integrates into business operations, not just how to write prompts.",
     image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face',
     name: 'Hiring Director',
-    role: 'Growth-Stage SaaS · Bengaluru',
+    role: 'Growth-Stage SaaS',
   },
 ];
 
@@ -89,9 +91,14 @@ function TestimonialsColumn({ testimonials, duration = 15, className = '' }) {
 }
 
 // ── Section export ──────────────────────────────────────────────────────────
-const col1 = TESTIMONIALS.slice(0, 3);
-const col2 = TESTIMONIALS.slice(3, 6);
-const col3 = TESTIMONIALS.slice(6, 9);
+// Column 1 = beta fellows, column 2 = individual people, column 3 = organisations.
+const ORGS = ['Talent Partner', 'Hiring Manager', 'Hiring Director'];
+// Repeat short groups so a single loop copy is taller than the column — otherwise
+// the marquee scrolls into empty space and cards "pop in" before it loops.
+const fill = (arr, min = 6) => (arr.length === 0 ? arr : Array.from({ length: Math.max(min, arr.length) }, (_, i) => arr[i % arr.length]));
+const col1 = fill(TESTIMONIALS.filter(t => t.fellow));
+const col3 = fill(TESTIMONIALS.filter(t => ORGS.includes(t.name)));
+const col2 = fill(TESTIMONIALS.filter(t => !t.fellow && !ORGS.includes(t.name)));
 
 export default function TestimonialsColumns() {
   return (

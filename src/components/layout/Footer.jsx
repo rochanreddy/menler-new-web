@@ -13,15 +13,6 @@ const SOCIAL_LINKS = [
     ),
   },
   {
-    label: 'X',
-    href: 'https://x.com/MenlerAI',
-    icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-      </svg>
-    ),
-  },
-  {
     label: 'Instagram',
     href: 'https://instagram.com/menler.ai',
     icon: (
@@ -51,7 +42,8 @@ export default function Footer() {
       <div className="footer-5-inner">
         <div className="footer-5-brand">
           <MenlerWordmark size={34} theme="dark" />
-          <p className="footer-brand-desc" style={{ marginTop: 14 }}>AI learning, built for the people doing the work. Your turning point in the AI era.</p>
+          <p style={{ marginTop: 6, fontFamily: "'DM Serif Display', serif", fontStyle: 'italic', fontSize: 13.5, color: 'var(--lavender)' }}>Your turning point in the AI Era.</p>
+          <p className="footer-brand-desc" style={{ marginTop: 12 }}>AI learning, built for the people doing the work.</p>
           <div className="footer-social">
             {SOCIAL_LINKS.map((s) => (
               <a
@@ -101,7 +93,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="footer-5-trust footer-5-trust--left">
-        <p>© 2026 Menler. India's AI learning brand.</p>
+        <p>© 2026 Menler Learning System pvt ltd</p>
       </div>
     </footer>
   );

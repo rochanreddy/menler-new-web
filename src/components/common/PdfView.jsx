@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
-import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+import PdfWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?worker';
 
-// PDF.js needs a worker; Vite bundles this URL for us.
-pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
+// Vite's `?worker` import gives a real module worker — using workerPort avoids
+// the classic-vs-module worker mismatch that makes getDocument fail to load.
+pdfjsLib.GlobalWorkerOptions.workerPort = new PdfWorker();
 
 /**
  * Renders a PDF inline by drawing each page to a <canvas>. Unlike an <iframe>,

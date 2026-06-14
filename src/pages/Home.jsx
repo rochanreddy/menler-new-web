@@ -22,7 +22,7 @@ import TestimonialsColumns from '../components/common/TestimonialsColumns';
 // Clearbit logo CDN by domain, then a clean text name d.
 const HIRING_COMPANIES = [
   { name: 'Ringg AI', domain: 'ringg.ai', logo: '/logos/ringg.png' },
-  { name: 'MyGate', domain: 'mygate.com', logo: '/logos/mygate.png' },
+  { name: 'MyGate', domain: 'mygate.com', logo: '/logos/mygate_new.png' },
   { name: 'Zolve', domain: 'zolve.com', logo: '/logos/zolve.png' },
   { name: 'Instawork', domain: 'instawork.com', logo: '/logos/instawork.png' },
   { name: 'Lyzr', domain: 'lyzr.ai', logo: '/logos/lyzr.png' },
@@ -208,11 +208,11 @@ export default function Home() {
           </div>
           <p className="hero-metrics-label">Menler Fellowship · at a glance</p>
           <div className="hero-stats">
-            <div><span className="hero-stat-num">90%</span><span className="hero-stat-lbl">Interview pipeline<br />target</span></div>
-            <div><span className="hero-stat-num">25+</span><span className="hero-stat-lbl">Hiring<br />associations</span></div>
+            <div><span className="hero-stat-num">90%</span><span className="hero-stat-lbl">Interview Pipeline<br />Target</span></div>
+            <div><span className="hero-stat-num">25+</span><span className="hero-stat-lbl">Hiring<br />Associations</span></div>
             <div><span className="hero-stat-num">20+</span><span className="hero-stat-lbl">AI Builders<br />& Operators</span></div>
-            <div><span className="hero-stat-num">12</span><span className="hero-stat-lbl">Weeks intensive<br />fellowship</span></div>
-            <div><span className="hero-stat-num">7+</span><span className="hero-stat-lbl">Domain<br />tracks</span></div>
+            <div><span className="hero-stat-num">12</span><span className="hero-stat-lbl">Weeks Intensive<br />Fellowship</span></div>
+            <div><span className="hero-stat-num">6+</span><span className="hero-stat-lbl">Domain<br />Tracks</span></div>
           </div>
         </div>
         </div>
@@ -231,17 +231,27 @@ export default function Home() {
             <span className="prog-card-badge">No coding required</span>
             <p className="prog-card-title">Claude AI Generalist</p>
             <div className="prog-card-desc">
-              <p className="prog-card-sub">Master Claude across your domain and graduates as a certified AI specialist with a domain portfolio.</p>
-              <p className="prog-card-sub">Founder's Office · Product management · Marketing &amp; Sales · Analyst · Finance Operations · HR Operations.</p>
+              <p className="prog-card-sub">Master Claude AI, across business functions, get certified and graduate with a domain-focused portfolio..</p>
+              <p className="prog-card-sub">Analyst · Finance Operations · Founder's Office · HR Operations · Marketing & Sales · Product Management</p>
             </div>
-            <p className="prog-card-for">Builders from</p>
+            <p className="prog-card-for">AI Builders from</p>
             <div className="prog-card-logos">
               {GEN_BUILDERS.map(c => <BrandLogo key={c.name} name={c.name} domain={c.domain} logo={c.logo} />)}
             </div>
             <div className="next-batch">
-              <p className="nb-label">Batch starts</p>
-              <p className="nb-when"><strong>August 2026</strong> · 12 weeks · 60 hour live · Online</p>
-              <p className="nb-deadline">Applications close 25 July 2026</p>
+              <div className="nb-info">
+                <p className="nb-label">Batch starts</p>
+                <p className="nb-when"><strong>August 2026</strong></p>
+                <p className="nb-deadline">Applications close by 25 July 2026</p>
+              </div>
+              <div className="nb-chips">
+                <span className="nb-chip">10 Weeks</span>
+                <span className="nb-chip">50 Hours</span>
+                <span className="nb-chip">Live Cohorts</span>
+                <span className="nb-chip">Mentorship</span>
+                <span className="nb-chip">Talent Network</span>
+                <span className="nb-chip">Career Development</span>
+              </div>
             </div>
             <button className="prog-card-cta" onClick={() => go('/generalist')}>Explore Generalist Program</button>
           </div>
@@ -249,17 +259,27 @@ export default function Home() {
             <span className="prog-card-badge">Coding experience required</span>
             <p className="prog-card-title">Claude AI Engineering</p>
             <div className="prog-card-desc">
-              <p className="prog-card-sub">Build the full Claude stack and earn the AI Engineer credential.</p>
-              <p className="prog-card-sub">API · RAG · MCP · Multi-agent systems · Computer use · Evals · Deployed AI apps.</p>
+              <p className="prog-card-sub">Master Claude AI, build real-time AI applications, get certified and graduate with a portfolio of AI applications</p>
+              <p className="prog-card-sub">AI Agent Engineer · AI Application Developer · AI Consultant · AI Engineer · AI Automation Engineer </p>
             </div>
-            <p className="prog-card-for">Builders from</p>
+            <p className="prog-card-for">AI Builders from</p>
             <div className="prog-card-logos">
               {ENG_BUILDERS.map(c => <BrandLogo key={c.name} name={c.name} domain={c.domain} logo={c.logo} />)}
             </div>
             <div className="next-batch">
-              <p className="nb-label">Upcoming batch</p>
-              <p className="nb-when"><strong>September 2026</strong> · 12 weeks · 60 hour live · Online</p>
-              <p className="nb-deadline">Applications open July 2026</p>
+              <div className="nb-info">
+                <p className="nb-label">Batch Starts</p>
+                <p className="nb-when"><strong>September 2026</strong></p>
+                <p className="nb-deadline">Applications open by 25 July 2026</p>
+              </div>
+              <div className="nb-chips">
+                <span className="nb-chip">12 Weeks</span>
+                <span className="nb-chip">60 Hours</span>
+                <span className="nb-chip">Live Cohorts</span>
+                <span className="nb-chip">Mentorship</span>
+                <span className="nb-chip">Talent Network</span>
+                <span className="nb-chip">Career Development</span>
+              </div>
             </div>
             <button className="prog-card-cta" onClick={() => go('/engineering')}>Explore Engineering Program</button>
           </div>
@@ -294,7 +314,7 @@ export default function Home() {
                 <span key={s}>{s}</span>
               ))}</div>
               <p className="proj-outcome">{p.outcome}</p>
-              <span className="proj-card-link">View preview</span>
+              <span className="proj-card-link">View project</span>
             </Reveal>
           ))}
         </div>
@@ -351,7 +371,7 @@ export default function Home() {
       <section className="section jobs-section" style={{ paddingTop: 48, paddingBottom: 32 }}>
         <p className="section-label">Hiring associations &amp; roles</p>
         <h2 className="section-h2">The jobs<br /><em>AI specialists are landing.</em></h2>
-        <p className="section-sub">A new category of professional is emerging: AI-native, domain-aware, and outcome-driven. Menler is built to develop them.</p>
+        <p className="section-sub">A new category of professional is emerging: AI-native, domain, and outcome-driven. Menler is built to develop them.</p>
         <div className="jobs-roles">
           <div className="role-card gen-side">
             <p className="role-card-program">Claude AI Generalist · Open roles</p>
@@ -359,34 +379,34 @@ export default function Home() {
               <div className="role-row"><p className="role-name">AI Specialist</p><p className="role-band">₹12–22L · Domain teams</p></div>
               <div className="role-row"><p className="role-name">AI Strategist</p><p className="role-band">₹15–28L · Consulting &amp; in-house</p></div>
               <div className="role-row"><p className="role-name">Founder's Office Associate</p><p className="role-band">₹14–24L · Startups &amp; funds</p></div>
-              <div className="role-row"><p className="role-name">Marketing AI Lead</p><p className="role-band">₹14–25L · Brand &amp; growth teams</p></div>
+              <div className="role-row"><p className="role-name">AI Product Manager </p><p className="role-band">₹14–25L · Brand &amp; growth teams</p></div>
               <div className="role-row"><p className="role-name">Operations AI Analyst</p><p className="role-band">₹10–18L · Ops &amp; finance</p></div>
               <div className="role-row"><p className="role-name">Domain AI Consultant</p><p className="role-band">₹15–30L · Boutique consulting</p></div>
-              <div className="role-row"><p className="role-name">AI Product Manager</p><p className="role-band">₹16–30L · SaaS &amp; platforms</p></div>
+              <div className="role-row"><p className="role-name">Marketing AI Lead</p><p className="role-band">₹16–30L · SaaS &amp; platforms</p></div>
               <div className="role-row"><p className="role-name">Finance AI Analyst</p><p className="role-band">₹12–22L · BFSI &amp; fintech</p></div>
               <div className="role-row"><p className="role-name">Customer Experience AI Lead</p><p className="role-band">₹12–20L · Support &amp; success</p></div>
               <div className="role-row"><p className="role-name">Sales AI Specialist</p><p className="role-band">₹12–24L · Revenue &amp; GTM teams</p></div>
             </div>
           </div>
           <div className="role-card eng-side">
-            <p className="role-card-program">Claude AI Engineering · Placement roles</p>
+            <p className="role-card-program">Claude AI Engineering · Open roles</p>
             <div className="role-list">
-              <div className="role-row"><p className="role-name">Claude Solutions Engineer</p><p className="role-band">₹22–45L · AI-native startups</p></div>
-              <div className="role-row"><p className="role-name">AI Engineer / Applied AI</p><p className="role-band">₹20–40L · Product teams</p></div>
-              <div className="role-row"><p className="role-name">RAG / Agent Engineer</p><p className="role-band">₹22–40L · Platform teams</p></div>
-              <div className="role-row"><p className="role-name">MCP Platform Engineer</p><p className="role-band">₹25–48L · Infra &amp; enterprise AI</p></div>
-              <div className="role-row"><p className="role-name">LLMOps Engineer</p><p className="role-band">₹22–42L · Production AI</p></div>
-              <div className="role-row"><p className="role-name">AI Research Engineer</p><p className="role-band">₹25–55L · Frontier teams</p></div>
-              <div className="role-row"><p className="role-name">Agentic Systems Engineer</p><p className="role-band">₹28–55L · AI-first startups</p></div>
-              <div className="role-row"><p className="role-name">Applied AI Scientist</p><p className="role-band">₹30–60L · Research teams</p></div>
-              <div className="role-row"><p className="role-name">AI Infrastructure Engineer</p><p className="role-band">₹24–46L · Platform &amp; infra</p></div>
-              <div className="role-row"><p className="role-name">Evals &amp; Safety Engineer</p><p className="role-band">₹24–48L · Trust &amp; reliability</p></div>
+              <div className="role-row"><p className="role-name">AI Engineer</p><p className="role-band">₹20–40L · Product, engineering &amp; AI teams</p></div>
+              <div className="role-row"><p className="role-name">AI Solutions Engineer</p><p className="role-band">₹22–45L · Enterprise AI &amp; solution delivery teams</p></div>
+              <div className="role-row"><p className="role-name">AI Agent Engineer</p><p className="role-band">₹22–40L · Agentic AI, workflow automation &amp; platform teams</p></div>
+              <div className="role-row"><p className="role-name">Applied AI Engineer</p><p className="role-band">₹20–40L · AI-native startups &amp; product companies</p></div>
+              <div className="role-row"><p className="role-name">LLMOps Engineer</p><p className="role-band">₹22–42L · Production AI, deployment &amp; infrastructure teams</p></div>
+              <div className="role-row"><p className="role-name">AI Platform Engineer</p><p className="role-band">₹25–48L · Enterprise AI platforms &amp; developer tooling</p></div>
+              <div className="role-row"><p className="role-name">AI Infrastructure Engineer</p><p className="role-band">₹24–46L · Cloud, infrastructure &amp; AI systems teams</p></div>
+              <div className="role-row"><p className="role-name">AI Systems Engineer</p><p className="role-band">₹28–55L · Multi-agent systems &amp; AI-first startups</p></div>
+              <div className="role-row"><p className="role-name">AI Research Engineer</p><p className="role-band">₹25–55L · Frontier AI labs &amp; research teams</p></div>
+              <div className="role-row"><p className="role-name">AI Safety Engineer</p><p className="role-band">₹24–48L · Trust, reliability &amp; AI governance teams</p></div>
             </div>
           </div>
         </div>
-        <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 18, fontStyle: 'italic', lineHeight: 1.6 }}>Salary bands sourced from fellowship partner intake. Updated quarterly.</p>
+        <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 18, fontStyle: 'italic', lineHeight: 1.6 }}>*Salary bands sourced from fellowship partner intake. Updated quarterly.</p>
         <div className="partners-strip">
-          <p className="partners-label">Hiring associations · India · 25+ companies</p>
+          <p className="partners-label">Hiring associations · 25+ companies</p>
           <HiringRail companies={HIRING_COMPANIES} rows={2} />
         </div>
         <div style={{ textAlign: 'center', marginTop: 32 }}>
@@ -402,7 +422,7 @@ export default function Home() {
           <div className="outcome dark">
             <span className="outcome-num">01</span>
             <p className="outcome-title">Claude Specialist certification</p>
-            <p className="outcome-desc">Domain-specific badge.<br />The Only Claude-native career credential in the AI ecosystem.</p>
+            <p className="outcome-desc">Domain-specific badge. The Only Claude-native career credential in the AI ecosystem.</p>
           </div>
           <div className="outcome">
             <span className="outcome-num">02</span>
@@ -411,7 +431,7 @@ export default function Home() {
           </div>
           <div className="outcome">
             <span className="outcome-num">03</span>
-            <p className="outcome-title">Interview pipeline in your domain</p>
+            <p className="outcome-title">Interview Pipeline in your domain</p>
             <p className="outcome-desc">Matched to employers in your track. Demo Day puts you in front of decision-makers.</p>
           </div>
           <div className="outcome purple">
@@ -431,27 +451,27 @@ export default function Home() {
       <section className="section" style={{ background: 'white', paddingTop: 48, paddingBottom: 32 }}>
         <p className="section-label">Why Menler</p>
         <h2 className="section-h2">Built around outcomes,<br /><em>measured against them.</em></h2>
-        <p className="section-sub"> Every technological shift creates a new class of professionals. Menler exists to build the AI-native generation.</p>
+        <p className="section-sub"> Every technological shift creates a new class of professionals.<br />Menler exists to build the AI-native generation.</p>
         <div className="metrics-strip">
           <Reveal className="metric-tile dark" delay={0}>
             <span className="metric-num">90%</span>
-            <p className="metric-label">Interview pipeline target</p>
+            <p className="metric-label">Interview Pipeline Target</p>
             <p className="metric-desc">Our placement goal — every fellow into an active interview pipeline within 90 days, across our domain tracks.</p>
           </Reveal>
           <Reveal className="metric-tile green" delay={70}>
             <span className="metric-num">25+</span>
             <p className="metric-label">Hiring associations</p>
-            <p className="metric-desc">Founder's offices, VC firms, marketing agencies, finance teams, AI-native startups — actively recruiting AI Specialists.</p>
+            <p className="metric-desc">Founder's offices, VC-backed startups, marketing agencies, finance teams, and AI-native companies actively hiring AI talent. </p>
           </Reveal>
           <Reveal className="metric-tile" delay={140}>
             <span className="metric-num">12</span>
             <p className="metric-label">Weeks to credential</p>
-            <p className="metric-desc">Three phases: AI fluency, Agentic Build, Domain Specialisation — then Project &amp; Interview pipeline. Faster than a postgraduate diploma. Deeper than a course.</p>
+            <p className="metric-desc">AI Fluency. Agentic Building. Domain Specialisation. An operator-led path that's faster than a diploma and deeper than a course.</p>
           </Reveal>
           <Reveal className="metric-tile" delay={210}>
-            <span className="metric-num">7+</span>
+            <span className="metric-num">6+</span>
             <p className="metric-label">Domain tracks</p>
-            <p className="metric-desc">Founder's Office · VC · Product · Project Mgmt · Engineering · Data &amp; Business Analysts · Strategists &amp; Ops · Marketing &amp; Sales.</p>
+            <p className="metric-desc">Analyst · Finance Operations · Founder's Office · HR Operations · Marketing &amp; Sales · Product Management</p>
           </Reveal>
         </div>
       </section>

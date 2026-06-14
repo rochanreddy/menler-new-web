@@ -5,10 +5,13 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#26215C" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="author" content="Menler Learning Systems Private Limited" />
     <meta name="description" content="Menler — India's Claude-native AI learning. AI courses & fellowships: Generalist (no-code), Engineering, and the Gen AI Kickstarter. Real projects, real placement." />
     <meta name="keywords" content="AI learning India, AI courses India, AI fellowship India, Claude AI Generalist, AI engineering fellowship, AI bootcamp India, AI aptitude test, AI upskilling India" />
     <link rel="canonical" href="https://menler.in/" />
     <link rel="alternate" hreflang="en-in" href="https://menler.in/" />
+    <link rel="alternate" hreflang="x-default" href="https://menler.in/" />
 
     <!-- Open Graph / Twitter defaults (per-page values are set by the Seo component) -->
     <meta property="og:type" content="website" />
@@ -16,10 +19,15 @@
     <meta property="og:title" content="Menler — AI Learning India · Claude AI Fellowship" />
     <meta property="og:description" content="India's Claude-native AI fellowship. Learn AI, ship real projects, get placement support." />
     <meta property="og:url" content="https://menler.in/" />
-    <meta property="og:image" content="https://menler.in/favicon.svg" />
+    <meta property="og:locale" content="en_IN" />
+    <meta property="og:image" content="https://menler.in/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Menler — India's Claude-native AI learning" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Menler — AI Learning India · Claude AI Fellowship" />
     <meta name="twitter:description" content="India's Claude-native AI fellowship. Learn AI, ship real projects, get placement support." />
+    <meta name="twitter:image" content="https://menler.in/og-image.png" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -33,17 +41,33 @@
       "@context": "https://schema.org",
       "@graph": [
         {
-          "@type": "Organization",
+          "@type": "EducationalOrganization",
           "@id": "https://menler.in/#organization",
           "name": "Menler",
+          "legalName": "Menler Learning Systems Private Limited",
           "url": "https://menler.in/",
-          "logo": "https://menler.in/favicon.svg",
+          "logo": "https://menler.in/og-image.png",
+          "image": "https://menler.in/og-image.png",
           "description": "India's Claude-native AI learning company — AI fellowships, courses and placement support.",
+          "email": "support@menler.in",
           "areaServed": "IN",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Bengaluru",
+            "addressRegion": "Karnataka",
+            "addressCountry": "IN"
+          },
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "email": "support@menler.in",
+            "contactType": "customer support",
+            "areaServed": "IN",
+            "availableLanguage": ["English", "Hindi"]
+          },
           "sameAs": [
             "https://www.linkedin.com/company/menler/",
-            "https://x.com/MenlerAI",
-            "https://instagram.com/menler.ai"
+            "https://instagram.com/menler.ai",
+            "https://www.facebook.com/profile.php?id=61589670181082"
           ]
         },
         {
@@ -51,6 +75,7 @@
           "@id": "https://menler.in/#website",
           "url": "https://menler.in/",
           "name": "Menler",
+          "inLanguage": "en-IN",
           "publisher": { "@id": "https://menler.in/#organization" }
         }
       ]

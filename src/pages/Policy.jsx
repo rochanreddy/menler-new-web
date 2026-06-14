@@ -1,13 +1,14 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import Seo from '../components/common/Seo';
 import Footer from '../components/layout/Footer';
+import { POLICIES } from '../data/policyContent';
 
-// Policy documents shown in-site (PDF embedded), reached from the footer.
-const POLICIES = {
-  privacy: { title: 'Privacy Policy', pdf: '/policy/Menler_Privacy_Policy.pdf' },
-  refund: { title: 'Refund Policy', pdf: '/policy/Menler_Refund_Policy.pdf' },
-  terms: { title: 'Terms & Conditions', pdf: '/policy/Menler_Terms_Conditions.pdf' },
-};
+// Renders one content block: paragraph, sub-heading, or bullet list.
+function Block({ block }) {
+  if (block.sub) return <p className="policy-sub">{block.sub}</p>;
+  if (block.ul) return <ul className="policy-list">{block.ul.map((li, i) => <li key={i}>{li}</li>)}</ul>;
+  return <p className="policy-para">{block.p}</p>;
+}
 
 export default function Policy() {
   const { slug } = useParams();
@@ -27,22 +28,27 @@ export default function Policy() {
 
   return (
     <>
-      <Seo title={`${policy.title} | Menler`} description={`${policy.title} for Menler.`} path={`/policy/${slug}`} />
+      <Seo title={`${policy.title} | Menler`} description={`${policy.title} for Menler — ${policy.intro.slice(0, 150)}`} path={`/policy/${slug}`} />
       <section className="policy-page">
-        <div className="policy-shell">
-          <p className="section-label">Menler</p>
-          <h1 className="policy-title">{policy.title}</h1>
-          <div className="policy-doc">
-            {/* toolbar=0 hides the viewer's download/print bar; navpanes=0 hides
-                the left thumbnail/outline panel — show the PDF content only.
-                Hovering the document scrolls the document itself. */}
-            <iframe src={`${policy.pdf}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`} title={policy.title} scrolling="yes" />
-          </div>
-          {/* Mobile browsers often can't scroll a PDF embedded in an iframe — give
-              them a reliable full-screen view where native scrolling always works. */}
-          <a className="policy-open-mobile" href={policy.pdf} target="_blank" rel="noopener noreferrer">
-            Open in full screen ↗
-          </a>
+        <div className="policy-shell policy-shell--text">
+          <header className="policy-header">
+            <p className="section-label">Menler · Legal</p>
+            <h1 className="policy-title">{policy.title}</h1>
+            {policy.updated && <p className="policy-updated">{policy.updated}</p>}
+          </header>
+
+          <article className="policy-paper">
+            <p className="policy-intro">{policy.intro}</p>
+
+            {policy.sections.map((sec, i) => (
+              <div className="policy-section" key={i}>
+                <h2 className="policy-h2">{sec.h}</h2>
+                {sec.body.map((block, j) => <Block key={j} block={block} />)}
+              </div>
+            ))}
+
+            <p className="policy-footnote">© 2026 Menler Learning Systems Private Limited · menler.in · support@menler.in</p>
+          </article>
         </div>
       </section>
       <Footer />

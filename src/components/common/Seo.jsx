@@ -31,25 +31,27 @@ function upsertLink(rel, href) {
   el.setAttribute('href', href);
 }
 
-export default function Seo({ title, description, keywords, path, image, jsonLd }) {
+export default function Seo({ title, description, keywords, path, image, jsonLd, type = 'website', noindex = false }) {
   const ldString = jsonLd ? JSON.stringify(jsonLd) : '';
   useEffect(() => {
     const fullTitle = title || `${SITE_NAME} — AI Learning India`;
     const desc = description || DEFAULT_DESC;
     const url = SITE_URL + (path != null ? path : window.location.pathname);
-    const img = image || `${SITE_URL}/favicon.svg`;
+    const img = image || `${SITE_URL}/og-image.png`;
 
     document.title = fullTitle;
     upsertMeta('name', 'description', desc);
     if (keywords) upsertMeta('name', 'keywords', keywords);
+    upsertMeta('name', 'robots', noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1');
     upsertLink('canonical', url);
 
     // Open Graph
     upsertMeta('property', 'og:title', fullTitle);
     upsertMeta('property', 'og:description', desc);
-    upsertMeta('property', 'og:type', 'website');
+    upsertMeta('property', 'og:type', type);
     upsertMeta('property', 'og:url', url);
     upsertMeta('property', 'og:site_name', SITE_NAME);
+    upsertMeta('property', 'og:locale', 'en_IN');
     upsertMeta('property', 'og:image', img);
 
     // Twitter
@@ -68,7 +70,7 @@ export default function Seo({ title, description, keywords, path, image, jsonLd 
       document.head.appendChild(ld);
     }
     return () => { if (ld) ld.remove(); };
-  }, [title, description, keywords, path, image, ldString]);
+  }, [title, description, keywords, path, image, ldString, type, noindex]);
 
   return null;
 }

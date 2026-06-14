@@ -6,10 +6,11 @@ export default function LeadForm({ defaultProgram = '' }) {
   const toast = useToast();
   const [form, setForm] = useState({
     name: '', email: '', phone: '',
-    background: '', program: defaultProgram, track: '', message: '',
+    background: '', backgroundOther: '', program: defaultProgram, track: '', message: '',
   });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [consent, setConsent] = useState(false);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
@@ -62,13 +63,23 @@ export default function LeadForm({ defaultProgram = '' }) {
         <select value={form.background} onChange={e => set('background', e.target.value)}>
           <option value="">Select…</option>
           <option>Student</option>
-          <option>Working professional — non-tech</option>
-          <option>Working professional — tech</option>
-          <option>Software engineer / data scientist</option>
-          <option>Business owner</option>
           <option>Founder</option>
-          <option>Career switcher</option>
+          <option>Business Owner</option>
+          <option>Analyst</option>
+          <option>Engineering</option>
+          <option>Finance</option>
+          <option>Founder's Office</option>
+          <option>Human Resources (HR)</option>
+          <option>Operations</option>
+          <option>Marketing &amp; Sales</option>
+          <option>Product Management</option>
+          <option>Program Management</option>
+          <option>Strategy &amp; Consulting</option>
+          <option>Other</option>
         </select>
+        {form.background === 'Other' && (
+          <input style={{ marginTop: 8 }} placeholder="Tell us your background" value={form.backgroundOther} onChange={e => set('backgroundOther', e.target.value)} />
+        )}
       </div>
 
       <div className="lf-field">
@@ -81,24 +92,14 @@ export default function LeadForm({ defaultProgram = '' }) {
         </select>
       </div>
 
-      <div className="lf-field">
-        <label>Track (optional)</label>
-        <select value={form.track} onChange={e => set('track', e.target.value)}>
-          <option value="">Select a track…</option>
-          <option>Founder's Office</option>
-          <option>Marketing</option>
-          <option>Analyst</option>
-          <option>Finance</option>
-          <option>Operations</option>
-          <option>Technology</option>
-          <option>Engineering — full Claude stack</option>
-        </select>
-      </div>
+      <label className="lf-consent">
+        <input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} />
+        <span>I consent to being contacted by Menler regarding admissions, program updates, and important fellowship information.</span>
+      </label>
 
-      <button className="lf-submit" type="submit" disabled={loading}>
+      <button className="lf-submit" type="submit" disabled={loading || !consent}>
         {loading ? 'Submitting…' : 'Express interest'}
       </button>
-      <p className="lf-fineprint">By submitting, you agree to be contacted by the Menler admissions team. We don't spam — only genuine, useful updates about the fellowship.</p>
     </form>
   );
 }
