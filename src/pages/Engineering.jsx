@@ -59,7 +59,7 @@ export default function Engineering() {
       <Seo
         title="Claude AI Engineering Fellowship — AI Specialist Program India | Menler"
         description="A 12-week Claude AI engineering fellowship for developers. Build production AI systems — API, RAG, MCP, agents, evals & LLMOps — with placement support."
-        keywords="Claude AI engineering fellowship, AI specialist program India, AI engineering course India, agentic AI engineering, RAG engineering, MCP"
+        keywords="Claude AI engineering fellowship, AI engineering course India, agentic AI engineering, AI engineering roadmap, AI systems engineering, Claude API engineering, RAG engineering, MCP, agentic AI workflows, AI specialist program India"
         path="/engineering"
         jsonLd={{ '@context': 'https://schema.org', '@type': 'Course', name: 'Claude AI Engineering Fellowship', description: '12-week Claude AI engineering fellowship — production AI systems: API, RAG, MCP, agents, evals and LLMOps, with placement support.', provider: { '@type': 'Organization', name: 'Menler', sameAs: 'https://menler.in' } }}
       />

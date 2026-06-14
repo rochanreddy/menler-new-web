@@ -235,7 +235,7 @@ export default function Generalist() {
       <Seo
         title="Claude AI Generalist Fellowship — No-Code AI Course India | Menler"
         description="A 10-week no-code Claude AI fellowship for non-tech professionals and students. Master AI workflows across marketing, finance, product, HR & ops — with placement support."
-        keywords="Claude AI Generalist course, no-code AI fellowship, AI generalist program India, AI fellowship for non-tech, AI course India"
+        keywords="Claude AI Generalist course, no-code AI fellowship, AI generalist program India, AI fellowship for non-tech, AI workflows, AI-native work, AI upskilling India, AI course India"
         path="/generalist"
         jsonLd={{ '@context': 'https://schema.org', '@type': 'Course', name: 'Claude AI Generalist Fellowship', description: '10-week no-code Claude AI fellowship for non-technical professionals — domain AI workflows, real projects and placement support.', provider: { '@type': 'Organization', name: 'Menler', sameAs: 'https://menler.in' } }}
       />

@@ -108,7 +108,7 @@ export default function Resources() {
       <Seo
         title="AI Learning Resources — Prompts, Templates & Guides | Menler"
         description="Free AI learning resources: a Claude prompt library, AI stack map, templates, cheat sheets and an AI glossary. The knowledge layer for the AI-native workforce."
-        keywords="AI learning resources, free AI resources, AI prompts library, Claude prompts, AI templates, AI cheat sheets, AI glossary, AI stack map"
+        keywords="AI learning resources, free AI resources, AI question bank, AI prompts library, Claude prompts, AI project ideas, AI capstone projects, AI tool setup guide, AI tools ecosystem, AI stack map, AI cheat sheets, AI templates, AI glossary, AI terms explained , Agentic AI explained, agentic AI workflows , AI careers India, AI jobs future , Enterprise AI transformation, enterprise AI use cases , AI workflows, AI automation workflows , AI upskilling India, AI skills training , AI-native work, AI-native workforce , Large language models explained, LLM tools , Best AI tools, AI productivity tools , AI transformation strategy, AI adoption"
         path="/resources"
       />
       {/* ── HERO ── */}

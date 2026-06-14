@@ -37,7 +37,7 @@ export default function About() {
       <Seo
         title="About Menler — AI Learning Company India"
         description="Menler is India's Claude-native AI learning company. Our vision: depth over breadth, outcomes over completion — turning learners into AI-native specialists."
-        keywords="About Menler, AI learning company India, Menler AI, AI fellowship India"
+        keywords="About Menler, About Menler AI, AI learning company India, Menler AI, AI-native workforce, AI fellowship India"
         path="/about"
       />
       {/* ── HERO ── */}

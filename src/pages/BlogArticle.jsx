@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import Footer from '../components/layout/Footer';
+import Seo from '../components/common/Seo';
 
 export default function BlogArticle() {
   const navigate = useNavigate();
@@ -7,6 +8,13 @@ export default function BlogArticle() {
 
   return (
     <>
+      <Seo
+        title="How we shipped a Claude-native earnings agent in six days | Menler"
+        description="Full prompt, full MCP map, full failure log — the Claude-native earnings agent build that shaped Menler's Finance track. Agentic AI workflows explained by operators."
+        keywords="agentic AI explained, agentic AI workflows, Claude earnings agent, MCP, AI build log, AI blog India, enterprise AI use cases"
+        path="/blog/earnings-agent"
+        type="article"
+      />
       <article className="article-shell">
         <div className="article-hero">
           <p className="article-cat">Build Logs · Featured</p>

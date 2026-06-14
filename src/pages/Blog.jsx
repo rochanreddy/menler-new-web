@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../components/layout/Footer';
+import Seo from '../components/common/Seo';
 import Reveal from '../components/common/Reveal';
 import Thumb from '../components/common/Thumb';
 import { useToast } from '../components/common/Toast';
@@ -32,6 +33,12 @@ export default function Blog() {
 
   return (
     <>
+      <Seo
+        title="Menler Blog — AI Build Logs, Workflows & Careers | India"
+        description="The Menler blog: real Claude build logs, agentic AI workflows, AI career guides, and AI-native ways of working — written by operators, for India's AI-native workforce."
+        keywords="AI blog India, AI learning blog, agentic AI explained, agentic AI workflows, AI build logs, AI careers India, AI jobs future, AI workflows"
+        path="/blog"
+      />
       {/* ── FEATURED HERO ── */}
       <section className="mag-hero">
         <div className="mag-hero-inner">

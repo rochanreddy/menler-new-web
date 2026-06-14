@@ -448,7 +448,7 @@ export default function Aptitude() {
       <Seo
         title="AI Aptitude Test — Free AI Readiness Assessment | Menler"
         description="Take the free AI Aptitude Test — a 15-question AI readiness assessment. Get a personalised score, learning roadmap and a downloadable question bank. No signup to start."
-        keywords="AI aptitude test, AI readiness test, AI assessment, free AI test, AI career test, AI skills assessment"
+        keywords="AI aptitude test, AI readiness test, AI test, AI assessment, free AI test, AI generalist mock test, AI engineering mock test, AI workflow aptitude test, AI beginner assessment test, Claude API engineering test, agentic AI engineering test, AI skills assessment, AI career test"
         path="/aptitude"
         jsonLd={{ '@context': 'https://schema.org', '@type': 'Quiz', name: 'AI Aptitude Test', about: 'AI readiness assessment', educationalLevel: 'Beginner to Advanced', provider: { '@type': 'Organization', name: 'Menler', sameAs: 'https://menler.in' } }}
       />
