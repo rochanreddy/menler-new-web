@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { submitLead } from '../../services/leadService';
+import PdfView from './PdfView';
 
 /**
  * Claude Playbook resource popup — split layout:
@@ -76,7 +77,7 @@ export default function PlaybookModal({ item, onClose }) {
         {/* ── LEFT: preview ── */}
         <div className="pb-modal-left">
           {pdfReady === true ? (
-            <iframe className="pb-modal-frame" src={`${item.pdf}#toolbar=0&navpanes=0&view=FitH`} title={`${item.title} preview`} />
+            <PdfView className="pb-modal-frame" url={item.pdf} />
           ) : (
             <div className="pb-modal-placeholder">
               <span className="pb-ph-icon" aria-hidden="true">📄</span>
