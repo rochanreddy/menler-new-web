@@ -149,7 +149,7 @@ export default function MentorsRail({ style, className = '', rows = ROWS.length,
       <div className="captains-head">
         <p className="captains-label" style={labelStyle}>Mentors</p>
         <h2 className="captains-title" style={titleStyle}>The People Behind Menler</h2>
-        <p className="captains-sub">Instructors, mentors, and leaders from industry who shape what you learn and how you grow.</p>
+        <p className="captains-sub">leaders and mentors from industry who shape what you learn and how you grow.</p>
       </div>
 
       {railRows}

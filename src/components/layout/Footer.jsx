@@ -93,7 +93,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="footer-5-trust footer-5-trust--left">
-        <p>© 2026 Menler Learning System pvt ltd</p>
+        <p>© 2026 Menler Learning Systems pvt ltd</p>
       </div>
     </footer>
   );

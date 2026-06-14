@@ -35,24 +35,6 @@ const CURRICULUM = [
   {
     label: 'Phase 3', weeks: 'Weeks 7–10', title: 'Domain specialisation, capstone & placement',
     domains: [
-      { name: "Founder's Office",
-        weeks: [
-          { w: 'Week 1 — Strategic Intelligence', lessons: ['CoS / EIR / FO roles vs the job title', 'The three operating modes of a founder', 'Founder psychology & how trust decisions are made', 'AI-native strategic intelligence a founder would use'] },
-          { w: 'Week 2 — Founder Communication', lessons: ['Anatomy of an investor update founders actually send', 'Pitch narrative vs pitch deck', 'Stakeholder communication maps', 'Writing for a founder who edits in 90 seconds'] },
-          { w: 'Week 3 — Operations Layer', lessons: ['GTM coordination from the FO seat', 'Startup metrics that matter (ARR, NDR, CAC:LTV, burn)', 'Dashboards that trigger decisions, not just report', 'Notion as the operational source of truth'] },
-          { w: "Week 4 — Ship the Founder's OS", lessons: ['AI operator vs AI user', 'Agentic workflow architecture', 'Voice-briefing systems for the founder', 'Presenting a systems handover to a founder'] },
-        ],
-        tools: ['Claude', 'Perplexity', 'NotebookLM', 'Gamma', 'Notion', 'N8N', 'ElevenLabs', 'Slack', 'Replit'],
-        projects: ["Founder's OS — research + comms + ops, integrated", 'Live voice-briefing system on a real startup'] },
-      { name: 'Marketing',
-        weeks: [
-          { w: 'Week 1 — AI-native GTM Strategy', lessons: ['Marketing strategy vs marketing activity', 'Customer journey — trust is the conversion problem', 'Positioning without the biggest budget', 'GTM motion: product-, sales- or marketing-led'] },
-          { w: 'Week 2 — Brand & Content System', lessons: ['Content strategy vs content calendar', 'Storytelling architecture (spine, POV, arc)', 'Platform logic: Instagram, LinkedIn, YouTube, WhatsApp', 'Reach content vs trust content'] },
-          { w: 'Week 3 — Growth & Sales', lessons: ['Paid acquisition: ROAS vs CAC vs LTV vs payback', 'CRM thinking (HubSpot vs Zoho)', 'Retention stack: email + WhatsApp + push', 'AI lead qualification & outreach at volume'] },
-          { w: 'Week 4 — Ship the Marketing & Sales OS', lessons: ['Where AI creates leverage vs destroys brand', 'Campaign operations as a repeatable system', 'Brand-voice integrity at scale', 'Presenting an AI marketing system to a CMO'] },
-        ],
-        tools: ['Claude', 'Gamma', 'Canva AI', 'Midjourney', 'HubSpot', 'Meta Ads', 'GA4', 'WhatsApp Business', 'N8N', 'Runway'],
-        projects: ['Marketing OS — GTM + content + growth, integrated', 'Brand audio + video ad with live CRM pipeline'] },
       { name: 'Analyst',
         weeks: [
           { w: 'Week 1 — Business Diagnostics', lessons: ['BA lifecycle: problem definition → recommendation', 'KPI design vs KPI reporting', 'Problem framing: 5 Whys, issue tree, MECE', 'The so-what test on every insight'] },
@@ -71,6 +53,15 @@ const CURRICULUM = [
         ],
         tools: ['Claude', 'Google Sheets AI', 'Gamma', 'Notion', 'N8N', 'Airtable', 'Excel', 'Slack', 'Replit'],
         projects: ['Finance OS — analysis + FP&A + risk & compliance', 'Automated credit-risk & CFO reporting pipeline'] },
+      { name: "Founder's Office",
+        weeks: [
+          { w: 'Week 1 — Strategic Intelligence', lessons: ['CoS / EIR / FO roles vs the job title', 'The three operating modes of a founder', 'Founder psychology & how trust decisions are made', 'AI-native strategic intelligence a founder would use'] },
+          { w: 'Week 2 — Founder Communication', lessons: ['Anatomy of an investor update founders actually send', 'Pitch narrative vs pitch deck', 'Stakeholder communication maps', 'Writing for a founder who edits in 90 seconds'] },
+          { w: 'Week 3 — Operations Layer', lessons: ['GTM coordination from the FO seat', 'Startup metrics that matter (ARR, NDR, CAC:LTV, burn)', 'Dashboards that trigger decisions, not just report', 'Notion as the operational source of truth'] },
+          { w: "Week 4 — Ship the Founder's OS", lessons: ['AI operator vs AI user', 'Agentic workflow architecture', 'Voice-briefing systems for the founder', 'Presenting a systems handover to a founder'] },
+        ],
+        tools: ['Claude', 'Perplexity', 'NotebookLM', 'Gamma', 'Notion', 'N8N', 'ElevenLabs', 'Slack', 'Replit'],
+        projects: ["Founder's OS — research + comms + ops, integrated", 'Live voice-briefing system on a real startup'] },
       { name: 'Human Resource',
         weeks: [
           { w: 'Week 1 — Talent Acquisition System', lessons: ['How TA differs across startup, enterprise & GCC', 'JD design that attracts vs repels', 'The iceberg model of competency', 'The ATS problem & offer management'] },
@@ -80,6 +71,15 @@ const CURRICULUM = [
         ],
         tools: ['Claude', 'Notion', 'Keka', 'Darwinbox', 'N8N', 'Gamma', 'Airtable', 'Slack', 'Gmail'],
         projects: ['HR OS — TA + HRBP + payroll + L&D, deployed', 'Automated hiring + offer + compliance command centre'] },
+      { name: 'Marketing',
+        weeks: [
+          { w: 'Week 1 — AI-native GTM Strategy', lessons: ['Marketing strategy vs marketing activity', 'Customer journey — trust is the conversion problem', 'Positioning without the biggest budget', 'GTM motion: product-, sales- or marketing-led'] },
+          { w: 'Week 2 — Brand & Content System', lessons: ['Content strategy vs content calendar', 'Storytelling architecture (spine, POV, arc)', 'Platform logic: Instagram, LinkedIn, YouTube, WhatsApp', 'Reach content vs trust content'] },
+          { w: 'Week 3 — Growth & Sales', lessons: ['Paid acquisition: ROAS vs CAC vs LTV vs payback', 'CRM thinking (HubSpot vs Zoho)', 'Retention stack: email + WhatsApp + push', 'AI lead qualification & outreach at volume'] },
+          { w: 'Week 4 — Ship the Marketing & Sales OS', lessons: ['Where AI creates leverage vs destroys brand', 'Campaign operations as a repeatable system', 'Brand-voice integrity at scale', 'Presenting an AI marketing system to a CMO'] },
+        ],
+        tools: ['Claude', 'Gamma', 'Canva AI', 'Midjourney', 'HubSpot', 'Meta Ads', 'GA4', 'WhatsApp Business', 'N8N', 'Runway'],
+        projects: ['Marketing OS — GTM + content + growth, integrated', 'Brand audio + video ad with live CRM pipeline'] },
       { name: 'Product Management',
         weeks: [
           { w: 'Week 1 — Discovery & Problem Framing', lessons: ['What PMs actually do vs the JD', 'JTBD vs feature requests vs user complaints', 'AI-native discovery & user synthesis', "Framing a problem statement that doesn't get ignored"] },
@@ -101,33 +101,33 @@ const GEN_HIRING = {
   title: 'The jobs',
   titleEm: 'AI specialists are landing.',
   sub: "AI adoption is accelerating. Demand for AI-native professionals is accelerating faster.",
-  genLabel: 'AI-native roles',
-  engLabel: 'Domain roles',
+  genLabel: 'AI-Native Roles',
+  engLabel: 'Domain Roles',
   genRoles: [
+    { name: 'AI Specialist', band: '₹12–22L · Domain teams' },
     { name: 'AI Strategist', band: '₹15–28L · Consulting & in-house' },
-    { name: 'AI Product Manager', band: '₹16–30L · SaaS & platforms' },
+    { name: 'AI Builder', band: '₹14–26L · AI-first startups' },
+    { name: 'AI Systems Specialist', band: '₹16–30L · Platform & automation teams' },
+    { name: 'Automation Specialist', band: '₹12–24L · Operations & workflow teams' },
     { name: 'Domain AI Consultant', band: '₹15–30L · Boutique consulting' },
-    { name: 'Automation Specialist', band: '₹12–24L · Ops & workflow teams' },
-    { name: 'AI Program Manager', band: '₹16–28L · Transformation teams' },
-    { name: 'Prompt / Workflow Lead', band: '₹14–26L · AI-first startups' },
   ],
   engRoles: [
-    { name: 'AI Specialist', band: '₹12–22L · Domain teams' },
+    { name: 'AI Product Manager', band: '₹16–30L · SaaS & platforms' },
+    { name: 'AI Program Manager', band: '₹16–28L · Transformation teams' },
     { name: "Founder's Office Associate", band: '₹14–24L · Startups & funds' },
     { name: 'Marketing AI Lead', band: '₹14–25L · Brand & growth teams' },
-    { name: 'Operations AI Analyst', band: '₹10–18L · Ops & finance' },
+    { name: 'Operations AI Analyst', band: '₹10–18L · Ops & finance teams' },
     { name: 'Finance AI Analyst', band: '₹12–22L · BFSI & fintech' },
-    { name: 'Customer Experience AI Lead', band: '₹12–20L · Support & success' },
   ],
 };
 
 const TRACKS = [
-  { name: "Founder's Office", role: 'Decision intelligence · Exec briefings' },
-  { name: 'Product Management', role: 'Discovery · PRDs · Roadmaps' },
-  { name: 'Finance & Operations', role: 'Financial analysis · Risk management  · Process automation' },
-  { name: 'Marketing & Sales', role: 'Content engines · GTM · CRM' },
-  { name: 'HR Operations', role: 'Recruitment operation · Employee experience · Payroll automation' },
-  { name: 'Business Analysis', role: 'Data storytelling · Decision  · Intelligent' },
+  { name: 'Analyst', role: 'Business intelligence · Data storytelling · AI insights' },
+  { name: 'Finance Ops', role: 'Financial intelligence · Workflow automation · Risk controls' },
+  { name: "Founder's Office", role: 'Market research · Strategic analysis · Executive decisions' },
+  { name: 'Human Resources Ops', role: 'Talent acquisition · People analytics · Workforce intelligence' },
+  { name: 'Marketing & Sales', role: 'Growth systems · Customer acquisition · CRM automation' },
+  { name: 'Product Management', role: 'User research · PRDs · Product execution' },
 ];
 
 const PROJECTS = [
@@ -166,6 +166,7 @@ const TOOL_LOGO_SRC = {
   'Runway': '/logos/runway.png', 'Lovable': '/logos/lovable-logo.png', 'Emergent': '/logos/emergent.png',
   'Gemini': '/logos/gemini.png', 'Gemini (image)': '/logos/gemini.png', 'ChatGPT': '/logos/chatgpt.png',
   'Claude Code': '/logos/claude_code-removebg-preview.png', 'Cursor': '/logos/cursor.png',
+  'SQL': '/logos/sql.svg',
 };
 
 // Tools without a local logo file — fall back to the brand's favicon by domain.
@@ -242,23 +243,22 @@ export default function Generalist() {
       {/* ── HERO + WHO THIS IS FOR (one screen together) ── */}
       <div className="hero-screen">
       {/* ── HERO ── */}
-      <section className="hero" style={{ padding: '34px clamp(20px, 6vw, 40px) 24px' }}>
+      <section className="hero hero-big" style={{ padding: '66px clamp(20px, 6vw, 40px) 68px' }}>
         <div className="hero-ring r1" /><div className="hero-ring r2" />
         <div className="hero-inner">
-          <p className="hero-eyebrow">Claude AI Generalist Fellowship · India</p>
+          <p className="hero-eyebrow">Claude AI Generalist Fellowship</p>
           <h1 className="hero-h1">Master Claude AI.<br /><em>Transform your domain.</em></h1>
-          <p className="hero-sub">India's only Claude AI Specialist Fellowship.<strong style={{ color: '#EEEDFE', fontWeight: 500 }}><br />Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
+          <p className="hero-sub">India's only Claude AI Specialist Fellowship.<strong className="hero-tagline" style={{ color: '#EEEDFE', fontWeight: 500 }}>Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
           <div className="hero-actions">
             <button className="btn-primary" style={{ minWidth: 220, textAlign: 'center' }} onClick={openApply}>Apply Now</button>
             <button className="btn-outline" style={{ minWidth: 220, textAlign: 'center' }}>Download Brochure</button>
           </div>
-          <div className="hero-stats hero-stats-6">
-            <div><span className="hero-stat-num">90%</span><span className="hero-stat-lbl">Interview pipeline<br />target</span></div>
-            <div><span className="hero-stat-num">25+</span><span className="hero-stat-lbl">Hiring<br />associations</span></div>
+          <div className="hero-stats">
+            <div><span className="hero-stat-num">90%</span><span className="hero-stat-lbl">Interview Pipeline<br />Target</span></div>
+            <div><span className="hero-stat-num">25+</span><span className="hero-stat-lbl">Hiring<br />Associations</span></div>
             <div><span className="hero-stat-num">20+</span><span className="hero-stat-lbl">AI Builders<br />& Operators</span></div>
-            <div><span className="hero-stat-num">10</span><span className="hero-stat-lbl">Weeks intensive<br />fellowship</span></div>
-            <div><span className="hero-stat-num">7+</span><span className="hero-stat-lbl">Domain<br />tracks</span></div>
-            <div><span className="hero-stat-num">5+</span><span className="hero-stat-lbl">Shipped<br />projects</span></div>
+            <div><span className="hero-stat-num">10</span><span className="hero-stat-lbl">Weeks Intensive<br />Fellowship</span></div>
+            <div><span className="hero-stat-num">6+</span><span className="hero-stat-lbl">Domain<br />Tracks</span></div>
           </div>
         </div>
       </section>
@@ -267,13 +267,13 @@ export default function Generalist() {
       <section className="section" style={{ background: 'var(--parchment)', paddingTop: 24, paddingBottom: 20 }}>
         <p className="section-label">Who this is for</p>
         <h2 className="section-h2">Any background.<br /><em>Any domain. Zero code.</em></h2>
-        <p className="section-sub">The AI-native workforce won't be made up of engineers alone. It will be built by professionals across every domain.</p>
+        <p className="section-sub">The AI-native workforce won't be made up of engineers alone.<br />It will be built by professionals across every domain.</p>
         <div className="audience-grid">
-          <div className="audience-card"><div className="ava" style={{ background: 'var(--cloud)', color: 'var(--specialist)' }}>ST</div><p className="audience-role">Students</p><p className="audience-desc">Any discipline. Enter the job market as AI-native.</p></div>
-          <div className="audience-card"><div className="ava" style={{ background: '#FAEEDA', color: '#854F0B' }}>WP</div><p className="audience-role">Professionals</p><p className="audience-desc">Tech & non-tech. Lead AI in your current role.</p></div>
-          <div className="audience-card"><div className="ava" style={{ background: '#FCEBEB', color: '#A32D2D' }}>BO</div><p className="audience-role">Business owners</p><p className="audience-desc">Use Claude to run your business smarter.</p></div>
-          <div className="audience-card"><div className="ava" style={{ background: '#E1F5EE', color: '#085041' }}>FO</div><p className="audience-role">Founders</p><p className="audience-desc">Build with Claude without an engineering team.</p></div>
-          <div className="audience-card"><div className="ava" style={{ background: '#F1EFE8', color: '#5F5E5A' }}>CS</div><p className="audience-role">Career switchers</p><p className="audience-desc">Move into AI-adjacent roles with a real credential.</p></div>
+          <div className="audience-card"><div className="ava" style={{ background: 'var(--cloud)', color: 'var(--specialist)' }}>1</div><p className="audience-role">Students</p><p className="audience-desc">Any discipline. Enter the job market as AI-native.</p></div>
+          <div className="audience-card"><div className="ava" style={{ background: '#FAEEDA', color: '#854F0B' }}>2</div><p className="audience-role">Professionals</p><p className="audience-desc">Tech & non-tech. Lead AI in your current role.</p></div>
+          <div className="audience-card"><div className="ava" style={{ background: '#FCEBEB', color: '#A32D2D' }}>3</div><p className="audience-role">Business owners</p><p className="audience-desc">Use Claude to run your business smarter.</p></div>
+          <div className="audience-card"><div className="ava" style={{ background: '#E1F5EE', color: '#085041' }}>4</div><p className="audience-role">Founders</p><p className="audience-desc">Build with Claude without an engineering team.</p></div>
+          <div className="audience-card"><div className="ava" style={{ background: '#F1EFE8', color: '#5F5E5A' }}>5</div><p className="audience-role">Career switchers</p><p className="audience-desc">Move into AI-adjacent roles with a real credential.</p></div>
         </div>
       </section>
       </div>
@@ -282,7 +282,7 @@ export default function Generalist() {
       <section className="section" style={{ background: 'white', paddingTop: 48 }}>
         <p className="section-label">10-week curriculum</p>
         <h2 className="section-h2">From curious<br /><em>to Claude Specialist.</em></h2>
-        <p className="section-sub">Three phases, no code — just Claude mastery applied to your domain. Pick a phase to open its modules, tools, and projects.</p>
+        <p className="section-sub">Three phases, no code — just Claude mastery applied to your domain.<br />Pick a phase to open its modules, tools, and projects.</p>
         <div className="curric-acc">
           {CURRICULUM.map((p, i) => {
             const open = activePhase === i;
@@ -412,7 +412,7 @@ export default function Generalist() {
       <section className="section tracks-dark" style={{ paddingTop: 48 }}>
         <p className="section-label" style={{ color: 'var(--lavender)' }}>Domain tracks</p>
         <h2 className="section-h2" style={{ color: '#EEEDFE' }}>Your Claude skills,<br /><em>applied to your career.</em></h2>
-        <p className="section-sub" style={{ color: 'rgba(238,237,254,0.5)' }}>Choose your track in Week 7. Capstone, certification module, and job matching are all domain-specific.</p>
+        <p className="section-sub" style={{ color: 'rgba(238,237,254,0.5)' }}>Choose your track in Week 7.<br />Capstone, certification module, and job matching are all domain-specific.</p>
         <div className="tracks-grid">
           {TRACKS.map((t, i) => (
             <div key={i} className="track" style={t.dashed ? { borderStyle: 'dashed' } : {}}>
@@ -428,7 +428,7 @@ export default function Generalist() {
         <div className="mini-lead-inner">
           <div className="mini-lead-copy">
             <h3>Get the Generalist <em>brochure & syllabus</em>.</h3>
-            <p>Full 10-week curriculum, mentor list, fee structure, scholarships, and Cohort 01 timeline — straight to your inbox.</p>
+            <p>Syllabus, schedule, fees, scholarships, and ISA options — straight to your inbox.</p>
           </div>
           {done ? (
             <div className="mini-lead-success">✓ Brochure on its way.</div>
@@ -472,7 +472,7 @@ export default function Generalist() {
         badge="Applications open · 30 seats"
         title="Ready to become a Claude AI Generalist?"
         subtitle={<><span style={{ whiteSpace: 'nowrap' }}>No coding experience.</span> <span style={{ whiteSpace: 'nowrap' }}>Just 10 weeks and real ambition.</span></>}
-        buttonText="Sign up"
+        buttonText="Apply Now"
         onButtonClick={openApply}
       />
 

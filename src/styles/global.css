@@ -242,10 +242,10 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
    center the content like the AI Aptitude Test hero. */
 .hero-centered .hero-inner { max-width: 760px; margin-left: auto; margin-right: auto; text-align: center; }
 .hero-centered .hero-eyebrow { justify-content: center; }
-.hero-centered .hero-sub { max-width: 300px; margin-left: auto; margin-right: auto; }
+.hero-centered .hero-sub { max-width: 350px; margin-left: auto; margin-right: auto; }
 .hero-centered .hero-actions { justify-content: center; }
 .hero-centered .hero-stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 22px 44px; max-width: none; }
-.hero-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--lavender); margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+.hero-eyebrow { font-size: 12px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--lavender); margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
 .hero-h1 { font-family: 'DM Serif Display', serif; font-size: clamp(32px, 6.8vw, 54px); font-weight: 400; color: #EEEDFE; line-height: 1.1; margin-bottom: 14px; }
 .hero-h1 em {
   background: linear-gradient(100deg, var(--lavender) 0%, #EEEDFE 45%, var(--lavender) 90%);
@@ -259,7 +259,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   0%, 100% { filter: drop-shadow(0 0 1px rgba(175,169,236,0.12)); }
   50% { filter: drop-shadow(0 0 7px rgba(175,169,236,0.5)); }
 }
-.hero-sub { font-size: 17px; color: rgba(238,237,254,0.58); line-height: 1.65; max-width: 700px; margin-bottom: 24px; }
+.hero-sub { font-size: 17px; color: rgba(238,237,254,0.58); line-height: 1.8; max-width: 700px; margin-bottom: 24px; }
 .hero-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .btn-primary { background: var(--specialist); color: white; padding: 11px 22px; border-radius: 22px; font-size: 13px; font-weight: 500; text-decoration: none; transition: background .2s; display: inline-block; cursor: pointer; border: none; font-family: inherit; }
 .btn-primary:hover { background: #6B62CC; }
@@ -267,7 +267,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .btn-ghost:hover { color: #EEEDFE; }
 .btn-outline { background: transparent; color: var(--lavender); padding: 11px 22px; border-radius: 22px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; border: 1px solid rgba(175,169,236,0.5); transition: background .2s, border-color .2s, color .2s; }
 .btn-outline:hover { background: rgba(175,169,236,0.12); border-color: var(--lavender); color: #EEEDFE; }
-.hero-stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 22px 18px; margin-top: 52px; padding-top: 28px; border-top: 0.5px solid rgba(175,169,236,0.18); max-width: 560px; }
+.hero-stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 18px 16px; margin-top: 52px; padding-top: 28px; border-top: 0.5px solid rgba(175,169,236,0.18); max-width: 560px; }
 .hero-stats.hero-stats-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); max-width: 680px; gap: 22px 14px; }
 .hero-stat-num { font-family: 'DM Serif Display', serif; font-size: 26px; color: #EEEDFE; display: block; }
 .hero-stat-lbl { font-size: 11px; color: var(--lavender); display: block; margin-top: 2px; }
@@ -277,7 +277,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .section-label { font-size: 10px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--specialist); margin-bottom: 10px; }
 .section-h2 { font-family: 'DM Serif Display', serif; font-size: clamp(25px, 4.8vw, 34px); font-weight: 400; color: var(--ink); line-height: 1.2; margin-bottom: 8px; }
 .section-h2 em { color: var(--specialist); font-style: italic; }
-.section-sub { font-size: 14px; color: var(--text-muted); max-width: 575px; line-height: 1.5; }
+.section-sub { font-size: 14px; color: var(--text-muted); max-width: 625px; line-height: 1.5; }
 
 /* ── PROGRAMS COMPARISON ── */
 .prog-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 36px; }
@@ -533,7 +533,19 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .hero-screen .audience-grid { margin-top: 20px; }
   .hero-screen .audience-card { padding: 14px 10px; }
   .hero-screen .ava { width: 38px; height: 38px; margin-bottom: 9px; }
+  /* Program heroes: match the Home page hero text sizes. */
+  .hero-big .hero-tagline { white-space: nowrap; }
+  .hero-screen .hero-big .hero-inner { max-width: 700px; }
+  .hero-screen .hero-big .hero-h1 { font-size: clamp(32px, 6.8vw, 54px); line-height: 1.2; margin-bottom: 14px; }
+  .hero-screen .hero-big .hero-h1 em { white-space: nowrap; }
+  .hero-screen .hero-big .hero-sub { font-size: 17px; margin-bottom: 24px; }
+  .hero-screen .hero-big .hero-eyebrow { margin-bottom: 18px; font-size: 10px; }
+  .hero-screen .hero-big .hero-stats { margin-top: 18px !important; padding-top: 18px !important; }
+  .hero-screen .hero-big .hero-stat-num { font-size: 26px; }
+  .hero-screen .hero-big .hero-stat-lbl { font-size: 11px; }
 }
+/* Kickstarter tagline sits on its own line with a clear gap above it. */
+.hero-big .hero-tagline { display: block; margin-top: 16px; }
 .audience-card { background: white; border-radius: 10px; padding: 14px 10px; text-align: center; border: 0.5px solid rgba(175,169,236,0.22); }
 .ava { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 9px; font-size: 12px; font-weight: 500; }
 .audience-role { font-size: 12px; font-weight: 500; color: var(--ink); margin-bottom: 3px; }

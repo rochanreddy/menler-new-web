@@ -238,7 +238,7 @@ export default function Resources() {
       <section className="section" style={{ background: 'white', paddingTop: 48, paddingBottom: 32 }}>
         <p className="section-label" style={{ textAlign: 'center' }}>Explore Menler Programs</p>
         <h2 className="section-h2" style={{ textAlign: 'center' }}>Continue your <em>AI journey.</em></h2>
-        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto' }}>Ready to go beyond assessment? Explore the Menler programs designed to help you build capability, portfolio, and career momentum.</p>
+        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto' }}>Ready to go beyond assessment? Explore the Menler programs designed to help you<br />build capability, portfolio, and career momentum.</p>
         <div className="cluster-grid" style={{ marginTop: 28 }}>
           <div className="cluster-card cluster-card--kick">
             <p className="cluster-num">For beginners &amp; explorers</p>
@@ -249,7 +249,7 @@ export default function Resources() {
           <div className="cluster-card cluster-card--gen">
             <p className="cluster-num">College students &amp; professionals</p>
             <p className="cluster-name">Menler AI Generalist Fellowship</p>
-            <p className="cluster-sets">Apply AI inside marketing, finance operations, product management, HR operations, consulting, and business workflows.</p>
+            <p className="cluster-sets">Apply AI across business functions. Drive real-world impact through smarter execution.</p>
             <button className="cluster-btn" onClick={() => go('/generalist')}>Explore Fellowship</button>
           </div>
           <div className="cluster-card cluster-card--eng">

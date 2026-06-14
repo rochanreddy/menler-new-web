@@ -199,7 +199,7 @@ export default function Home() {
           <Suspense fallback={null}><Hero3D /></Suspense>
         </div>
         <div className="hero-inner">
-          <p className="hero-eyebrow">Menler Fellowship · India</p>
+          <p className="hero-eyebrow">Menler Fellowship</p>
           <h1 className="hero-h1">Your turning point<br /><em>in the AI era.</em></h1>
           <p className="hero-sub">India's only Claude AI Specialist Fellowship.<strong style={{ color: '#EEEDFE', fontWeight: 350 }}><br />Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
           <div className="hero-actions">
@@ -231,7 +231,7 @@ export default function Home() {
             <span className="prog-card-badge">No coding required</span>
             <p className="prog-card-title">Claude AI Generalist</p>
             <div className="prog-card-desc">
-              <p className="prog-card-sub">Master Claude AI, across business functions, get certified and graduate with a domain-focused portfolio..</p>
+              <p className="prog-card-sub">Master Claude AI, across business functions, get certified and graduate with a domain-focused portfolio.</p>
               <p className="prog-card-sub">Analyst · Finance Operations · Founder's Office · HR Operations · Marketing & Sales · Product Management</p>
             </div>
             <p className="prog-card-for">AI Builders from</p>
@@ -259,7 +259,7 @@ export default function Home() {
             <span className="prog-card-badge">Coding experience required</span>
             <p className="prog-card-title">Claude AI Engineering</p>
             <div className="prog-card-desc">
-              <p className="prog-card-sub">Master Claude AI, build real-time AI applications, get certified and graduate with a portfolio of AI applications</p>
+              <p className="prog-card-sub">Master Claude AI, build AI applications, get certified and graduate with a portfolio of AI projects</p>
               <p className="prog-card-sub">AI Agent Engineer · AI Application Developer · AI Consultant · AI Engineer · AI Automation Engineer </p>
             </div>
             <p className="prog-card-for">AI Builders from</p>
@@ -328,7 +328,7 @@ export default function Home() {
       </section>
 
       {/* ── TECH STACK ── */}
-      <section className="section toolstack-section">
+      <section className="section toolstack-section" style={{ paddingBottom: 72 }}>
         <h2 className="toolstack-title">Your GenAI toolstack</h2>
         <p className="toolstack-sub">Get hands-on with AI tools — from your first prompt to your first real project.</p>
         <div className="toolstack-grid">
@@ -365,7 +365,7 @@ export default function Home() {
       </section>
 
       {/* ── MENTORS ── */}
-      <MentorsRail className="captains-screen" style={{ paddingTop: 40, paddingBottom: 28 }} />
+      <MentorsRail style={{ paddingTop: 48, paddingBottom: 32 }} />
 
       {/* ── HIRING PARTNERS & ROLES ── */}
       <section className="section jobs-section" style={{ paddingTop: 48, paddingBottom: 32 }}>

@@ -170,8 +170,8 @@ export default function Aptitude() {
   const setL = (k, v) => setLeadForm(f => ({ ...f, [k]: v }));
 
   // Question-bank topic selector + per-topic PDF download.
-  const [qbFilter, setQbFilter] = useState('All about AI');
-  const qbBank = QB_BANKS.find(b => b.label === qbFilter) || QB_BANKS[0];
+  const [qbFilter, setQbFilter] = useState('All');
+  const qbBank = QB_BANKS.find(b => b.name === qbFilter) || QB_BANKS[0];
   const downloadQB = () => {
     if (!qbBank.pdf) return;
     const a = document.createElement('a');
@@ -415,7 +415,7 @@ export default function Aptitude() {
         <section className="section" style={{ background: 'white', paddingTop: 48, paddingBottom: 32 }}>
           <p className="section-label" style={{ textAlign: 'center' }}>Explore Menler Programs</p>
           <h2 className="section-h2" style={{ textAlign: 'center' }}>Continue your <em>AI journey.</em></h2>
-          <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto' }}>Ready to go beyond assessment? Explore the Menler programs designed to help you build capability, portfolio, and career momentum.</p>
+          <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto' }}>Ready to go beyond assessment? Explore the Menler programs designed to help you<br />build capability, portfolio, and career momentum.</p>
           <div className="cluster-grid" style={{ marginTop: 28 }}>
             <div className="cluster-card cluster-card--kick">
               <p className="cluster-num">For beginners &amp; explorers</p>
@@ -426,7 +426,7 @@ export default function Aptitude() {
             <div className="cluster-card cluster-card--gen">
               <p className="cluster-num">College students &amp; professionals</p>
               <p className="cluster-name">Menler AI Generalist Fellowship</p>
-              <p className="cluster-sets">Apply AI inside marketing, finance operations, product management, HR operations, consulting, and business workflows.</p>
+              <p className="cluster-sets">Apply AI across business functions. Drive real-world impact through smarter execution.</p>
               <button className="cluster-btn" onClick={() => go('/generalist')}>Explore Fellowship</button>
             </div>
             <div className="cluster-card cluster-card--eng">
@@ -457,7 +457,7 @@ export default function Aptitude() {
         <div className="apt-hero-inner">
           <p className="apt-eyebrow">Free · No signup to start</p>
           <h1 className="apt-h1">Where do you stand<br /><em>on the AI Curve?</em></h1>
-          <p className="apt-sub">A 15 question AI Aptitude Test designed to assess your AI readiness and recommend the most relevant learning pathway for your goals.</p>
+          <p className="apt-sub">A 15 question AI Aptitude Test designed to assess your AI readiness<br />and recommend the most relevant learning pathway for your goals.</p>
           <button className="apt-cta-big" onClick={() => dispatch({ type: 'START_TEST', cluster: 'All About AI', questions: getAllAboutAIQuestions(15) })}>Start the test</button>
         </div>
       </section>
@@ -499,16 +499,16 @@ export default function Aptitude() {
       <section className="section" style={{ background: 'white', paddingBottom: 32 }}>
         <p className="section-label">Section 3 · Question bank</p>
         <h2 className="section-h2">AI Interview QB.<br /><em>200+ questions from real loops.</em></h2>
-        <p className="section-sub">Asked at top Indian and global companies. Select a topic and get a PDF of the Q&amp;A asked in real interview rounds.</p>
+        <p className="section-sub">Asked at top Indian and global companies.<br />Select a topic and get a PDF of the Q&amp;A asked in real interview rounds.</p>
         <div className="qb-filters">
           {QB_BANKS.map(b => (
             <button
-              key={b.label}
-              className={`qb-filter-pill${qbFilter === b.label ? ' active' : ''}`}
-              onClick={() => setQbFilter(b.label)}
-              aria-pressed={qbFilter === b.label}
+              key={b.name}
+              className={`qb-filter-pill${qbFilter === b.name ? ' active' : ''}`}
+              onClick={() => setQbFilter(b.name)}
+              aria-pressed={qbFilter === b.name}
             >
-              {b.label}
+              {b.name}
             </button>
           ))}
         </div>
@@ -525,7 +525,7 @@ export default function Aptitude() {
       <section className="section" style={{ background: 'white', paddingTop: 48, paddingBottom: 32 }}>
         <p className="section-label" style={{ textAlign: 'center' }}>Explore Menler Programs</p>
         <h2 className="section-h2" style={{ textAlign: 'center' }}>Continue your <em>AI journey.</em></h2>
-        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto' }}>Ready to go beyond assessment? Explore the Menler programs designed to help you build capability, portfolio, and career momentum.</p>
+        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto' }}>Ready to go beyond assessment? Explore the Menler programs designed to help you<br />build capability, portfolio, and career momentum.</p>
         <div className="cluster-grid" style={{ marginTop: 28 }}>
           <div className="cluster-card cluster-card--kick">
             <p className="cluster-num">For beginners &amp; explorers</p>
@@ -536,7 +536,7 @@ export default function Aptitude() {
           <div className="cluster-card cluster-card--gen">
             <p className="cluster-num">College students &amp; professionals</p>
             <p className="cluster-name">Menler AI Generalist Fellowship</p>
-            <p className="cluster-sets">Apply AI inside marketing, finance operations, product management, HR operations, consulting, and business workflows.</p>
+            <p className="cluster-sets">Apply AI across business functions. Drive real-world impact through smarter execution.</p>
             <button className="cluster-btn" onClick={() => go('/generalist')}>Explore Fellowship</button>
           </div>
           <div className="cluster-card cluster-card--eng">

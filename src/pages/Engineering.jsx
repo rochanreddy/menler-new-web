@@ -24,7 +24,7 @@ const ENG_HIRING = {
   engLabel: 'Advanced AI Systems',
   genRoles: [
     { name: 'AI Engineer', band: '₹20–40L · Product & AI teams' },
-    { name: 'Claude Solutions Engineer', band: '₹22–45L · AI-native startups' },
+    { name: 'Solutions Engineer', band: '₹22–45L · AI-native startups' },
     { name: 'RAG Engineer', band: '₹22–40L · Knowledge systems teams' },
     { name: 'Agent Engineer', band: '₹24–45L · Agentic AI companies' },
     { name: 'AI Product Engineer', band: '₹20–38L · Product organizations' },
@@ -66,13 +66,13 @@ export default function Engineering() {
       {/* ── HERO + WHO THIS IS FOR (one screen together) ── */}
       <div className="hero-screen">
       {/* ── HERO ── */}
-      <section className="hero" style={{ background: '#085041', padding: '34px clamp(20px, 6vw, 40px) 24px' }}>
+      <section className="hero hero-big" style={{ background: '#085041', padding: '66px clamp(20px, 6vw, 40px) 54px' }}>
         <div className="hero-ring r1" style={{ borderColor: 'rgba(93,202,165,0.1)' }} />
         <div className="hero-ring r2" style={{ borderColor: 'rgba(93,202,165,0.08)' }} />
         <div className="hero-inner">
           <p className="hero-eyebrow" style={{ color: '#5DCAA5' }}>Claude AI Engineering Fellowship · India</p>
           <h1 className="hero-h1" style={{ color: '#E1F5EE' }}>Build Claude AI systems<br /><em style={{ color: '#9FE1CB' }}>that go to production.</em></h1>
-          <p className="hero-sub" style={{ color: 'rgba(225,245,238,0.55)' }}>India's only Claude AI Engineering Fellowship.<strong style={{ color: '#E1F5EE', fontWeight: 500 }}><br />Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
+          <p className="hero-sub" style={{ color: 'rgba(225,245,238,0.55)' }}>India's only Claude AI Engineering Fellowship.<strong className="hero-tagline" style={{ color: '#E1F5EE', fontWeight: 500 }}>Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
           <div className="hero-actions">
             <button className="btn-primary" style={{ background: '#1D9E75', minWidth: 220, textAlign: 'center' }} onClick={openApply}>Apply Now</button>
             <button className="btn-outline" style={{ color: '#9FE1CB', borderColor: 'rgba(93,202,165,0.5)', minWidth: 220, textAlign: 'center' }}>Download Brochure</button>
@@ -91,13 +91,13 @@ export default function Engineering() {
       <section className="section" style={{ background: '#E1F5EE', paddingTop: 24, paddingBottom: 20 }}>
         <p className="section-label" style={{ color: 'var(--forest)' }}>Who this is for</p>
         <h2 className="section-h2" style={{ color: 'var(--forest)' }}>You already code.<br /><em style={{ color: 'var(--placed)' }}>Now build with Claude.</em></h2>
-        <p className="section-sub">The AI-native products of the next decade will be built by engineers who know how to work with AI.</p>
+        <p className="section-sub" style={{ maxWidth: 'none' }}>The AI-native products of the next decade will be built by engineers who know how to work with AI.</p>
         <div className="audience-grid">
-          <div className="audience-card"><div className="ava" style={{ background: '#E1F5EE', color: '#085041' }}>SE</div><p className="audience-role">Software engineers</p><p className="audience-desc">Frontend, backend, fullstack. Build Claude-native apps.</p></div>
-          <div className="audience-card"><div className="ava" style={{ background: 'var(--cloud)', color: 'var(--specialist)' }}>DS</div><p className="audience-role">Data scientists</p><p className="audience-desc">RAG pipelines, evals, and agentic data workflows.</p></div>
-          <div className="audience-card"><div className="ava" style={{ background: '#FAEEDA', color: '#854F0B' }}>ML</div><p className="audience-role">ML practitioners</p><p className="audience-desc">Fine-tuning, context engineering, LLMOps.</p></div>
-          <div className="audience-card"><div className="ava" style={{ background: '#FCEBEB', color: '#A32D2D' }}>IT</div><p className="audience-role">IT engineers</p><p className="audience-desc">MCP servers, integrations, enterprise deployments.</p></div>
-          <div className="audience-card"><div className="ava" style={{ background: '#F1EFE8', color: '#5F5E5A' }}>DT</div><p className="audience-role">Deep tech</p><p className="audience-desc">Systems, infra, and production AI architecture.</p></div>
+          <div className="audience-card"><div className="ava" style={{ background: '#E1F5EE', color: '#085041' }}>1</div><p className="audience-role">Software engineers</p><p className="audience-desc">Frontend, backend, fullstack. Build Claude-native apps.</p></div>
+          <div className="audience-card"><div className="ava" style={{ background: 'var(--cloud)', color: 'var(--specialist)' }}>2</div><p className="audience-role">Data scientists</p><p className="audience-desc">RAG pipelines, evals, and agentic data workflows.</p></div>
+          <div className="audience-card"><div className="ava" style={{ background: '#FAEEDA', color: '#854F0B' }}>3</div><p className="audience-role">ML practitioners</p><p className="audience-desc">Fine-tuning, context engineering, LLMOps.</p></div>
+          <div className="audience-card"><div className="ava" style={{ background: '#FCEBEB', color: '#A32D2D' }}>4</div><p className="audience-role">IT engineers</p><p className="audience-desc">MCP servers, integrations, enterprise deployments.</p></div>
+          <div className="audience-card"><div className="ava" style={{ background: '#F1EFE8', color: '#5F5E5A' }}>5</div><p className="audience-role">Deep tech</p><p className="audience-desc">Systems, infra, and production AI architecture.</p></div>
         </div>
       </section>
       </div>
@@ -106,11 +106,11 @@ export default function Engineering() {
       <section className="section" style={{ background: 'white' }}>
         <p className="section-label" style={{ color: 'var(--forest)' }}>12-week curriculum</p>
         <h2 className="section-h2" style={{ color: 'var(--forest)' }}>From engineer<br /><em style={{ color: 'var(--placed)' }}>to Claude Specialist.</em></h2>
-        <p className="section-sub">The full Claude engineering stack — API, RAG, MCP, agents, evaluation, LLMOps. Shipped to production.</p>
+        <p className="section-sub" style={{ maxWidth: 'none' }}>The full Claude engineering stack — API, RAG, MCP, agents, evaluation, LLMOps. Shipped to production.</p>
         <div className="curric curric-eng" style={{ display: 'block' }}>
           <div className="curric-detail curric-soon">
             <p className="curric-soon-title">Coming Soon</p>
-            <p className="curric-soon-sub">The full phase-by-phase curriculum breakdown drops soon. Join the waitlist to get it first.</p>
+            <p className="curric-soon-sub" style={{ maxWidth: 'none' }}>The full phase-by-phase curriculum breakdown drops soon.<br />Join the waitlist to get it first.</p>
             <button className="btn-primary" style={{ background: '#1D9E75' }} onClick={openApply}>Join the waitlist</button>
           </div>
         </div>
@@ -120,14 +120,14 @@ export default function Engineering() {
       <MentorsRail labelStyle={{ color: 'var(--forest)' }} titleStyle={{ color: 'var(--forest)' }} />
 
       {/* ── HIRING PARTNERS & ROLES ── */}
-      <HiringJobs {...ENG_HIRING} />
+      <HiringJobs {...ENG_HIRING} subStyle={{ maxWidth: 'none' }} />
 
       {/* ── LEAD FORM ── */}
       <section className="mini-lead">
         <div className="mini-lead-inner">
           <div className="mini-lead-copy">
             <h3 style={{ color: 'var(--forest)' }}>Get the Engineering <em style={{ color: 'var(--placed)' }}>brochure & syllabus</em>.</h3>
-            <p>Full Claude engineering stack — API, RAG, MCP, agents, evals — plus mentor list, fee structure, and Cohort 01 timeline.</p>
+            <p>Syllabus, schedule, fees, scholarships, and ISA options — straight to your inbox.</p>
           </div>
           {done ? (
             <div className="mini-lead-success">✓ Brochure on its way.</div>
@@ -161,7 +161,7 @@ export default function Engineering() {
         badge="Applications open · 30 seats"
         title="Ready to build Claude-native systems?"
         subtitle="Python required. Ambition mandatory. 12 weeks to production."
-        buttonText="Sign up"
+        buttonText="Apply Now"
         buttonStyle={{ color: 'var(--forest)' }}
         sectionStyle={{ background: 'var(--forest)' }}
         onButtonClick={openApply}

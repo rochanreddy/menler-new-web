@@ -154,20 +154,21 @@ export default function Kickstarter() {
       {/* ── HERO + WHO THIS IS FOR (one screen together) ── */}
       <div className="hero-screen">
       {/* ── HERO ── */}
-      <section className="hero" style={{ background: 'linear-gradient(135deg,#1A1647 0%,#854F0B 100%)', padding: '34px clamp(22px, 6vw, 40px) 24px' }}>
+      <section className="hero hero-big" style={{ background: 'linear-gradient(135deg,#1A1647 0%,#854F0B 100%)', padding: '66px clamp(22px, 6vw, 40px) 54px' }}>
         <div className="hero-ring r1" style={{ borderColor: 'rgba(250,238,218,0.12)' }} />
         <div className="hero-ring r2" style={{ borderColor: 'rgba(250,238,218,0.08)' }} />
         <div className="hero-inner">
-          <p className="hero-eyebrow" style={{ color: '#FAEEDA' }}>Gen AI Kickstarter · India · No prerequisites</p>
+          <p className="hero-eyebrow" style={{ color: '#FAEEDA' }}>Gen AI Kickstarter · No prerequisites</p>
           <h1 className="hero-h1" style={{ color: '#FFF6E1' }}>14 days. 4 builds.<br /><em style={{ color: '#FAEEDA' }}>AI-fluent.</em></h1>
-          <p className="hero-sub" style={{ color: 'rgba(255,246,225,0.7)' }}>India's most accessible Gen AI program.<strong style={{ color: '#FFF6E1', fontWeight: 500 }}><br />Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
+          <p className="hero-sub" style={{ color: 'rgba(255,246,225,0.7)' }}>India's most accessible Gen AI program.<strong className="hero-tagline" style={{ color: '#FFF6E1', fontWeight: 500 }}>Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
           <div className="hero-actions">
             <button className="btn-primary" style={{ background: '#BA7517', minWidth: 220, textAlign: 'center' }} onClick={openApply}>Apply Now</button>
             <button className="btn-outline" style={{ color: '#FAEEDA', borderColor: 'rgba(250,238,218,0.5)', minWidth: 220, textAlign: 'center' }}>Download Brochure</button>
           </div>
           <div className="hero-stats" style={{ borderColor: 'rgba(250,238,218,0.2)' }}>
-            <div><span className="hero-stat-num" style={{ color: '#FFF6E1' }}>14</span><span className="hero-stat-lbl" style={{ color: '#FAEEDA' }}>Days</span></div>
+            <div><span className="hero-stat-num" style={{ color: '#FFF6E1' }}>20+</span><span className="hero-stat-lbl" style={{ color: '#FAEEDA' }}>AI Builders<br />& Operators</span></div>
             <div><span className="hero-stat-num" style={{ color: '#FFF6E1' }}>10+</span><span className="hero-stat-lbl" style={{ color: '#FAEEDA' }}>AI Tools</span></div>
+            <div><span className="hero-stat-num" style={{ color: '#FFF6E1' }}>14</span><span className="hero-stat-lbl" style={{ color: '#FAEEDA' }}>Days</span></div>
             <div><span className="hero-stat-num" style={{ color: '#FFF6E1' }}>4</span><span className="hero-stat-lbl" style={{ color: '#FAEEDA' }}>Mini-builds</span></div>
             <div><span className="hero-stat-num" style={{ color: '#FFF6E1' }}>1</span><span className="hero-stat-lbl" style={{ color: '#FAEEDA' }}>Fluency Certificate</span></div>
           </div>
@@ -180,11 +181,11 @@ export default function Kickstarter() {
         <h2 className="section-h2" style={{ color: '#854F0B' }}>Built for the curious.<br /><em style={{ color: '#BA7517' }}>Welcome, beginners.</em></h2>
         <p className="section-sub">No prerequisites. No gatekeeping. If you can use a smartphone, you can do this.</p>
         <div className="audience-grid">
-          <div className="audience-card"><div className="ava" style={{ background: '#FAEEDA', color: '#854F0B' }}>SS</div><p className="audience-role">School students</p><p className="audience-desc">Class 10–12 who want to be AI-native before college.</p></div>
-          <div className="audience-card"><div className="ava" style={{ background: 'var(--cloud)', color: 'var(--specialist)' }}>CS</div><p className="audience-role">College students</p><p className="audience-desc">Any discipline. Stand out at internships and placements.</p></div>
-          <div className="audience-card"><div className="ava" style={{ background: '#E1F5EE', color: '#085041' }}>WP</div><p className="audience-role">Professionals new to AI</p><p className="audience-desc">Catch up fast. Without coding. Without overwhelm.</p></div>
-          <div className="audience-card"><div className="ava" style={{ background: '#FCEBEB', color: '#A32D2D' }}>FH</div><p className="audience-role">Founders' AI hires</p><p className="audience-desc">First AI person at a startup? Get the toolkit fast.</p></div>
-          <div className="audience-card"><div className="ava" style={{ background: '#F1EFE8', color: '#5F5E5A' }}>PE</div><p className="audience-role">Parents & educators</p><p className="audience-desc">Be the AI guide for your kids and your classroom.</p></div>
+          <div className="audience-card"><div className="ava" style={{ background: '#FAEEDA', color: '#854F0B' }}>1</div><p className="audience-role">School students</p><p className="audience-desc">Class 10–12 who want to be AI-native before college.</p></div>
+          <div className="audience-card"><div className="ava" style={{ background: 'var(--cloud)', color: 'var(--specialist)' }}>2</div><p className="audience-role">College students</p><p className="audience-desc">Any discipline. Stand out at internships and placements.</p></div>
+          <div className="audience-card"><div className="ava" style={{ background: '#E1F5EE', color: '#085041' }}>3</div><p className="audience-role">Professionals new to AI</p><p className="audience-desc">Catch up fast. Without coding. Without overwhelm.</p></div>
+          <div className="audience-card"><div className="ava" style={{ background: '#FCEBEB', color: '#A32D2D' }}>4</div><p className="audience-role">Founders' AI hires</p><p className="audience-desc">First AI person at a startup? Get the toolkit fast.</p></div>
+          <div className="audience-card"><div className="ava" style={{ background: '#F1EFE8', color: '#5F5E5A' }}>5</div><p className="audience-role">Parents & educators</p><p className="audience-desc">Be the AI guide for your kids and your classroom.</p></div>
         </div>
       </section>
       </div>
@@ -297,7 +298,7 @@ export default function Kickstarter() {
       </section>
 
       {/* ── TOOLS ── */}
-      <section className="section toolstack-section" style={{ paddingTop: 48 }}>
+      <section className="section toolstack-section" style={{ paddingTop: 48, paddingBottom: 72 }}>
         <h2 className="toolstack-title">Your GenAI toolstack</h2>
         <p className="toolstack-sub">Get hands-on with AI tools — from your first prompt to your first real project.</p>
         <div className="toolstack-grid">
@@ -319,7 +320,7 @@ export default function Kickstarter() {
         <div className="mini-lead-inner">
           <div className="mini-lead-copy">
             <h3>Get the Kickstarter <em>brochure.</em></h3>
-            <p>Full 14-day schedule, mentor list, fee tiers, scholarships, and next batch dates — straight to your inbox.</p>
+            <p>Syllabus, schedule, fees, scholarships, and ISA options — straight to your inbox.</p>
           </div>
           {done ? (
             <div className="mini-lead-success">✓ Brochure on its way.</div>
@@ -378,9 +379,9 @@ export default function Kickstarter() {
         badgeDotColor="#FAEEDA"
         title="Already AI-fluent? See the 12-week Fellowship"
         subtitle="Kickstarter alumni get a 30% scholarship to either Generalist or Engineering tracks."
-        buttonText="Explore the Fellowship"
+        buttonText="Apply Now"
         buttonStyle={{ color: '#854F0B' }}
-        onButtonClick={() => { navigate('/#programs'); window.scrollTo(0, 0); }}
+        onButtonClick={openApply}
         sectionStyle={{ background: '#854F0B' }}
       />
 
