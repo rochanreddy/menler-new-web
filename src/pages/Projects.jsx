@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Footer from '../components/layout/Footer';
 import CtaBanner from '../components/common/CtaBanner';
@@ -37,6 +38,7 @@ export default function Projects() {
   const projects = useContent(PROJECTS_QUERY, PROJECTS);
   const project = projects.find(p => p.slug === slug);
   const deck = DECKS[slug];
+  const [deckOpen, setDeckOpen] = useState(false); // mobile full-screen deck
 
   if (!project) {
     return (
@@ -75,9 +77,24 @@ export default function Projects() {
             <h4 className="proj-doc-h" style={{ marginTop: 0 }}>Project deck</h4>
             <div className="proj-deck">
               <PdfView url={deck} />
+              {/* Mobile only: tap the deck to open it full-screen (like the playbook). */}
+              <button type="button" className="proj-deck-fsbtn" onClick={() => setDeckOpen(true)} aria-label="Open deck full screen">
+                <span>Tap to open full screen ⤢</span>
+              </button>
             </div>
           </div>
         </section>
+      )}
+
+      {/* Full-screen deck overlay (opened from the mobile tap target above). */}
+      {deck && deckOpen && (
+        <div className="deck-fs" role="dialog" aria-modal="true" aria-label="Project deck">
+          <div className="deck-fs-bar">
+            <span className="deck-fs-title">{project.title} · deck</span>
+            <button type="button" className="deck-fs-close" onClick={() => setDeckOpen(false)} aria-label="Close deck">✕</button>
+          </div>
+          <div className="deck-fs-body"><PdfView url={deck} /></div>
+        </div>
       )}
 
       {/* ── DESCRIPTION & PROBLEM STATEMENT ── */}

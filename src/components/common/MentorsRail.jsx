@@ -1,4 +1,3 @@
-import { useRef, useEffect } from 'react';
 import { useContent } from '../../lib/useContent';
 
 // Fallback content — used until Sanity is configured/populated (see useContent).
@@ -27,91 +26,15 @@ const OVERLAYS = [
 
 const MENTORS_QUERY = '*[_type == "mentor"] | order(orderRank) { name, role, company, "img": photo.asset->url }';
 
+// Pure-CSS marquee: 3 identical copies + a transform animation (see global.css
+// .captains-track--rtl/ltr). GPU-accelerated → smooth on mobile, no per-frame JS.
 function CaptainRow({ list, dir, tint }) {
-  const railRef = useRef(null);
-  const drag = useRef({ down: false, startX: 0, startScroll: 0 });
-  const paused = useRef(false);
-  const inited = useRef(false);
-  const period = useRef(0);      // width of one copy of the list (for seamless wrap)
-  const resumeTimer = useRef(0); // re-arms auto-scroll after a touch swipe
-
-  useEffect(() => {
-    const el = railRef.current;
-    if (!el) return;
-    let raf;
-    // Cache the scroll width: reading el.scrollWidth every frame forces a
-    // synchronous layout reflow, which is the main source of jank on mobile.
-    // The track renders 3 identical copies — wrapping by exactly ONE copy width
-    // (`p`) lands on identical pixels, so the loop is seamless (no flicker).
-    let p = 0;
-    const measure = () => {
-      p = el.scrollWidth / 3;
-      period.current = p;
-      if (p > 0 && !inited.current) {
-        el.scrollLeft = dir === 'ltr' ? p : 0;
-        inited.current = true;
-      }
-    };
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(el);
-    // Only animate while the rail is on screen — no wasted frames (and no
-    // scroll writes competing with the page) while the user scrolls past it.
-    let visible = true;
-    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; }, { threshold: 0 });
-    io.observe(el);
-
-    const tick = () => {
-      if (visible && p > 0 && !paused.current && !drag.current.down) {
-        let next = el.scrollLeft + (dir === 'ltr' ? -0.5 : 0.5);
-        if (next >= p) next -= p;
-        else if (next < 0) next += p;
-        el.scrollLeft = next;
-      }
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => { cancelAnimationFrame(raf); ro.disconnect(); io.disconnect(); clearTimeout(resumeTimer.current); };
-  }, [dir]);
-
-  // Touch does NOT pause the rail — it keeps auto-scrolling at a steady pace
-  // (the CSS disables horizontal touch-scroll so a thumb on the rail can't stop
-  // it; vertical page scroll still passes through via touch-action: pan-y).
-  const onPointerDown = (e) => {
-    // Leave touch gestures alone so the page scrolls vertically without the rail
-    // capturing the pointer (which caused the stutter on mobile). Drag = mouse only.
-    if (e.pointerType === 'touch') return;
-    const el = railRef.current;
-    drag.current = { down: true, startX: e.clientX, startScroll: el.scrollLeft };
-    el.setPointerCapture?.(e.pointerId);
-  };
-  const onPointerMove = (e) => {
-    if (!drag.current.down) return;
-    railRef.current.scrollLeft = drag.current.startScroll - (e.clientX - drag.current.startX);
-  };
-  const onPointerUp = (e) => {
-    drag.current.down = false;
-    railRef.current?.releasePointerCapture?.(e.pointerId);
-  };
-
   const items = [...list, ...list, ...list];
-
   return (
-    <div
-      className="captains-rail"
-      ref={railRef}
-      onPointerEnter={(e) => { if (e.pointerType === 'mouse') paused.current = true; }}
-      onPointerLeave={(e) => { if (e.pointerType === 'mouse') paused.current = false; }}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-      onPointerCancel={onPointerUp}
-    >
-      <div className="captains-track">
+    <div className="captains-rail">
+      <div className={`captains-track captains-track--${dir}`}>
         {items.map((m, i) => (
           <article className="captain-card" key={i} aria-label={`${m.name}, ${m.role}`}>
-            {/* Gradient fills the card; the photo (if any) sits on top, with a
-                dark scrim over it so the name/role/company stay readable. */}
             <div className="captain-bg" style={{ backgroundImage: OVERLAYS[(tint + i) % OVERLAYS.length] }} />
             {m.img && <img className="captain-photo-img" src={encodeURI(m.img)} alt={m.name} loading="lazy" />}
             <div className={`captain-overlay${m.img ? ' captain-overlay--photo' : ''}`}>

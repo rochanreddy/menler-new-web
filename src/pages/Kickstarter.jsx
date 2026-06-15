@@ -75,28 +75,28 @@ const TOOLS = [
 ];
 
 const PROJECTS = [
-  { tag: 'Build 1', tagStyle: { background: '#FAEEDA', color: '#854F0B' }, title: 'Personal research agent', meta: 'Day 5 · Perplexity + NotebookLM', desc: 'An always-ready research agent that answers your questions across PDFs, links, and YouTube transcripts.', cardStyle: { background: 'white', borderColor: 'rgba(186,117,23,0.18)' } },
+  { tag: 'Build 1', tagStyle: { background: '#FAEEDA', color: '#854F0B' }, title: 'Personal research agent', meta: 'Day 5 · Perplexity + NotebookLM', desc: 'An always ready research agent that answers your questions across PDFs, links, and YouTube transcripts.', cardStyle: { background: 'white', borderColor: 'rgba(186,117,23,0.18)' } },
   { tag: 'Build 2', tagStyle: { background: '#FAEEDA', color: '#854F0B' }, title: 'Study planner agent', meta: 'Day 7 · Claude Projects', desc: 'A daily study assistant tuned to your subjects, exam dates, and learning style.', cardStyle: { background: 'white', borderColor: 'rgba(186,117,23,0.18)' } },
-  { tag: 'Build 3', tagStyle: { background: '#FAEEDA', color: '#854F0B' }, title: 'Content engine', meta: 'Day 9 · Claude + Canva AI', desc: 'Posts, captions, thumbnails, and scripts on autopilot — in your voice.', cardStyle: { background: 'white', borderColor: 'rgba(186,117,23,0.18)' } },
-  { tag: 'Build 4', tagStyle: { background: '#FAEEDA', color: '#854F0B' }, title: 'Automation Suite', meta: 'Day 10 · Claude · Cowork', desc: 'Stress-test any idea — market, competition, ICP — in a single Claude run with citations.', cardStyle: { background: 'white', borderColor: 'rgba(186,117,23,0.18)' } },
-  { tag: 'Build 5', tagStyle: { background: '#BA7517', color: 'white' }, title: 'AI-Powered Capstone Project', meta: 'Day 11 · Claude Skills', desc: 'Wire Claude into your daily life — calendar, mail, study notes — with one Skill that does the work.', cardStyle: { background: '#FFE9C7', borderColor: 'rgba(186,117,23,0.4)' } },
+  { tag: 'Build 3', tagStyle: { background: '#FAEEDA', color: '#854F0B' }, title: 'Content engine', meta: 'Day 9 · Claude + Canva AI', desc: 'Posts, captions, thumbnails, and scripts on autopilot in your voice.', cardStyle: { background: 'white', borderColor: 'rgba(186,117,23,0.18)' } },
+  { tag: 'Build 4', tagStyle: { background: '#FAEEDA', color: '#854F0B' }, title: 'Automation Suite', meta: 'Day 10 · Claude · Cowork', desc: 'Stress test any idea market, competition, ICP in a single Claude run with citations.', cardStyle: { background: 'white', borderColor: 'rgba(186,117,23,0.18)' } },
+  { tag: 'Build 5', tagStyle: { background: '#BA7517', color: 'white' }, title: 'AI-Powered Capstone Project', meta: 'Day 11 · Claude Skills', desc: 'Wire Claude into your daily life calendar, mail, study notes with one Skill that does the work.', cardStyle: { background: '#FFE9C7', borderColor: 'rgba(186,117,23,0.4)' } },
 ];
 
 const MODULES = [
   { label: 'Module 1', title: 'AI Foundations + Claude OS',
-    lessons: ['The AI Landscape — What You Actually Need to Know', 'Claude OS — Three Interfaces, Three Use Cases', 'Prompting Fundamentals — The CLEAR Framwork','AI Workflow Thinking — From Task to System'],
+    lessons: ['The AI Landscape : What You Actually Need to Know', 'Claude OS : Three Interfaces, Three Use Cases', 'Prompting Fundamentals : The CLEAR Framwork','AI Workflow Thinking  From Task to System'],
     tools: ['Claude', 'ChatGPT', 'Gemini', 'Perplexity'],
     project: 'Personal AI Operating System' },
   { label: 'Module 2', title: 'Claude Power Layers',
-    lessons: ['Claude Skills — Teaching Claude to Behave Differently', 'Claude Connectors — Claude Inside Your Existing Tools', 'Claude Projects — Building a Persistent Intelligence System','Research Intelligence — Claude + Perplexity + NotebookLM', 'AI Creatives — Image, Audio & Video Generation'],
+    lessons: ['Claude Skills : Teaching Claude to Behave Differently', 'Claude Connectors Claude Inside Your Existing Tools', 'Claude Projects Building a Persistent Intelligence System','Research Intelligence Claude + Perplexity + NotebookLM', 'AI Creatives Image, Audio & Video Generation'],
     tools: ['Canva AI', 'Gemini', 'ElevenLabs', 'NotebookLM', 'Runway', 'Claude Skills', 'Claude Routines'],
     project: 'Study planner agent & Content engine' },
   { label: 'Module 3', title: 'Automation Systems',
-    lessons: ['Claude Schedules — Time-Triggered Intelligence', 'Claude Routines — On-Demand Repeatable Workflows', 'Claude for Data — Upload, Interrogate, Act','External Automation — Zapier, n8n & When to Leave Claude'],
+    lessons: ['Claude Schedules : Time-Triggered Intelligence', 'Claude Routines On Demand Repeatable Workflows', 'Claude for Data Upload, Interrogate, Act','External Automation Zapier, n8n & When to Leave Claude'],
     tools: ['n8n', 'Zapier', 'Claude', 'Notion'],
     project: 'Automation Suite' },
   { label: 'Module 4',  title: 'Vibe coding & Demo day',
-    lessons: ['Vibe Coding — Build Real Things Without Writing Code', 'Capstone Build Sprint — Ship in 20 Minutes', 'Demo Day — Present, Critique, Level Up','AI-Native Career Positioning'],
+    lessons: ['Vibe Coding : Build Real Things Without Writing Code', 'Capstone Build Sprint Ship in 20 Minutes', 'Demo Day Present, Critique, Level Up','AI-Native Career Positioning'],
     tools: ['Claude', 'Emergent', 'Lovable'],
     project: 'AI-Powered Capstone Project' },
 ];
@@ -211,7 +211,7 @@ export default function Kickstarter() {
         <h2 className="section-h2" style={{ color: '#854F0B' }}>Built for the curious.<br /><em style={{ color: '#BA7517' }}>Welcome, beginners.</em></h2>
         <p className="section-sub">No prerequisites. No gatekeeping. If you can use a smartphone, you can do this.</p>
         <div className="audience-grid">
-          <div className="audience-card"><div className="ava" style={{ background: '#FAEEDA', color: '#854F0B' }}>1</div><p className="audience-role">School students</p><p className="audience-desc">Class 10–12 who want to be AI-native before college.</p></div>
+          <div className="audience-card"><div className="ava" style={{ background: '#FAEEDA', color: '#854F0B' }}>1</div><p className="audience-role">School students</p><p className="audience-desc">Class 10–12 who want to be AI Fluent before college.</p></div>
           <div className="audience-card"><div className="ava" style={{ background: 'var(--cloud)', color: 'var(--specialist)' }}>2</div><p className="audience-role">College students</p><p className="audience-desc">Any discipline. Stand out at internships and placements.</p></div>
           <div className="audience-card"><div className="ava" style={{ background: '#E1F5EE', color: '#085041' }}>3</div><p className="audience-role">Professionals new to AI</p><p className="audience-desc">Catch up fast. Without coding. Without overwhelm.</p></div>
           <div className="audience-card"><div className="ava" style={{ background: '#FCEBEB', color: '#A32D2D' }}>4</div><p className="audience-role">Founders' AI hires</p><p className="audience-desc">First AI person at a startup? Get the toolkit fast.</p></div>
@@ -296,8 +296,8 @@ export default function Kickstarter() {
       {/* ── WHAT YOU BUILD ── */}
       <section className="section" style={{ background: 'white', paddingTop: 48, paddingBottom: 32 }}>
         <p className="section-label" style={{ color: '#854F0B' }}>What you'll build</p>
-        <h2 className="section-h2" style={{ color: '#854F0B' }}>Four mini-builds.<br /><em style={{ color: '#BA7517' }}>One personal capstone.</em></h2>
-        <div className="proj-grid">
+        <h2 className="section-h2" style={{ color: '#854F0B' }}>Four mini builds.<br /><em style={{ color: '#BA7517' }}>One personal capstone.</em></h2>
+        <div className="proj-grid proj-grid--center">
           {PROJECTS.map((p, i) => (
             <div
               key={i}
@@ -314,16 +314,6 @@ export default function Kickstarter() {
               <p className="proj-desc">{p.desc}</p>
             </div>
           ))}
-          <div
-            className="proj-card proj-card--clickable"
-            role="button"
-            tabIndex={0}
-            style={{ background: 'white', borderColor: 'rgba(186,117,23,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-            onClick={() => go('/resources')}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go('/resources'); } }}
-          >
-            <button className="btn-primary" style={{ background: '#BA7517', minWidth: 160 }} onClick={() => go('/resources')}>See more</button>
-          </div>
         </div>
       </section>
 
@@ -393,13 +383,13 @@ export default function Kickstarter() {
       <section className="hiring-section outcome-section" style={{ background: 'var(--parchment)', paddingTop: 48 }}>
         <p className="section-label" style={{ textAlign: 'center', color: '#854F0B' }}>Outcome</p>
         <h2 className="section-h2" style={{ textAlign: 'center', color: '#854F0B' }}>What you leave with<br /><em style={{ color: '#BA7517' }}>after 14 days.</em></h2>
-        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto 28px' }}>The first assets of your AI-fluent professional identity</p>
+        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto 28px' }}>The first assets of your AI fluent professional identity</p>
         <div className="roles-grid">
-          <div className="role-card"><p className="role-name">AI Fluency Certificate</p><p className="role-comp">Issued by Menler</p><p className="role-desc">Verifiable credential. Proof that you're Gen AI fluent — across 10+ tools and 4 builds.</p></div>
-          <div className="role-card"><p className="role-name">Portfolio of 4 builds</p><p className="role-comp">Public + shareable</p><p className="role-desc">Four real AI mini-projects on a personal portfolio page. Show in interviews, on LinkedIn, on your CV.</p></div>
-          <div className="role-card"><p className="role-name">Direct access to AI-forward opportunities</p><p className="role-comp">Top performers</p><p className="role-desc">Standout fellows get matched to internship openings with our hiring partners — real work, real experience, on your CV.</p></div>
-          <div className="role-card"><p className="role-name">Merit recognized. Potential accelerated</p><p className="role-comp">Up to 30%</p><p className="role-desc">Top scorers in the Aptitude Test get a 30% scholarship to the 12-week Generalist or Engineering Fellowship.</p></div>
-          <div className="role-card"><p className="role-name">Practical workflows you'll keep long after the program ends.</p><p className="role-comp">Permanent skill lift</p><p className="role-desc">Actual daily habits — not theoretical knowledge. You leave with workflows you'll use forever.</p></div>
+          <div className="role-card"><p className="role-name">AI Fluency Certificate</p><p className="role-comp">Issued by Menler</p><p className="role-desc">Verifiable credential. Proof that you're Gen AI fluent across 10+ tools and 4 builds.</p></div>
+          <div className="role-card"><p className="role-name">Portfolio of 4 builds</p><p className="role-comp">Public + shareable</p><p className="role-desc">Four real AI mini projects on a personal portfolio page. Show in interviews, on LinkedIn, on your CV.</p></div>
+          <div className="role-card"><p className="role-name">Direct access to AI-forward opportunities</p><p className="role-comp">Top performers</p><p className="role-desc">Standout fellows get matched to internship openings with our hiring partners real work, real experience, on your CV.</p></div>
+          <div className="role-card"><p className="role-name">Merit recognized. Potential accelerated</p><p className="role-comp">Up to 30%</p><p className="role-desc">Top scorers in the Aptitude Test get a 30% scholarship to the 12 week Generalist or Engineering Fellowship.</p></div>
+          <div className="role-card"><p className="role-name">Practical workflows you'll keep long after the program ends.</p><p className="role-comp">Permanent skill lift</p><p className="role-desc">Actual daily habits not theoretical knowledge. You leave with workflows you'll use forever.</p></div>
           <div className="role-card"><p className="role-name">A network built around learning, building, and opportunity.</p><p className="role-comp">India-wide</p><p className="role-desc">Cohort buddies across India. Meet at city meetups, build together, hire each other later.</p></div>
         </div>
       </section>
@@ -416,7 +406,7 @@ export default function Kickstarter() {
         style={{ background: '#854F0B' }}
         badge="Next batch · Rolling enrolments"
         badgeDotColor="#FAEEDA"
-        title="Already AI-fluent? See the 12-week Fellowship"
+        title="Already AI fluent? See the 12-week Fellowship"
         subtitle="Kickstarter alumni get a 30% scholarship to either Generalist or Engineering tracks."
         buttonText="Apply Now"
         buttonStyle={{ color: '#854F0B' }}

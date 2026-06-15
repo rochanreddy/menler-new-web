@@ -19,12 +19,12 @@ const ENG_HIRING = {
   labelStyle: { color: 'var(--forest)' },
   titleStyle: { color: 'var(--forest)' },
   titleEmStyle: { color: 'var(--placed)' },
-  sub: 'Companies are hiring engineers who can build and ship Claude-native systems in production.',
+  sub: 'Companies are hiring engineers who can build and ship Claude native systems in production.',
   genLabel: 'AI Engineering',
   engLabel: 'Advanced AI Systems',
   genRoles: [
     { name: 'AI Engineer', band: '₹20–40L · Product & AI teams' },
-    { name: 'Solutions Engineer', band: '₹22–45L · AI-native startups' },
+    { name: 'Solutions Engineer', band: '₹22–45L · AI Native startups' },
     { name: 'RAG Engineer', band: '₹22–40L · Knowledge systems teams' },
     { name: 'Agent Engineer', band: '₹24–45L · Agentic AI companies' },
     { name: 'AI Product Engineer', band: '₹20–38L · Product organizations' },
@@ -91,9 +91,9 @@ export default function Engineering() {
       <section className="section" style={{ background: '#E1F5EE', paddingTop: 24, paddingBottom: 20 }}>
         <p className="section-label" style={{ color: 'var(--forest)' }}>Who this is for</p>
         <h2 className="section-h2" style={{ color: 'var(--forest)' }}>You already code.<br /><em style={{ color: 'var(--placed)' }}>Now build with Claude.</em></h2>
-        <p className="section-sub" style={{ maxWidth: 'none' }}>The AI-native products of the next decade will be built by engineers who know how to work with AI.</p>
+        <p className="section-sub" style={{ maxWidth: 'none' }}>The AI Native products of the next decade will be built by engineers who know how to work with AI.</p>
         <div className="audience-grid">
-          <div className="audience-card"><div className="ava" style={{ background: '#E1F5EE', color: '#085041' }}>1</div><p className="audience-role">Software engineers</p><p className="audience-desc">Frontend, backend, fullstack. Build Claude-native apps.</p></div>
+          <div className="audience-card"><div className="ava" style={{ background: '#E1F5EE', color: '#085041' }}>1</div><p className="audience-role">Software engineers</p><p className="audience-desc">Frontend, backend, fullstack. Build Claude native apps.</p></div>
           <div className="audience-card"><div className="ava" style={{ background: 'var(--cloud)', color: 'var(--specialist)' }}>2</div><p className="audience-role">Data scientists</p><p className="audience-desc">RAG pipelines, evals, and agentic data workflows.</p></div>
           <div className="audience-card"><div className="ava" style={{ background: '#FAEEDA', color: '#854F0B' }}>3</div><p className="audience-role">ML practitioners</p><p className="audience-desc">Fine-tuning, context engineering, LLMOps.</p></div>
           <div className="audience-card"><div className="ava" style={{ background: '#FCEBEB', color: '#A32D2D' }}>4</div><p className="audience-role">IT engineers</p><p className="audience-desc">MCP servers, integrations, enterprise deployments.</p></div>

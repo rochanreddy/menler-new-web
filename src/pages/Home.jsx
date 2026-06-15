@@ -263,8 +263,8 @@ export default function Home() {
               </div>
               <div className="nb-chips">
                 <span className="nb-chip">10 Weeks</span>
-                <span className="nb-chip">50 Hours</span>
-                <span className="nb-chip">Live Cohorts</span>
+                <span className="nb-chip">Live Classes</span>
+                <span className="nb-chip">Career Development</span>
               </div>
             </div>
             <button className="prog-card-cta" onClick={() => go('/generalist')}>Explore Generalist Program</button>
@@ -288,8 +288,8 @@ export default function Home() {
               </div>
               <div className="nb-chips">
                 <span className="nb-chip">12 Weeks</span>
-                <span className="nb-chip">60 Hours</span>
-                <span className="nb-chip">Live Cohorts</span>
+                <span className="nb-chip">Live Classes</span>
+                <span className="nb-chip">Career Development</span>
               </div>
             </div>
             <button className="prog-card-cta" onClick={() => go('/engineering')}>Explore Engineering Program</button>
@@ -341,7 +341,7 @@ export default function Home() {
       {/* ── TECH STACK ── */}
       <section className="section toolstack-section" style={{ paddingBottom: 72 }}>
         <h2 className="toolstack-title">Your GenAI toolstack</h2>
-        <p className="toolstack-sub">Get hands-on with AI tools — from your first prompt to your first real project.</p>
+        <p className="toolstack-sub">Get hands on with AI tools from your first prompt to your first real project.</p>
         <div className="toolstack-grid">
           {[TECH.slice(0, 5), TECH.slice(5, 11), TECH.slice(11, 16)].map((row, ri) => (
             <div key={ri} className="toolstack-row">
@@ -356,7 +356,7 @@ export default function Home() {
         <div className="mini-lead-inner">
           <div className="mini-lead-copy">
             <h3>Get the Menler fellowship <em>brochure.</em></h3>
-            <p>Syllabus, schedule, fees, scholarships, and ISA options — straight to your inbox.</p>
+            <p>Syllabus, schedule, fees & scholarships straight to your inbox.</p>
           </div>
           {miniDone ? (
             <div className="mini-lead-success">✓ Brochure on its way.</div>
@@ -382,7 +382,7 @@ export default function Home() {
       <section className="section jobs-section" style={{ paddingTop: 48, paddingBottom: 32 }}>
         <p className="section-label">Hiring associations &amp; roles</p>
         <h2 className="section-h2">The jobs<br /><em>AI specialists are landing.</em></h2>
-        <p className="section-sub">A new category of professional is emerging: AI-native, domain, and outcome-driven. Menler is built to develop them.</p>
+        <p className="section-sub">A new category of professional is emerging: AI Native, Domain, and Outcome driven. Menler is built to develop them.</p>
         <div className="jobs-roles">
           <div className="role-card gen-side">
             <p className="role-card-program">Claude AI Generalist · Open roles</p>
@@ -402,7 +402,7 @@ export default function Home() {
           <div className="role-card eng-side">
             <p className="role-card-program">Claude AI Engineering · Open roles</p>
             <div className="role-list">
-              <div className="role-row"><p className="role-name">AI Engineer</p><p className="role-band">₹20–40L · Product, engineering &amp; AI teams</p></div>
+              <div className="role-row"><p className="role-name">Forward Deployed Engineer</p><p className="role-band">₹20–40L · Product, engineering &amp; AI teams</p></div>
               <div className="role-row"><p className="role-name">AI Solutions Engineer</p><p className="role-band">₹22–45L · Enterprise AI &amp; solution delivery teams</p></div>
               <div className="role-row"><p className="role-name">AI Agent Engineer</p><p className="role-band">₹22–40L · Agentic AI, workflow automation &amp; platform teams</p></div>
               <div className="role-row"><p className="role-name">Applied AI Engineer</p><p className="role-band">₹20–40L · AI-native startups &amp; product companies</p></div>
@@ -433,22 +433,22 @@ export default function Home() {
           <div className="outcome dark">
             <span className="outcome-num">01</span>
             <p className="outcome-title">Claude Specialist certification</p>
-            <p className="outcome-desc">Domain-specific badge. The Only Claude-native career credential in the AI ecosystem.</p>
+            <p className="outcome-desc">Domain Specific badge. The Only Claude Native career credential in the AI ecosystem.</p>
           </div>
           <div className="outcome">
             <span className="outcome-num">02</span>
             <p className="outcome-title">Domain project portfolio</p>
-            <p className="outcome-desc">Real projects — published, documented, and demo-ready by Week 12.</p>
+            <p className="outcome-desc">Real projects published, documented, and demo-ready by Week 12.</p>
           </div>
           <div className="outcome">
             <span className="outcome-num">03</span>
             <p className="outcome-title">Interview Pipeline in your domain</p>
-            <p className="outcome-desc">Matched to employers in your track. Demo Day puts you in front of decision-makers.</p>
+            <p className="outcome-desc">Matched to employers in your track. Demo Day puts you in front of decision makers.</p>
           </div>
           <div className="outcome purple">
             <span className="outcome-num" style={{ color: 'var(--specialist)' }}>04</span>
             <p className="outcome-title">AI business strategy fluency</p>
-            <p className="outcome-desc">Pitch AI investments, design roadmaps, communicate ROI — regardless of seniority or background.</p>
+            <p className="outcome-desc">Pitch AI investments, design roadmaps, communicate ROI  regardless of seniority or background.</p>
           </div>
           <div className="outcome" style={{ gridColumn: '1/-1', background: 'var(--cloud)' }}>
             <span className="outcome-num" style={{ color: 'var(--specialist)' }}>05</span>
@@ -462,22 +462,22 @@ export default function Home() {
       <section className="section" style={{ background: 'white', paddingTop: 48, paddingBottom: 32 }}>
         <p className="section-label">Why Menler</p>
         <h2 className="section-h2">Built around outcomes,<br /><em>measured against them.</em></h2>
-        <p className="section-sub"> Every technological shift creates a new class of professionals.<br />Menler exists to build the AI-native generation.</p>
+        <p className="section-sub"> Every technological shift creates a new class of professionals.<br />Menler exists to build the AI Native generation.</p>
         <div className="metrics-strip">
           <Reveal className="metric-tile dark" delay={0}>
             <span className="metric-num">90%</span>
             <p className="metric-label">Interview Pipeline Target</p>
-            <p className="metric-desc">Our placement goal — every fellow into an active interview pipeline within 90 days, across our domain tracks.</p>
+            <p className="metric-desc">Our placement goal every fellow into an active interview pipeline within 90 days, across our domain tracks.</p>
           </Reveal>
           <Reveal className="metric-tile green" delay={70}>
             <span className="metric-num">25+</span>
             <p className="metric-label">Hiring associations</p>
-            <p className="metric-desc">Founder's offices, VC-backed startups, marketing agencies, finance teams, and AI-native companies actively hiring AI talent. </p>
+            <p className="metric-desc">Founder's offices, VC-backed startups, marketing agencies, finance teams, and AI native companies actively hiring AI talent. </p>
           </Reveal>
           <Reveal className="metric-tile" delay={140}>
             <span className="metric-num">12</span>
             <p className="metric-label">Weeks to credential</p>
-            <p className="metric-desc">AI Fluency. Agentic Building. Domain Specialisation. An operator-led path that's faster than a diploma and deeper than a course.</p>
+            <p className="metric-desc">AI Fluency. Agentic Building. Domain Specialisation. An operator led path that's faster than a diploma and deeper than a course.</p>
           </Reveal>
           <Reveal className="metric-tile" delay={210}>
             <span className="metric-num">6+</span>

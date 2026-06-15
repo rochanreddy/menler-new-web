@@ -99,6 +99,7 @@ const fill = (arr, min = 6) => (arr.length === 0 ? arr : Array.from({ length: Ma
 const col1 = fill(TESTIMONIALS.filter(t => t.fellow));
 const col3 = fill(TESTIMONIALS.filter(t => ORGS.includes(t.name)));
 const col2 = fill(TESTIMONIALS.filter(t => !t.fellow && !ORGS.includes(t.name)));
+const colAll = fill(TESTIMONIALS); // mobile: one column with every testimonial
 
 export default function TestimonialsColumns() {
   return (
@@ -111,7 +112,8 @@ export default function TestimonialsColumns() {
         </p>
       </div>
       <div className="tmc-columns">
-        <TestimonialsColumn testimonials={col1} duration={18} />
+        <TestimonialsColumn testimonials={colAll} duration={28} className="tmc-col--all" />
+        <TestimonialsColumn testimonials={col1} duration={18} className="tmc-col--sm" />
         <TestimonialsColumn testimonials={col2} duration={22} className="tmc-col--md" />
         <TestimonialsColumn testimonials={col3} duration={20} className="tmc-col--lg" />
       </div>

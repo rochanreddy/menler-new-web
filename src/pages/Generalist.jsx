@@ -15,12 +15,12 @@ import { submitLead } from '../services/leadService';
 
 // ── Pricing card content ──
 const GEN_PRICE_FEATS = [
-  ['50 hrs live instruction over 10 weeks', 'Instructor-led · real questions in real-time'],
-  ['Build live projects with mentors', 'Portfolio-ready deliverables every week'],
+  ['50 hrs live instruction over 10 weeks', 'Instructor led · real questions in real time'],
+  ['Build live projects with mentors', 'Portfolio ready deliverables every week'],
   ['LMS + community · 1-year access', 'Recordings, resources, and cohort community'],
   ['1:1 doubt-solving sessions', 'Direct mentor access · no question left behind'],
   ['Interview pipeline + placement support', "LinkedIn review · Menler's hiring network"],
-  ['Claude Specialist Certification', 'Menler-certified · LinkedIn-shareable'],
+  ['Claude Specialist Certification', 'Menler-certified · LinkedIn shareable'],
 ];
 
 // Pricing card content (fallback) + GROQ for the generalistPage singleton.
@@ -33,7 +33,7 @@ const GEN_PRICING = {
   priceSub: 'incl. all taxes · EMI from ₹4,999/mo',
   features: GEN_PRICE_FEATS,
   chips: [
-    { label: 'Start date', value: 'Jul 07, 2026' },
+    { label: 'Start date', value: 'Aug 07, 2026' },
     { label: 'Duration', value: '10 Weeks' },
     { label: 'Sessions', value: '20 Live · 50 hrs' },
     { label: 'Format', value: 'Live online' },
@@ -43,37 +43,37 @@ const GEN_PRICING_QUERY = '*[_type == "generalistPage"][0].pricing{pill, name, t
 
 const CURRICULUM = [
   {
-    label: 'Phase 1', weeks: 'Weeks 1–3', title: 'AI foundations & Claude mastery',
+    label: 'Phase 1', weeks: 'Weeks 1–3', title: 'AI Foundations & Claude Mastery',
     modules: [
-      { w: 'Week 1 — Understand AI: See the Landscape Clearly', lessons: ['How LLMs work: next-token prediction, tokens, parameters, RLHF', 'Key terms: context windows, embeddings, temperature, fine-tuning', 'Live 3-way comparison: Claude vs ChatGPT vs Gemini', 'The 6 Gen AI categories — text, image, video, audio, code, agents', 'Tool landscape & why Claude leads for generalists'] },
-      { w: 'Week 2 — Talk with AI: Claude Mastery', lessons: ['Claude Projects, Skills, Connectors, MCPs & APIs', 'System-prompt architecture & best practices', 'Claude Chat vs Cowork vs Code — live comparison', 'Schedules, Plugins & Routines', 'Claude for PowerPoint, Word & Excel; Notion as external memory'] },
+      { w: 'Week 1 — Understand AI: See the Landscape Clearly', lessons: ['How LLMs work: next token prediction, tokens, parameters, RLHF', 'Key terms: context windows, embeddings, temperature, fine tuning', 'Live 3-way comparison: Claude vs ChatGPT vs Gemini', 'The 6 Gen AI categories text, image, video, audio, code, agents', 'Tool landscape & why Claude leads for generalists'] },
+      { w: 'Week 2 — Talk with AI: Claude Mastery', lessons: ['Claude Projects, Skills, Connectors, MCPs & APIs', 'System prompt architecture & best practices', 'Claude Chat vs Cowork vs Code live comparison', 'Schedules, Plugins & Routines', 'Claude for PowerPoint, Word & Excel; Notion as external memory'] },
       { w: 'Week 3 — Think + Create with AI: Prompt Engineering & Creative Studio', lessons: ['16 prompt frameworks (Zero/Few-shot, CoT, ToT, RAG, chaining…)', 'Claude Skills as prompt libraries; Routines for chained sequences', 'How diffusion models work; image prompt architecture', 'AI video, voice (STT/TTS/cloning) & 3D with Claude'] },
     ],
     tools: ['Claude', 'ChatGPT', 'Gemini', 'Perplexity', 'NotebookLM', 'Canva AI', 'ElevenLabs', 'Runway', 'Gamma'],
-    projects: ['Project 1 — My Claude OS (configured workspace)', 'Project 2 — AI Media Kit (images, video, audio, deck)'],
+    projects: ['Project 1 : My Claude OS (configured workspace)', 'Project 2 : AI Media Kit (images, video, audio, deck)'],
   },
   {
-    label: 'Phase 2', weeks: 'Weeks 4–6', title: 'Automate, build & ship',
+    label: 'Phase 2', weeks: 'Weeks 4–6', title: 'Automate, Build & Ship',
     modules: [
       { w: 'Week 4 — Automate with AI: Voice Agents, Routines & Workflows', lessons: ['STT/TTS from scratch; voice cloning', 'Voice-agent deployment (VAPI, Bland, Retell)', 'Claude Routines + MCPs; the agent loop', 'N8N architecture; Claude as the intelligence node; Make & Zapier'] },
       { w: 'Week 5 — Build with AI: Vibecoding & Agentic App Development', lessons: ['How code generation differs from text', 'Vibecoding: describe → generate → test → iterate → ship', 'Claude Code, Cursor, Lovable, Bolt.new & Replit', 'Agentic apps: Claude API + MCP tool calls; capstone scoping'] },
       { w: 'Week 6 — AI Native: Ship It — Demo Day', lessons: ['Capstone build sprint on the full Claude stack', 'Product polish: UX, error handling, MCP reliability', 'Gamma deck + presentation coaching', 'Demo Day & AI Generalist certification'] },
     ],
     tools: ['Claude Code', 'Cursor', 'Lovable', 'Replit', 'Emergent', 'N8N', 'Make', 'Zapier', 'ElevenLabs', 'GitHub', 'Gamma'],
-    projects: ['Project 3 — My Automated AI System (voice + automation)', 'Project 4 — Ship It capstone (live app or agent)'],
+    projects: ['Project 3 : My Automated AI System (voice + automation)', 'Project 4 — Ship It capstone (live app or agent)'],
   },
   {
-    label: 'Phase 3', weeks: 'Weeks 7–10', title: 'Domain specialisation, capstone & placement',
+    label: 'Phase 3', weeks: 'Weeks 7–10', title: 'Domain Specialisation, Capstone & Placement',
     domains: [
       { name: 'Analyst',
         weeks: [
           { w: 'Week 1 — Business Diagnostics', lessons: ['BA lifecycle: problem definition → recommendation', 'KPI design vs KPI reporting', 'Problem framing: 5 Whys, issue tree, MECE', 'The so-what test on every insight'] },
           { w: 'Week 2 — Analytics & Reporting', lessons: ['Dashboards that drive decisions', 'Metric hierarchy: leading vs lagging', 'Data storytelling: SCQA in under 60 seconds', 'Cohort, funnel & segmentation analysis'] },
-          { w: 'Week 3 — Automate the Analytics Layer', lessons: ['Operational analytics in Indian qcom', 'Report vs decision system', 'SQL for analysts — how Claude changes access', 'Data quality in Indian businesses'] },
-          { w: 'Week 4 — Ship the BI OS', lessons: ['AI leverage vs confident wrong answers', 'Verifying hallucinated metrics & benchmarks', 'BI OS architecture — the four layers', 'BI OS as a career asset'] },
+          { w: 'Week 3 — Automate the Analytics Layer', lessons: ['Operational analytics in Indian qcom', 'Report vs decision system', 'SQL for analysts how Claude changes access', 'Data quality in Indian businesses'] },
+          { w: 'Week 4 — Ship the BI OS', lessons: ['AI leverage vs confident wrong answers', 'Verifying hallucinated metrics & benchmarks', 'BI OS architecture the four layers', 'BI OS as a career asset'] },
         ],
         tools: ['Claude', 'Perplexity', 'Google Sheets AI', 'Looker Studio', 'Gamma', 'N8N', 'SQL', 'Notion', 'Slack'],
-        projects: ['BI OS — diagnosis + analytics + automation, deployed', 'Looker Studio dashboard + board narrative'] },
+        projects: ['BI OS diagnosis + analytics + automation, deployed', 'Looker Studio dashboard + board narrative'] },
       { name: 'Finance Operations',
         weeks: [
           { w: 'Week 1 — Financial Analysis & Modelling', lessons: ['Unit economics in consumer & fintech', 'The model a CFO reads in 90 seconds', 'Chain-of-thought for statement analysis', 'Scenario analysis: base / bull / bear'] },
@@ -82,7 +82,7 @@ const CURRICULUM = [
           { w: 'Week 4 — Ship the Finance OS', lessons: ['What an AI-native finance function looks like', 'The RBI FREE-AI framework (2025)', 'Model risk governance in Indian BFSI', 'Finance OS as an intelligence layer on ERP'] },
         ],
         tools: ['Claude', 'Google Sheets AI', 'Gamma', 'Notion', 'N8N', 'Airtable', 'Excel', 'Slack', 'Replit'],
-        projects: ['Finance OS — analysis + FP&A + risk & compliance', 'Automated credit-risk & CFO reporting pipeline'] },
+        projects: ['Finance OS analysis + FP&A + risk & compliance', 'Automated credit-risk & CFO reporting pipeline'] },
       { name: "Founder's Office",
         weeks: [
           { w: 'Week 1 — Strategic Intelligence', lessons: ['CoS / EIR / FO roles vs the job title', 'The three operating modes of a founder', 'Founder psychology & how trust decisions are made', 'AI-native strategic intelligence a founder would use'] },
@@ -91,7 +91,7 @@ const CURRICULUM = [
           { w: "Week 4 — Ship the Founder's OS", lessons: ['AI operator vs AI user', 'Agentic workflow architecture', 'Voice-briefing systems for the founder', 'Presenting a systems handover to a founder'] },
         ],
         tools: ['Claude', 'Perplexity', 'NotebookLM', 'Gamma', 'Notion', 'N8N', 'ElevenLabs', 'Slack', 'Replit'],
-        projects: ["Founder's OS — research + comms + ops, integrated", 'Live voice-briefing system on a real startup'] },
+        projects: ["Founder's OS research + comms + ops, integrated", 'Live voice-briefing system on a real startup'] },
       { name: 'Human Resource',
         weeks: [
           { w: 'Week 1 — Talent Acquisition System', lessons: ['How TA differs across startup, enterprise & GCC', 'JD design that attracts vs repels', 'The iceberg model of competency', 'The ATS problem & offer management'] },
@@ -100,7 +100,7 @@ const CURRICULUM = [
           { w: 'Week 4 — Ship the HR OS', lessons: ['What an AI-native HR function looks like', 'The HR data fragmentation problem', 'AI in hiring — legal exposure (DPDP, Equal Remuneration)', 'Employee relations & grievance management'] },
         ],
         tools: ['Claude', 'Notion', 'Keka', 'Darwinbox', 'N8N', 'Gamma', 'Airtable', 'Slack', 'Gmail'],
-        projects: ['HR OS — TA + HRBP + payroll + L&D, deployed', 'Automated hiring + offer + compliance command centre'] },
+        projects: ['HR OS TA + HRBP + payroll + L&D, deployed', 'Automated hiring + offer + compliance command centre'] },
       { name: 'Marketing',
         weeks: [
           { w: 'Week 1 — AI-native GTM Strategy', lessons: ['Marketing strategy vs marketing activity', 'Customer journey — trust is the conversion problem', 'Positioning without the biggest budget', 'GTM motion: product-, sales- or marketing-led'] },
@@ -109,7 +109,7 @@ const CURRICULUM = [
           { w: 'Week 4 — Ship the Marketing & Sales OS', lessons: ['Where AI creates leverage vs destroys brand', 'Campaign operations as a repeatable system', 'Brand-voice integrity at scale', 'Presenting an AI marketing system to a CMO'] },
         ],
         tools: ['Claude', 'Gamma', 'Canva AI', 'Midjourney', 'HubSpot', 'Meta Ads', 'GA4', 'WhatsApp Business', 'N8N', 'Runway'],
-        projects: ['Marketing OS — GTM + content + growth, integrated', 'Brand audio + video ad with live CRM pipeline'] },
+        projects: ['Marketing OS GTM + content + growth, integrated', 'Brand audio + video ad with live CRM pipeline'] },
       { name: 'Product Management',
         weeks: [
           { w: 'Week 1 — Discovery & Problem Framing', lessons: ['What PMs actually do vs the JD', 'JTBD vs feature requests vs user complaints', 'AI-native discovery & user synthesis', "Framing a problem statement that doesn't get ignored"] },
@@ -118,7 +118,7 @@ const CURRICULUM = [
           { w: 'Week 4 — Ship an AI-native Feature', lessons: ["What's different about AI-native products", 'AI UX patterns: graceful degradation, confirmation', 'Writing specs engineering will respect', 'Pitching an AI feature to a founder or investor'] },
         ],
         tools: ['Claude', 'Jira', 'Notion', 'Figma', 'Gamma', 'GA4', 'Mixpanel', 'Lovable', 'Replit'],
-        projects: ['PM Case File — discovery → PRD → analytics', 'Shipped AI-native prototype + spec + pitch deck'] },
+        projects: ['PM Case File discovery → PRD → analytics', 'Shipped AI-native prototype + spec + pitch deck'] },
     ],
   },
 ];
@@ -130,7 +130,7 @@ const GEN_HIRING = {
   label: 'Hiring associations & roles',
   title: 'The jobs',
   titleEm: 'AI specialists are landing.',
-  sub: "AI adoption is accelerating. Demand for AI-native professionals is accelerating faster.",
+  sub: "AI adoption is accelerating. Demand for AI Native professionals is accelerating faster.",
   genLabel: 'AI-Native Roles',
   engLabel: 'Domain Roles',
   genRoles: [
@@ -298,13 +298,13 @@ export default function Generalist() {
       <section className="section" style={{ background: 'var(--parchment)', paddingTop: 24, paddingBottom: 20 }}>
         <p className="section-label">Who this is for</p>
         <h2 className="section-h2">Any background.<br /><em>Any domain. Zero code.</em></h2>
-        <p className="section-sub">The AI-native workforce won't be made up of engineers alone.<br />It will be built by professionals across every domain.</p>
+        <p className="section-sub">The AI Native workforce won't be made up of engineers alone.<br />It will be built by professionals across every domain.</p>
         <div className="audience-grid">
-          <div className="audience-card"><div className="ava" style={{ background: 'var(--cloud)', color: 'var(--specialist)' }}>1</div><p className="audience-role">Students</p><p className="audience-desc">Any discipline. Enter the job market as AI-native.</p></div>
-          <div className="audience-card"><div className="ava" style={{ background: '#FAEEDA', color: '#854F0B' }}>2</div><p className="audience-role">Professionals</p><p className="audience-desc">Tech & non-tech. Lead AI in your current role.</p></div>
+          <div className="audience-card"><div className="ava" style={{ background: 'var(--cloud)', color: 'var(--specialist)' }}>1</div><p className="audience-role">Students</p><p className="audience-desc">Any discipline. Enter the job market as AI Native.</p></div>
+          <div className="audience-card"><div className="ava" style={{ background: '#FAEEDA', color: '#854F0B' }}>2</div><p className="audience-role">Professionals</p><p className="audience-desc">Tech & non tech. Lead AI in your current role.</p></div>
           <div className="audience-card"><div className="ava" style={{ background: '#FCEBEB', color: '#A32D2D' }}>3</div><p className="audience-role">Business owners</p><p className="audience-desc">Use Claude to run your business smarter.</p></div>
           <div className="audience-card"><div className="ava" style={{ background: '#E1F5EE', color: '#085041' }}>4</div><p className="audience-role">Founders</p><p className="audience-desc">Build with Claude without an engineering team.</p></div>
-          <div className="audience-card"><div className="ava" style={{ background: '#F1EFE8', color: '#5F5E5A' }}>5</div><p className="audience-role">Career switchers</p><p className="audience-desc">Move into AI-adjacent roles with a real credential.</p></div>
+          <div className="audience-card"><div className="ava" style={{ background: '#F1EFE8', color: '#5F5E5A' }}>5</div><p className="audience-role">Career switchers</p><p className="audience-desc">Move into AI adjacent roles with a real credential.</p></div>
         </div>
       </section>
       </div>
@@ -313,7 +313,7 @@ export default function Generalist() {
       <section className="section curric-section--gen" style={{ background: 'white', paddingTop: 48 }}>
         <p className="section-label">10-week curriculum</p>
         <h2 className="section-h2">From curious<br /><em>to Claude Specialist.</em></h2>
-        <p className="section-sub">Three phases, no code — just Claude mastery applied to your domain.<br />Pick a phase to open its modules, tools, and projects.</p>
+        <p className="section-sub">Three phases, no code just Claude mastery applied to your domain.<br />Pick a phase to open its modules, tools, and projects.</p>
         <div className="curric-acc">
           {CURRICULUM.map((p, i) => {
             const open = activePhase === i;
@@ -344,7 +344,7 @@ export default function Generalist() {
                         return (
                       <div className="curric-detail--split curric-detail--triple">
                         <div className="curric-detail-main">
-                          <p className="curric-label">Modules · week by week</p>
+                          <p className="curric-label">Modulesk</p>
                           <ul className="curric-weeks">
                             {p.modules.map((m, wi) => (
                               <li key={m.w} className={`curric-week${selWeek === wi ? ' on' : ''}`}>
@@ -459,7 +459,7 @@ export default function Generalist() {
         <div className="mini-lead-inner">
           <div className="mini-lead-copy">
             <h3>Get the Generalist <em>brochure & syllabus</em>.</h3>
-            <p>Syllabus, schedule, fees, scholarships, and ISA options — straight to your inbox.</p>
+            <p>Syllabus, schedule, fees & scholarships straight to your inbox.</p>
           </div>
           {done ? (
             <div className="mini-lead-success">✓ Brochure on its way.</div>
@@ -493,7 +493,7 @@ export default function Generalist() {
       <section className="section kp-section" style={{ background: '#ffffff', paddingTop: 8 }}>
         <p className="section-label" style={{ textAlign: 'center' }}>Pricing</p>
         <h2 className="section-h2" style={{ textAlign: 'center' }}>One fellowship. <em>Everything in.</em></h2>
-        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto 32px' }}>Ten weeks to AI-native — mentorship, real projects, certification, and placement support.</p>
+        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto 32px' }}>Ten weeks to AI Native mentorship, real projects, certification, and placement support.</p>
         <PricingCard {...genPricing} onCta={openApply} />
         <div style={{ textAlign: 'center', marginTop: 56 }}>
           <button className="btn-primary" style={{ minWidth: 220 }} onClick={openApply}>Book a call</button>
