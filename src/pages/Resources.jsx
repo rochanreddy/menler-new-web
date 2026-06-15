@@ -24,7 +24,7 @@ const TEMPLATE_CARDS = [
 
 const PLAYBOOK = [
   { logo: '/logos/claude_code-removebg-preview.png', thumb: 'Ship faster with Claude', badge: 'Claude Code', cat: 'Engineering', title: 'Claude Code Playbook', desc: 'Build, refactor, and ship real code with Claude in your terminal and editor.', pdf: '/pdfs/Menler_Claude_Code_Playbook.pdf' },
-  { logo: '/logos/claude.svg', thumb: 'Your Claude Chat Operating System', badge: 'Claude Chat OS', cat: 'Generalist', title: 'Claude Chat Playbook', desc: 'Everyday prompting — research, writing, analysis, and fast answers.', pdf: '/pdfs/Menler_Claude_Chat_Playbook.pdf' },
+  { logo: '/logos/claude.svg', thumb: 'Your Claude Chat OS', badge: 'Claude Chat', cat: 'Generalist', title: 'Claude Chat Playbook', desc: 'Everyday prompting — research, writing, analysis, and fast answers.', pdf: '/pdfs/Menler_Claude_Chat_Playbook.pdf' },
   { logo: '/logos/claude_cowork.png', thumb: 'Multi-Step AI Workflows', badge: 'Claude Cowork', cat: 'Workflows', title: 'Claude Cowork Playbook', desc: 'Multi-document, multi-step work that turns raw inputs into finished deliverables.', pdf: '/pdfs/Menler_Claude_Cowork_Playbook.pdf' },
   { logo: '/logos/claude_design.png', thumb: 'Design Faster with Claude', badge: 'Claude Design', cat: 'Design', title: 'Claude Design Playbook', desc: 'Generate visuals, mockups, and on-brand design assets with Claude.', pdf: '/pdfs/Menler_Claude_Design_Playbook.pdf' },
   { logo: '/logos/claude.svg', ms: '/logos/microsoft.png', thumb: 'Microsoft 365 Workflows', badge: 'Claude MS', cat: 'Microsoft 365', title: 'Claude in MS', desc: 'Use Claude across Microsoft 365 — Word, Excel, PowerPoint, and Teams.', pdf: '/pdfs/Menler_Claude_Microsoft_Playbook.pdf' },
