@@ -1390,6 +1390,8 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .runner-btn-ghost:hover { background: var(--cloud); }
 .runner-btn-ghost:disabled { opacity: 0.4; cursor: not-allowed; }
 .runner-btn-ghost.on { background: rgba(186,117,23,0.14); border-color: var(--amber); color: var(--amber); }
+/* Highlighted track name on the set-picker page. */
+.apt-track-badge { display: inline-block; background: var(--cloud); color: var(--specialist); font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 7px 18px; border-radius: 999px; border: 1px solid rgba(83,74,183,0.22); margin-bottom: 14px; }
 
 .runner-nav { position: sticky; top: 90px; background: white; border-radius: 18px; padding: 22px; box-shadow: 0 24px 56px rgba(38,33,92,0.08); }
 .runner-timer { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--ink); border-radius: 12px; margin-bottom: 20px; }
@@ -1459,6 +1461,11 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .cluster-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; max-width: 1240px; margin: 22px auto 0; }
 .cluster-card { position: relative; background: #fff; border: 1px solid rgba(83,74,183,0.14); border-radius: 14px; padding: 16px 18px 14px; display: flex; flex-direction: column; overflow: hidden; transition: transform .18s, box-shadow .18s, border-color .18s; }
 /* Taller cards + larger type on the "Pick a set" page only */
+/* Center an incomplete last row (e.g. sets 4 & 5) instead of left-aligning. */
+.cluster-grid--sets { display: flex; flex-wrap: wrap; justify-content: center; }
+.cluster-grid--sets .cluster-card { flex: 0 1 calc((100% - 44px) / 3); min-width: 0; }
+@media (max-width: 760px) { .cluster-grid--sets .cluster-card { flex-basis: calc((100% - 22px) / 2); } }
+@media (max-width: 480px) { .cluster-grid--sets .cluster-card { flex-basis: 100%; } }
 .cluster-grid--sets .cluster-card { min-height: 190px; padding: 24px 22px 20px; }
 .cluster-grid--sets .cluster-name { font-size: 19px; }
 .cluster-grid--sets .cluster-sets { font-size: 14px; margin-bottom: 16px; padding-bottom: 16px; }

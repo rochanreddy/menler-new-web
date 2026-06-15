@@ -395,9 +395,9 @@ export default function Aptitude() {
       <>
         <section className="section" style={{ background: 'var(--parchment)', minHeight: '60vh', paddingTop: 48, textAlign: 'center' }}>
           <div style={{ textAlign: 'left' }}>
-            <button className="runner-btn" style={{ color: 'var(--specialist)', marginBottom: 18 }} onClick={() => dispatch({ type: 'TO_CLUSTERS' })}>← Back</button>
+            <button className="runner-btn-ghost" style={{ marginBottom: 22 }} onClick={() => dispatch({ type: 'TO_CLUSTERS' })}>← Back to tracks</button>
           </div>
-          <p className="section-label">{cluster.name}</p>
+          <p className="apt-track-badge">{cluster.name}</p>
           <h2 className="section-h2">Pick a set<br /><em>to begin.</em></h2>
           <p className="section-sub" style={{ margin: '0 auto' }}>Five sets, 15 questions each. Choose any — your report and 14-day roadmap come at the end.</p>
           <div className="cluster-grid cluster-grid--sets">
@@ -489,7 +489,7 @@ export default function Aptitude() {
               <span className="cluster-num">{String(i + 1).padStart(2, '0')}</span>
               <p className="cluster-name">{c.name}</p>
               <p className="cluster-sets">{c.sets.length} sets · 15 questions each</p>
-              <button className="cluster-btn" onClick={() => dispatch({ type: 'PICK_CLUSTER', cluster: c.name })}>Start test <span className="cluster-arrow">→</span></button>
+              <button className="cluster-btn" onClick={() => dispatch({ type: 'PICK_CLUSTER', cluster: c.name })}>Take test</button>
             </div>
           ))}
         </div>

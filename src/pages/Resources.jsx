@@ -7,9 +7,9 @@ import { PROJECTS } from '../data/projectsData';
 import { submitLead } from '../services/leadService';
 
 const LIBRARY_CARDS = [
-  { num: '01', name: 'Prompt Library', desc: '120+ tested prompts across business, engineering, and beginner tracks.', tags: ['All programs', '120+ prompts'], pdf: '/pdfs/Menler_100_Prompts_Playbook.pdf' },
-  { num: '02', name: 'AI stack map', desc: 'Visual guide to the best AI tools by category.', tags: ['All programs', 'Q2 2026'], pdf: '/pdfs/Menler_AI_Stack_Map.pdf' },
-  { num: '03', name: 'Project connectors docs', desc: '18 hands-on project walkthroughs led by the program instructors.', tags: ['Generalist', 'Engineering', 'Kickstarter'], tagsNowrap: true, pdf: '/pdfs/Menler_Connector_Projects.pdf' },
+  { num: '01', name: 'Prompt Library', desc: '100+ tested prompts across business, engineering, and beginner tracks.', tags: ['All programs', '100+ prompts'], pdf: '/pdfs/Menler_100_Prompts_Playbook.pdf' },
+  { num: '02', name: 'AI stack map', desc: 'Visual guide to the best AI tools by category.', tags: ['All programs', 'Upto 2026'], pdf: '/pdfs/Menler_AI_Stack_Map.pdf' },
+  { num: '03', name: 'Project connectors docs', desc: '10 hands-on project walkthroughs led by the program instructors.', tags: ['Generalist', 'Engineering', 'Kickstarter'], tagsNowrap: true, pdf: '/pdfs/Menler_Connector_Projects.pdf' },
   { num: '04', name: 'AI glossary', desc: '100+ AI terms explained in simple, beginner-friendly language.', tags: ['Beginners', '100+ terms'], pdf: '/pdfs/Menler_AI_Glossary_AtoZ.pdf' },
 ];
 
@@ -23,11 +23,11 @@ const TEMPLATE_CARDS = [
 ];
 
 const PLAYBOOK = [
-  { logo: '/logos/claude_code-removebg-preview.png', thumb: '120+ Code Prompts', badge: 'Claude Code', cat: 'Engineering', title: 'Claude Code Playbook', desc: 'Build, refactor, and ship real code with Claude in your terminal and editor.', pdf: '/pdfs/Menler_Claude_Code_Playbook.pdf' },
-  { logo: '/logos/claude.svg', thumb: '200+ Chat Prompts', badge: 'Claude Chat', cat: 'Generalist', title: 'Claude Chat Playbook', desc: 'Everyday prompting — research, writing, analysis, and fast answers.', pdf: '/pdfs/Menler_Claude_Chat_Playbook.pdf' },
-  { logo: '/logos/claude_cowork.png', thumb: '50+ Cowork Flows', badge: 'Claude Cowork', cat: 'Workflows', title: 'Claude Cowork Playbook', desc: 'Multi-document, multi-step work that turns raw inputs into finished deliverables.', pdf: '/pdfs/Menler_Claude_Cowork_Playbook.pdf' },
-  { logo: '/logos/claude_design.png', thumb: '80+ Design Prompts', badge: 'Claude Design', cat: 'Design', title: 'Claude Design Playbook', desc: 'Generate visuals, mockups, and on-brand design assets with Claude.', pdf: '/pdfs/Menler_Claude_Design_Playbook.pdf' },
-  { logo: '/logos/claude.svg', ms: '/logos/microsoft.png', thumb: '100+ prompts', badge: 'Claude MS', cat: 'Microsoft 365', title: 'Claude in MS', desc: 'Use Claude across Microsoft 365 — Word, Excel, PowerPoint, and Teams.', pdf: '/pdfs/Menler_Claude_Microsoft_Playbook.pdf' },
+  { logo: '/logos/claude_code-removebg-preview.png', thumb: 'Ship faster with Claude', badge: 'Claude Code', cat: 'Engineering', title: 'Claude Code Playbook', desc: 'Build, refactor, and ship real code with Claude in your terminal and editor.', pdf: '/pdfs/Menler_Claude_Code_Playbook.pdf' },
+  { logo: '/logos/claude.svg', thumb: 'Your Claude Chat Operating System', badge: 'Claude Chat OS', cat: 'Generalist', title: 'Claude Chat Playbook', desc: 'Everyday prompting — research, writing, analysis, and fast answers.', pdf: '/pdfs/Menler_Claude_Chat_Playbook.pdf' },
+  { logo: '/logos/claude_cowork.png', thumb: 'Multi-Step AI Workflows', badge: 'Claude Cowork', cat: 'Workflows', title: 'Claude Cowork Playbook', desc: 'Multi-document, multi-step work that turns raw inputs into finished deliverables.', pdf: '/pdfs/Menler_Claude_Cowork_Playbook.pdf' },
+  { logo: '/logos/claude_design.png', thumb: 'Design Faster with Claude', badge: 'Claude Design', cat: 'Design', title: 'Claude Design Playbook', desc: 'Generate visuals, mockups, and on-brand design assets with Claude.', pdf: '/pdfs/Menler_Claude_Design_Playbook.pdf' },
+  { logo: '/logos/claude.svg', ms: '/logos/microsoft.png', thumb: 'Microsoft 365 Workflows', badge: 'Claude MS', cat: 'Microsoft 365', title: 'Claude in MS', desc: 'Use Claude across Microsoft 365 — Word, Excel, PowerPoint, and Teams.', pdf: '/pdfs/Menler_Claude_Microsoft_Playbook.pdf' },
 ];
 
 // Group every project's tag class into a small set of filterable domains for
@@ -116,7 +116,7 @@ export default function Resources() {
         <div className="hero-ring r1" /><div className="hero-ring r2" /><div className="hero-ring rl1" />
         <div className="hero-inner">
           <h1 className="hero-h1">The Menler library.<br /><em>Free. Forever.</em></h1>
-          <p className="hero-sub">The knowledge layer for the AI-native workforce. Guides, prompts, templates, and frameworks designed for real-world execution.</p>
+          <p className="hero-sub" style={{ maxWidth: 'none' }}>The knowledge layer for the AI-native workforce.<br />Guides, prompts, templates, and frameworks designed for real-world execution.</p>
         </div>
       </section>
       {/* ── CLAUDE PLAYBOOK ── */}
@@ -172,9 +172,9 @@ export default function Resources() {
       {/* ── PROJECT BUILDS ── */}
       <section id="project-builds" className="res-preview alt" style={{ background: 'white' }}>
         <div className="preview-shell">
-          <p className="section-label">Library 03 · Project builds</p>
+          <p className="section-label">Project builds</p>
           <h2 className="section-h2">Every project.<br /><em>One place.</em></h2>
-          <p className="section-sub">The full set of fellow-built projects across domains. Open any one for the build doc, stack, and outcome.</p>
+          <p className="section-sub" style={{ maxWidth: 'none' }}>The full set of fellow-built projects across domains. Open any one for the build doc, stack, and outcome.</p>
           <div className="proj-filters" role="group" aria-label="Filter projects by domain">
             {PROJECT_FILTERS.map((f) => (
               <button
@@ -221,7 +221,7 @@ export default function Resources() {
         <div className="mini-lead-inner">
           <div className="mini-lead-copy">
             <h3>The Resources<br /><em>weekly drop.</em></h3>
-            <p>One email a week. A new prompt, a new guide, a new template, and one India AI signal. No filler. Maintained by the Menler instructor team.</p>
+            <p>One email a week. A new prompt, a new guide, a new template, and one India AI signal. No filler.</p>
           </div>
           {done ? (
             <p style={{ color: 'var(--placed)', fontWeight: 500 }}>✓ You're in. Every Friday morning.</p>
