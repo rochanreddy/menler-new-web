@@ -248,7 +248,7 @@ export default function Home() {
             <span className="prog-card-badge">No coding required</span>
             <p className="prog-card-title">Claude AI Generalist</p>
             <div className="prog-card-desc">
-              <p className="prog-card-sub">Master Claude AI, across business functions, get certified and graduate with a domain-focused portfolio.</p>
+              <p className="prog-card-sub">Master Claude AI, across all domains, get certified and graduate with a domain-focused portfolio.</p>
               <p className="prog-card-sub">Analyst · Finance Operations · Founder's Office · HR Operations · Marketing & Sales · Product Management</p>
             </div>
             <p className="prog-card-for">AI Builders from</p>

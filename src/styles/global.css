@@ -1678,8 +1678,10 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .apt-report-actions .runner-btn { color: var(--specialist); }
 @media (max-width: 600px) { .apt-roadmap { grid-template-columns: 1fr; } }
 
-.qb-filters { display: flex; flex-wrap: nowrap; justify-content: center; gap: 8px; max-width: none; margin: 24px auto 0; }
-.qb-filter-pill { flex: 0 0 auto; white-space: nowrap; background: #fff; border: 1px solid rgba(83,74,183,0.22); color: var(--ink); font-family: inherit; font-size: 12px; font-weight: 500; padding: 7px 13px; border-radius: 20px; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
+/* Equal-size, centered track pills (wrap into rows; every box same width). */
+.qb-filters { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 760px; margin: 24px auto 0; }
+.qb-filter-pill { flex: 0 0 150px; width: 150px; text-align: center; white-space: nowrap; background: #fff; border: 1px solid rgba(83,74,183,0.22); color: var(--ink); font-family: inherit; font-size: 12px; font-weight: 500; padding: 8px 10px; border-radius: 20px; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
+@media (max-width: 560px) { .qb-filter-pill { flex: 0 1 calc(50% - 4px); width: auto; max-width: calc(50% - 4px); font-size: 11.5px; } }
 .qb-filter-pill:hover { background: var(--cloud); border-color: var(--specialist); }
 .qb-filter-pill.active { background: var(--specialist); border-color: var(--specialist); color: #fff; }
 .qb-empty { grid-column: 1 / -1; text-align: center; color: var(--text-muted); font-size: 14px; padding: 24px 0; }
