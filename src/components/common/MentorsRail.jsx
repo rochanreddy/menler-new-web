@@ -39,6 +39,8 @@ function CaptainRow({ list, dir, tint }) {
   const drag = useRef({ down: false, startX: 0, startScroll: 0 });
   const paused = useRef(false);
   const inited = useRef(false);
+  const period = useRef(0);      // width of one copy of the list (for seamless wrap)
+  const resumeTimer = useRef(0); // re-arms auto-scroll after a touch swipe
 
   useEffect(() => {
     const el = railRef.current;
@@ -46,11 +48,14 @@ function CaptainRow({ list, dir, tint }) {
     let raf;
     // Cache the scroll width: reading el.scrollWidth every frame forces a
     // synchronous layout reflow, which is the main source of jank on mobile.
-    let half = 0;
+    // The track renders 3 identical copies — wrapping by exactly ONE copy width
+    // (`p`) lands on identical pixels, so the loop is seamless (no flicker).
+    let p = 0;
     const measure = () => {
-      half = el.scrollWidth / 2;
-      if (half > 0 && !inited.current) {
-        el.scrollLeft = dir === 'ltr' ? half : 0;
+      p = el.scrollWidth / 3;
+      period.current = p;
+      if (p > 0 && !inited.current) {
+        el.scrollLeft = dir === 'ltr' ? p : 0;
         inited.current = true;
       }
     };
@@ -64,17 +69,31 @@ function CaptainRow({ list, dir, tint }) {
     io.observe(el);
 
     const tick = () => {
-      if (visible && half > 0 && !paused.current && !drag.current.down) {
+      if (visible && p > 0 && !paused.current && !drag.current.down) {
         let next = el.scrollLeft + (dir === 'ltr' ? -0.5 : 0.5);
-        if (next >= half) next -= half;
-        else if (next <= 0) next += half;
+        if (next >= p) next -= p;
+        else if (next < 0) next += p;
         el.scrollLeft = next;
       }
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
-    return () => { cancelAnimationFrame(raf); ro.disconnect(); io.disconnect(); };
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); io.disconnect(); clearTimeout(resumeTimer.current); };
   }, [dir]);
+
+  // Touch: let the browser scroll the rail horizontally (native momentum) while
+  // the user swipes. Pause the auto-scroll during the gesture, then re-arm it —
+  // snapping the position back into one period so the resume never jumps.
+  const onTouchStart = () => { paused.current = true; clearTimeout(resumeTimer.current); };
+  const onTouchEnd = () => {
+    clearTimeout(resumeTimer.current);
+    resumeTimer.current = setTimeout(() => {
+      const el = railRef.current;
+      const p = period.current;
+      if (el && p > 0) el.scrollLeft = ((el.scrollLeft % p) + p) % p; // invisible (copies are identical)
+      paused.current = false;
+    }, 2200);
+  };
 
   const onPointerDown = (e) => {
     // Leave touch gestures alone so the page scrolls vertically without the rail
@@ -105,6 +124,9 @@ function CaptainRow({ list, dir, tint }) {
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+      onTouchCancel={onTouchEnd}
     >
       <div className="captains-track">
         {items.map((m, i) => (

@@ -8,6 +8,7 @@ import MentorsRail from '../components/common/MentorsRail';
 import ProjectModal from '../components/common/ProjectModal';
 import { useApply } from '../components/common/ApplyContext';
 import HiringJobs from '../components/common/HiringJobs';
+import PricingCard from '../components/common/PricingCard';
 import { KICKSTARTER_FAQS } from '../data/faqData';
 import { submitLead } from '../services/leadService';
 
@@ -26,6 +27,16 @@ const DAYS = [
   { num: '12', topic: 'External Automation', tool: 'n8n , zapier', cap: false },
   { num: '13', topic: 'Vibe Coding', tool: 'Lovable, Emergent', cap: false },
   { num: '14', topic: 'Capstone Build Sprint', tool: 'Live audience', cap: true },
+];
+
+// ── Pricing card content ──
+const KS_FEATS = [
+  ['4 live sessions across 2 weekends', 'Sat + Sun · 2 hrs each · Bengaluru or online'],
+  ['Claude OS hands-on build', 'Projects, Skills, Connectors, Routines — live'],
+  ['4 portfolio deliverables', 'AI OS · Research System · Automation · Capstone'],
+  ['Demo Day + peer review', 'Present live. Get feedback. Ship something real.'],
+  ['Menler AI Kickstarter Certificate', 'LinkedIn-shareable proof of hands-on AI work'],
+  ['AI resource library access', 'Prompt packs, templates, and tool guides'],
 ];
 
 // GenAI toolstack — same set/design as the home page (4 / 5 / 4 rows).
@@ -346,9 +357,32 @@ export default function Kickstarter() {
 
       {/* ── HIRING PARTNERS & ROLES ── */}
       <HiringJobs label="Internship opportunities" title="The internships" sectionStyle={{ paddingTop: 48 }} labelStyle={{ color: '#854F0B' }} titleStyle={{ color: '#854F0B' }} titleEmStyle={{ color: '#BA7517' }} />
-      <div style={{ textAlign: 'center', padding: '0 clamp(22px, 6vw, 40px) 56px', background: '#ffffff' }}>
-        <button className="btn-primary" style={{ background: '#BA7517', minWidth: 200 }} onClick={openApply}>Book a call</button>
-      </div>
+
+      {/* ── PRICING ── */}
+      <section className="section kp-section" style={{ background: '#ffffff', paddingTop: 8 }}>
+        <p className="section-label" style={{ textAlign: 'center', color: '#854F0B' }}>Pricing</p>
+        <h2 className="section-h2" style={{ textAlign: 'center', color: '#854F0B' }}>One price. <em style={{ color: '#BA7517' }}>Everything in.</em></h2>
+        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto 32px' }}>Your hands-on entry into AI — no prerequisites, no hidden fees.</p>
+
+        <PricingCard
+          pill="Entry Programme"
+          name="AI Kickstarter"
+          tagline="4 live sessions across 2 weekends — build a real Claude OS and ship 4 portfolio projects."
+          price="4,999"
+          priceSub="incl. all taxes · one-time"
+          onCta={openApply}
+          features={KS_FEATS}
+          chips={[
+            { label: 'Start date', value: 'Jul 12, 2026' },
+            { label: 'Duration', value: '2 Weekends' },
+            { label: 'Sessions', value: '4 Live · 8 hrs' },
+            { label: 'Format', value: 'Live online' },
+          ]}
+        />
+        <div style={{ textAlign: 'center', marginTop: 56 }}>
+          <button className="btn-primary" style={{ background: '#BA7517', minWidth: 200 }} onClick={openApply}>Book a call</button>
+        </div>
+      </section>
 
       {/* ── OUTCOMES ── */}
       <section className="hiring-section outcome-section" style={{ background: 'var(--parchment)', paddingTop: 48 }}>

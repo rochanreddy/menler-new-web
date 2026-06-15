@@ -8,8 +8,19 @@ import MentorsRail from '../components/common/MentorsRail';
 import ProjectModal from '../components/common/ProjectModal';
 import { useApply } from '../components/common/ApplyContext';
 import HiringJobs from '../components/common/HiringJobs';
+import PricingCard from '../components/common/PricingCard';
 import { GENERALIST_FAQS } from '../data/faqData';
 import { submitLead } from '../services/leadService';
+
+// ── Pricing card content ──
+const GEN_PRICE_FEATS = [
+  ['50 hrs live instruction over 10 weeks', 'Instructor-led · real questions in real-time'],
+  ['Build live projects with mentors', 'Portfolio-ready deliverables every week'],
+  ['LMS + community · 1-year access', 'Recordings, resources, and cohort community'],
+  ['1:1 doubt-solving sessions', 'Direct mentor access · no question left behind'],
+  ['Interview pipeline + placement support', "LinkedIn review · Menler's hiring network"],
+  ['Claude Specialist Certification', 'Menler-certified · LinkedIn-shareable'],
+];
 
 const CURRICULUM = [
   {
@@ -279,7 +290,7 @@ export default function Generalist() {
       </div>
 
       {/* ── CURRICULUM ── */}
-      <section className="section" style={{ background: 'white', paddingTop: 48 }}>
+      <section className="section curric-section--gen" style={{ background: 'white', paddingTop: 48 }}>
         <p className="section-label">10-week curriculum</p>
         <h2 className="section-h2">From curious<br /><em>to Claude Specialist.</em></h2>
         <p className="section-sub">Three phases, no code — just Claude mastery applied to your domain.<br />Pick a phase to open its modules, tools, and projects.</p>
@@ -457,9 +468,32 @@ export default function Generalist() {
 
       {/* ── HIRING PARTNERS ── */}
       <HiringJobs {...GEN_HIRING} />
-      <div style={{ background: '#ffffff', textAlign: 'center', padding: '0 var(--gutter) 48px' }}>
-        <button className="btn-primary" style={{ minWidth: 220 }} onClick={openApply}>Book a call</button>
-      </div>
+
+      {/* ── PRICING ── */}
+      <section className="section kp-section" style={{ background: '#ffffff', paddingTop: 8 }}>
+        <p className="section-label" style={{ textAlign: 'center' }}>Pricing</p>
+        <h2 className="section-h2" style={{ textAlign: 'center' }}>One fellowship. <em>Everything in.</em></h2>
+        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto 32px' }}>Ten weeks to AI-native — mentorship, real projects, certification, and placement support.</p>
+        <PricingCard
+          pill="Flagship Programme"
+          name="AI Generalist Fellowship"
+          tagline="10 weeks · 50 live hours — build a full Claude OS, ship 10+ projects, and earn a Specialist certificate."
+          price="59,999"
+          origPrice="79,999"
+          priceSub="incl. all taxes · EMI from ₹4,999/mo"
+          onCta={openApply}
+          features={GEN_PRICE_FEATS}
+          chips={[
+            { label: 'Start date', value: 'Jul 07, 2026' },
+            { label: 'Duration', value: '10 Weeks' },
+            { label: 'Sessions', value: '20 Live · 50 hrs' },
+            { label: 'Format', value: 'Live online' },
+          ]}
+        />
+        <div style={{ textAlign: 'center', marginTop: 56 }}>
+          <button className="btn-primary" style={{ minWidth: 220 }} onClick={openApply}>Book a call</button>
+        </div>
+      </section>
 
       {/* ── FAQ ── */}
       <section className="section" style={{ background: 'var(--parchment)', textAlign: 'center', paddingTop: 48 }}>
