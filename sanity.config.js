@@ -4,11 +4,12 @@ import { visionTool } from '@sanity/vision';
 import { orderableDocumentListDeskItem } from '@sanity/orderable-document-list';
 import { schemaTypes } from './schemaTypes';
 
-// Embedded at /studio (see src/pages/Studio.jsx + the route in src/App.jsx).
-// projectId/dataset come from Vite env; set them in .env after creating the
-// Sanity project. A harmless placeholder keeps the build green before then.
-const projectId = import.meta.env.VITE_SANITY_PROJECT_ID || 'placeholder';
-const dataset = import.meta.env.VITE_SANITY_DATASET || 'production';
+// Studio is hosted on Sanity (menler.sanity.studio) via `npx sanity deploy`.
+// projectId is hardcoded as the fallback so the hosted build (which doesn't read
+// Vite env) connects to the right project; the Vite env override is kept for any
+// local `sanity dev`.
+const projectId = (import.meta.env && import.meta.env.VITE_SANITY_PROJECT_ID) || 'f3b732bt';
+const dataset = (import.meta.env && import.meta.env.VITE_SANITY_DATASET) || 'production';
 
 // Pages that should exist as a single editable document (not a creatable list).
 const SINGLETONS = [
@@ -24,7 +25,6 @@ export default defineConfig({
   title: 'Menler',
   projectId,
   dataset,
-  basePath: '/studio',
   plugins: [
     structureTool({
       structure: (S, context) =>
