@@ -116,12 +116,17 @@ const pricingDoc = (p) => ({
 async function run() {
   console.log(`Seeding project ${projectId} / ${dataset} ...`);
 
+  // Remove any previous mentor/project docs (old dotted IDs published as drafts).
+  console.log('Clearing old mentor/project docs...');
+  await client.delete({ query: '*[_type == "mentor"]' });
+  await client.delete({ query: '*[_type == "project"]' });
+
   console.log('Mentors...');
   for (let i = 0; i < MENTORS.length; i++) {
     const m = MENTORS[i];
     const photo = await uploadImage(m.img);
     await client.createOrReplace({
-      _id: `mentor.${slugify(m.name)}`,
+      _id: `mentor-${slugify(m.name)}`,
       _type: 'mentor',
       orderRank: rank(i),
       name: m.name, role: m.role, company: m.company, photo,
@@ -134,7 +139,7 @@ async function run() {
     const p = PROJECTS[i];
     const image = await uploadImage(p.image);
     await client.createOrReplace({
-      _id: `project.${p.slug}`,
+      _id: `project-${p.slug}`,
       _type: 'project',
       orderRank: rank(i),
       title: p.title,
@@ -146,11 +151,13 @@ async function run() {
     console.log(`  ✓ ${p.title}`);
   }
 
-  console.log('Page singletons...');
-  await client.createOrReplace({ _id: 'homePage', _type: 'homePage' });
-  await client.createOrReplace({ _id: 'engineeringPage', _type: 'engineeringPage' });
-  await client.createOrReplace({ _id: 'kickstarterPage', _type: 'kickstarterPage', pricing: pricingDoc(KS_PRICING) });
-  await client.createOrReplace({ _id: 'generalistPage', _type: 'generalistPage', pricing: pricingDoc(GEN_PRICING) });
+  // Page singletons: createIfNotExists so we DON'T overwrite content you've
+  // already edited in the Studio (hero copy, pricing, etc.).
+  console.log('Page singletons (only if missing)...');
+  await client.createIfNotExists({ _id: 'homePage', _type: 'homePage' });
+  await client.createIfNotExists({ _id: 'engineeringPage', _type: 'engineeringPage' });
+  await client.createIfNotExists({ _id: 'kickstarterPage', _type: 'kickstarterPage', pricing: pricingDoc(KS_PRICING) });
+  await client.createIfNotExists({ _id: 'generalistPage', _type: 'generalistPage', pricing: pricingDoc(GEN_PRICING) });
   console.log('  ✓ home / engineering / kickstarter / generalist');
 
   console.log('\nDone. Open /studio to review, then Publish any changes.');
