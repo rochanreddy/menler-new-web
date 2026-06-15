@@ -44,7 +44,7 @@ export const PROJECTS = [
     },
   },
   {
-    slug: 'pmo-status-agent', image: '/projects/PMO_Status.png',
+    slug: 'pmo-status-agent', image: '/projects/pmo_status.png',
     tag: 'Product Management', tagCls: 't-pjm', title: 'PMO status agent',
     desc: 'Reads sprint boards, code commits, and stand-up notes — drafts the weekly leadership update with risks, slippage, and the asks for next week.',
     stack: ['MCP', 'Cowork', 'Skills'], outcome: 'Saves 6+ hrs/PM/week of status writing',
@@ -146,7 +146,7 @@ export const PROJECTS = [
     },
   },
   {
-    slug: 'internal-engineering-copilot', image: '/projects/Internal_Engineering_COPILOT.png', tag: 'Engineering', tagCls: 't-eng',
+    slug: 'internal-engineering-copilot', image: '/projects/Internal_engineering_copilot.png', tag: 'Engineering', tagCls: 't-eng',
     title: 'Internal engineering copilot',
     desc: 'An agent over internal repos and docs that scaffolds code, runs retrieval-grounded reviews, and drafts design notes without leaving the IDE.',
     stack: ['Claude CLI', 'Cursor', 'Python', 'RAG'], outcome: 'Design-to-first-PR time down ~40%',
@@ -188,7 +188,7 @@ export const PROJECTS = [
     },
   },
   {
-    slug: 'incident-management-auto-sync', image: '/projects/Incident_Management.png', tag: 'Analytics', tagCls: 't-analyst',
+    slug: 'incident-management-auto-sync', image: '/projects/Incident_management.png', tag: 'Analytics', tagCls: 't-analyst',
     title: 'Incident management auto-sync',
     desc: 'Connects ServiceNow to Google Sheets via API and Apps Script, classifies incidents, and refreshes live dashboards with no analyst input.',
     stack: ['ServiceNow', 'Google Apps Script', 'Gemini', 'Data Studio'], outcome: '~10 hrs/week of manual logging eliminated',
@@ -216,7 +216,7 @@ export const PROJECTS = [
     },
   },
   {
-    slug: 'account-research-solutioning-agent', image: '/projects/Account_Research.png', tag: 'Marketing & Sales', tagCls: 't-marketing',
+    slug: 'account-research-solutioning-agent', image: '/projects/Account_research.png', tag: 'Marketing & Sales', tagCls: 't-marketing',
     title: 'Account research & solutioning agent',
     desc: 'Gathers public company signals, synthesises an account brief, and drafts a tailored solution narrative plus a first-cut sales deck for the deal team.',
     stack: ['Claude', 'ChatGPT', 'Python'], outcome: 'Pre-meeting prep cut from ~4 hours to 30 mins',
@@ -272,7 +272,7 @@ export const PROJECTS = [
     },
   },
   {
-    slug: 'insight-on-demand-data-agent', image: '/projects/Insights_ON_Demand.png', tag: 'Analytics', tagCls: 't-analyst',
+    slug: 'insight-on-demand-data-agent', image: '/projects/Insights_on_demand.png', tag: 'Analytics', tagCls: 't-analyst',
     title: 'Insight-on-demand data agent',
     desc: 'Turns plain-English business questions into SQL, runs them against the warehouse, and returns narrated insights and charts for leadership.',
     stack: ['Claude', 'BigQuery', 'Comet'], outcome: "Self-serve analytics for the CEO's office — zero wait",
