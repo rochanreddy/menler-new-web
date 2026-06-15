@@ -12,7 +12,8 @@ import { useToast } from '../components/common/Toast';
 const Hero3D = lazy(() => import('../components/common/Hero3D'));
 import { HOME_FAQS } from '../data/faqData';
 import { submitLead } from '../services/leadService';
-import { PROJECTS } from '../data/projectsData';
+import { PROJECTS, PROJECTS_QUERY } from '../data/projectsData';
+import { useContent } from '../lib/useContent';
 import { BrandLogo } from '../components/common/PartnersMarquee';
 import HiringRail from '../components/common/HiringRail';
 import TestimonialsColumns from '../components/common/TestimonialsColumns';
@@ -155,8 +156,9 @@ export default function Home() {
     'always-on-content-outreach-engine',   // Marketing & Sales
     'pmo-status-agent',                    // Product Management
   ];
+  const projects = useContent(PROJECTS_QUERY, PROJECTS);
   const visibleProjects = HOME_PROJECT_SLUGS
-    .map(slug => PROJECTS.find(p => p.slug === slug))
+    .map(slug => projects.find(p => p.slug === slug))
     .filter(Boolean);
 
   // "Apply to the Fellowship" opens the lead form in a popup.
@@ -318,7 +320,7 @@ export default function Home() {
             </Reveal>
           ))}
         </div>
-        {PROJECTS.length > visibleProjects.length && (
+        {projects.length > visibleProjects.length && (
           <div style={{ textAlign: 'center', marginTop: 32 }}>
             <button className="btn-outline" style={{ color: 'var(--specialist)', borderColor: 'rgba(83,74,183,0.5)', minWidth: 200 }} onClick={() => go('/resources#project-builds')}>
               Explore more

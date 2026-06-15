@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
+import { useContent } from '../../lib/useContent';
 
-// NOTE: photos are portrait placeholders and company shows as a text wordmark —
-// swap `img` for real instructor photos (and add `logo`) when available.
+// Fallback content — used until Sanity is configured/populated (see useContent).
 const MENTORS = [
   { name: 'Anuttam G', role: 'Product Manager', company: 'Flipkart, Ex-BigBasket', img: '/mentors/Anuttam.png' },
   { name: 'Shashank Kumar', role: 'Technical Operations & Analytics Lead', company: 'Equifax', img: '/mentors/Shashank.png' },
@@ -25,14 +25,7 @@ const OVERLAYS = [
   'linear-gradient(120deg, #160f2b 0%, #0c0818 100%)',
 ];
 
-// Split the mentors into two non-overlapping halves — one per row. Because no
-// mentor is in both rows, the same face can never line up above/below itself
-// while the rows scroll in opposite directions. All mentors still appear.
-const HALF = Math.ceil(MENTORS.length / 2);
-const ROWS = [
-  { list: MENTORS.slice(0, HALF), dir: 'rtl', tint: 0 },
-  { list: MENTORS.slice(HALF), dir: 'ltr', tint: 4 },
-];
+const MENTORS_QUERY = '*[_type == "mentor"] | order(orderRank) { name, role, company, "img": photo.asset->url }';
 
 function CaptainRow({ list, dir, tint }) {
   const railRef = useRef(null);
@@ -147,14 +140,19 @@ function CaptainRow({ list, dir, tint }) {
   );
 }
 
-export default function MentorsRail({ style, className = '', rows = ROWS.length, bare = false, labelStyle = {}, titleStyle = {} } = {}) {
+export default function MentorsRail({ style, className = '', rows = 2, bare = false, labelStyle = {}, titleStyle = {} } = {}) {
   // `rows` caps how many scrolling rows render (default: all). `bare` skips the
   // section wrapper + heading so the rail can sit inside another section.
   // A single row has no "above/below" twin to worry about, so show every mentor
-  // there; multi-row uses the split halves so no face lines up with itself.
+  // there; multi-row uses split halves so no face lines up with itself.
+  const mentors = useContent(MENTORS_QUERY, MENTORS);
+  const half = Math.ceil(mentors.length / 2);
   const shown = rows === 1
-    ? [{ list: MENTORS, dir: ROWS[0].dir, tint: ROWS[0].tint }]
-    : ROWS.slice(0, Math.max(1, rows));
+    ? [{ list: mentors, dir: 'rtl', tint: 0 }]
+    : [
+        { list: mentors.slice(0, half), dir: 'rtl', tint: 0 },
+        { list: mentors.slice(half), dir: 'ltr', tint: 4 },
+      ].slice(0, Math.max(1, rows));
 
   const railRows = (
     <div className="captains-rows">

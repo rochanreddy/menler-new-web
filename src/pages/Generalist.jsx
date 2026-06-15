@@ -9,6 +9,7 @@ import ProjectModal from '../components/common/ProjectModal';
 import { useApply } from '../components/common/ApplyContext';
 import HiringJobs from '../components/common/HiringJobs';
 import PricingCard from '../components/common/PricingCard';
+import { useContent } from '../lib/useContent';
 import { GENERALIST_FAQS } from '../data/faqData';
 import { submitLead } from '../services/leadService';
 
@@ -21,6 +22,24 @@ const GEN_PRICE_FEATS = [
   ['Interview pipeline + placement support', "LinkedIn review · Menler's hiring network"],
   ['Claude Specialist Certification', 'Menler-certified · LinkedIn-shareable'],
 ];
+
+// Pricing card content (fallback) + GROQ for the generalistPage singleton.
+const GEN_PRICING = {
+  pill: 'Flagship Programme',
+  name: 'AI Generalist Fellowship',
+  tagline: '10 weeks · 50 live hours — build a full Claude OS, ship 10+ projects, and earn a Specialist certificate.',
+  price: '59,999',
+  origPrice: '79,999',
+  priceSub: 'incl. all taxes · EMI from ₹4,999/mo',
+  features: GEN_PRICE_FEATS,
+  chips: [
+    { label: 'Start date', value: 'Jul 07, 2026' },
+    { label: 'Duration', value: '10 Weeks' },
+    { label: 'Sessions', value: '20 Live · 50 hrs' },
+    { label: 'Format', value: 'Live online' },
+  ],
+};
+const GEN_PRICING_QUERY = '*[_type == "generalistPage"][0].pricing{pill, name, tagline, price, origPrice, priceSub, features, chips}';
 
 const CURRICULUM = [
   {
@@ -235,6 +254,7 @@ export default function Generalist() {
     }
   };
   const openApply = useApply();
+  const genPricing = useContent(GEN_PRICING_QUERY, GEN_PRICING);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -474,22 +494,7 @@ export default function Generalist() {
         <p className="section-label" style={{ textAlign: 'center' }}>Pricing</p>
         <h2 className="section-h2" style={{ textAlign: 'center' }}>One fellowship. <em>Everything in.</em></h2>
         <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto 32px' }}>Ten weeks to AI-native — mentorship, real projects, certification, and placement support.</p>
-        <PricingCard
-          pill="Flagship Programme"
-          name="AI Generalist Fellowship"
-          tagline="10 weeks · 50 live hours — build a full Claude OS, ship 10+ projects, and earn a Specialist certificate."
-          price="59,999"
-          origPrice="79,999"
-          priceSub="incl. all taxes · EMI from ₹4,999/mo"
-          onCta={openApply}
-          features={GEN_PRICE_FEATS}
-          chips={[
-            { label: 'Start date', value: 'Jul 07, 2026' },
-            { label: 'Duration', value: '10 Weeks' },
-            { label: 'Sessions', value: '20 Live · 50 hrs' },
-            { label: 'Format', value: 'Live online' },
-          ]}
-        />
+        <PricingCard {...genPricing} onCta={openApply} />
         <div style={{ textAlign: 'center', marginTop: 56 }}>
           <button className="btn-primary" style={{ minWidth: 220 }} onClick={openApply}>Book a call</button>
         </div>

@@ -9,6 +9,7 @@ import ProjectModal from '../components/common/ProjectModal';
 import { useApply } from '../components/common/ApplyContext';
 import HiringJobs from '../components/common/HiringJobs';
 import PricingCard from '../components/common/PricingCard';
+import { useContent } from '../lib/useContent';
 import { KICKSTARTER_FAQS } from '../data/faqData';
 import { submitLead } from '../services/leadService';
 
@@ -38,6 +39,23 @@ const KS_FEATS = [
   ['Menler AI Kickstarter Certificate', 'LinkedIn-shareable proof of hands-on AI work'],
   ['AI resource library access', 'Prompt packs, templates, and tool guides'],
 ];
+
+// Pricing card content (fallback) + GROQ for the kickstarterPage singleton.
+const KS_PRICING = {
+  pill: 'Entry Programme',
+  name: 'AI Kickstarter',
+  tagline: '4 live sessions across 2 weekends — build a real Claude OS and ship 4 portfolio projects.',
+  price: '4,999',
+  priceSub: 'incl. all taxes · one-time',
+  features: KS_FEATS,
+  chips: [
+    { label: 'Start date', value: 'Jul 12, 2026' },
+    { label: 'Duration', value: '2 Weekends' },
+    { label: 'Sessions', value: '4 Live · 8 hrs' },
+    { label: 'Format', value: 'Live online' },
+  ],
+};
+const KS_PRICING_QUERY = '*[_type == "kickstarterPage"][0].pricing{pill, name, tagline, price, origPrice, priceSub, features, chips}';
 
 // GenAI toolstack — same set/design as the home page (4 / 5 / 4 rows).
 const TOOLS = [
@@ -131,6 +149,7 @@ export default function Kickstarter() {
   const [activeModule, setActiveModule] = useState(0);
   const moduleDetailRef = useRef(null);
   const openApply = useApply();
+  const ksPricing = useContent(KS_PRICING_QUERY, KS_PRICING);
 
   // Pick a module. On mobile, the detail panel stacks below the module list,
   // so scroll it into view (after the state-driven re-render) to make the
@@ -364,21 +383,7 @@ export default function Kickstarter() {
         <h2 className="section-h2" style={{ textAlign: 'center', color: '#854F0B' }}>One price. <em style={{ color: '#BA7517' }}>Everything in.</em></h2>
         <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto 32px' }}>Your hands-on entry into AI — no prerequisites, no hidden fees.</p>
 
-        <PricingCard
-          pill="Entry Programme"
-          name="AI Kickstarter"
-          tagline="4 live sessions across 2 weekends — build a real Claude OS and ship 4 portfolio projects."
-          price="4,999"
-          priceSub="incl. all taxes · one-time"
-          onCta={openApply}
-          features={KS_FEATS}
-          chips={[
-            { label: 'Start date', value: 'Jul 12, 2026' },
-            { label: 'Duration', value: '2 Weekends' },
-            { label: 'Sessions', value: '4 Live · 8 hrs' },
-            { label: 'Format', value: 'Live online' },
-          ]}
-        />
+        <PricingCard {...ksPricing} onCta={openApply} />
         <div style={{ textAlign: 'center', marginTop: 56 }}>
           <button className="btn-primary" style={{ background: '#BA7517', minWidth: 200 }} onClick={openApply}>Book a call</button>
         </div>

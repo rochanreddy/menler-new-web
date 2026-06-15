@@ -2,7 +2,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Footer from '../components/layout/Footer';
 import CtaBanner from '../components/common/CtaBanner';
 import PdfView from '../components/common/PdfView';
-import { PROJECTS } from '../data/projectsData';
+import { PROJECTS, PROJECTS_QUERY } from '../data/projectsData';
+import { useContent } from '../lib/useContent';
 
 // Per-project slide deck (PPTX in /public/project_decks), shown on the detail page.
 const DECKS = {
@@ -33,7 +34,8 @@ export default function Projects() {
   const navigate = useNavigate();
   const go = (path) => { navigate(path); window.scrollTo(0, 0); };
 
-  const project = PROJECTS.find(p => p.slug === slug);
+  const projects = useContent(PROJECTS_QUERY, PROJECTS);
+  const project = projects.find(p => p.slug === slug);
   const deck = DECKS[slug];
 
   if (!project) {

@@ -1,5 +1,13 @@
 // Portfolio projects shown on the Home page and the /projects pages.
 // `slug` is the URL key used by /projects/:slug.
+
+// GROQ to read the same shape from Sanity (used via useContent; PROJECTS below
+// is the fallback). Image/deck resolve to URL strings to match the fallback.
+export const PROJECTS_QUERY = `*[_type == "project"] | order(orderRank) {
+  "slug": slug.current, title, "image": image.asset->url, tag, tagCls, desc, stack, outcome,
+  "deck": deck.asset->url, doc
+}`;
+
 export const PROJECTS = [
   {
     slug: 'ceo-decision-intelligence-agent', image: '/projects/CEO_Decession.png',

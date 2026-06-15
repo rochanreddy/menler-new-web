@@ -38,12 +38,16 @@ export default function PricingCard({
 
       <p className="kp-fhdr">What's included</p>
       <div className="kp-feats">
-        {features.map(([t, d]) => (
-          <div className="kp-feat" key={t}>
-            <span className="kp-chk">{IcoCheck}</span>
-            <div><p className="kp-ft">{t}</p><p className="kp-fd">{d}</p></div>
-          </div>
-        ))}
+        {features.map((f) => {
+          const title = Array.isArray(f) ? f[0] : f.title;
+          const detail = Array.isArray(f) ? f[1] : f.detail;
+          return (
+            <div className="kp-feat" key={title}>
+              <span className="kp-chk">{IcoCheck}</span>
+              <div><p className="kp-ft">{title}</p><p className="kp-fd">{detail}</p></div>
+            </div>
+          );
+        })}
       </div>
 
       <div className="kp-chips">
