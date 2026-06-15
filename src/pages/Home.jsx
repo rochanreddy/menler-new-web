@@ -265,9 +265,6 @@ export default function Home() {
                 <span className="nb-chip">10 Weeks</span>
                 <span className="nb-chip">50 Hours</span>
                 <span className="nb-chip">Live Cohorts</span>
-                <span className="nb-chip">Mentorship</span>
-                <span className="nb-chip">Talent Network</span>
-                <span className="nb-chip">Career Development</span>
               </div>
             </div>
             <button className="prog-card-cta" onClick={() => go('/generalist')}>Explore Generalist Program</button>
@@ -293,9 +290,6 @@ export default function Home() {
                 <span className="nb-chip">12 Weeks</span>
                 <span className="nb-chip">60 Hours</span>
                 <span className="nb-chip">Live Cohorts</span>
-                <span className="nb-chip">Mentorship</span>
-                <span className="nb-chip">Talent Network</span>
-                <span className="nb-chip">Career Development</span>
               </div>
             </div>
             <button className="prog-card-cta" onClick={() => go('/engineering')}>Explore Engineering Program</button>

@@ -404,8 +404,8 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 }
 /* Split the module detail: lesson plan + project on the left, tool stack on the right */
 /* ── Curriculum accordion (Generalist 12-week) ── */
-.curric-acc { margin-top: 36px; background: var(--ink); border: 1px solid rgba(175,169,236,0.18); border-radius: 18px; overflow: hidden; }
-.curric-acc-item { border-bottom: 1px solid rgba(175,169,236,0.12); }
+.curric-acc { margin-top: 36px; background: var(--ink); border: 3px solid rgba(175,169,236,0.55); border-radius: 18px; overflow: hidden; }
+.curric-acc-item { border-bottom: 3px solid rgba(175,169,236,0.3); }
 .curric-acc-item:last-child { border-bottom: none; }
 .curric-acc-head { width: 100%; text-align: left; background: none; border: none; cursor: pointer; padding: 22px 28px; display: flex; align-items: center; gap: 18px; font-family: inherit; transition: background .15s; }
 .curric-acc-head:hover { background: rgba(175,169,236,0.06); }
@@ -423,7 +423,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .curric-acc-body { padding: 4px 18px 24px; }
 }
 /* Nested per-week dropdowns inside a phase */
-.curric-weeks { list-style: none; margin: 0; padding: 0; border: 1px solid rgba(175,169,236,0.16); border-radius: 12px; overflow: hidden; flex: 1; display: flex; flex-direction: column; }
+.curric-weeks { list-style: none; margin: 0; padding: 0; border: 1.5px solid rgba(175,169,236,0.28); border-radius: 12px; overflow: hidden; flex: 1; display: flex; flex-direction: column; }
 /* Darken the week list so it reads as an index/nav panel — stronger on desktop,
    a subtle tint on mobile. */
 @media (min-width: 641px) {
@@ -831,11 +831,12 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .captains-sub { font-size: 15px; color: var(--text-muted); max-width: none; line-height: 1.6; }
 .captains-rows { display: flex; flex-direction: column; gap: 16px; }
 .captains-rail {
-  overflow-x: auto; overflow-y: hidden; cursor: grab; user-select: none;
+  overflow: hidden; cursor: grab; user-select: none;
   margin: 0 calc(-1 * var(--gutter)); padding: 0 var(--gutter);
-  /* Allow horizontal thumb-swipe through the cards while vertical page scroll
-     still passes through. Keep the rail on its own compositor layer (less flicker). */
-  touch-action: pan-x pan-y; will-change: scroll-position;
+  /* Continuous auto-scroll marquee: disable horizontal touch-scroll so a thumb
+     on the rail can't stop it; vertical page scroll still passes through.
+     Keep the rail on its own compositor layer (less flicker). */
+  touch-action: pan-y; will-change: scroll-position;
   scrollbar-width: none; -ms-overflow-style: none;
 }
 .captains-rail::-webkit-scrollbar { display: none; }
@@ -1223,7 +1224,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .hiring-marquee .partner-logo-img { height: 30px; max-width: 116px; }
 /* Multi-row auto-scrolling logo rail (like the mentors rail) */
 .logorail-rows { display: flex; flex-direction: column; gap: 14px; margin-top: 20px; }
-.logorail-rail { overflow: hidden; cursor: grab; }
+.logorail-rail { overflow: hidden; cursor: grab; touch-action: pan-y; user-select: none; }
 .logorail-rail:active { cursor: grabbing; }
 .logorail-track { display: flex; gap: 14px; width: max-content; }
 .logorail-track .partner-chip { min-width: 156px; height: 66px; flex: 0 0 auto; }

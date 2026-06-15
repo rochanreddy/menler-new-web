@@ -74,20 +74,9 @@ function CaptainRow({ list, dir, tint }) {
     return () => { cancelAnimationFrame(raf); ro.disconnect(); io.disconnect(); clearTimeout(resumeTimer.current); };
   }, [dir]);
 
-  // Touch: let the browser scroll the rail horizontally (native momentum) while
-  // the user swipes. Pause the auto-scroll during the gesture, then re-arm it —
-  // snapping the position back into one period so the resume never jumps.
-  const onTouchStart = () => { paused.current = true; clearTimeout(resumeTimer.current); };
-  const onTouchEnd = () => {
-    clearTimeout(resumeTimer.current);
-    resumeTimer.current = setTimeout(() => {
-      const el = railRef.current;
-      const p = period.current;
-      if (el && p > 0) el.scrollLeft = ((el.scrollLeft % p) + p) % p; // invisible (copies are identical)
-      paused.current = false;
-    }, 2200);
-  };
-
+  // Touch does NOT pause the rail — it keeps auto-scrolling at a steady pace
+  // (the CSS disables horizontal touch-scroll so a thumb on the rail can't stop
+  // it; vertical page scroll still passes through via touch-action: pan-y).
   const onPointerDown = (e) => {
     // Leave touch gestures alone so the page scrolls vertically without the rail
     // capturing the pointer (which caused the stutter on mobile). Drag = mouse only.
@@ -111,15 +100,12 @@ function CaptainRow({ list, dir, tint }) {
     <div
       className="captains-rail"
       ref={railRef}
-      onMouseEnter={() => { paused.current = true; }}
-      onMouseLeave={() => { paused.current = false; }}
+      onPointerEnter={(e) => { if (e.pointerType === 'mouse') paused.current = true; }}
+      onPointerLeave={(e) => { if (e.pointerType === 'mouse') paused.current = false; }}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
-      onTouchStart={onTouchStart}
-      onTouchEnd={onTouchEnd}
-      onTouchCancel={onTouchEnd}
     >
       <div className="captains-track">
         {items.map((m, i) => (

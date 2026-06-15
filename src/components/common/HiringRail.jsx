@@ -31,6 +31,9 @@ function LogoRow({ list, dir }) {
   }, [dir]);
 
   const onPointerDown = (e) => {
+    // Drag = mouse only; touch must not capture/pause (keeps the marquee moving
+    // and lets vertical page scroll pass through).
+    if (e.pointerType === 'touch') return;
     const el = railRef.current;
     drag.current = { down: true, startX: e.clientX, startScroll: el.scrollLeft };
     el.setPointerCapture?.(e.pointerId);
@@ -50,8 +53,8 @@ function LogoRow({ list, dir }) {
     <div
       className="logorail-rail"
       ref={railRef}
-      onMouseEnter={() => { paused.current = true; }}
-      onMouseLeave={() => { paused.current = false; }}
+      onPointerEnter={(e) => { if (e.pointerType === 'mouse') paused.current = true; }}
+      onPointerLeave={(e) => { if (e.pointerType === 'mouse') paused.current = false; }}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
