@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Footer from '../components/layout/Footer';
 import CtaBanner from '../components/common/CtaBanner';
 import PdfView from '../components/common/PdfView';
+import Seo, { SITE_URL } from '../components/common/Seo';
 import { PROJECTS, PROJECTS_QUERY } from '../data/projectsData';
 import { useContent } from '../lib/useContent';
 
@@ -43,6 +44,7 @@ export default function Projects() {
   if (!project) {
     return (
       <>
+        <Seo title="Project not found — Menler" path={`/projects/${slug}`} noindex />
         <section className="section" style={{ background: 'var(--parchment)', textAlign: 'center', minHeight: '50vh' }}>
           <h2 className="section-h2">Project not found</h2>
           <p className="section-sub">That project doesn’t exist or has moved.</p>
@@ -56,9 +58,28 @@ export default function Projects() {
   }
 
   const { doc } = project;
+  const ogImage = project.image ? (project.image.startsWith('http') ? project.image : SITE_URL + project.image) : undefined;
 
   return (
     <>
+      <Seo
+        title={`${project.title} — Menler Project`}
+        description={project.desc}
+        keywords={`${project.title}, ${project.tag}, AI project, ${(project.stack || []).join(', ')}, Menler`}
+        path={`/projects/${slug}`}
+        image={ogImage}
+        type="article"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'CreativeWork',
+          name: project.title,
+          description: project.desc,
+          ...(ogImage ? { image: ogImage } : {}),
+          url: `${SITE_URL}/projects/${slug}`,
+          keywords: (project.stack || []).join(', '),
+          isPartOf: { '@type': 'WebSite', name: 'Menler', url: SITE_URL },
+        }}
+      />
       {/* ── PROJECT PREVIEW HERO ── */}
       <section className="proj-detail-hero">
         <div className="proj-detail-inner">
