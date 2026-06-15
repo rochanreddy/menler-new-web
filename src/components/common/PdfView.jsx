@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
-import PdfWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?worker';
+// Resolve the worker as a bundled asset URL (canonical Vite + pdf.js pattern).
+// pdf.js v6 ships an ES-module worker, so it's loaded as a module worker.
+import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 
-// Vite's `?worker` import gives a real module worker — using workerPort avoids
-// the classic-vs-module worker mismatch that makes getDocument fail to load.
-pdfjsLib.GlobalWorkerOptions.workerPort = new PdfWorker();
+pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
 
 /**
  * Renders a PDF inline by drawing each page to a <canvas>. Unlike an <iframe>,
@@ -15,6 +15,7 @@ pdfjsLib.GlobalWorkerOptions.workerPort = new PdfWorker();
 export default function PdfView({ url, className = '' }) {
   const pagesRef = useRef(null);
   const [status, setStatus] = useState('loading'); // loading | ready | error
+  const [errMsg, setErrMsg] = useState('');
 
   useEffect(() => {
     if (!url) return undefined;
@@ -25,7 +26,7 @@ export default function PdfView({ url, className = '' }) {
 
     (async () => {
       try {
-        const pdf = await pdfjsLib.getDocument(url).promise;
+        const pdf = await pdfjsLib.getDocument({ url }).promise;
         if (cancelled) return;
         const cssWidth = (container && container.clientWidth) || 600;
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -43,8 +44,9 @@ export default function PdfView({ url, className = '' }) {
           if (cancelled) return;
         }
         if (!cancelled) setStatus('ready');
-      } catch {
-        if (!cancelled) setStatus('error');
+      } catch (e) {
+        console.error('PdfView failed to load', url, e);
+        if (!cancelled) { setErrMsg(e?.message || String(e)); setStatus('error'); }
       }
     })();
 
@@ -52,10 +54,10 @@ export default function PdfView({ url, className = '' }) {
   }, [url]);
 
   return (
-    <div className={`pdfview ${className}`}>
+    <div className={`pdfview ${className}`} data-lenis-prevent>
       <div ref={pagesRef} className="pdfview-pages" />
       {status === 'loading' && <p className="pdfview-msg">Loading document…</p>}
-      {status === 'error' && <p className="pdfview-msg">Couldn’t load the document.</p>}
+      {status === 'error' && <p className="pdfview-msg">Couldn’t load the document.{errMsg ? ` (${errMsg})` : ''}</p>}
     </div>
   );
 }

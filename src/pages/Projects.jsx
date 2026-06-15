@@ -1,7 +1,32 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import Footer from '../components/layout/Footer';
 import CtaBanner from '../components/common/CtaBanner';
+import PdfView from '../components/common/PdfView';
 import { PROJECTS } from '../data/projectsData';
+
+// Per-project slide deck (PPTX in /public/project_decks), shown on the detail page.
+const DECKS = {
+  'ceo-decision-intelligence-agent': '/project_decks/CEO_Decision_Intelligence_Agent.pdf',
+  'deal-flow-triage-agent': '/project_decks/Deal_Flow_Triage_Agent.pdf',
+  'insights-to-prd-pipeline': '/project_decks/Insights_to_PRD_Pipeline.pdf',
+  'pmo-status-agent': '/project_decks/PMO_Status_Agent.pdf',
+  'production-rag-pipeline-custom-mcp': '/project_decks/Production_RAG_Pipeline.pdf',
+  'research-synthesis-insight-engine': '/project_decks/Research_Synthesis_Engine.pdf',
+  'sop-automation-suite': '/project_decks/SOP_Automation_Suite.pdf',
+  'always-on-content-outreach-engine': '/project_decks/Content_Outreach_Engine.pdf',
+  'retail-support-rag-service': '/project_decks/Retail_Support_RAG.pdf',
+  'api-doc-summariser-agent': '/project_decks/API_Doc_Summariser.pdf',
+  'internal-engineering-copilot': '/project_decks/Internal_Engineering_Copilot.pdf',
+  'quote-to-order-automation-engine': '/project_decks/Quote_to_Order_Engine.pdf',
+  'requirement-to-dashboard-pipeline': '/project_decks/Requirement_to_Dashboard.pdf',
+  'incident-management-auto-sync': '/project_decks/Incident_Management_Auto_Sync.pdf',
+  'ai-job-matching-workflow': '/project_decks/AI_Job_Matching_Workflow.pdf',
+  'account-research-solutioning-agent': '/project_decks/Account_Research_Agent.pdf',
+  'crm-hygiene-autopilot': '/project_decks/CRM_Hygiene_Autopilot.pdf',
+  'end-to-end-seo-content-agent': '/project_decks/SEO_Content_Agent.pdf',
+  'inbound-email-triage-agent': '/project_decks/Inbound_Email_Triage_Agent.pdf',
+  'insight-on-demand-data-agent': '/project_decks/Insight_on_Demand_Agent.pdf',
+};
 
 export default function Projects() {
   const { slug } = useParams();
@@ -9,6 +34,7 @@ export default function Projects() {
   const go = (path) => { navigate(path); window.scrollTo(0, 0); };
 
   const project = PROJECTS.find(p => p.slug === slug);
+  const deck = DECKS[slug];
 
   if (!project) {
     return (
@@ -39,6 +65,18 @@ export default function Projects() {
           <p className="proj-outcome" style={{ marginTop: 16 }}>{project.outcome}</p>
         </div>
       </section>
+
+      {/* ── PROJECT DECK ── */}
+      {deck && (
+        <section className="section" style={{ background: 'var(--parchment)', paddingTop: 36, paddingBottom: 36 }}>
+          <div className="proj-doc proj-doc--page">
+            <h4 className="proj-doc-h" style={{ marginTop: 0 }}>Project deck</h4>
+            <div className="proj-deck">
+              <PdfView url={deck} />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── DESCRIPTION & PROBLEM STATEMENT ── */}
       <section className="section" style={{ background: 'white' }}>
