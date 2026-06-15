@@ -157,6 +157,9 @@ export default function Home() {
     'pmo-status-agent',                    // Product Management
   ];
   const projects = useContent(PROJECTS_QUERY, PROJECTS);
+  // Editable page copy (hero + CTA) from Sanity; each field falls back to the
+  // original hardcoded design when not set in the Studio.
+  const home = useContent('*[_type == "homePage"][0]{hero, ctaBanner}', null);
   const visibleProjects = HOME_PROJECT_SLUGS
     .map(slug => projects.find(p => p.slug === slug))
     .filter(Boolean);
@@ -201,21 +204,33 @@ export default function Home() {
           <Suspense fallback={null}><Hero3D /></Suspense>
         </div>
         <div className="hero-inner">
-          <p className="hero-eyebrow">Menler Fellowship</p>
-          <h1 className="hero-h1">Your turning point<br /><em>in the AI era.</em></h1>
-          <p className="hero-sub">India's only Claude AI Specialist Fellowship.<strong style={{ color: '#EEEDFE', fontWeight: 350 }}><br />Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
+          <p className="hero-eyebrow">{home?.hero?.eyebrow || 'Menler Fellowship'}</p>
+          {home?.hero?.heading
+            ? <h1 className="hero-h1" style={{ whiteSpace: 'pre-line' }}>{home.hero.heading}</h1>
+            : <h1 className="hero-h1">Your turning point<br /><em>in the AI era.</em></h1>}
+          {home?.hero?.sub
+            ? <p className="hero-sub" style={{ whiteSpace: 'pre-line' }}>{home.hero.sub}</p>
+            : <p className="hero-sub">India's only Claude AI Specialist Fellowship.<strong style={{ color: '#EEEDFE', fontWeight: 350 }}><br />Learning that ships. Credential that counts. Outcomes that compound.</strong></p>}
           <div className="hero-actions">
             <button className="btn-primary" onClick={scrollToPrograms}>Check Fellowship Program</button>
             <button className="btn-outline" onClick={() => go('/aptitude')}>Take the AI Aptitude Test</button>
           </div>
           <p className="hero-metrics-label">Menler Fellowship · at a glance</p>
-          <div className="hero-stats">
-            <div><span className="hero-stat-num">90%</span><span className="hero-stat-lbl">Interview Pipeline<br />Target</span></div>
-            <div><span className="hero-stat-num">25+</span><span className="hero-stat-lbl">Hiring<br />Associations</span></div>
-            <div><span className="hero-stat-num">20+</span><span className="hero-stat-lbl">AI Builders<br />& Operators</span></div>
-            <div><span className="hero-stat-num">12</span><span className="hero-stat-lbl">Weeks Intensive<br />Fellowship</span></div>
-            <div><span className="hero-stat-num">6+</span><span className="hero-stat-lbl">Domain<br />Tracks</span></div>
-          </div>
+          {home?.hero?.stats?.length ? (
+            <div className="hero-stats">
+              {home.hero.stats.map((s, i) => (
+                <div key={i}><span className="hero-stat-num">{s.value}</span><span className="hero-stat-lbl" style={{ whiteSpace: 'pre-line' }}>{s.label}</span></div>
+              ))}
+            </div>
+          ) : (
+            <div className="hero-stats">
+              <div><span className="hero-stat-num">90%</span><span className="hero-stat-lbl">Interview Pipeline<br />Target</span></div>
+              <div><span className="hero-stat-num">25+</span><span className="hero-stat-lbl">Hiring<br />Associations</span></div>
+              <div><span className="hero-stat-num">20+</span><span className="hero-stat-lbl">AI Builders<br />& Operators</span></div>
+              <div><span className="hero-stat-num">12</span><span className="hero-stat-lbl">Weeks Intensive<br />Fellowship</span></div>
+              <div><span className="hero-stat-num">6+</span><span className="hero-stat-lbl">Domain<br />Tracks</span></div>
+            </div>
+          )}
         </div>
         </div>
       </section>
@@ -508,10 +523,10 @@ export default function Home() {
 
       {/* ── CTA ── */}
       <CtaBanner
-        badge="Applications open · Limited seats per program"
-        title="Your Menler starts here."
-        subtitle={<><span style={{ whiteSpace: 'nowrap' }}>Choose your program.</span> <span style={{ whiteSpace: 'nowrap' }}>Build your credential.</span> <span style={{ whiteSpace: 'nowrap' }}>Get placed.</span></>}
-        buttonText="Apply to the Fellowship"
+        badge={home?.ctaBanner?.badge || 'Applications open · Limited seats per program'}
+        title={home?.ctaBanner?.title || 'Your Menler starts here.'}
+        subtitle={home?.ctaBanner?.subtitle || <><span style={{ whiteSpace: 'nowrap' }}>Choose your program.</span> <span style={{ whiteSpace: 'nowrap' }}>Build your credential.</span> <span style={{ whiteSpace: 'nowrap' }}>Get placed.</span></>}
+        buttonText={home?.ctaBanner?.buttonText || 'Apply to the Fellowship'}
         onButtonClick={() => setShowApply(true)}
       />
 
