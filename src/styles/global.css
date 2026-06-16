@@ -1682,10 +1682,10 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .qb-filters { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 760px; margin: 24px auto 0; }
 .qb-filter-pill { flex: 0 0 150px; width: 150px; text-align: center; white-space: nowrap; background: #fff; border: 1px solid rgba(83,74,183,0.22); color: var(--ink); font-family: inherit; font-size: 12px; font-weight: 500; padding: 8px 10px; border-radius: 20px; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
 @media (max-width: 560px) { .qb-filter-pill { flex: 0 1 calc(50% - 4px); width: auto; max-width: calc(50% - 4px); font-size: 11.5px; } }
-/* Wide desktop: all pills in one equal-width row (only where they fit cleanly). */
+/* Wide desktop: all pills in one row, each sized to its own label (no clipping). */
 @media (min-width: 1180px) {
-  .qb-filters { flex-wrap: nowrap; max-width: 1150px; }
-  .qb-filter-pill { flex: 1 1 0; width: auto; max-width: none; min-width: 0; font-size: 11px; padding: 8px 6px; }
+  .qb-filters { flex-wrap: nowrap; max-width: 1180px; gap: 10px; }
+  .qb-filter-pill { flex: 0 0 auto; width: auto; max-width: none; min-width: 0; font-size: 12px; padding: 8px 16px; }
 }
 .qb-filter-pill:hover { background: var(--cloud); border-color: var(--specialist); }
 .qb-filter-pill.active { background: var(--specialist); border-color: var(--specialist); color: #fff; }
