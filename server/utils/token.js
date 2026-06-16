@@ -21,11 +21,15 @@ export function sessionCookieOptions() {
   // In production the frontend and API live on different domains (e.g. Vercel +
   // Render), so the cookie must be SameSite=None + Secure to be sent cross-site.
   // Locally we keep Lax/non-secure so http://localhost works without HTTPS.
-  const isProd = process.env.NODE_ENV === 'production';
+  // Detect cross-site from NODE_ENV OR an https FRONTEND_URL, so it works even
+  // when the host (e.g. Render) doesn't set NODE_ENV=production.
+  const crossSite =
+    process.env.NODE_ENV === 'production' ||
+    (process.env.FRONTEND_URL || '').startsWith('https://');
   return {
     httpOnly: true,
-    sameSite: isProd ? 'none' : 'lax',
-    secure: isProd,
+    sameSite: crossSite ? 'none' : 'lax',
+    secure: crossSite,
     maxAge: SESSION_MAX_AGE_MS,
     path: '/',
   };

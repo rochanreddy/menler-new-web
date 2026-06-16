@@ -22,11 +22,15 @@ export function verifyAdmin(token) {
 export function adminCookieOptions() {
   // Cross-domain in production (frontend and API on different hosts) needs
   // SameSite=None + Secure; locally we keep Lax/non-secure for http://localhost.
-  const isProd = process.env.NODE_ENV === 'production';
+  // Detect cross-site from NODE_ENV OR an https FRONTEND_URL, so it works even
+  // when the host (e.g. Render) doesn't set NODE_ENV=production.
+  const crossSite =
+    process.env.NODE_ENV === 'production' ||
+    (process.env.FRONTEND_URL || '').startsWith('https://');
   return {
     httpOnly: true,
-    sameSite: isProd ? 'none' : 'lax',
-    secure: isProd,
+    sameSite: crossSite ? 'none' : 'lax',
+    secure: crossSite,
     maxAge: ADMIN_MAX_AGE_MS,
     path: '/',
   };
