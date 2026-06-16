@@ -247,9 +247,12 @@ export default function Hero3D() {
 
     let activeIdx = -1;   // which domain label currently owns the burst
     let burstOpen = 0;    // 0 = collapsed, 1 = fully fanned out
-    let zAmp = 1;         // running estimate of the label z-amplitude (grows to the true value; for normalising)
-    const zArr = new Array(DOMAINS.length).fill(0);
+    const nxArr = new Array(DOMAINS.length).fill(0); // normalised screen x per label (-1 left … +1 right)
+    const wzArr = new Array(DOMAINS.length).fill(0); // world z per label (>0 = near side, facing camera)
+    // Burst is full open on the right of the orbit and shrinks to closed on the left.
+    const OPEN_RIGHT = 0.45, OPEN_LEFT = -0.45;
     const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+    const openOf = (i) => (wzArr[i] > 0 ? smooth(OPEN_LEFT, OPEN_RIGHT, nxArr[i]) : 0);
 
     // Lights
     scene.add(new THREE.AmbientLight(0xffffff, 0.65));
@@ -286,7 +289,7 @@ export default function Hero3D() {
       rotX = Math.max(-1.2, Math.min(1.2, rotX));
       group.rotation.x = rotX;
       group.rotation.y = rotY;
-      dotsSpin.rotation.z += 0.0045; // dots travel along the ring line (paced so each name can be read)
+      dotsSpin.rotation.z += 0.008; // dots travel along the ring line (quicker pass right→left)
       // Hide a label exactly when the sphere sits between it and the camera.
       // Test the camera→label segment against the sphere (centred at the world
       // origin, radius RADIUS): if its closest point to the centre falls inside
@@ -307,28 +310,29 @@ export default function Hero3D() {
       }
 
       // ── Drive the sub-skill burst ──
-      // The label nearest the camera (largest world z) is "at the middle". The
-      // burst opens in proportion to how far that label leads the runner-up, so
-      // it fans out at a name's peak and closes during the hand-off to the next.
-      let bestIdx = 0, bestZ = -Infinity, secondZ = -Infinity;
+      // A name opens as it comes round on the RIGHT of the orbit, then shrinks
+      // and closes as it travels to the LEFT. The burst sticks to one name for
+      // its whole right→left pass, then the next name entering on the right
+      // takes over.
+      let pickIdx = -1, pickX = -Infinity;
       for (let i = 0; i < labels.length; i++) {
         labels[i].getWorldPosition(tmpV);
-        zArr[i] = tmpV.z;
-        if (zArr[i] > zAmp) zAmp = zArr[i]; // track amplitude for normalising the gap
+        wzArr[i] = tmpV.z;
+        tmpV.project(camera);
+        nxArr[i] = tmpV.x;
+        if (wzArr[i] > 0 && nxArr[i] > pickX) { pickX = nxArr[i]; pickIdx = i; } // front-most & rightmost
       }
-      for (let i = 0; i < zArr.length; i++) {
-        if (zArr[i] > bestZ) { secondZ = bestZ; bestZ = zArr[i]; bestIdx = i; }
-        else if (zArr[i] > secondZ) { secondZ = zArr[i]; }
-      }
-      const gapNorm = (bestZ - secondZ) / (zAmp || 1);
       let targetOpen;
-      if (bestIdx !== activeIdx) {
-        targetOpen = 0; // close before handing the burst to a new name
-        if (burstOpen < 0.04) { activeIdx = bestIdx; populateBurst(DOMAINS[activeIdx]); }
+      if (activeIdx === -1) {
+        targetOpen = 0;
+        // Grab the name once it has come far enough round to the right.
+        if (pickIdx >= 0 && openOf(pickIdx) > 0.4) { activeIdx = pickIdx; populateBurst(DOMAINS[activeIdx]); }
       } else {
-        targetOpen = smooth(0.06, 0.24, gapNorm);
+        targetOpen = openOf(activeIdx);
+        // Released once it has shrunk away to the left / gone behind the globe.
+        if (targetOpen < 0.02 && burstOpen < 0.05) activeIdx = -1;
       }
-      burstOpen += (targetOpen - burstOpen) * 0.1;
+      burstOpen += (targetOpen - burstOpen) * 0.12;
 
       // Emphasise the active label; reset the rest to their base size.
       for (let i = 0; i < labels.length; i++) {
