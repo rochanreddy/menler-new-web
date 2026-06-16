@@ -1,21 +1,21 @@
 import HiringRail from './HiringRail';
 
 const DEFAULT_GEN_ROLES = [
-  { name: 'AI Research intern', band: '₹10k–25k/month · Research & Strategy teams' },
-  { name: 'Founders Office intern ', band: '₹10K–25K/month · Startups & venture-backed companies' },
-  { name: "Marketing AI Intern", band: '₹8K–20K/month · Brand & growth teams' },
-  { name: 'Business Operations Intern', band: '₹10K–18K/month · Operations & process teams' },
-  { name: 'AI Content Intern', band: '₹8K–18K/month · Content & media companies' },
-  { name: 'Customer Success Intern', band: '₹8K–15K/month · SaaS & support teams' },
+  { name: 'AI Research', band: '₹10k–25k/month · Research & Strategy teams' },
+  { name: 'Founders Office ', band: '₹10K–25K/month · Startups & venture-backed companies' },
+  { name: "Marketing AI", band: '₹8K–20K/month · Brand & growth teams' },
+  { name: 'Business Operations', band: '₹10K–18K/month · Operations & process teams' },
+  { name: 'AI Content', band: '₹8K–18K/month · Content & media companies' },
+  { name: 'Customer Success', band: '₹8K–15K/month · SaaS & support teams' },
 ];
 
 const DEFAULT_ENG_ROLES = [
-  { name: 'Prompt Engineering Intern', band: '₹10K–25K/month · AI-first startups' },
-  { name: 'AI Automation Intern', band: '₹12K–25K/month · No-code & operations teams' },
-  { name: 'AI Workflow Intern', band: '₹10K–20K/month · Internal automation teams' },
-  { name: 'Agent Building Intern', band: '₹15K–30K/month · Emerging AI companies' },
-  { name: 'AI Product Operations Intern', band: '₹12K–25K/month · Product teams' },
-  { name: 'Claude / GPT Implementation Intern', band: '₹25–55L · Frontier teams' },
+  { name: 'Prompt Engineering', band: '₹10K–25K/month · AI-first startups' },
+  { name: 'AI Automation', band: '₹12K–25K/month · No-code & operations teams' },
+  { name: 'AI Workflow', band: '₹10K–20K/month · Internal automation teams' },
+  { name: 'Agent Building', band: '₹15K–30K/month · Emerging AI companies' },
+  { name: 'AI Product Operations', band: '₹12K–25K/month · Product teams' },
+  { name: 'Claude / GPT Implementation', band: '₹25–55L · Frontier teams' },
 ];
 
 const DEFAULT_COMPANIES = [
