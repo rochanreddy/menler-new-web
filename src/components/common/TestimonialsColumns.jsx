@@ -107,7 +107,7 @@ export default function TestimonialsColumns() {
       <div className="tmc-head">
         <p className="section-label">Voices · Fellows &amp; Advisors</p>
         <h2 className="section-h2">Why<br /><em>chose Menler.</em></h2>
-        <p className="section-sub">
+        <p className="section-sub section-sub--1line">
           From beta fellows and advisory voices — AI operators, builders, curriculum reviewers, and hiring associations.
         </p>
       </div>

@@ -278,6 +278,9 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .section-h2 { font-family: 'DM Serif Display', serif; font-size: clamp(25px, 4.8vw, 34px); font-weight: 400; color: var(--ink); line-height: 1.2; margin-bottom: 8px; }
 .section-h2 em { color: var(--specialist); font-style: italic; }
 .section-sub { font-size: 14px; color: var(--text-muted); max-width: 625px; line-height: 1.5; }
+/* Sub-text that should stay on one line on desktop (wraps normally on mobile). */
+.section-sub--1line { max-width: none; }
+@media (min-width: 900px) { .section-sub--1line { white-space: nowrap; } }
 /* Program-section sub: keep the first sentence on one line on desktop. */
 .prog-sub-wide { max-width: none; }
 @media (min-width: 768px) { .prog-sub-wide { white-space: nowrap; } }
@@ -890,6 +893,12 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .proj-filter { flex: 0 0 150px; width: 150px; text-align: center; white-space: nowrap; font-family: inherit; font-size: 11.5px; font-weight: 500; color: var(--text-muted); background: var(--parchment); border: 1px solid rgba(38,33,92,0.1); padding: 8px 10px; border-radius: 20px; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
 .proj-filter:hover { color: var(--ink); border-color: rgba(83,74,183,0.4); }
 .proj-filter.on { background: var(--specialist); color: #fff; border-color: var(--specialist); }
+/* Desktop: all project-build track filters on one line, each sized to its label.
+   Mobile keeps the wrapped 150px-pill layout above (unchanged). */
+@media (min-width: 1080px) {
+  .proj-filters { flex-wrap: nowrap; }
+  .proj-filter { flex: 0 0 auto; width: auto; padding: 8px 16px; }
+}
 
 .proj-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 32px; }
 /* Center an incomplete last row (e.g. the 4th & 5th build cards). */

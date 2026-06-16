@@ -69,7 +69,7 @@ export default function HiringJobs({
     <section className="section jobs-section" style={sectionStyle}>
       <p className="section-label" style={labelStyle}>{label}</p>
       <h2 className="section-h2" style={titleStyle}>{title}<br /><em style={titleEmStyle}>{titleEm}</em></h2>
-      <p className="section-sub" style={subStyle}>{sub}</p>
+      <p className="section-sub section-sub--1line" style={subStyle}>{sub}</p>
       <div className="jobs-roles">
         <div className="role-card gen-side">
           <p className="role-card-program">{genLabel}</p>

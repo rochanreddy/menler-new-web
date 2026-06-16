@@ -386,7 +386,7 @@ export default function Home() {
       <section className="section jobs-section" style={{ paddingTop: 48, paddingBottom: 32 }}>
         <p className="section-label">Hiring associations &amp; roles</p>
         <h2 className="section-h2">The jobs<br /><em>AI specialists are landing.</em></h2>
-        <p className="section-sub">A new category of professional is emerging: AI Native, Domain, and Outcome driven. Menler is built to develop them.</p>
+        <p className="section-sub section-sub--1line">A new category of professional is emerging: AI Native, Domain, and Outcome driven.<br />Menler is built to develop them.</p>
         <div className="jobs-roles">
           <div className="role-card gen-side">
             <p className="role-card-program">Claude AI Generalist · Open roles</p>
