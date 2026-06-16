@@ -14,6 +14,7 @@ import { HOME_FAQS } from '../data/faqData';
 import { submitLead } from '../services/leadService';
 import { PROJECTS, PROJECTS_QUERY } from '../data/projectsData';
 import { useContent } from '../lib/useContent';
+import ErrorBoundary from '../components/common/ErrorBoundary';
 import { BrandLogo } from '../components/common/PartnersMarquee';
 import HiringRail from '../components/common/HiringRail';
 import TestimonialsColumns from '../components/common/TestimonialsColumns';
@@ -201,7 +202,10 @@ export default function Home() {
         <div className="hero-ring r1" /><div className="hero-ring r2" /><div className="hero-ring r3" />
         <div className="hero-grid">
         <div className="hero-visual" aria-hidden="true">
-          <Suspense fallback={null}><Hero3D /></Suspense>
+          {/* If WebGL/3D fails (e.g. hardware accel disabled), skip it — don't crash the page. */}
+          <ErrorBoundary fallback={null}>
+            <Suspense fallback={null}><Hero3D /></Suspense>
+          </ErrorBoundary>
         </div>
         <div className="hero-inner">
           <p className="hero-eyebrow">{home?.hero?.eyebrow || 'Menler Fellowship'}</p>

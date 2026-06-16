@@ -36,6 +36,10 @@ export default class ErrorBoundary extends Component {
 
   render() {
     if (!this.state.hasError) return this.props.children;
+    // When a `fallback` is provided (e.g. fallback={null} around an optional
+    // widget like the 3D hero), render that instead of the full-page card so a
+    // non-critical failure degrades gracefully rather than blanking the page.
+    if (this.props.fallback !== undefined) return this.props.fallback;
     return (
       <div style={{ minHeight: '70vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '40px 20px', fontFamily: "'DM Sans', system-ui, sans-serif", color: '#26215C' }}>
         <h1 style={{ fontFamily: "'DM Serif Display', serif", fontWeight: 400, fontSize: 34, margin: 0 }}>Something went wrong</h1>
