@@ -340,7 +340,7 @@ export default function Kickstarter() {
         <div className="mini-lead-inner">
           <div className="mini-lead-copy">
             <h3>Get the Kickstarter <em>brochure.</em></h3>
-            <p>Syllabus, schedule, fees, scholarships, and ISA options — straight to your inbox.</p>
+            <p>Syllabus, schedule, fees & scholarships straight to your inbox.</p>
           </div>
           {done ? (
             <div className="mini-lead-success">✓ Brochure on its way.</div>
@@ -371,7 +371,7 @@ export default function Kickstarter() {
       <section className="section kp-section" style={{ background: '#ffffff', paddingTop: 8 }}>
         <p className="section-label" style={{ textAlign: 'center', color: '#854F0B' }}>Pricing</p>
         <h2 className="section-h2" style={{ textAlign: 'center', color: '#854F0B' }}>One price. <em style={{ color: '#BA7517' }}>Everything in.</em></h2>
-        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto 32px' }}>Your hands-on entry into AI — no prerequisites, no hidden fees.</p>
+        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto 32px' }}>Your hands-on entry into AI no prerequisites, no hidden fees.</p>
 
         <PricingCard
           {...ksPricing}
