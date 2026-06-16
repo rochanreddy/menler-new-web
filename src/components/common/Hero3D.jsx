@@ -128,7 +128,48 @@ export default function Hero3D() {
       const sp = new THREE.Sprite(mat);
       const s = 0.0046;
       sp.scale.set(lw * s, lh * s, 1);             // display size unchanged
+      sp.userData.base = sp.scale.clone();         // remembered so we can emphasise the active label
       return sp;
+    };
+
+    // Sub-skills revealed when a domain name reaches the front of the orbit.
+    const SUBSKILLS = {
+      "Founder's Office": ['Strategy', 'Chief of Staff', 'Board Decks', 'Briefings'],
+      'Product Management': ['PRDs', 'Roadmaps', 'User Research', 'Specs'],
+      'Engineering': ['RAG', 'MCP', 'Agents', 'Evals', 'LLMOps'],
+      'Finance': ['Deal Memos', 'Forecasts', 'Reporting', 'Diligence'],
+      'Marketing': ['Content', 'Campaigns', 'SEO', 'Outreach'],
+      'HR': ['Hiring', 'SOPs', 'Onboarding', 'Policies'],
+      'Operations': ['Automation', 'Workflows', 'Dashboards', 'Tickets'],
+      'Analytics': ['SQL', 'Insights', 'Pipelines', 'Charts'],
+    };
+    // Smaller, lighter label for a sub-skill node.
+    const makeSubTexture = (text) => {
+      const SS = 2, fs = 30, padX = 26, padY = 16;
+      const c = document.createElement('canvas');
+      let cx = c.getContext('2d');
+      cx.font = `600 ${fs}px 'DM Sans', sans-serif`;
+      const w = Math.ceil(cx.measureText(text).width) + 6;
+      const lw = w + padX * 2, lh = fs + padY * 2;
+      c.width = lw * SS; c.height = lh * SS;
+      cx = c.getContext('2d');
+      cx.scale(SS, SS);
+      cx.font = `600 ${fs}px 'DM Sans', sans-serif`;
+      cx.textAlign = 'center'; cx.textBaseline = 'middle';
+      const mx = lw / 2, my = lh / 2;
+      const pillPadX = 13, pillH = lh - 20, pillW = w + pillPadX * 2, rr = pillH / 2;
+      cx.beginPath();
+      cx.roundRect(mx - pillW / 2, my - pillH / 2, pillW, pillH, rr);
+      cx.fillStyle = 'rgba(11,8,20,0.5)';
+      cx.fill();
+      cx.lineWidth = 1.2;
+      cx.strokeStyle = 'rgba(175,169,236,0.4)';
+      cx.stroke();
+      cx.fillStyle = 'rgba(238,237,254,0.92)';
+      cx.fillText(text, mx, my);
+      const tex = new THREE.CanvasTexture(c);
+      tex.minFilter = THREE.LinearFilter; tex.anisotropy = 8;
+      return tex;
     };
 
     DOMAINS.forEach((name, i) => {
@@ -145,6 +186,66 @@ export default function Hero3D() {
       labels.push(label);
     });
     const tmpV = new THREE.Vector3();
+
+    // ── Sub-skill "mind-map" burst ──────────────────────────────────────────
+    // A camera-facing group that snaps to whichever domain label is at the
+    // front of the orbit and fans its sub-skills out on spoke lines, opening as
+    // the name reaches the middle and collapsing as it rotates away.
+    const MAXSUB = 6;
+    const burstGroup = new THREE.Group();
+    burstGroup.visible = false;
+    scene.add(burstGroup);
+
+    const subSprites = [];
+    const subMats = [];
+    const subTexs = new Array(MAXSUB).fill(null);
+    for (let i = 0; i < MAXSUB; i++) {
+      const m = new THREE.SpriteMaterial({ transparent: true, depthTest: false, depthWrite: false, opacity: 0 });
+      const sp = new THREE.Sprite(m);
+      sp.visible = false;
+      burstGroup.add(sp);
+      subSprites.push(sp); subMats.push(m);
+    }
+    const lineGeo = new THREE.BufferGeometry();
+    const linePos = new Float32Array(MAXSUB * 2 * 3);
+    lineGeo.setAttribute('position', new THREE.BufferAttribute(linePos, 3));
+    const burstLineMat = new THREE.LineBasicMaterial({ color: 0xAFA9EC, transparent: true, opacity: 0, depthTest: false, depthWrite: false });
+    const burstLines = new THREE.LineSegments(lineGeo, burstLineMat);
+    burstGroup.add(burstLines);
+
+    // Lay the active domain's sub-skills out evenly around the centre on spokes.
+    const populateBurst = (domain) => {
+      const subs = (SUBSKILLS[domain] || []).slice(0, MAXSUB);
+      const n = subs.length;
+      for (let i = 0; i < MAXSUB; i++) {
+        const sp = subSprites[i];
+        if (i < n) {
+          const tex = makeSubTexture(subs[i]);
+          if (subTexs[i]) subTexs[i].dispose();
+          subTexs[i] = tex;
+          sp.material.map = tex; sp.material.needsUpdate = true;
+          const ang = Math.PI / 2 + (i * Math.PI * 2) / n; // start at top, go around
+          const r = 2.5 + (i % 2 ? 0.45 : 0);
+          const x = Math.cos(ang) * r, y = Math.sin(ang) * r;
+          sp.position.set(x, y, 0);
+          const aspect = tex.image.width / tex.image.height;
+          const h = 0.6;
+          sp.scale.set(h * aspect, h, 1);
+          sp.visible = true;
+          linePos.set([0, 0, 0, x, y, 0], i * 6);
+        } else {
+          sp.visible = false;
+        }
+      }
+      lineGeo.setDrawRange(0, n * 2);
+      lineGeo.attributes.position.needsUpdate = true;
+    };
+
+    let activeIdx = -1;   // which domain label currently owns the burst
+    let burstOpen = 0;    // 0 = collapsed, 1 = fully fanned out
+    let zAmp = 1;         // running estimate of the label z-amplitude (grows to the true value; for normalising)
+    const zArr = new Array(DOMAINS.length).fill(0);
+    const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 
     // Lights
     scene.add(new THREE.AmbientLight(0xffffff, 0.65));
@@ -181,7 +282,7 @@ export default function Hero3D() {
       rotX = Math.max(-1.2, Math.min(1.2, rotX));
       group.rotation.x = rotX;
       group.rotation.y = rotY;
-      dotsSpin.rotation.z += 0.006; // dots travel along the ring line
+      dotsSpin.rotation.z += 0.0045; // dots travel along the ring line (paced so each name can be read)
       // Hide a label exactly when the sphere sits between it and the camera.
       // Test the camera→label segment against the sphere (centred at the world
       // origin, radius RADIUS): if its closest point to the centre falls inside
@@ -200,6 +301,50 @@ export default function Hero3D() {
         }
         lb.visible = !occluded;
       }
+
+      // ── Drive the sub-skill burst ──
+      // The label nearest the camera (largest world z) is "at the middle". The
+      // burst opens in proportion to how far that label leads the runner-up, so
+      // it fans out at a name's peak and closes during the hand-off to the next.
+      let bestIdx = 0, bestZ = -Infinity, secondZ = -Infinity;
+      for (let i = 0; i < labels.length; i++) {
+        labels[i].getWorldPosition(tmpV);
+        zArr[i] = tmpV.z;
+        if (zArr[i] > zAmp) zAmp = zArr[i]; // track amplitude for normalising the gap
+      }
+      for (let i = 0; i < zArr.length; i++) {
+        if (zArr[i] > bestZ) { secondZ = bestZ; bestZ = zArr[i]; bestIdx = i; }
+        else if (zArr[i] > secondZ) { secondZ = zArr[i]; }
+      }
+      const gapNorm = (bestZ - secondZ) / (zAmp || 1);
+      let targetOpen;
+      if (bestIdx !== activeIdx) {
+        targetOpen = 0; // close before handing the burst to a new name
+        if (burstOpen < 0.04) { activeIdx = bestIdx; populateBurst(DOMAINS[activeIdx]); }
+      } else {
+        targetOpen = smooth(0.06, 0.24, gapNorm);
+      }
+      burstOpen += (targetOpen - burstOpen) * 0.1;
+
+      // Emphasise the active label; reset the rest to their base size.
+      for (let i = 0; i < labels.length; i++) {
+        const b = labels[i].userData.base;
+        if (b) labels[i].scale.copy(b);
+      }
+      if (activeIdx >= 0 && burstOpen > 0.02) {
+        const al = labels[activeIdx];
+        if (al.userData.base) al.scale.copy(al.userData.base).multiplyScalar(1 + 0.16 * burstOpen);
+        burstGroup.visible = true;
+        al.getWorldPosition(tmpV);
+        burstGroup.position.copy(tmpV);
+        burstGroup.quaternion.copy(camera.quaternion); // face the camera
+        burstGroup.scale.setScalar(burstOpen);
+        for (const m of subMats) m.opacity = burstOpen;
+        burstLineMat.opacity = burstOpen * 0.5;
+      } else {
+        burstGroup.visible = false;
+      }
+
       renderer.render(scene, camera);
       raf = requestAnimationFrame(animate);
     };
@@ -230,6 +375,9 @@ export default function Hero3D() {
       ringMats.forEach(m => m.dispose());
       dotMats.forEach(m => m.dispose());
       labelTex.forEach(t => t.dispose());
+      subMats.forEach(m => m.dispose());
+      subTexs.forEach(t => t && t.dispose());
+      lineGeo.dispose(); burstLineMat.dispose();
       renderer.dispose();
     };
   }, []);
