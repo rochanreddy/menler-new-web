@@ -841,16 +841,12 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .captains-sub { font-size: 15px; color: var(--text-muted); max-width: none; line-height: 1.6; }
 .captains-rows { display: flex; flex-direction: column; gap: 16px; }
 /* Continuous marquee via GPU transform animation (smooth on mobile, no JS). */
-.captains-rail { overflow: hidden; margin: 0 calc(-1 * var(--gutter)); padding: 0 var(--gutter); }
-.captains-track { display: flex; width: max-content; will-change: transform; }
+/* Swipeable scroll container; auto-advance is driven in JS (MentorsRail). */
+.captains-rail { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; margin: 0 calc(-1 * var(--gutter)); padding: 0 var(--gutter); }
+.captains-rail::-webkit-scrollbar { display: none; }
+.captains-track { display: flex; width: max-content; }
 /* Uniform per-card unit (margin, not gap) so the 3 copies tile seamlessly. */
 .captains-track > .captain-card { margin-right: 18px; }
-.captains-track--rtl { animation: cap-marquee-rtl 42s linear infinite; }
-.captains-track--ltr { animation: cap-marquee-ltr 42s linear infinite; }
-.captains-rail:hover .captains-track { animation-play-state: paused; }
-@keyframes cap-marquee-rtl { from { transform: translate3d(0,0,0); } to { transform: translate3d(-33.3333%,0,0); } }
-@keyframes cap-marquee-ltr { from { transform: translate3d(-33.3333%,0,0); } to { transform: translate3d(0,0,0); } }
-@media (prefers-reduced-motion: reduce) { .captains-track--rtl, .captains-track--ltr { animation: none; } }
 .captain-card {
   flex: 0 0 360px; width: 360px; height: 300px;
   border-radius: 14px; overflow: hidden; position: relative; background: #0a0c14;

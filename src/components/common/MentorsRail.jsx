@@ -1,3 +1,4 @@
+import { useRef, useEffect } from 'react';
 import { useContent } from '../../lib/useContent';
 
 // Fallback content — used until Sanity is configured/populated (see useContent).
@@ -27,13 +28,58 @@ const OVERLAYS = [
 
 const MENTORS_QUERY = '*[_type == "mentor"] | order(orderRank) { name, role, company, "img": photo.asset->url }';
 
-// Pure-CSS marquee: 3 identical copies + a transform animation (see global.css
-// .captains-track--rtl/ltr). GPU-accelerated → smooth on mobile, no per-frame JS.
+// A real horizontal scroll container with 3 identical copies. A light per-frame
+// auto-advance keeps it moving continuously (one scrollLeft write/frame); the
+// user can swipe left/right at any time and it carries on from there. It pauses
+// only on MOUSE hover (desktop) — touch never stops it. Loops seamlessly by
+// snapping back a copy-width at the boundaries.
 function CaptainRow({ list, dir, tint }) {
+  const railRef = useRef(null);
   const items = [...list, ...list, ...list];
+
+  useEffect(() => {
+    const el = railRef.current;
+    if (!el) return;
+    const track = el.firstElementChild;
+    let raf, paused = false, copy = 0, centred = false;
+    const speed = dir === 'ltr' ? -0.5 : 0.5; // px/frame
+
+    const measure = () => {
+      copy = el.scrollWidth / 3;
+      if (copy > 0 && !centred) { el.scrollLeft = copy; centred = true; } // start in the middle copy
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    if (track) ro.observe(track); // re-measure when lazy images change the width
+
+    const loop = () => {
+      if (!paused && copy > 0) {
+        let x = el.scrollLeft + speed;
+        if (x >= copy * 2) x -= copy;
+        else if (x <= 0) x += copy;
+        el.scrollLeft = x;
+      }
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+
+    // Pause for a hovering mouse only; touch interactions keep it scrolling.
+    const onEnter = (e) => { if (e.pointerType === 'mouse') paused = true; };
+    const onLeave = (e) => { if (e.pointerType === 'mouse') paused = false; };
+    el.addEventListener('pointerenter', onEnter);
+    el.addEventListener('pointerleave', onLeave);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      el.removeEventListener('pointerenter', onEnter);
+      el.removeEventListener('pointerleave', onLeave);
+    };
+  }, [dir, list]);
+
   return (
-    <div className="captains-rail">
-      <div className={`captains-track captains-track--${dir}`}>
+    <div className="captains-rail" ref={railRef}>
+      <div className="captains-track">
         {items.map((m, i) => (
           <article className="captain-card" key={i} aria-label={`${m.name}, ${m.role}`}>
             <div className="captain-bg" style={{ backgroundImage: OVERLAYS[(tint + i) % OVERLAYS.length] }} />
