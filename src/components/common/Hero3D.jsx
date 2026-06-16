@@ -249,11 +249,11 @@ export default function Hero3D() {
     let burstOpen = 0;    // 0 = collapsed, 1 = fully fanned out
     const nxArr = new Array(DOMAINS.length).fill(0); // normalised screen x per label (-1 left … +1 right)
     const wzArr = new Array(DOMAINS.length).fill(0); // world z per label (>0 = near side, facing camera)
-    // Symmetric about centre: a name opens on the RIGHT (rise 0.68→0.52), stays
-    // FULLY open across the wide plateau (0.52 … -0.52) for a good while, then
-    // closes on the LEFT with the exact mirror ramp (-0.52→-0.68). The right
-    // fade-in and left fade-out are the same width. (Screen-x: +1 right … -1 left.)
-    const RIGHT_EDGE = 0.68, FULL_RIGHT = 0.52, FULL_LEFT = -0.52, OPEN_LEFT = -0.68;
+    // Window sits on the RIGHT of centre: a name opens while it's still slightly
+    // right (rise 0.6→0.42), stays fully open for a moment (plateau 0.42 … 0.22),
+    // then closes as it reaches the centre (fall 0.22→0.04). It never crosses to
+    // the left — it opens before the name arrives at centre. (Screen-x: +1 right … -1 left.)
+    const RIGHT_EDGE = 0.6, FULL_RIGHT = 0.42, FULL_LEFT = 0.22, OPEN_LEFT = 0.04;
     const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
     const openOf = (i) => {
       if (wzArr[i] <= 0) return 0;                       // behind the globe → closed
