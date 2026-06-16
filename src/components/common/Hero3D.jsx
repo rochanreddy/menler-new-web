@@ -249,17 +249,19 @@ export default function Hero3D() {
     let burstOpen = 0;    // 0 = collapsed, 1 = fully fanned out
     const nxArr = new Array(DOMAINS.length).fill(0); // normalised screen x per label (-1 left … +1 right)
     const wzArr = new Array(DOMAINS.length).fill(0); // world z per label (>0 = near side, facing camera)
-    // Window sits on the RIGHT of centre: a name opens while it's still slightly
-    // right (rise 0.6→0.42), stays fully open for a moment (plateau 0.42 … 0.22),
-    // then closes as it reaches the centre (fall 0.22→0.04). It never crosses to
-    // the left — it opens before the name arrives at centre. (Screen-x: +1 right … -1 left.)
-    const RIGHT_EDGE = 0.6, FULL_RIGHT = 0.42, FULL_LEFT = 0.22, OPEN_LEFT = 0.04;
+    // Two mirror edges control the burst, in normalised screen-x (+1 right … -1 left):
+    //   RIGHT_EDGE → opening starts here on the right; full open by FULL_RIGHT.
+    //   LEFT_EDGE  → closing ends here on the left;  full open until FULL_LEFT.
+    // It's fully open across the plateau (FULL_RIGHT … FULL_LEFT) in between.
+    // Symmetric about centre: the left close mirrors the right open.
+    const RIGHT_EDGE = 0.6, FULL_RIGHT = 0.42;   // open on the right
+    const LEFT_EDGE = -0.6, FULL_LEFT = -0.42;   // close on the left (mirror of the right)
     const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
     const openOf = (i) => {
       if (wzArr[i] <= 0) return 0;                       // behind the globe → closed
       const nx = nxArr[i];
-      const rise = smooth(RIGHT_EDGE, FULL_RIGHT, nx);   // 0 at far right → 1 by FULL_RIGHT
-      const fall = smooth(OPEN_LEFT, FULL_LEFT, nx);     // 0 at the left  → 1 by FULL_LEFT
+      const rise = smooth(RIGHT_EDGE, FULL_RIGHT, nx);   // 0 at RIGHT_EDGE → 1 by FULL_RIGHT
+      const fall = smooth(LEFT_EDGE, FULL_LEFT, nx);     // 0 at LEFT_EDGE  → 1 by FULL_LEFT
       return Math.min(rise, fall);                       // = 1 across the plateau in between
     };
 
