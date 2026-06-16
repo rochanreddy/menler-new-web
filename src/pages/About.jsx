@@ -57,7 +57,7 @@ export default function About() {
         <div className="about-grid">
           <div className="about-card" style={{ background: 'var(--ink)', color: '#EEEDFE', padding: 28, borderRadius: 14 }}>
             <p className="about-card-label" style={{ color: 'var(--lavender)' }}>Vision</p>
-            <p style={{ fontFamily: "'DM Serif Display',serif", fontSize: 19.5, lineHeight: 1.4, color: '#EEEDFE', fontStyle: 'italic' }}>To build the AI-native professionals powering India's next decade of growth</p>
+            <p style={{ fontFamily: "'DM Serif Display',serif", fontSize: 19.5, lineHeight: 1.4, color: '#EEEDFE', fontStyle: 'italic' }}>To build the AI-native professionals powering India's next decade of growth.</p>
           </div>
           <div className="about-card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <div style={{ background: 'var(--cloud)', borderRadius: 10, padding: '18px 20px' }}>
