@@ -494,7 +494,11 @@ export default function Generalist() {
         <p className="section-label" style={{ textAlign: 'center' }}>Pricing</p>
         <h2 className="section-h2" style={{ textAlign: 'center' }}>One fellowship. <em>Everything in.</em></h2>
         <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto 32px' }}>Ten weeks to AI Native mentorship, real projects, certification, and placement support.</p>
-        <PricingCard {...genPricing} onCta={openApply} />
+        <PricingCard
+          {...genPricing}
+          description={<>Master Claude AI, across all domains, get certified and graduate with a domain-focused portfolio.<span className="kp-desc-domains">Analyst · Finance Operations · Founder&apos;s Office · HR Operations · Marketing &amp; Sales · Product Management</span></>}
+          onCta={openApply}
+        />
         <div style={{ textAlign: 'center', marginTop: 56 }}>
           <button className="btn-primary" style={{ minWidth: 220 }} onClick={openApply}>Book a call</button>
         </div>

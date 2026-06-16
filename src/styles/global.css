@@ -2379,7 +2379,8 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .kp-name { font-family: 'DM Serif Display', serif; font-size: 32px; font-weight: 400; color: #fff; line-height: 1.1; margin: 14px 0 8px; }
 .kp-tagline { font-size: 13.5px; line-height: 1.55; color: rgba(238,237,254,.62); max-width: 360px; }
 .kp-desc { margin-top: 12px; font-size: 13px; line-height: 1.7; color: rgba(238,237,254,.74); max-width: 540px; }
-@media (max-width: 640px) { .kp-desc { font-size: 12.5px; max-width: none; } }
+.kp-desc-domains { display: block; margin-top: 8px; font-size: 11.5px; line-height: 1.6; letter-spacing: .02em; color: rgba(238,237,254,.55); }
+@media (max-width: 640px) { .kp-desc { font-size: 12.5px; max-width: none; } .kp-desc-domains { font-size: 11px; } }
 
 .kp-price { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; text-align: right; }
 .kp-price-orig { font-size: 13px; color: rgba(175,169,236,.5); text-decoration: line-through; margin-bottom: 4px; }
