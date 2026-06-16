@@ -278,6 +278,9 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .section-h2 { font-family: 'DM Serif Display', serif; font-size: clamp(25px, 4.8vw, 34px); font-weight: 400; color: var(--ink); line-height: 1.2; margin-bottom: 8px; }
 .section-h2 em { color: var(--specialist); font-style: italic; }
 .section-sub { font-size: 14px; color: var(--text-muted); max-width: 625px; line-height: 1.5; }
+/* Program-section sub: keep the first sentence on one line on desktop. */
+.prog-sub-wide { max-width: none; }
+@media (min-width: 768px) { .prog-sub-wide { white-space: nowrap; } }
 
 /* ── PROGRAMS COMPARISON ── */
 .prog-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 36px; }

@@ -246,7 +246,7 @@ export default function Home() {
       <section className="section prog-section" style={{ background: 'var(--parchment)', paddingTop: 40, paddingBottom: 28 }} ref={programsRef}>
         <p className="section-label">Choose your program</p>
         <h2 className="section-h2">Two Paths, One Outcome <br /><em>AI Native You!</em></h2>
-        <p className="section-sub">Both fellowships lead to a recognised AI Specialist credential and active career support. Pick the one that fits your background.</p>
+        <p className="section-sub prog-sub-wide">Both fellowships lead to a recognised AI Specialist credential and active career support.<br />Pick the one that fits your background.</p>
         <div className="prog-compare">
           <div className="prog-card gen">
             <span className="prog-card-badge">No coding required</span>
