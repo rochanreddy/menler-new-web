@@ -496,6 +496,7 @@ export default function Generalist() {
         <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto 32px' }}>Ten weeks to AI Native mentorship, real projects, certification, and placement support.</p>
         <PricingCard
           {...genPricing}
+          tagline=""
           description={<>Master Claude AI, across all domains, get certified and graduate with a domain-focused portfolio.<span className="kp-desc-domains">Analyst · Finance Operations · Founder&apos;s Office · HR Operations · Marketing &amp; Sales · Product Management</span></>}
           onCta={openApply}
         />

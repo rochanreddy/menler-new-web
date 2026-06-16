@@ -22,7 +22,7 @@ export default function PricingCard({
         <div className="kp-head-l">
           <div className="kp-pill"><span className="kp-dot" />{pill}</div>
           <h3 className="kp-name">{name}</h3>
-          <p className="kp-tagline">{tagline}</p>
+          {tagline && <p className="kp-tagline">{tagline}</p>}
           {description && <p className="kp-desc">{description}</p>}
         </div>
         <div className="kp-price">
