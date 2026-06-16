@@ -1,12 +1,56 @@
+import { useRef, useEffect } from 'react';
 import { BrandLogo } from './PartnersMarquee';
 
-// One logo row. Pure-CSS marquee: 3 identical copies + a transform animation
-// (see global.css .logorail-track--rtl/ltr) — GPU-smooth on mobile, no JS.
+// One logo row. A real horizontal scroll container with 3 identical copies and a
+// light per-frame auto-advance: it keeps moving continuously (doesn't stop on
+// touch), the user can swipe left/right at will, and it pauses only on MOUSE
+// hover. Loops seamlessly by snapping back a copy-width at the boundaries.
 function LogoRow({ list, dir }) {
+  const railRef = useRef(null);
   const items = [...list, ...list, ...list];
+
+  useEffect(() => {
+    const el = railRef.current;
+    if (!el) return;
+    const track = el.firstElementChild;
+    let raf, paused = false, copy = 0, centred = false;
+    const speed = dir === 'ltr' ? -0.5 : 0.5; // px/frame
+
+    const measure = () => {
+      copy = el.scrollWidth / 3;
+      if (copy > 0 && !centred) { el.scrollLeft = copy; centred = true; }
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    if (track) ro.observe(track);
+
+    const loop = () => {
+      if (!paused && copy > 0) {
+        let x = el.scrollLeft + speed;
+        if (x >= copy * 2) x -= copy;
+        else if (x <= 0) x += copy;
+        el.scrollLeft = x;
+      }
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+
+    const onEnter = (e) => { if (e.pointerType === 'mouse') paused = true; };
+    const onLeave = (e) => { if (e.pointerType === 'mouse') paused = false; };
+    el.addEventListener('pointerenter', onEnter);
+    el.addEventListener('pointerleave', onLeave);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      el.removeEventListener('pointerenter', onEnter);
+      el.removeEventListener('pointerleave', onLeave);
+    };
+  }, [dir, list]);
+
   return (
-    <div className="logorail-rail">
-      <div className={`logorail-track logorail-track--${dir}`}>
+    <div className="logorail-rail" ref={railRef}>
+      <div className="logorail-track">
         {items.map((c, i) => (
           <BrandLogo key={i} name={c.name} domain={c.domain} logo={c.logo} />
         ))}

@@ -1271,16 +1271,12 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .hiring-marquee .partner-logo-img { height: 30px; max-width: 116px; }
 /* Multi-row auto-scrolling logo rail (like the mentors rail) */
 .logorail-rows { display: flex; flex-direction: column; gap: 14px; margin-top: 20px; }
-.logorail-rail { overflow: hidden; }
-.logorail-track { display: flex; width: max-content; will-change: transform; }
+/* Swipeable scroll container; auto-advance is driven in JS (HiringRail). */
+.logorail-rail { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; }
+.logorail-rail::-webkit-scrollbar { display: none; }
+.logorail-track { display: flex; width: max-content; }
 .logorail-track .partner-chip { min-width: 156px; height: 66px; flex: 0 0 auto; margin-right: 14px; }
 .logorail-track .partner-logo-img { height: 30px; max-width: 118px; }
-.logorail-track--rtl { animation: logo-marquee-rtl 50s linear infinite; }
-.logorail-track--ltr { animation: logo-marquee-ltr 50s linear infinite; }
-.logorail-rail:hover .logorail-track { animation-play-state: paused; }
-@keyframes logo-marquee-rtl { from { transform: translate3d(0,0,0); } to { transform: translate3d(-33.3333%,0,0); } }
-@keyframes logo-marquee-ltr { from { transform: translate3d(-33.3333%,0,0); } to { transform: translate3d(0,0,0); } }
-@media (prefers-reduced-motion: reduce) { .logorail-track--rtl, .logorail-track--ltr { animation: none; } }
 .partners-logos.hiring-companies { gap: 12px; margin-top: 18px; }
 .partners-logos.hiring-companies .partner-chip { min-width: 132px; height: 60px; }
 .partners-logos.hiring-companies .partner-logo-img { height: 28px; max-width: 116px; }
