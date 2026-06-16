@@ -5184,8 +5184,8 @@ export const APTITUDE_QUESTIONS = [
 export const MAX_SCORE = maxScoreForQuestions(APTITUDE_QUESTIONS);
 
 export function maxScoreForQuestions(questions) {
-  if (!questions?.length) return 0;
-  return questions.reduce((acc, q) => acc + Math.max(...q.options.map(o => o.s)), 0);
+  // Each question is worth 1 mark, so the max is simply the question count.
+  return questions?.length || 0;
 }
 
 export function getRecommendation(score, maxScore = MAX_SCORE) {

@@ -119,8 +119,12 @@ function reducer(state, action) {
   }
 }
 
+// The "correct" option is the highest-scoring one for that question.
+const bestIdx = (q) => q.options.reduce((bi, o, oi, arr) => (o.s > arr[bi].s ? oi : bi), 0);
+
+// Each question is worth exactly 1 mark (correct answer = 1, otherwise 0).
 function calcScore(answers, questions) {
-  return answers.reduce((acc, a, i) => (a === null ? acc : acc + questions[i].options[a].s), 0);
+  return answers.reduce((acc, a, i) => (a !== null && a === bestIdx(questions[i]) ? acc + 1 : acc), 0);
 }
 
 export default function Aptitude() {
@@ -168,6 +172,18 @@ export default function Aptitude() {
   const [leadForm, setLeadForm] = useState({ name: '', email: '' });
   const [leadDone, setLeadDone] = useState(false);
   const setL = (k, v) => setLeadForm(f => ({ ...f, [k]: v }));
+
+  // Answer sheet is gated behind a short form: click "View answer sheet" → fill
+  // the form → the sheet is revealed.
+  const [sheetFormOpen, setSheetFormOpen] = useState(false); // form is showing
+  const [sheetUnlocked, setSheetUnlocked] = useState(false); // sheet is revealed
+  const [sheetForm, setSheetForm] = useState({ name: '', email: '' });
+  const setS = (k, v) => setSheetForm(f => ({ ...f, [k]: v }));
+  const unlockSheet = async (e) => {
+    e.preventDefault();
+    try { await submitLead({ ...sheetForm, cluster: state.cluster, set: state.setIdx + 1, score: calcScore(state.answers, state.questions), source: 'aptitude-answer-sheet' }); } catch { /* non-blocking */ }
+    setSheetUnlocked(true);
+  };
 
   // Question-bank topic selector + per-topic PDF download.
   const [qbFilter, setQbFilter] = useState('All');
@@ -274,8 +290,8 @@ export default function Aptitude() {
     const roadmap = buildRoadmap(rec.program);
     const dims = buildDimensions(questions.length).map(d => {
       const slice = questions.slice(d.from, d.to);
-      const max = slice.reduce((a, qq) => a + Math.max(...qq.options.map(o => o.s)), 0);
-      const got = state.answers.slice(d.from, d.to).reduce((a, ans, i) => (ans === null ? a : a + slice[i].options[ans].s), 0);
+      const max = slice.length; // 1 mark per question
+      const got = state.answers.slice(d.from, d.to).reduce((a, ans, i) => (ans !== null && ans === bestIdx(slice[i]) ? a + 1 : a), 0);
       return { ...d, pct: Math.round((got / max) * 100) };
     });
     return (
@@ -295,9 +311,22 @@ export default function Aptitude() {
               ))}
             </div>
 
-            {/* Answer sheet — right below the dimension breakdown */}
-            <details className="apt-answers">
-              <summary>View answer sheet</summary>
+            {/* Answer sheet — gated behind a short form */}
+            <div className="apt-answers">
+              {!sheetUnlocked && !sheetFormOpen && (
+                <button type="button" className="apt-answers-toggle" onClick={() => setSheetFormOpen(true)}>View answer sheet</button>
+              )}
+              {!sheetUnlocked && sheetFormOpen && (
+                <form className="apt-sheet-gate" onSubmit={unlockSheet}>
+                  <p className="apt-lead-label">Enter your details to view the answer sheet</p>
+                  <div className="apt-lead-row">
+                    <input type="text" required placeholder="Your name" value={sheetForm.name} onChange={e => setS('name', e.target.value)} />
+                    <input type="email" required placeholder="you@email.com" value={sheetForm.email} onChange={e => setS('email', e.target.value)} />
+                    <button type="submit">View answer sheet</button>
+                  </div>
+                </form>
+              )}
+              {sheetUnlocked && (
               <div className="apt-answers-body">
                 {(() => {
                   const correctCount = questions.reduce((acc, qq, i) => {
@@ -350,7 +379,8 @@ export default function Aptitude() {
                   );
                 })}
               </div>
-            </details>
+              )}
+            </div>
 
             <div className="runner-rec" style={{ background: rec.bg }}>
               <p className="runner-rec-label">Recommended pathway</p>

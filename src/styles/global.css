@@ -1653,6 +1653,9 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .apt-saved { text-align: center; color: var(--placed); font-weight: 500; margin: 22px 0; }
 .apt-answers { margin: 8px 0 24px; border: 0.5px solid var(--border); border-radius: 10px; }
 .apt-answers > summary { cursor: pointer; padding: 14px 16px; font-size: 13px; font-weight: 600; color: var(--specialist); list-style: none; }
+.apt-answers-toggle { display: block; width: 100%; text-align: left; cursor: pointer; padding: 14px 16px; font-size: 13px; font-weight: 600; color: var(--specialist); background: none; border: none; font-family: inherit; }
+.apt-sheet-gate { padding: 14px 16px 16px; }
+.apt-sheet-gate .apt-lead-label { margin-bottom: 10px; }
 .apt-answers > summary::-webkit-details-marker { display: none; }
 .apt-answers-body { padding: 4px 16px 16px; }
 .apt-answer-tally { font-size: 13px; font-weight: 700; color: var(--ink); padding: 8px 0 12px; }
