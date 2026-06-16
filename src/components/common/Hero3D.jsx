@@ -300,7 +300,7 @@ export default function Hero3D() {
       rotX = Math.max(-1.2, Math.min(1.2, rotX));
       group.rotation.x = rotX;
       group.rotation.y = rotY;
-      dotsSpin.rotation.z += 0.0022; // dots travel along the ring line (slow pass so names linger)
+      dotsSpin.rotation.z += 0.003; // dots travel along the ring line (slightly quicker pass)
       // Hide a label exactly when the sphere sits between it and the camera.
       // Test the camera→label segment against the sphere (centred at the world
       // origin, radius RADIUS): if its closest point to the centre falls inside
