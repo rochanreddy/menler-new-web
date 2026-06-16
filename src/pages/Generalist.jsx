@@ -497,7 +497,7 @@ export default function Generalist() {
         <PricingCard
           {...genPricing}
           tagline=""
-          description={<>Build your AI Native portfolio in just 10 weeks.<span className="kp-desc-line2">Master Claude AI, across all domains, get certified and graduate with a domain-focused portfolio.</span><span className="kp-desc-domains">Analyst · Finance Operations · Founder&apos;s Office · HR Operations · Marketing &amp; Sales · Product Management</span></>}
+          description={<>Build your AI Native portfolio in just 10 weeks.<span className="kp-desc-line2">Master Claude AI, across all domains, get certified and graduate with a domain-focused portfolio.</span></>}
           onCta={openApply}
         />
         <div style={{ textAlign: 'center', marginTop: 56 }}>
