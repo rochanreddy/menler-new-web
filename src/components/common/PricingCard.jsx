@@ -11,7 +11,7 @@ export default function PricingCard({
   price,
   origPrice,
   priceSub,
-  ctaLabel = 'Enrol now',
+  ctaLabel = 'Enroll now',
   onCta,
   features = [],
   chips = [],

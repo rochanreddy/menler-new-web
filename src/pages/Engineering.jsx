@@ -127,7 +127,7 @@ export default function Engineering() {
         <div className="mini-lead-inner">
           <div className="mini-lead-copy">
             <h3 style={{ color: 'var(--forest)' }}>Get the Engineering <em style={{ color: 'var(--placed)' }}>brochure & syllabus</em>.</h3>
-            <p>Syllabus, schedule, fees, scholarships, and ISA options — straight to your inbox.</p>
+            <p>Syllabus, schedule, fees & scholarships straight to your inbox.</p>
           </div>
           {done ? (
             <div className="mini-lead-success">✓ Brochure on its way.</div>
