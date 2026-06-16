@@ -371,12 +371,12 @@ export default function Kickstarter() {
       <section className="section kp-section" style={{ background: '#ffffff', paddingTop: 8 }}>
         <p className="section-label" style={{ textAlign: 'center', color: '#854F0B' }}>Pricing</p>
         <h2 className="section-h2" style={{ textAlign: 'center', color: '#854F0B' }}>One price. <em style={{ color: '#BA7517' }}>Everything in.</em></h2>
-        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto 32px' }}>Your hands-on entry into AI no prerequisites, no hidden fees.</p>
+        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto 32px' }}>Your hands on entry into AI no prerequisites, no hidden fees.</p>
 
         <PricingCard
           {...ksPricing}
           ctaLabel="Pay now"
-          description="Two weekends, four live sessions, zero prerequisites. Go from your first prompt to a working Claude OS and four portfolio projects."
+          description={<>Build your AI foundation in just two weekends.<span className="kp-desc-line2">Learn AI fundamentals, build real workflows, and ship your first projects.</span></>}
           onCta={openApply}
         />
         <div style={{ textAlign: 'center', marginTop: 56 }}>
