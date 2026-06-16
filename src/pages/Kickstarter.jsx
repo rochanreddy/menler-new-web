@@ -373,7 +373,7 @@ export default function Kickstarter() {
         <h2 className="section-h2" style={{ textAlign: 'center', color: '#854F0B' }}>One price. <em style={{ color: '#BA7517' }}>Everything in.</em></h2>
         <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto 32px' }}>Your hands-on entry into AI — no prerequisites, no hidden fees.</p>
 
-        <PricingCard {...ksPricing} onCta={openApply} />
+        <PricingCard {...ksPricing} ctaLabel="Pay now" onCta={openApply} />
         <div style={{ textAlign: 'center', marginTop: 56 }}>
           <button className="btn-primary" style={{ background: '#BA7517', minWidth: 200 }} onClick={openApply}>Book a call</button>
         </div>
