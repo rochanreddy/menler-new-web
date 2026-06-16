@@ -252,7 +252,7 @@ export default function Hero3D() {
     // Burst stays CLOSED at the far right, opens as the name comes in toward the
     // middle (peak just right of centre), then shrinks back to closed on the
     // left — a bump between RIGHT_EDGE and OPEN_LEFT, peaking at OPEN_PEAK.
-    const RIGHT_EDGE = 0.28, OPEN_PEAK = 0.1, OPEN_LEFT = -0.6;
+    const RIGHT_EDGE = 0.28, OPEN_PEAK = 0.1, OPEN_LEFT = -0.85;
     const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
     const openOf = (i) => {
       if (wzArr[i] <= 0) return 0;                       // behind the globe → closed
