@@ -253,7 +253,7 @@ export default function Hero3D() {
     // just right-of-centre (FULL_RIGHT → FULL_LEFT — where the user marked it),
     // and fades out toward the LEFT. A flat-topped plateau, not a single peak,
     // so it visibly opens all the way. (Normalised screen-x: +1 right … -1 left.)
-    const RIGHT_EDGE = 0.7, FULL_RIGHT = 0.5, FULL_LEFT = 0.15, OPEN_LEFT = -0.8;
+    const RIGHT_EDGE = 0.68, FULL_RIGHT = 0.52, FULL_LEFT = 0.38, OPEN_LEFT = -0.15;
     const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
     const openOf = (i) => {
       if (wzArr[i] <= 0) return 0;                       // behind the globe → closed
