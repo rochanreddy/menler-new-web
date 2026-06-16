@@ -106,7 +106,7 @@ export default function Engineering() {
       <section className="section" style={{ background: 'white' }}>
         <p className="section-label" style={{ color: 'var(--forest)' }}>12-week curriculum</p>
         <h2 className="section-h2" style={{ color: 'var(--forest)' }}>From engineer<br /><em style={{ color: 'var(--placed)' }}>to Claude Specialist.</em></h2>
-        <p className="section-sub" style={{ maxWidth: 'none' }}>The full Claude engineering stack — API, RAG, MCP, agents, evaluation, LLMOps. Shipped to production.</p>
+        <p className="section-sub" style={{ maxWidth: 'none' }}>The full Claude engineering stack — API, RAG, MCP, Agents, Evaluation, LLMOps. Shipped to Production.</p>
         <div className="curric curric-eng" style={{ display: 'block' }}>
           <div className="curric-detail curric-soon">
             <p className="curric-soon-title">Coming Soon</p>
