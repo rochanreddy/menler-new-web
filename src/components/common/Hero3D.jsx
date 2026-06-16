@@ -318,23 +318,24 @@ export default function Hero3D() {
       }
 
       // ── Drive the sub-skill burst ──
-      // A name opens as it comes round on the RIGHT of the orbit, then shrinks
-      // and closes as it travels to the LEFT. The burst sticks to one name for
-      // its whole right→left pass, then the next name entering on the right
+      // A name opens as it comes in toward the middle (just right of centre),
+      // then shrinks and closes as it travels to the LEFT. The burst sticks to
+      // one name for its whole pass, then the next name reaching the window
       // takes over.
-      let pickIdx = -1, pickX = -Infinity;
+      let pickIdx = -1, pickOpen = 0;
       for (let i = 0; i < labels.length; i++) {
         labels[i].getWorldPosition(tmpV);
         wzArr[i] = tmpV.z;
         tmpV.project(camera);
         nxArr[i] = tmpV.x;
-        if (wzArr[i] > 0 && nxArr[i] > pickX) { pickX = nxArr[i]; pickIdx = i; } // front-most & rightmost
+        const o = openOf(i);
+        if (o > pickOpen) { pickOpen = o; pickIdx = i; } // the label most into the open window
       }
       let targetOpen;
       if (activeIdx === -1) {
         targetOpen = 0;
-        // Grab the name once it has come far enough round to the right.
-        if (pickIdx >= 0 && openOf(pickIdx) > 0.4) { activeIdx = pickIdx; populateBurst(DOMAINS[activeIdx]); }
+        // Grab the name once it has come in near the centre.
+        if (pickIdx >= 0 && pickOpen > 0.4) { activeIdx = pickIdx; populateBurst(DOMAINS[activeIdx]); }
       } else {
         targetOpen = openOf(activeIdx);
         // Released once it has shrunk away to the left / gone behind the globe.
