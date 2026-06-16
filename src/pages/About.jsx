@@ -46,7 +46,7 @@ export default function About() {
         <div className="hero-inner">
           <p className="hero-eyebrow" style={{ color: 'var(--lavender)' }}>About Menler</p>
           <h1 className="hero-h1">AI learning, built for<br /><em>the people doing the work.</em></h1>
-          <p className="hero-sub" style={{ maxWidth: 570 }}>Menler helps students and professionals become AI-native through<br />hands-on learning, shipped projects, and a builder-first community.<br />The true measure of learning is what you can build on Monday morning.</p>
+          <p className="hero-sub about-hero-sub" style={{ maxWidth: 570 }}>Menler helps students and professionals become AI-native through<br />hands-on learning, shipped projects, and a builder-first community.<br />The true measure of learning is what you can build on Monday morning.</p>
         </div>
       </section>
       

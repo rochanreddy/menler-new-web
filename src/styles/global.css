@@ -260,6 +260,12 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   50% { filter: drop-shadow(0 0 7px rgba(175,169,236,0.5)); }
 }
 .hero-sub { font-size: 17px; color: rgba(238,237,254,0.58); line-height: 1.8; max-width: 700px; margin-bottom: 24px; }
+/* About hero: on mobile only, drop the desktop-tuned line breaks and justify the
+   copy so it reads as a tidy block (even edges) instead of ragged centred lines. */
+@media (max-width: 640px) {
+  .about-hero-sub br { display: none; }
+  .about-hero-sub { text-align: justify; text-align-last: center; }
+}
 .hero-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .btn-primary { background: var(--specialist); color: white; padding: 11px 22px; border-radius: 22px; font-size: 13px; font-weight: 500; text-decoration: none; transition: background .2s; display: inline-block; cursor: pointer; border: none; font-family: inherit; }
 .btn-primary:hover { background: #6B62CC; }
