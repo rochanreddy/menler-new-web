@@ -249,18 +249,18 @@ export default function Hero3D() {
     let burstOpen = 0;    // 0 = collapsed, 1 = fully fanned out
     const nxArr = new Array(DOMAINS.length).fill(0); // normalised screen x per label (-1 left … +1 right)
     const wzArr = new Array(DOMAINS.length).fill(0); // world z per label (>0 = near side, facing camera)
-    // Burst stays CLOSED at the far-right edge, opens on the RIGHT SIDE of the
-    // globe (peak ~0.45 — where the user marked it), then carries across and
-    // closes at the extreme LEFT. A bump between RIGHT_EDGE and OPEN_LEFT,
-    // peaking at OPEN_PEAK (all in normalised screen-x: +1 right … -1 left).
-    const RIGHT_EDGE = 0.75, OPEN_PEAK = 0.45, OPEN_LEFT = -0.85;
+    // Burst stays CLOSED at the far-right edge, then is FULLY open across a zone
+    // just right-of-centre (FULL_RIGHT → FULL_LEFT — where the user marked it),
+    // and fades out toward the LEFT. A flat-topped plateau, not a single peak,
+    // so it visibly opens all the way. (Normalised screen-x: +1 right … -1 left.)
+    const RIGHT_EDGE = 0.7, FULL_RIGHT = 0.5, FULL_LEFT = 0.15, OPEN_LEFT = -0.8;
     const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
     const openOf = (i) => {
       if (wzArr[i] <= 0) return 0;                       // behind the globe → closed
       const nx = nxArr[i];
-      const rise = smooth(RIGHT_EDGE, OPEN_PEAK, nx);    // 0 at far right → 1 at the peak
-      const fall = smooth(OPEN_LEFT, OPEN_PEAK, nx);     // 0 at the left  → 1 at the peak
-      return Math.min(rise, fall);
+      const rise = smooth(RIGHT_EDGE, FULL_RIGHT, nx);   // 0 at far right → 1 by FULL_RIGHT
+      const fall = smooth(OPEN_LEFT, FULL_LEFT, nx);     // 0 at the left  → 1 by FULL_LEFT
+      return Math.min(rise, fall);                       // = 1 across the plateau in between
     };
 
     // Lights
