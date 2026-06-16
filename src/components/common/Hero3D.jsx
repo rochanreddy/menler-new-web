@@ -249,9 +249,10 @@ export default function Hero3D() {
     let burstOpen = 0;    // 0 = collapsed, 1 = fully fanned out
     const nxArr = new Array(DOMAINS.length).fill(0); // normalised screen x per label (-1 left … +1 right)
     const wzArr = new Array(DOMAINS.length).fill(0); // world z per label (>0 = near side, facing camera)
-    // Burst stays CLOSED at the far right, opens as the name comes in toward the
-    // middle (peak just right of centre), then shrinks back to closed on the
-    // left — a bump between RIGHT_EDGE and OPEN_LEFT, peaking at OPEN_PEAK.
+    // Burst stays CLOSED at the far-right edge, opens on the RIGHT SIDE of the
+    // globe (peak ~0.45 — where the user marked it), then carries across and
+    // closes at the extreme LEFT. A bump between RIGHT_EDGE and OPEN_LEFT,
+    // peaking at OPEN_PEAK (all in normalised screen-x: +1 right … -1 left).
     const RIGHT_EDGE = 0.75, OPEN_PEAK = 0.45, OPEN_LEFT = -0.85;
     const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
     const openOf = (i) => {
