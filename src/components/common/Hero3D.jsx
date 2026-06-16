@@ -134,14 +134,14 @@ export default function Hero3D() {
 
     // Sub-skills revealed when a domain name reaches the front of the orbit.
     const SUBSKILLS = {
-      "Founder's Office": ['Strategy', 'Chief of Staff', 'Board Decks', 'Briefings'],
-      'Product Management': ['PRDs', 'Roadmaps', 'User Research', 'Specs'],
-      'Engineering': ['RAG', 'MCP', 'Agents', 'Evals', 'LLMOps'],
-      'Finance': ['Deal Memos', 'Forecasts', 'Reporting', 'Diligence'],
-      'Marketing': ['Content', 'Campaigns', 'SEO', 'Outreach'],
-      'HR': ['Hiring', 'SOPs', 'Onboarding', 'Policies'],
-      'Operations': ['Automation', 'Workflows', 'Dashboards', 'Tickets'],
-      'Analytics': ['SQL', 'Insights', 'Pipelines', 'Charts'],
+      "Founder's Office": ['Strategy', 'Chief of Staff', 'Board Decks', 'Briefings', 'Fundraising'],
+      'Product Management': ['PRDs', 'Roadmaps', 'User Research', 'Specs', 'Prioritisation'],
+      'Engineering': ['RAG', 'MCP', 'Agents', 'Evals', 'LLMOps', 'Fine-tuning'],
+      'Finance': ['Deal Memos', 'Forecasts', 'Reporting', 'Diligence', 'Budgets'],
+      'Marketing': ['Content', 'Campaigns', 'SEO', 'Outreach', 'Creative'],
+      'HR': ['Hiring', 'SOPs', 'Onboarding', 'Policies', 'Payroll'],
+      'Operations': ['Automation', 'Workflows', 'Dashboards', 'Tickets', 'Vendors'],
+      'Analytics': ['SQL', 'Insights', 'Pipelines', 'Charts', 'Modelling'],
     };
     // Smaller, lighter label for a sub-skill node.
     const makeSubTexture = (text) => {
@@ -217,6 +217,8 @@ export default function Hero3D() {
     const populateBurst = (domain) => {
       const subs = (SUBSKILLS[domain] || []).slice(0, MAXSUB);
       const n = subs.length;
+      const seg = (Math.PI * 2) / n;
+      const start = Math.random() * Math.PI * 2; // random orientation each time it opens
       for (let i = 0; i < MAXSUB; i++) {
         const sp = subSprites[i];
         if (i < n) {
@@ -224,8 +226,10 @@ export default function Hero3D() {
           if (subTexs[i]) subTexs[i].dispose();
           subTexs[i] = tex;
           sp.material.map = tex; sp.material.needsUpdate = true;
-          const ang = Math.PI / 2 + (i * Math.PI * 2) / n; // start at top, go around
-          const r = 2.5 + (i % 2 ? 0.45 : 0);
+          // Even sector per node (keeps them from piling up) + random jitter and
+          // varied spoke length so the burst looks scattered, not a neat cross.
+          const ang = start + i * seg + (Math.random() - 0.5) * seg * 0.7;
+          const r = 2.2 + Math.random() * 1.3;
           const x = Math.cos(ang) * r, y = Math.sin(ang) * r;
           sp.position.set(x, y, 0);
           const aspect = tex.image.width / tex.image.height;
