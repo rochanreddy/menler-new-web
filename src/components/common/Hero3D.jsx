@@ -249,11 +249,11 @@ export default function Hero3D() {
     let burstOpen = 0;    // 0 = collapsed, 1 = fully fanned out
     const nxArr = new Array(DOMAINS.length).fill(0); // normalised screen x per label (-1 left … +1 right)
     const wzArr = new Array(DOMAINS.length).fill(0); // world z per label (>0 = near side, facing camera)
-    // Burst stays CLOSED at the far-right edge, then is FULLY open across a zone
-    // just right-of-centre (FULL_RIGHT → FULL_LEFT — where the user marked it),
-    // and fades out toward the LEFT. A flat-topped plateau, not a single peak,
-    // so it visibly opens all the way. (Normalised screen-x: +1 right … -1 left.)
-    const RIGHT_EDGE = 0.68, FULL_RIGHT = 0.52, FULL_LEFT = 0.38, OPEN_LEFT = -0.15;
+    // Symmetric about centre: a name opens on the RIGHT (rise 0.68→0.52), stays
+    // FULLY open across the wide plateau (0.52 … -0.52) for a good while, then
+    // closes on the LEFT with the exact mirror ramp (-0.52→-0.68). The right
+    // fade-in and left fade-out are the same width. (Screen-x: +1 right … -1 left.)
+    const RIGHT_EDGE = 0.68, FULL_RIGHT = 0.52, FULL_LEFT = -0.52, OPEN_LEFT = -0.68;
     const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
     const openOf = (i) => {
       if (wzArr[i] <= 0) return 0;                       // behind the globe → closed
