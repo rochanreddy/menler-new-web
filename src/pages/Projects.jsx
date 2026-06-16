@@ -4,7 +4,7 @@ import Footer from '../components/layout/Footer';
 import CtaBanner from '../components/common/CtaBanner';
 import PdfView from '../components/common/PdfView';
 import Seo, { SITE_URL } from '../components/common/Seo';
-import { PROJECTS, PROJECTS_QUERY } from '../data/projectsData';
+import { PROJECTS, PROJECTS_QUERY, tagClassFor } from '../data/projectsData';
 import { useContent } from '../lib/useContent';
 
 // Per-project slide deck (PPTX in /public/project_decks), shown on the detail page.
@@ -83,7 +83,7 @@ export default function Projects() {
       {/* ── PROJECT PREVIEW HERO ── */}
       <section className="proj-detail-hero">
         <div className="proj-detail-inner">
-          <span className={`proj-domain-tag ${project.tagCls}`}>{project.tag}</span>
+          <span className={`proj-domain-tag ${tagClassFor(project)}`}>{project.tag}</span>
           <h1 className="proj-detail-title">{project.title}</h1>
           <p className="proj-detail-desc">{project.desc}</p>
           <div className="proj-stack" style={{ marginTop: 18 }}>{project.stack.map(s => <span key={s}>{s}</span>)}</div>

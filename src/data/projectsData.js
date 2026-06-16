@@ -294,3 +294,23 @@ export const PROJECTS = [
     },
   },
 ];
+
+// Canonical colour class per domain so the same category always renders the
+// same tag colour everywhere — regardless of the (sometimes inconsistent)
+// `tagCls` stored on individual projects or coming from Sanity. Keyed by the
+// lower-cased `tag` label. Use tagClassFor(tag) at every render site.
+const TAG_CLASS_BY_DOMAIN = {
+  "founder's office": 't-founder',
+  'finance operations': 't-vc',
+  'product management': 't-pm',
+  'engineering': 't-eng',
+  'analyst': 't-analyst',
+  'analytics': 't-analyst',
+  'human resource': 't-ops',
+  'marketing & sales': 't-marketing',
+};
+
+export function tagClassFor(project) {
+  const tag = (project?.tag || '').trim().toLowerCase();
+  return TAG_CLASS_BY_DOMAIN[tag] || project?.tagCls || 't-analyst';
+}

@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Footer from '../components/layout/Footer';
 import Seo from '../components/common/Seo';
 import PlaybookModal from '../components/common/PlaybookModal';
-import { PROJECTS } from '../data/projectsData';
+import { PROJECTS, tagClassFor } from '../data/projectsData';
 import { submitLead } from '../services/leadService';
 
 const LIBRARY_CARDS = [
@@ -198,7 +198,7 @@ export default function Resources() {
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(`/projects/${p.slug}`); } }}
               >
                 {p.image && <div className="proj-card-img"><img src={p.image} alt={p.title} loading="lazy" /></div>}
-                <span className={`proj-domain-tag ${p.tagCls}`}>{p.tag}</span>
+                <span className={`proj-domain-tag ${tagClassFor(p)}`}>{p.tag}</span>
                 <h3 className="proj-card-title">{p.title}</h3>
                 <div className="proj-stack">{p.stack.map(s => <span key={s}>{s}</span>)}</div>
                 <p className="proj-outcome">{p.outcome}</p>

@@ -12,7 +12,7 @@ import { useToast } from '../components/common/Toast';
 const Hero3D = lazy(() => import('../components/common/Hero3D'));
 import { HOME_FAQS } from '../data/faqData';
 import { submitLead } from '../services/leadService';
-import { PROJECTS, PROJECTS_QUERY } from '../data/projectsData';
+import { PROJECTS, PROJECTS_QUERY, tagClassFor } from '../data/projectsData';
 import { useContent } from '../lib/useContent';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 import { BrandLogo } from '../components/common/PartnersMarquee';
@@ -322,7 +322,7 @@ export default function Home() {
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(`/projects/${p.slug}`); } }}
             >
               {p.image && <div className="proj-card-img"><img src={p.image} alt={p.title} loading="lazy" /></div>}
-              <span className={`proj-domain-tag ${p.tagCls}`}>{p.tag}</span>
+              <span className={`proj-domain-tag ${tagClassFor(p)}`}>{p.tag}</span>
               <h3 className="proj-card-title">{p.title}</h3>
               <p className="proj-card-desc">{p.desc}</p>
               <div className="proj-stack">{p.stack.map(s => (
