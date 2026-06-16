@@ -1483,7 +1483,11 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .apt-track-badge { display: inline-block; background: var(--cloud); color: var(--specialist); font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 7px 18px; border-radius: 999px; border: 1px solid rgba(83,74,183,0.22); margin-bottom: 14px; }
 
 .runner-nav { position: sticky; top: 90px; background: white; border-radius: 18px; padding: 22px; box-shadow: 0 24px 56px rgba(38,33,92,0.08); }
+.runner-topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.runner-exit { color: var(--specialist); }
 .runner-timer { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--ink); border-radius: 12px; margin-bottom: 20px; }
+/* Inline timer lives in the question card's top bar — mobile only (see media query). */
+.runner-timer--inline { display: none; }
 .runner-timer-label { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--lavender); }
 .runner-timer-val { font-family: 'DM Serif Display', serif; font-size: 22px; color: #fff; font-variant-numeric: tabular-nums; }
 .runner-timer.low { background: #A32D2D; animation: timerPulse 1s ease-in-out infinite; }
@@ -1508,8 +1512,16 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 @media (max-width: 860px) {
   .runner-layout { grid-template-columns: 1fr; }
   .runner-main { padding: 26px 22px; }
-  .runner-nav { position: static; order: -1; }
+  /* Navigator (question dots) drops BELOW the question card on mobile. */
+  .runner-nav { position: static; order: 0; }
   .runner-nav-grid { grid-template-columns: repeat(8, 1fr); }
+  /* Timer moves out of the navigator and sits beside Exit at the top of the card. */
+  .runner-nav .runner-timer { display: none; }
+  .runner-timer--inline { display: flex; flex: 0 0 auto; gap: 8px; padding: 7px 13px; margin: 0; }
+  .runner-timer--inline .runner-timer-label { font-size: 9.5px; }
+  .runner-timer--inline .runner-timer-val { font-size: 16px; }
+  .runner-topbar { margin-bottom: 12px; }
+  .runner-exit { font-size: 13px; }
 }
 
 /* ── Exam runner: fit the whole test screen in the viewport (no page scroll) ──

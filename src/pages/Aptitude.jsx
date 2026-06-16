@@ -205,7 +205,14 @@ export default function Aptitude() {
       <section className="apt-runner apt-runner--exam">
         <div className="runner-layout">
           <div className="runner-main">
-            <button className="runner-btn" style={{ color: 'var(--specialist)', marginBottom: 14 }} onClick={() => dispatch({ type: 'TO_SETS' })}>← Exit to sets</button>
+            <div className="runner-topbar">
+              <button className="runner-btn runner-exit" onClick={() => dispatch({ type: 'TO_SETS' })}>← Exit to sets</button>
+              {/* Compact timer shown beside Exit on mobile only (the aside timer is hidden there). */}
+              <div className={`runner-timer runner-timer--inline${lowTime ? ' low' : ''}`}>
+                <span className="runner-timer-label">Time left</span>
+                <span className="runner-timer-val">{mm}:{ss}</span>
+              </div>
+            </div>
             <p className="runner-set-tag">Set {state.setIdx + 1} · {state.cluster}</p>
             <div className="runner-progress"><div className="runner-progress-fill" style={{ width: `${pct}%` }} /></div>
             <p className="runner-meta">Question {state.idx + 1} of {total} · {answeredCount} answered</p>
