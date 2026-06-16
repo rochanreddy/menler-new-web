@@ -233,7 +233,7 @@ export default function Hero3D() {
           const x = Math.cos(ang) * r, y = Math.sin(ang) * r;
           sp.position.set(x, y, 0);
           const aspect = tex.image.width / tex.image.height;
-          const h = 0.6;
+          const h = 0.42;
           sp.scale.set(h * aspect, h, 1);
           sp.visible = true;
           linePos.set([0, 0, 0, x, y, 0], i * 6);
