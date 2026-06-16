@@ -7,6 +7,7 @@ export default function PricingCard({
   pill,
   name,
   tagline,
+  description,
   price,
   origPrice,
   priceSub,
@@ -22,6 +23,7 @@ export default function PricingCard({
           <div className="kp-pill"><span className="kp-dot" />{pill}</div>
           <h3 className="kp-name">{name}</h3>
           <p className="kp-tagline">{tagline}</p>
+          {description && <p className="kp-desc">{description}</p>}
         </div>
         <div className="kp-price">
           {origPrice && <span className="kp-price-orig">₹{origPrice}</span>}
