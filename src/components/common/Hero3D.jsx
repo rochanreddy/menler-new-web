@@ -252,7 +252,7 @@ export default function Hero3D() {
     // Burst stays CLOSED at the far right, opens as the name comes in toward the
     // middle (peak just right of centre), then shrinks back to closed on the
     // left — a bump between RIGHT_EDGE and OPEN_LEFT, peaking at OPEN_PEAK.
-    const RIGHT_EDGE = 0.28, OPEN_PEAK = 0.1, OPEN_LEFT = -0.18;
+    const RIGHT_EDGE = 0.28, OPEN_PEAK = 0.1, OPEN_LEFT = -0.6;
     const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
     const openOf = (i) => {
       if (wzArr[i] <= 0) return 0;                       // behind the globe → closed
@@ -297,7 +297,7 @@ export default function Hero3D() {
       rotX = Math.max(-1.2, Math.min(1.2, rotX));
       group.rotation.x = rotX;
       group.rotation.y = rotY;
-      dotsSpin.rotation.z += 0.0035; // dots travel along the ring line (slow pass right→left)
+      dotsSpin.rotation.z += 0.0022; // dots travel along the ring line (slow pass so names linger)
       // Hide a label exactly when the sphere sits between it and the camera.
       // Test the camera→label segment against the sphere (centred at the world
       // origin, radius RADIUS): if its closest point to the centre falls inside
