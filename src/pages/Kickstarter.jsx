@@ -376,7 +376,7 @@ export default function Kickstarter() {
         <PricingCard
           {...ksPricing}
           ctaLabel="Pay now"
-          description="Your hands-on entry into AI — no prerequisites, no jargon. Over two weekends you'll go from your very first prompt to a working Claude OS and four portfolio-ready projects, guided live by practitioners. Walk away fluent, certified, and shipping real work — for one flat fee with nothing hidden."
+          description="Two weekends, four live sessions, zero prerequisites. Go from your first prompt to a working Claude OS and four portfolio projects."
           onCta={openApply}
         />
         <div style={{ textAlign: 'center', marginTop: 56 }}>
