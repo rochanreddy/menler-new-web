@@ -63,7 +63,7 @@ const CURRICULUM = [
     projects: ['Project 3 : My Automated AI System (voice + automation)', 'Project 4 : Ship It capstone (live app or agent)'],
   },
   {
-    
+
     label: 'Phase 3', weeks: 'Weeks 7–10', title: 'Domain Specialisation, Capstone & Placement',
     domains: [
       { name: 'Analyst',
@@ -436,7 +436,7 @@ export default function Generalist() {
           })}
         </div>
         <div style={{ textAlign: 'center', marginTop: 28 }}>
-          <button className="btn-primary" onClick={openApply}>Download curriculum</button>
+          <button className="btn-primary" onClick={openApply}>Download Curriculum</button>
         </div>
       </section>
 

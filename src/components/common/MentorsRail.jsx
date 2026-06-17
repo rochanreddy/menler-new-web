@@ -44,20 +44,26 @@ function CaptainRow({ list, dir, tint }) {
     let raf, paused = false, copy = 0, centred = false;
     const speed = dir === 'ltr' ? -0.5 : 0.5; // px/frame
 
+    let pos = 0, lastSet = -1;
     const measure = () => {
       copy = el.scrollWidth / 3;
-      if (copy > 0 && !centred) { el.scrollLeft = copy; centred = true; } // start in the middle copy
+      if (copy > 0 && !centred) { pos = copy; el.scrollLeft = copy; lastSet = el.scrollLeft; centred = true; } // start in the middle copy
     };
     measure();
     const ro = new ResizeObserver(measure);
-    if (track) ro.observe(track); // re-measure when lazy images change the width
+    if (track) ro.observe(track); // re-measure when the width changes
 
     const loop = () => {
-      if (!paused && copy > 0) {
-        let x = el.scrollLeft + speed;
-        if (x >= copy * 2) x -= copy;
-        else if (x <= 0) x += copy;
-        el.scrollLeft = x;
+      if (copy > 0) {
+        // If the user swiped (scrollLeft moved on its own), adopt that position.
+        if (lastSet < 0 || Math.abs(el.scrollLeft - lastSet) > 1.5) pos = el.scrollLeft;
+        if (!paused) {
+          pos += speed;                          // float position → no integer-rounding stutter
+          if (pos >= copy * 2) pos -= copy;       // seamless loop
+          else if (pos <= 0) pos += copy;
+          el.scrollLeft = pos;
+          lastSet = el.scrollLeft;
+        }
       }
       raf = requestAnimationFrame(loop);
     };
@@ -78,7 +84,7 @@ function CaptainRow({ list, dir, tint }) {
   }, [dir, list]);
 
   return (
-    <div className="captains-rail" ref={railRef}>
+    <div className="captains-rail" ref={railRef} data-lenis-prevent>
       <div className="captains-track">
         {items.map((m, i) => (
           <article className="captain-card" key={i} aria-label={`${m.name}, ${m.role}`}>

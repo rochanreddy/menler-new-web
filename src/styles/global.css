@@ -287,6 +287,15 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 /* Sub-text that should stay on one line on desktop (wraps normally on mobile). */
 .section-sub--1line { max-width: none; }
 @media (min-width: 900px) { .section-sub--1line { white-space: nowrap; } }
+/* Home "Real Projects" sub: keep each sentence on one line on mobile by scaling
+   the font to the viewport so the longer line always fits (two lines total). */
+@media (max-width: 640px) {
+  .proj-build-sub { white-space: nowrap; font-size: clamp(9px, 2.9vw, 14px); line-height: 1.7; }
+  /* Longer first sentence → smaller scale so each sentence still fits one line. */
+  .hiring-cat-sub { white-space: nowrap; font-size: clamp(6.5px, 2vw, 14px); line-height: 1.7; }
+  /* Question Bank sub: keep each sentence on one line (two lines total). */
+  .qb-sub { white-space: nowrap; font-size: clamp(8px, 2.5vw, 14px); line-height: 1.7; }
+}
 /* Program-section sub: keep the first sentence on one line on desktop. */
 .prog-sub-wide { max-width: none; }
 @media (min-width: 768px) { .prog-sub-wide { white-space: nowrap; } }
@@ -848,7 +857,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .captains-rows { display: flex; flex-direction: column; gap: 16px; }
 /* Continuous marquee via GPU transform animation (smooth on mobile, no JS). */
 /* Swipeable scroll container; auto-advance is driven in JS (MentorsRail). */
-.captains-rail { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; margin: 0 calc(-1 * var(--gutter)); padding: 0 var(--gutter); }
+.captains-rail { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; margin: 0 calc(-1 * var(--gutter)); padding: 0 var(--gutter); scroll-behavior: auto; scroll-snap-type: none; touch-action: pan-x; overscroll-behavior-x: contain; }
 .captains-rail::-webkit-scrollbar { display: none; }
 .captains-track { display: flex; width: max-content; }
 /* Uniform per-card unit (margin, not gap) so the 3 copies tile seamlessly. */
@@ -1278,7 +1287,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 /* Multi-row auto-scrolling logo rail (like the mentors rail) */
 .logorail-rows { display: flex; flex-direction: column; gap: 14px; margin-top: 20px; }
 /* Swipeable scroll container; auto-advance is driven in JS (HiringRail). */
-.logorail-rail { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; }
+.logorail-rail { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; scroll-behavior: auto; scroll-snap-type: none; touch-action: pan-x; overscroll-behavior-x: contain; }
 .logorail-rail::-webkit-scrollbar { display: none; }
 .logorail-track { display: flex; width: max-content; }
 .logorail-track .partner-chip { min-width: 156px; height: 66px; flex: 0 0 auto; margin-right: 14px; }

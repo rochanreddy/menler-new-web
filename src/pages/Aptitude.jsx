@@ -546,7 +546,7 @@ export default function Aptitude() {
       <section className="section" style={{ background: 'white', paddingBottom: 32 }}>
         <p className="section-label">Question bank</p>
         <h2 className="section-h2">AI Interview QB.<br /><em>Questions from real loops.</em></h2>
-        <p className="section-sub">Asked at top Indian and global companies.<br />Select a topic and get a PDF of the Q&amp;A asked in real interview rounds.</p>
+        <p className="section-sub qb-sub">Asked at top Indian and global companies.<br />Select a topic and get a PDF of the Q&amp;A asked in real interview rounds.</p>
         <div className="qb-filters">
           {QB_BANKS.map(b => (
             <button

@@ -308,7 +308,7 @@ export default function Home() {
       <section className="section" style={{ background: 'white', paddingTop: 48, paddingBottom: 32 }}>
         <p className="section-label">What you build</p>
         <h2 className="section-h2">Real Projects.<br /><em>Across Every Domain.</em></h2>
-        <p className="section-sub">Every Menler fellow ships a portfolio of domain specific projects.<br />Not toy demos actual systems built for real use cases.</p>
+        <p className="section-sub proj-build-sub">Every Menler fellow ships a portfolio of domain specific projects.<br />Not toy demos actual systems built for real use cases.</p>
         <div className="proj-grid proj-grid--4 proj-grid--home">
           {visibleProjects.map((p, i) => (
             <Reveal
@@ -386,7 +386,7 @@ export default function Home() {
       <section className="section jobs-section" style={{ paddingTop: 48, paddingBottom: 32 }}>
         <p className="section-label">Hiring associations &amp; roles</p>
         <h2 className="section-h2">The jobs<br /><em>AI specialists are landing.</em></h2>
-        <p className="section-sub section-sub--1line">A new category of professional is emerging: AI Native, Domain, and Outcome driven.<br />Menler is built to develop them.</p>
+        <p className="section-sub section-sub--1line hiring-cat-sub">A new category of professional is emerging: AI Native, Domain, and Outcome driven.<br />Menler is built to develop them.</p>
         <div className="jobs-roles">
           <div className="role-card gen-side">
             <p className="role-card-program">Claude AI Generalist · Open roles</p>

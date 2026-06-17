@@ -82,7 +82,7 @@ export const PROJECTS = [
   {
     slug: 'research-synthesis-insight-engine', image: '/projects/Research_synthesis.png',
     tag: 'Analyst', tagCls: 't-analyst', title: 'Research synthesis & insight engine',
-    desc: 'Multi-source agent across PDFs, web data, and internal reports — produces a competitive landscape with citations and contradictions flagged for review.',
+    desc: 'Multi source agent across PDFs, web data, and internal reports — produces a competitive landscape with citations and contradictions flagged for review.',
     stack: ['Claude API', 'Web search', 'Citations'], outcome: 'Days → hours per research cycle',
     doc: {
       overview: "A research agent that reads across everything and returns a cited, contradiction-aware landscape you can actually defend.",

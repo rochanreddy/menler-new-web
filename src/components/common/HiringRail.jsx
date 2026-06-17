@@ -16,20 +16,25 @@ function LogoRow({ list, dir }) {
     let raf, paused = false, copy = 0, centred = false;
     const speed = dir === 'ltr' ? -0.5 : 0.5; // px/frame
 
+    let pos = 0, lastSet = -1;
     const measure = () => {
       copy = el.scrollWidth / 3;
-      if (copy > 0 && !centred) { el.scrollLeft = copy; centred = true; }
+      if (copy > 0 && !centred) { pos = copy; el.scrollLeft = copy; lastSet = el.scrollLeft; centred = true; }
     };
     measure();
     const ro = new ResizeObserver(measure);
     if (track) ro.observe(track);
 
     const loop = () => {
-      if (!paused && copy > 0) {
-        let x = el.scrollLeft + speed;
-        if (x >= copy * 2) x -= copy;
-        else if (x <= 0) x += copy;
-        el.scrollLeft = x;
+      if (copy > 0) {
+        if (lastSet < 0 || Math.abs(el.scrollLeft - lastSet) > 1.5) pos = el.scrollLeft;
+        if (!paused) {
+          pos += speed;
+          if (pos >= copy * 2) pos -= copy;
+          else if (pos <= 0) pos += copy;
+          el.scrollLeft = pos;
+          lastSet = el.scrollLeft;
+        }
       }
       raf = requestAnimationFrame(loop);
     };
@@ -49,7 +54,7 @@ function LogoRow({ list, dir }) {
   }, [dir, list]);
 
   return (
-    <div className="logorail-rail" ref={railRef}>
+    <div className="logorail-rail" ref={railRef} data-lenis-prevent>
       <div className="logorail-track">
         {items.map((c, i) => (
           <BrandLogo key={i} name={c.name} domain={c.domain} logo={c.logo} />
