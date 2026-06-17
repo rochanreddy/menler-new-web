@@ -1648,6 +1648,9 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .apt-lead-row { display: flex; gap: 8px; flex-wrap: wrap; }
 .apt-lead-row input { flex: 1 1 150px; min-width: 0; padding: 10px 12px; border: 1px solid rgba(83,74,183,0.2); border-radius: 8px; font-family: inherit; font-size: 13px; }
 .apt-lead-row button { flex: 0 0 auto; background: var(--specialist); color: #fff; border: none; font-family: inherit; font-size: 13px; font-weight: 500; padding: 10px 18px; border-radius: 8px; cursor: pointer; }
+/* Stacked (vertical) variant — inputs and button full width, one per line. */
+.apt-lead-row--col { flex-direction: column; flex-wrap: nowrap; }
+.apt-lead-row--col input, .apt-lead-row--col button { flex: 0 0 auto; width: 100%; }
 .apt-saved { text-align: center; color: var(--placed); font-weight: 500; margin: 22px 0; }
 .apt-answers { margin: 8px 0 24px; border: 0.5px solid var(--border); border-radius: 10px; }
 .apt-answers > summary { cursor: pointer; padding: 14px 16px; font-size: 13px; font-weight: 600; color: var(--specialist); list-style: none; }

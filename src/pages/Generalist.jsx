@@ -60,9 +60,10 @@ const CURRICULUM = [
       { w: 'Week 6 — AI Native: Ship It — Demo Day', lessons: ['Capstone build sprint on the full Claude stack', 'Product polish: UX, error handling, MCP reliability', 'Gamma deck + presentation coaching', 'Demo Day & AI Generalist certification'] },
     ],
     tools: ['Claude Code', 'Cursor', 'Lovable', 'Replit', 'Emergent', 'N8N', 'Make', 'Zapier', 'ElevenLabs', 'GitHub', 'Gamma'],
-    projects: ['Project 3 : My Automated AI System (voice + automation)', 'Project 4 — Ship It capstone (live app or agent)'],
+    projects: ['Project 3 : My Automated AI System (voice + automation)', 'Project 4 : Ship It capstone (live app or agent)'],
   },
   {
+    
     label: 'Phase 3', weeks: 'Weeks 7–10', title: 'Domain Specialisation, Capstone & Placement',
     domains: [
       { name: 'Analyst',
@@ -282,7 +283,7 @@ export default function Generalist() {
           <p className="hero-sub">India's only Claude AI Specialist Fellowship.<strong className="hero-tagline" style={{ color: '#EEEDFE', fontWeight: 500 }}>Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
           <div className="hero-actions">
             <button className="btn-primary" style={{ minWidth: 220, textAlign: 'center' }} onClick={openApply}>Apply Now</button>
-            <button className="btn-outline" style={{ minWidth: 220, textAlign: 'center' }}>Download Brochure</button>
+            <button className="btn-outline" style={{ minWidth: 220, textAlign: 'center' }} onClick={() => go('/aptitude')}>Take the AI Aptitude Test</button>
           </div>
           <div className="hero-stats">
             <div><span className="hero-stat-num">90%</span><span className="hero-stat-lbl">Interview Pipeline<br />Target</span></div>

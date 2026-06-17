@@ -177,7 +177,7 @@ export default function Aptitude() {
   // the form → the sheet is revealed.
   const [sheetFormOpen, setSheetFormOpen] = useState(false); // form is showing
   const [sheetUnlocked, setSheetUnlocked] = useState(false); // sheet is revealed
-  const [sheetForm, setSheetForm] = useState({ name: '', email: '' });
+  const [sheetForm, setSheetForm] = useState({ name: '', email: '', phone: '' });
   const setS = (k, v) => setSheetForm(f => ({ ...f, [k]: v }));
   const unlockSheet = async (e) => {
     e.preventDefault();
@@ -185,10 +185,13 @@ export default function Aptitude() {
     setSheetUnlocked(true);
   };
 
-  // Question-bank topic selector + per-topic PDF download.
+  // Question-bank topic selector + per-topic PDF download (gated behind a form).
   const [qbFilter, setQbFilter] = useState('All');
   const qbBank = QB_BANKS.find(b => b.name === qbFilter) || QB_BANKS[0];
-  const downloadQB = () => {
+  const [qbFormOpen, setQbFormOpen] = useState(false);
+  const [qbForm, setQbForm] = useState({ name: '', email: '', phone: '' });
+  const setQ = (k, v) => setQbForm(f => ({ ...f, [k]: v }));
+  const doDownloadQB = () => {
     if (!qbBank.pdf) return;
     const a = document.createElement('a');
     a.href = encodeURI(qbBank.pdf);
@@ -198,6 +201,12 @@ export default function Aptitude() {
     document.body.appendChild(a);
     a.click();
     a.remove();
+  };
+  const submitQB = async (e) => {
+    e.preventDefault();
+    try { await submitLead({ ...qbForm, topic: qbBank.name, source: 'aptitude-question-bank' }); } catch { /* non-blocking */ }
+    setQbFormOpen(false);
+    doDownloadQB();
   };
   const saveReport = async (e) => {
     e.preventDefault();
@@ -322,6 +331,7 @@ export default function Aptitude() {
                   <div className="apt-lead-row">
                     <input type="text" required placeholder="Your name" value={sheetForm.name} onChange={e => setS('name', e.target.value)} />
                     <input type="email" required placeholder="you@email.com" value={sheetForm.email} onChange={e => setS('email', e.target.value)} />
+                    <input type="tel" required placeholder="Phone number" value={sheetForm.phone} onChange={e => setS('phone', e.target.value)} />
                     <button type="submit">View answer sheet</button>
                   </div>
                 </form>
@@ -550,9 +560,21 @@ export default function Aptitude() {
           ))}
         </div>
         <div style={{ textAlign: 'center', marginTop: 32 }}>
-          <button className="btn-primary" onClick={downloadQB} disabled={!qbBank.pdf}>
-            {qbBank.pdf ? `Download Question Bank — ${qbBank.name}` : `${qbBank.name} — coming soon`}
-          </button>
+          {!qbFormOpen ? (
+            <button className="btn-primary" onClick={() => qbBank.pdf && setQbFormOpen(true)} disabled={!qbBank.pdf}>
+              {qbBank.pdf ? `Download Question Bank — ${qbBank.name}` : `${qbBank.name} — coming soon`}
+            </button>
+          ) : (
+            <form className="apt-lead" style={{ maxWidth: 540, margin: '0 auto', textAlign: 'left' }} onSubmit={submitQB}>
+              <p className="apt-lead-label">Enter your details to download the {qbBank.name} question bank</p>
+              <div className="apt-lead-row apt-lead-row--col">
+                <input type="text" required placeholder="Your name" value={qbForm.name} onChange={e => setQ('name', e.target.value)} />
+                <input type="email" required placeholder="you@email.com" value={qbForm.email} onChange={e => setQ('email', e.target.value)} />
+                <input type="tel" required placeholder="Phone number" value={qbForm.phone} onChange={e => setQ('phone', e.target.value)} />
+                <button type="submit">Download PDF</button>
+              </div>
+            </form>
+          )}
         </div>
       </section>
 

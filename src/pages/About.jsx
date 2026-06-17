@@ -60,7 +60,7 @@ export default function About() {
             <p className="about-card-label" style={{ color: 'var(--lavender)' }}>Vision</p>
             <p style={{ fontFamily: "'DM Serif Display',serif", fontSize: 19.5, lineHeight: 1.4, color: '#EEEDFE', fontStyle: 'italic' }}>To build the AI-native professionals powering India's next decade of growth.</p>
             <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: 28 }}>
-              <MenlerWordmark size={60} theme="dark" />
+              <MenlerWordmark size={92} theme="dark" />
             </div>
           </div>
           <div className="about-card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
