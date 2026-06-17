@@ -178,11 +178,22 @@ export default function Aptitude() {
   const [sheetFormOpen, setSheetFormOpen] = useState(false); // form is showing
   const [sheetUnlocked, setSheetUnlocked] = useState(false); // sheet is revealed
   const [sheetForm, setSheetForm] = useState({ name: '', email: '', phone: '' });
+  const [sheetBusy, setSheetBusy] = useState(false);
+  const [sheetErr, setSheetErr] = useState(false);
   const setS = (k, v) => setSheetForm(f => ({ ...f, [k]: v }));
+  // Only reveal the sheet AFTER the lead is saved — so the data always reaches
+  // the admin panel. If the save fails, show an error and let them retry.
   const unlockSheet = async (e) => {
     e.preventDefault();
-    try { await submitLead({ ...sheetForm, cluster: state.cluster, set: state.setIdx + 1, score: calcScore(state.answers, state.questions), source: 'aptitude-answer-sheet' }); } catch { /* non-blocking */ }
-    setSheetUnlocked(true);
+    setSheetErr(false); setSheetBusy(true);
+    try {
+      await submitLead({ ...sheetForm, cluster: state.cluster, set: state.setIdx + 1, score: calcScore(state.answers, state.questions), source: 'aptitude-answer-sheet' });
+      setSheetUnlocked(true);
+    } catch {
+      setSheetErr(true);
+    } finally {
+      setSheetBusy(false);
+    }
   };
 
   // Question-bank topic selector + per-topic PDF download (gated behind a form).
@@ -190,6 +201,8 @@ export default function Aptitude() {
   const qbBank = QB_BANKS.find(b => b.name === qbFilter) || QB_BANKS[0];
   const [qbFormOpen, setQbFormOpen] = useState(false);
   const [qbForm, setQbForm] = useState({ name: '', email: '', phone: '' });
+  const [qbBusy, setQbBusy] = useState(false);
+  const [qbErr, setQbErr] = useState(false);
   const setQ = (k, v) => setQbForm(f => ({ ...f, [k]: v }));
   const doDownloadQB = () => {
     if (!qbBank.pdf) return;
@@ -202,11 +215,19 @@ export default function Aptitude() {
     a.click();
     a.remove();
   };
+  // Save the lead first, then download — so the data always reaches the admin.
   const submitQB = async (e) => {
     e.preventDefault();
-    try { await submitLead({ ...qbForm, topic: qbBank.name, source: 'aptitude-question-bank' }); } catch { /* non-blocking */ }
-    setQbFormOpen(false);
-    doDownloadQB();
+    setQbErr(false); setQbBusy(true);
+    try {
+      await submitLead({ ...qbForm, topic: qbBank.name, source: 'aptitude-question-bank' });
+      setQbFormOpen(false);
+      doDownloadQB();
+    } catch {
+      setQbErr(true);
+    } finally {
+      setQbBusy(false);
+    }
   };
   const saveReport = async (e) => {
     e.preventDefault();
@@ -332,8 +353,9 @@ export default function Aptitude() {
                     <input type="text" required placeholder="Your name" value={sheetForm.name} onChange={e => setS('name', e.target.value)} />
                     <input type="email" required placeholder="you@email.com" value={sheetForm.email} onChange={e => setS('email', e.target.value)} />
                     <input type="tel" required placeholder="Phone number" value={sheetForm.phone} onChange={e => setS('phone', e.target.value)} />
-                    <button type="submit">View answer sheet</button>
+                    <button type="submit" disabled={sheetBusy}>{sheetBusy ? 'Saving…' : 'View answer sheet'}</button>
                   </div>
+                  {sheetErr && <p className="apt-gate-err">Couldn't submit — please check your connection and try again.</p>}
                 </form>
               )}
               {sheetUnlocked && (
@@ -571,8 +593,9 @@ export default function Aptitude() {
                 <input type="text" required placeholder="Your name" value={qbForm.name} onChange={e => setQ('name', e.target.value)} />
                 <input type="email" required placeholder="you@email.com" value={qbForm.email} onChange={e => setQ('email', e.target.value)} />
                 <input type="tel" required placeholder="Phone number" value={qbForm.phone} onChange={e => setQ('phone', e.target.value)} />
-                <button type="submit">Download PDF</button>
+                <button type="submit" disabled={qbBusy}>{qbBusy ? 'Saving…' : 'Download PDF'}</button>
               </div>
+              {qbErr && <p className="apt-gate-err">Couldn't submit — please check your connection and try again.</p>}
             </form>
           )}
         </div>
