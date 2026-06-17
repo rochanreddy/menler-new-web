@@ -43,10 +43,10 @@ export const PROJECTS = [
     desc: 'Synthesises user interviews, support tickets, NPS comments, and sales notes into structured product requirement docs and themed opportunity stacks.',
     stack: ['Claude Projects', 'Multimodal', 'Cowork'], outcome: '5× faster discovery → PRD turnaround',
     doc: {
-      overview: "A discovery copilot that converts raw user signal into structured product requirements — with traceability back to the evidence that justifies each one.",
+      overview: "A discovery copilot that converts raw user signal into structured product requirements with traceability back to the evidence that justifies each one.",
       problem: "Interviews, tickets, NPS and sales notes pile up faster than any PM can synthesise, so insights get lost and every PRD starts from a blank page.",
       howItWorks: ["Ingests interview transcripts, support tickets, NPS comments and sales notes.", "Clusters them into themed opportunities and recurring pain points.", "Drafts a PRD with problem statement, goals and acceptance criteria.", "Links every requirement back to the user quotes behind it."],
-      features: ["Multi-source feedback clustering", "Auto-generated PRD with acceptance criteria", "Quote-level traceability for each requirement", "Themed opportunity stack ranked by frequency"],
+      features: ["Multi source feedback clustering", "Auto generated PRD with acceptance criteria", "Quote level traceability for each requirement", "Themed opportunity stack ranked by frequency"],
       architecture: "Claude Projects for persistent context, multimodal ingestion for documents and screenshots, and Cowork for the drafting workflow.",
       results: ["5× faster discovery-to-PRD turnaround", "Every requirement backed by real evidence", "A shared opportunity backlog the team trusts"],
     },
@@ -82,13 +82,13 @@ export const PROJECTS = [
   {
     slug: 'research-synthesis-insight-engine', image: '/projects/Research_synthesis.png',
     tag: 'Analyst', tagCls: 't-analyst', title: 'Research synthesis & insight engine',
-    desc: 'Multi source agent across PDFs, web data, and internal reports — produces a competitive landscape with citations and contradictions flagged for review.',
+    desc: 'Multi source agent across PDFs, web data, and internal reports produces a competitive landscape with citations and contradictions flagged for review.',
     stack: ['Claude API', 'Web search', 'Citations'], outcome: 'Days → hours per research cycle',
     doc: {
       overview: "A research agent that reads across everything and returns a cited, contradiction-aware landscape you can actually defend.",
       problem: "Manual research across PDFs, the web and internal reports takes days, and the findings are hard to trust without sources.",
       howItWorks: ["Fans out across PDFs, web results and internal reports.", "Extracts claims, figures and themes from each source.", "Cross-checks sources and flags contradictions for human review.", "Outputs a competitor and market landscape with citations."],
-      features: ["Multi-source parallel research", "A citation on every figure and claim", "Automatic contradiction flagging", "Structured landscape table output"],
+      features: ["Multi source parallel research", "A citation on every figure and claim", "Automatic contradiction flagging", "Structured landscape table output"],
       architecture: "Claude API with web search and tool use, plus citation tracking maintained across the full source set.",
       results: ["Days to hours per research cycle", "Every number traceable to a source", "Reviewers focus only on flagged conflicts"],
     },

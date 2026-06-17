@@ -313,6 +313,12 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .prog-card-desc { margin-bottom: 22px; padding-bottom: 20px; border-bottom: 1px solid rgba(38,33,92,0.08); }
 .prog-card-sub { font-size: 13px; line-height: 1.65; color: var(--text-muted); margin-bottom: 8px; }
 .prog-card-sub:last-child { margin-bottom: 0; }
+/* Mobile: shrink program-card copy so the description and the domain list each
+   fit on two lines (more room from tighter card padding). */
+@media (max-width: 640px) {
+  .prog-section .prog-card { padding: 24px 22px; }
+  .prog-card-sub { font-size: clamp(8.5px, 2.55vw, 12px); line-height: 1.5; }
+}
 .prog-card-for { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px; color: var(--text-muted); }
 .prog-card-builders { font-size: 13px; color: var(--ink); line-height: 1.5; margin-bottom: 18px; }
 .prog-card-logos { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-bottom: 22px; min-height: 50px; }

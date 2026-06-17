@@ -253,7 +253,7 @@ export default function Home() {
             <p className="prog-card-title">Claude AI Generalist</p>
             <div className="prog-card-desc">
               <p className="prog-card-sub">Master Claude AI, across all domains, get certified and graduate with a domain focused portfolio.</p>
-              <p className="prog-card-sub">Analyst · Finance Operations · Founder's Office · HR Operations · Marketing & Sales · Product Management</p>
+              <p className="prog-card-sub">Analyst · Finance Operations · Founder's Office · HR Operations · Marketing & Sales · Product Management</p>
             </div>
             <p className="prog-card-for">AI Builders from</p>
             <div className="prog-card-logos">
@@ -278,7 +278,7 @@ export default function Home() {
             <p className="prog-card-title">Claude AI Engineering</p>
             <div className="prog-card-desc">
               <p className="prog-card-sub">Master Claude AI, build AI applications, get certified and graduate with a portfolio of AI projects</p>
-              <p className="prog-card-sub">AI Agent Engineer · AI Application Developer · AI Consultant · AI Engineer · AI Automation Engineer </p>
+              <p className="prog-card-sub">AI Agent Engineer · AI Application Developer · AI Consultant · AI Engineer · AI Automation Engineer</p>
             </div>
             <p className="prog-card-for">AI Builders from</p>
             <div className="prog-card-logos">
