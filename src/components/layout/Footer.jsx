@@ -58,6 +58,17 @@ export default function Footer() {
               </a>
             ))}
           </div>
+          <a
+            className="footer-support"
+            href="https://mail.google.com/mail/?view=cm&fs=1&to=support@menler.in&su=Support%20request%20%E2%80%94%20Menler"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg className="footer-support-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" />
+            </svg>
+            support@menler.in
+          </a>
         </div>
         <div>
           <p className="footer-col-title">Programs</p>

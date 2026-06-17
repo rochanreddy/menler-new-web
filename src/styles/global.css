@@ -261,10 +261,11 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 }
 .hero-sub { font-size: 17px; color: rgba(238,237,254,0.58); line-height: 1.8; max-width: 700px; margin-bottom: 24px; }
 /* About hero: on mobile only, drop the desktop-tuned line breaks and justify the
-   copy so it reads as a tidy block (even edges) instead of ragged centred lines. */
+   copy so it wraps naturally (centred, even word spacing) instead of the
+   desktop-tuned line breaks. */
 @media (max-width: 640px) {
   .about-hero-sub br { display: none; }
-  .about-hero-sub { text-align: justify; text-align-last: center; }
+  .about-hero-sub { text-align: center; }
 }
 .hero-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .btn-primary { background: var(--specialist); color: white; padding: 11px 22px; border-radius: 22px; font-size: 13px; font-weight: 500; text-decoration: none; transition: background .2s; display: inline-block; cursor: pointer; border: none; font-family: inherit; }
@@ -642,6 +643,9 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 }
 .footer-social-link:hover { color: white; border-color: rgba(175,169,236,0.5); background: rgba(175,169,236,0.12); }
 .footer-social-link svg { width: 15px; height: 15px; fill: currentColor; }
+.footer-support { display: inline-flex; align-items: center; gap: 7px; margin-top: 16px; font-size: 12.5px; color: rgba(238,237,254,0.7); text-decoration: none; transition: color .15s; }
+.footer-support:hover { color: #fff; }
+.footer-support-icon { width: 15px; height: 15px; flex-shrink: 0; color: var(--lavender); }
 .footer-5 .footer-col-title { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--lavender); margin-bottom: 16px; font-weight: 600; }
 .footer-5 .footer-links { list-style: none; padding: 0; margin: 0; }
 .footer-5 .footer-links li { margin-bottom: 8px; }

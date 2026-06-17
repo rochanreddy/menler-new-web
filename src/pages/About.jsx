@@ -47,7 +47,7 @@ export default function About() {
         <div className="hero-inner">
           <p className="hero-eyebrow" style={{ color: 'var(--lavender)' }}>About Menler</p>
           <h1 className="hero-h1">AI learning, built for<br /><em>the people doing the work.</em></h1>
-          <p className="hero-sub about-hero-sub" style={{ maxWidth: 570 }}>Menler helps students and professionals become AI-native through<br />hands-on learning, shipped projects, and a builder-first community.<br />The true measure of learning is what you can build on Monday morning.</p>
+          <p className="hero-sub about-hero-sub" style={{ maxWidth: 570 }}>Menler helps students and professionals become AI Native through <br />hands-on learning, shipped projects, and a builder-first community.<br />The true measure of learning is what you can build on Monday morning.</p>
         </div>
       </section>
       
@@ -111,17 +111,17 @@ export default function About() {
           <div className="qualify-card">
             <p className="qualify-title">Hire from Menler</p>
             <p className="qualify-desc">Access AI-native talent trained to drive impact across business and technology functions.</p>
-            <a className="qualify-cta" href="mailto:team@menler.in"><svg className="qualify-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>team@menler.in</a>
+            <a className="qualify-cta" href="https://mail.google.com/mail/?view=cm&fs=1&to=team@menler.in&su=Working%20with%20Menler" target="_blank" rel="noopener noreferrer"><svg className="qualify-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>team@menler.in</a>
           </div>
           <div className="qualify-card">
             <p className="qualify-title">Menler Teams <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-muted)' }}></span></p>
             <p className="qualify-desc">Equip operator-led AI enablement designed around your workflows, teams, and business goals.</p>
-            <a className="qualify-cta" href="mailto:team@menler.in"><svg className="qualify-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>team@menler.in</a>
+            <a className="qualify-cta" href="https://mail.google.com/mail/?view=cm&fs=1&to=team@menler.in&su=Working%20with%20Menler" target="_blank" rel="noopener noreferrer"><svg className="qualify-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>team@menler.in</a>
           </div>
           <div className="qualify-card">
             <p className="qualify-title">Careers at Menler</p>
             <p className="qualify-desc">Join us in building India's AI-native workforce alongside builders, operators, and educators.</p>
-            <a className="qualify-cta" href="mailto:team@menler.in"><svg className="qualify-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>team@menler.in</a>
+            <a className="qualify-cta" href="https://mail.google.com/mail/?view=cm&fs=1&to=team@menler.in&su=Working%20with%20Menler" target="_blank" rel="noopener noreferrer"><svg className="qualify-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>team@menler.in</a>
           </div>
         </div>
       </section>
