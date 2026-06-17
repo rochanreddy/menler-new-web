@@ -4,6 +4,7 @@ import CtaBanner from '../components/common/CtaBanner';
 import Footer from '../components/layout/Footer';
 import Seo from '../components/common/Seo';
 import MentorsRail from '../components/common/MentorsRail';
+import MenlerWordmark from '../components/common/MenlerWordmark';
 import { useApply } from '../components/common/ApplyContext';
 
 const VALUES = [
@@ -55,8 +56,9 @@ export default function About() {
         <p className="section-label">Our story</p>
         <h2 className="section-h2">Why we built<br /><em>Menler.</em></h2>
         <div className="about-grid">
-          <div className="about-card" style={{ background: 'var(--ink)', color: '#EEEDFE', padding: 28, borderRadius: 14 }}>
-            <p className="about-card-label" style={{ color: 'var(--lavender)' }}>Vision</p>
+          <div className="about-card" style={{ background: 'var(--ink)', color: '#EEEDFE', padding: 28, borderRadius: 14, display: 'flex', flexDirection: 'column' }}>
+            <MenlerWordmark size={30} theme="dark" />
+            <p className="about-card-label" style={{ color: 'var(--lavender)', marginTop: 20 }}>Vision</p>
             <p style={{ fontFamily: "'DM Serif Display',serif", fontSize: 19.5, lineHeight: 1.4, color: '#EEEDFE', fontStyle: 'italic' }}>To build the AI-native professionals powering India's next decade of growth.</p>
           </div>
           <div className="about-card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
