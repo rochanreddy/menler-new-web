@@ -252,7 +252,7 @@ export default function Home() {
             <span className="prog-card-badge">No coding required</span>
             <p className="prog-card-title">Claude AI Generalist</p>
             <div className="prog-card-desc">
-              <p className="prog-card-sub">Master Claude AI, across all domains, get certified and graduate with a domain-focused portfolio.</p>
+              <p className="prog-card-sub">Master Claude AI, across all domains, get certified and graduate with a domain focused portfolio.</p>
               <p className="prog-card-sub">Analyst · Finance Operations · Founder's Office · HR Operations · Marketing & Sales · Product Management</p>
             </div>
             <p className="prog-card-for">AI Builders from</p>
@@ -308,7 +308,7 @@ export default function Home() {
       <section className="section" style={{ background: 'white', paddingTop: 48, paddingBottom: 32 }}>
         <p className="section-label">What you build</p>
         <h2 className="section-h2">Real Projects.<br /><em>Across Every Domain.</em></h2>
-        <p className="section-sub"><span style={{ whiteSpace: 'nowrap' }}>Every Menler fellow ships a portfolio of domain specific projects.</span><br />Not toy demos actual systems built for real use cases.</p>
+        <p className="section-sub">Every Menler fellow ships a portfolio of domain specific projects.<br />Not toy demos actual systems built for real use cases.</p>
         <div className="proj-grid proj-grid--4 proj-grid--home">
           {visibleProjects.map((p, i) => (
             <Reveal
