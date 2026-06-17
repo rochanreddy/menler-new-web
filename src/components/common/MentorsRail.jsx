@@ -28,64 +28,60 @@ const OVERLAYS = [
 
 const MENTORS_QUERY = '*[_type == "mentor"] | order(orderRank) { name, role, company, "img": photo.asset->url }';
 
-// A real horizontal scroll container with 3 identical copies. A light per-frame
-// auto-advance keeps it moving continuously (one scrollLeft write/frame); the
-// user can swipe left/right at any time and it carries on from there. It pauses
-// only on MOUSE hover (desktop) — touch never stops it. Loops seamlessly by
-// snapping back a copy-width at the boundaries.
+// Transform-based continuous marquee (3 identical copies). The track is moved
+// with translateX every frame, so it NEVER stops — not on touch, not on hover.
+// You can still drag it left/right: an active drag follows the finger/cursor and
+// auto-advance resumes the moment you let go. A resting finger does NOT stop it.
 function CaptainRow({ list, dir, tint }) {
-  const railRef = useRef(null);
+  const trackRef = useRef(null);
   const items = [...list, ...list, ...list];
 
   useEffect(() => {
-    const el = railRef.current;
-    if (!el) return;
-    const track = el.firstElementChild;
-    let raf, paused = false, copy = 0, centred = false;
-    const speed = dir === 'ltr' ? -0.5 : 0.5; // px/frame
+    const track = trackRef.current;
+    if (!track) return;
+    let raf, copy = 0, offset = 0;
+    let down = false, dragging = false, startX = 0, downX = 0, startOffset = 0;
+    const speed = dir === 'ltr' ? 0.5 : -0.5; // px/frame (rtl drifts content left)
 
-    let pos = 0, lastSet = -1;
-    const measure = () => {
-      copy = el.scrollWidth / 3;
-      if (copy > 0 && !centred) { pos = copy; el.scrollLeft = copy; lastSet = el.scrollLeft; centred = true; } // start in the middle copy
-    };
+    const wrap = () => { if (copy > 0) { while (offset <= -copy) offset += copy; while (offset > 0) offset -= copy; } };
+    const apply = () => { track.style.transform = `translate3d(${offset}px,0,0)`; };
+    const measure = () => { copy = track.scrollWidth / 3; };
     measure();
     const ro = new ResizeObserver(measure);
-    if (track) ro.observe(track); // re-measure when the width changes
+    ro.observe(track);
 
     const loop = () => {
-      if (copy > 0) {
-        // If the user swiped (scrollLeft moved on its own), adopt that position.
-        if (lastSet < 0 || Math.abs(el.scrollLeft - lastSet) > 1.5) pos = el.scrollLeft;
-        if (!paused) {
-          pos += speed;                          // float position → no integer-rounding stutter
-          if (pos >= copy * 2) pos -= copy;       // seamless loop
-          else if (pos <= 0) pos += copy;
-          el.scrollLeft = pos;
-          lastSet = el.scrollLeft;
-        }
-      }
+      if (copy > 0 && !dragging) { offset += speed; wrap(); apply(); }
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
 
-    // Pause for a hovering mouse only; touch interactions keep it scrolling.
-    const onEnter = (e) => { if (e.pointerType === 'mouse') paused = true; };
-    const onLeave = (e) => { if (e.pointerType === 'mouse') paused = false; };
-    el.addEventListener('pointerenter', onEnter);
-    el.addEventListener('pointerleave', onLeave);
+    // Drag only kicks in once the pointer actually moves (a tap/rest never stops it).
+    const onDown = (e) => { down = true; downX = startX = e.clientX; startOffset = offset; };
+    const onMove = (e) => {
+      if (!down) return;
+      if (!dragging && Math.abs(e.clientX - downX) > 6) dragging = true;
+      if (dragging) { offset = startOffset + (e.clientX - startX); wrap(); apply(); startOffset = offset; startX = e.clientX; }
+    };
+    const onUp = () => { down = false; dragging = false; };
+    track.addEventListener('pointerdown', onDown);
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
 
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
-      el.removeEventListener('pointerenter', onEnter);
-      el.removeEventListener('pointerleave', onLeave);
+      track.removeEventListener('pointerdown', onDown);
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
     };
   }, [dir, list]);
 
   return (
-    <div className="captains-rail" ref={railRef} data-lenis-prevent>
-      <div className="captains-track">
+    <div className="captains-rail">
+      <div className="captains-track" ref={trackRef}>
         {items.map((m, i) => (
           <article className="captain-card" key={i} aria-label={`${m.name}, ${m.role}`}>
             <div className="captain-bg" style={{ backgroundImage: OVERLAYS[(tint + i) % OVERLAYS.length] }} />

@@ -1,61 +1,59 @@
 import { useRef, useEffect } from 'react';
 import { BrandLogo } from './PartnersMarquee';
 
-// One logo row. A real horizontal scroll container with 3 identical copies and a
-// light per-frame auto-advance: it keeps moving continuously (doesn't stop on
-// touch), the user can swipe left/right at will, and it pauses only on MOUSE
-// hover. Loops seamlessly by snapping back a copy-width at the boundaries.
+// One logo row. Transform-based continuous marquee (3 identical copies) — moved
+// with translateX each frame so it NEVER stops on touch or hover. Draggable:
+// an active drag follows the pointer and auto-advance resumes on release; a
+// resting finger does not stop it.
 function LogoRow({ list, dir }) {
-  const railRef = useRef(null);
+  const trackRef = useRef(null);
   const items = [...list, ...list, ...list];
 
   useEffect(() => {
-    const el = railRef.current;
-    if (!el) return;
-    const track = el.firstElementChild;
-    let raf, paused = false, copy = 0, centred = false;
-    const speed = dir === 'ltr' ? -0.5 : 0.5; // px/frame
+    const track = trackRef.current;
+    if (!track) return;
+    let raf, copy = 0, offset = 0;
+    let down = false, dragging = false, startX = 0, downX = 0, startOffset = 0;
+    const speed = dir === 'ltr' ? 0.5 : -0.5; // px/frame
 
-    let pos = 0, lastSet = -1;
-    const measure = () => {
-      copy = el.scrollWidth / 3;
-      if (copy > 0 && !centred) { pos = copy; el.scrollLeft = copy; lastSet = el.scrollLeft; centred = true; }
-    };
+    const wrap = () => { if (copy > 0) { while (offset <= -copy) offset += copy; while (offset > 0) offset -= copy; } };
+    const apply = () => { track.style.transform = `translate3d(${offset}px,0,0)`; };
+    const measure = () => { copy = track.scrollWidth / 3; };
     measure();
     const ro = new ResizeObserver(measure);
-    if (track) ro.observe(track);
+    ro.observe(track);
 
     const loop = () => {
-      if (copy > 0) {
-        if (lastSet < 0 || Math.abs(el.scrollLeft - lastSet) > 1.5) pos = el.scrollLeft;
-        if (!paused) {
-          pos += speed;
-          if (pos >= copy * 2) pos -= copy;
-          else if (pos <= 0) pos += copy;
-          el.scrollLeft = pos;
-          lastSet = el.scrollLeft;
-        }
-      }
+      if (copy > 0 && !dragging) { offset += speed; wrap(); apply(); }
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
 
-    const onEnter = (e) => { if (e.pointerType === 'mouse') paused = true; };
-    const onLeave = (e) => { if (e.pointerType === 'mouse') paused = false; };
-    el.addEventListener('pointerenter', onEnter);
-    el.addEventListener('pointerleave', onLeave);
+    const onDown = (e) => { down = true; downX = startX = e.clientX; startOffset = offset; };
+    const onMove = (e) => {
+      if (!down) return;
+      if (!dragging && Math.abs(e.clientX - downX) > 6) dragging = true;
+      if (dragging) { offset = startOffset + (e.clientX - startX); wrap(); apply(); startOffset = offset; startX = e.clientX; }
+    };
+    const onUp = () => { down = false; dragging = false; };
+    track.addEventListener('pointerdown', onDown);
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
 
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
-      el.removeEventListener('pointerenter', onEnter);
-      el.removeEventListener('pointerleave', onLeave);
+      track.removeEventListener('pointerdown', onDown);
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
     };
   }, [dir, list]);
 
   return (
-    <div className="logorail-rail" ref={railRef} data-lenis-prevent>
-      <div className="logorail-track">
+    <div className="logorail-rail">
+      <div className="logorail-track" ref={trackRef}>
         {items.map((c, i) => (
           <BrandLogo key={i} name={c.name} domain={c.domain} logo={c.logo} />
         ))}

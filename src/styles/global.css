@@ -863,9 +863,11 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .captains-rows { display: flex; flex-direction: column; gap: 16px; }
 /* Continuous marquee via GPU transform animation (smooth on mobile, no JS). */
 /* Swipeable scroll container; auto-advance is driven in JS (MentorsRail). */
-.captains-rail { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; margin: 0 calc(-1 * var(--gutter)); padding: 0 var(--gutter); scroll-behavior: auto; scroll-snap-type: none; touch-action: pan-x; overscroll-behavior-x: contain; }
-.captains-rail::-webkit-scrollbar { display: none; }
-.captains-track { display: flex; width: max-content; }
+/* Transform-driven marquee (JS in MentorsRail) — not a scroll container, so it
+   never stops on touch/hover. touch-action: pan-y keeps vertical page scroll. */
+.captains-rail { overflow: hidden; margin: 0 calc(-1 * var(--gutter)); padding: 0 var(--gutter); touch-action: pan-y; }
+.captains-track { display: flex; width: max-content; will-change: transform; cursor: grab; user-select: none; }
+.captains-track img { -webkit-user-drag: none; user-select: none; }
 /* Uniform per-card unit (margin, not gap) so the 3 copies tile seamlessly. */
 .captains-track > .captain-card { margin-right: 18px; }
 .captain-card {
@@ -1293,9 +1295,10 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 /* Multi-row auto-scrolling logo rail (like the mentors rail) */
 .logorail-rows { display: flex; flex-direction: column; gap: 14px; margin-top: 20px; }
 /* Swipeable scroll container; auto-advance is driven in JS (HiringRail). */
-.logorail-rail { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; scroll-behavior: auto; scroll-snap-type: none; touch-action: pan-x; overscroll-behavior-x: contain; }
-.logorail-rail::-webkit-scrollbar { display: none; }
-.logorail-track { display: flex; width: max-content; }
+/* Transform-driven marquee (JS in HiringRail) — never stops on touch/hover. */
+.logorail-rail { overflow: hidden; touch-action: pan-y; }
+.logorail-track { display: flex; width: max-content; will-change: transform; cursor: grab; user-select: none; }
+.logorail-track img { -webkit-user-drag: none; user-select: none; }
 .logorail-track .partner-chip { min-width: 156px; height: 66px; flex: 0 0 auto; margin-right: 14px; }
 .logorail-track .partner-logo-img { height: 30px; max-width: 118px; }
 .partners-logos.hiring-companies { gap: 12px; margin-top: 18px; }
