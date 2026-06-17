@@ -57,14 +57,10 @@ export default function About() {
         <h2 className="section-h2">Why we built<br /><em>Menler.</em></h2>
         <div className="about-grid">
           <div className="about-card" style={{ background: 'var(--ink)', color: '#EEEDFE', padding: 28, borderRadius: 14, display: 'flex', flexDirection: 'column' }}>
-            <MenlerWordmark size={30} theme="dark" />
-            <p className="about-card-label" style={{ color: 'var(--lavender)', marginTop: 20 }}>Vision</p>
+            <p className="about-card-label" style={{ color: 'var(--lavender)' }}>Vision</p>
             <p style={{ fontFamily: "'DM Serif Display',serif", fontSize: 19.5, lineHeight: 1.4, color: '#EEEDFE', fontStyle: 'italic' }}>To build the AI-native professionals powering India's next decade of growth.</p>
-            <p style={{ fontSize: 14, lineHeight: 1.7, color: 'rgba(238,237,254,0.6)', marginTop: 14 }}>Not another course library — a turning point. We measure success by what our learners can build and ship on Monday morning.</p>
-            <div style={{ marginTop: 'auto', display: 'flex', flexWrap: 'wrap', gap: 8, paddingTop: 28 }}>
-              {['AI-Native', 'Domain-Focused', 'Outcome-Driven'].map(t => (
-                <span key={t} style={{ fontSize: 12, fontWeight: 500, letterSpacing: '0.02em', color: 'var(--lavender)', border: '1px solid rgba(175,169,236,0.35)', borderRadius: 999, padding: '6px 14px' }}>{t}</span>
-              ))}
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: 28 }}>
+              <MenlerWordmark size={60} theme="dark" />
             </div>
           </div>
           <div className="about-card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
