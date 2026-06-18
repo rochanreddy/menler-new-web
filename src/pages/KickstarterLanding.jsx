@@ -116,7 +116,7 @@ export default function KickstarterLanding() {
     e.preventDefault();
     setErr(false); setBusy(true);
     try {
-      await submitLead({ ...form, source: 'kickstarter-workshop', workshop: heading, program: 'Gen AI Kickstarter' });
+      await submitLead({ ...form, source: 'campaign-workshop', campaign: activeSlug, workshop: heading });
       setDone(true);
     } catch {
       setErr(true);
