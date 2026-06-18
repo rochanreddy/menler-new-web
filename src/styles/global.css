@@ -1712,10 +1712,12 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-banner-strip b { font-weight: 700; }
 .lp2-strip-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--lavender); }
 @media (max-width: 560px) {
-  .lp2-banner-body { max-width: 100%; padding-bottom: 200px; }
-  .lp2-banner-photo { width: 70%; top: auto; height: 200px; opacity: 0.9; }
-  .lp2-banner-photo img { -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 30%); mask-image: linear-gradient(180deg, transparent 0%, #000 30%); }
-  .lp2-banner-strip { position: static; }
+  /* Stack vertically: text → photo → full-width date strip (no side bar). */
+  .lp2-banner { display: block; }
+  .lp2-banner-body { max-width: 100%; padding: 22px 22px 14px; }
+  .lp2-banner-photo { position: static; width: 100%; height: 230px; }
+  .lp2-banner-photo img { object-position: center 18%; -webkit-mask-image: none; mask-image: none; }
+  .lp2-banner-strip { position: static; justify-content: center; }
 }
 
 /* Left column */
