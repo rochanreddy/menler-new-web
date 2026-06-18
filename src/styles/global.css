@@ -2474,7 +2474,7 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .admin-drawer-head h2 { font-size: 17px; margin: 0; color: var(--ink); }
 .admin-drawer-close { background: none; border: none; font-size: 26px; line-height: 1; cursor: pointer; color: var(--text-muted); padding: 0 4px; }
 .admin-drawer-close:hover { color: var(--ink); }
-.admin-drawer-body { padding: 8px 22px 28px; overflow: auto; }
+.admin-drawer-body { flex: 1 1 auto; min-height: 0; padding: 8px 22px 28px; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
 .admin-detail-row { display: grid; grid-template-columns: 130px 1fr; gap: 14px; padding: 11px 0; border-bottom: 0.5px solid rgba(175,169,236,0.16); }
 .admin-detail-key { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-muted); }
 .admin-detail-val { font-size: 14px; color: var(--ink); word-break: break-word; }
