@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import MenlerWordmark from '../components/common/MenlerWordmark';
 import Seo from '../components/common/Seo';
 import { submitLead } from '../services/leadService';
@@ -84,7 +84,8 @@ const FALLBACK = {
   get: GET.map((g) => ({ title: g.t, detail: g.d })),
 };
 
-const CAMPAIGN_QUERY = `*[_type == "campaignPage"][0]{
+// Load the campaign matching the URL slug (defaults to 'ai-kickstarter').
+const CAMPAIGN_QUERY = `*[_type == "campaignPage" && slug.current == $slug][0]{
   bannerBadge, bannerLine1, bannerLine2, bannerTagline, subtitle,
   date, time, format, price, origPrice, seatsNote,
   mentorName, mentorRole, "mentorPhoto": mentorPhoto.asset->url, mentorBio, mentorCreds,
@@ -102,8 +103,10 @@ export default function KickstarterLanding() {
   const [done, setDone] = useState(false);
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
-  // Sanity-editable content, merged per-field over the fallback.
-  const c = useContent(CAMPAIGN_QUERY, FALLBACK);
+  // Sanity-editable content for this slug, merged per-field over the fallback.
+  const { slug } = useParams();
+  const activeSlug = slug || 'ai-kickstarter';
+  const c = useContent(CAMPAIGN_QUERY, FALLBACK, { slug: activeSlug });
   const d = {};
   for (const k of Object.keys(FALLBACK)) d[k] = has(c?.[k]) ? c[k] : FALLBACK[k];
   const heading = `${d.bannerLine1} ${d.bannerLine2}`.trim();
@@ -124,7 +127,7 @@ export default function KickstarterLanding() {
 
   return (
     <div className="lp2">
-      <Seo title={`${heading} | Menler Workshop`} description={d.subtitle} path="/ai-kickstarter" noindex />
+      <Seo title={`${heading} | Menler Workshop`} description={d.subtitle} noindex />
 
       {/* Minimal top bar */}
       <header className="lp2-top">

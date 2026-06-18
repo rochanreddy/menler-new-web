@@ -94,6 +94,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/kickstarter" element={<Kickstarter />} />
             <Route path="/ai-kickstarter" element={<KickstarterLanding />} />
+            <Route path="/campaign/:slug" element={<KickstarterLanding />} />
             <Route path="/generalist" element={<Generalist />} />
             <Route path="/engineering" element={<Engineering />} />
             <Route path="/projects/:slug" element={<Projects />} />

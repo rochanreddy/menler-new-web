@@ -58,7 +58,8 @@ export default function Navbar() {
   if (
     location.pathname.startsWith('/admin') ||
     location.pathname.startsWith('/studio') ||
-    location.pathname.startsWith('/ai-kickstarter')
+    location.pathname.startsWith('/ai-kickstarter') ||
+    location.pathname.startsWith('/campaign/')
   ) return null;
 
   return (

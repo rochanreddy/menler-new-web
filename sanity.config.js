@@ -17,7 +17,6 @@ const SINGLETONS = [
   { id: 'kickstarterPage', title: 'Kickstarter Page' },
   { id: 'generalistPage', title: 'Generalist Page' },
   { id: 'engineeringPage', title: 'Engineering Page' },
-  { id: 'campaignPage', title: 'Campaign Landing Page' },
 ];
 const singletonIds = SINGLETONS.map((s) => s.id);
 
@@ -39,6 +38,7 @@ export default defineConfig({
                 .child(S.document().schemaType(s.id).documentId(s.id)),
             ),
             S.divider(),
+            S.documentTypeListItem('campaignPage').title('Campaign Landing Pages'),
             orderableDocumentListDeskItem({ type: 'mentor', title: 'Mentors', S, context }),
             orderableDocumentListDeskItem({ type: 'project', title: 'Projects', S, context }),
           ]),

@@ -8,12 +8,22 @@ export default defineType({
   title: 'Campaign Landing Page',
   type: 'document',
   groups: [
+    { name: 'setup', title: 'Setup' },
     { name: 'banner', title: 'Banner / Hero' },
     { name: 'schedule', title: 'Schedule & Price' },
     { name: 'mentor', title: 'Mentor' },
     { name: 'sections', title: 'Sections' },
   ],
   fields: [
+    // ── Setup: internal title + the page URL ──
+    defineField({ name: 'title', title: 'Campaign title (internal — shown in this list)', type: 'string', group: 'setup', validation: (r) => r.required() }),
+    defineField({
+      name: 'slug', title: 'Page URL', type: 'slug', group: 'setup',
+      description: 'This becomes the page address: menler.in/campaign/<slug>',
+      options: { source: 'title', maxLength: 96 },
+      validation: (r) => r.required(),
+    }),
+
     // ── Banner / hero ──
     defineField({ name: 'bannerBadge', title: 'Badge text', type: 'string', group: 'banner' }),
     defineField({ name: 'bannerLine1', title: 'Title — line 1 (highlighted)', type: 'string', group: 'banner' }),
@@ -63,5 +73,5 @@ export default defineType({
       }],
     }),
   ],
-  preview: { prepare: () => ({ title: 'Campaign Landing Page' }) },
+  preview: { select: { title: 'title', subtitle: 'slug.current' } },
 });

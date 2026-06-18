@@ -208,8 +208,10 @@ async function run() {
   console.log('Campaign landing page (only if missing)...');
   const campaignPhoto = await uploadImage(CAMPAIGN.mentorImg);
   await client.createIfNotExists({
-    _id: 'campaignPage',
+    _id: 'campaign-ai-kickstarter',
     _type: 'campaignPage',
+    title: 'AI Agent Workshop (Kickstarter)',
+    slug: { _type: 'slug', current: 'ai-kickstarter' },
     bannerBadge: CAMPAIGN.bannerBadge,
     bannerLine1: CAMPAIGN.bannerLine1,
     bannerLine2: CAMPAIGN.bannerLine2,
