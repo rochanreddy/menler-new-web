@@ -9,6 +9,7 @@ import { supabase } from './lib/supabase';
 
 const Home = lazy(() => import('./pages/Home'));
 const Kickstarter = lazy(() => import('./pages/Kickstarter'));
+const KickstarterLanding = lazy(() => import('./pages/KickstarterLanding'));
 const Generalist = lazy(() => import('./pages/Generalist'));
 const Engineering = lazy(() => import('./pages/Engineering'));
 const Projects = lazy(() => import('./pages/Projects'));
@@ -92,6 +93,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/kickstarter" element={<Kickstarter />} />
+            <Route path="/ai-kickstarter" element={<KickstarterLanding />} />
             <Route path="/generalist" element={<Generalist />} />
             <Route path="/engineering" element={<Engineering />} />
             <Route path="/projects/:slug" element={<Projects />} />

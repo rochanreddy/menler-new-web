@@ -114,6 +114,49 @@ const pricingDoc = (p) => ({
   features: toFeatures(p.features), chips: toChips(p.chips),
 });
 
+// --- campaign landing page (mirrors FALLBACK in src/pages/KickstarterLanding.jsx) ---
+const CAMPAIGN = {
+  bannerBadge: 'Designed for an AI-First Career',
+  bannerLine1: 'Build Your First',
+  bannerLine2: 'AI Agent',
+  bannerTagline: 'Go from zero to a working agent — live in 2 hours.',
+  subtitle: 'A hands-on workshop where you go from zero to a working AI agent — no coding, no jargon. Walk away with something real you built yourself.',
+  date: 'Saturday, 12 July 2026',
+  time: '5:00 – 7:00 PM IST',
+  format: 'Live online · Recording provided',
+  price: '499',
+  origPrice: '4,999',
+  seatsNote: 'Only 40 seats per cohort',
+  mentorName: 'Sachin Roy',
+  mentorRole: 'Founder, Menler',
+  mentorImg: '/mentors/Sachin.png',
+  mentorBio: 'Sachin has spent the last decade building AI products and training professionals to work alongside AI. He has led teams shipping real Claude-powered systems and has mentored hundreds of learners into AI-native roles.',
+  mentorCreds: [
+    '10+ years building AI & software products',
+    'Trained 500+ professionals on practical AI',
+    'Built production Claude agents & workflows',
+  ],
+  learn: [
+    { title: 'How AI agents actually work', detail: 'The simple mental model behind agents — prompts, tools, and memory — minus the hype.' },
+    { title: 'Build a working agent, live', detail: 'Follow along and create a real research/assistant agent step by step on the call.' },
+    { title: 'Connect it to real tools', detail: 'Wire your agent into the apps you use so it actually does work, not just chats.' },
+    { title: 'Ship & show it off', detail: 'Leave with a finished build you can put on your CV and show employers.' },
+  ],
+  forYou: [
+    'Students who want an edge in placements & internships',
+    'Working professionals who want to use AI in their job',
+    'Founders & operators who want to automate real work',
+    'Absolute beginners — zero coding or AI experience needed',
+  ],
+  get: [
+    { title: 'A real AI agent you built', detail: 'Not a demo — a working build that’s yours to keep.' },
+    { title: 'Workshop recording', detail: 'Rewatch anytime, follow at your own pace.' },
+    { title: 'Prompt & tool starter pack', detail: 'Templates and resources to keep building after.' },
+    { title: 'Certificate of participation', detail: 'LinkedIn-shareable proof of hands-on AI work.' },
+  ],
+};
+const keyed = (arr) => arr.map((o, i) => ({ _type: 'object', _key: `i${i}`, ...o }));
+
 async function run() {
   console.log(`Seeding project ${projectId} / ${dataset} ...`);
 
@@ -160,6 +203,34 @@ async function run() {
   await client.createIfNotExists({ _id: 'kickstarterPage', _type: 'kickstarterPage', pricing: pricingDoc(KS_PRICING) });
   await client.createIfNotExists({ _id: 'generalistPage', _type: 'generalistPage', pricing: pricingDoc(GEN_PRICING) });
   console.log('  ✓ home / engineering / kickstarter / generalist');
+
+  // Campaign landing page (only if missing) — uploads the mentor photo.
+  console.log('Campaign landing page (only if missing)...');
+  const campaignPhoto = await uploadImage(CAMPAIGN.mentorImg);
+  await client.createIfNotExists({
+    _id: 'campaignPage',
+    _type: 'campaignPage',
+    bannerBadge: CAMPAIGN.bannerBadge,
+    bannerLine1: CAMPAIGN.bannerLine1,
+    bannerLine2: CAMPAIGN.bannerLine2,
+    bannerTagline: CAMPAIGN.bannerTagline,
+    subtitle: CAMPAIGN.subtitle,
+    date: CAMPAIGN.date,
+    time: CAMPAIGN.time,
+    format: CAMPAIGN.format,
+    price: CAMPAIGN.price,
+    origPrice: CAMPAIGN.origPrice,
+    seatsNote: CAMPAIGN.seatsNote,
+    mentorName: CAMPAIGN.mentorName,
+    mentorRole: CAMPAIGN.mentorRole,
+    mentorPhoto: campaignPhoto,
+    mentorBio: CAMPAIGN.mentorBio,
+    mentorCreds: CAMPAIGN.mentorCreds,
+    learn: keyed(CAMPAIGN.learn),
+    forYou: CAMPAIGN.forYou,
+    get: keyed(CAMPAIGN.get),
+  });
+  console.log('  ✓ campaignPage');
 
   console.log('\nDone. Open /studio to review, then Publish any changes.');
 }

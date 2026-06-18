@@ -17,6 +17,7 @@ const SINGLETONS = [
   { id: 'kickstarterPage', title: 'Kickstarter Page' },
   { id: 'generalistPage', title: 'Generalist Page' },
   { id: 'engineeringPage', title: 'Engineering Page' },
+  { id: 'campaignPage', title: 'Campaign Landing Page' },
 ];
 const singletonIds = SINGLETONS.map((s) => s.id);
 

@@ -53,8 +53,13 @@ export default function Navbar() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // The admin panel and Sanity Studio are standalone, chrome-free areas — no public navbar.
-  if (location.pathname.startsWith('/admin') || location.pathname.startsWith('/studio')) return null;
+  // The admin panel, Sanity Studio, and campaign landing pages are standalone,
+  // chrome-free areas — no public navbar.
+  if (
+    location.pathname.startsWith('/admin') ||
+    location.pathname.startsWith('/studio') ||
+    location.pathname.startsWith('/ai-kickstarter')
+  ) return null;
 
   return (
     <>

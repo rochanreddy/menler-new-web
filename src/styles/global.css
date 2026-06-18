@@ -1679,6 +1679,129 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .apt-answers-toggle { display: block; width: 100%; text-align: left; cursor: pointer; padding: 14px 16px; font-size: 13px; font-weight: 600; color: var(--specialist); background: none; border: none; font-family: inherit; }
 .apt-sheet-gate { padding: 14px 16px 16px; }
 .apt-gate-err { margin-top: 10px; font-size: 12.5px; color: #A32D2D; }
+
+/* ── Workshop registration landing page (/ai-kickstarter) ──
+   Left column scrolls, right column (form) is sticky. Amber Kickstarter theme. */
+.lp2 { --a: #BA7517; --a-dark: #854F0B; --cream: #FFF6E1; background: #fff; color: var(--ink); min-height: 100vh; }
+.lp2-top { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; justify-content: space-between; padding: 13px clamp(16px, 5vw, 48px); background: rgba(255,255,255,0.94); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(38,33,92,0.08); }
+.lp2-top-tag { font-size: 10.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--a-dark); background: var(--cream); padding: 5px 11px; border-radius: 999px; }
+
+.lp2-grid { max-width: 1280px; margin: 0 auto; padding: clamp(28px, 5vw, 56px) clamp(16px, 5vw, 48px) 64px; }
+@media (min-width: 901px) {
+  .lp2-grid { display: grid; grid-template-columns: 1fr 440px; gap: 40px; align-items: start; }
+  .lp2-main { grid-column: 1; grid-row: 1; min-width: 0; }
+  .lp2-aside { grid-column: 2; grid-row: 1; position: sticky; top: 80px; }
+}
+
+/* Banner hero (Scaler-style) */
+.lp2-banner { position: relative; overflow: hidden; border-radius: 18px; background: linear-gradient(120deg, #FFF1CC 0%, #FCE6A8 55%, #F6D77E 100%); min-height: 320px; display: flex; }
+.lp2-banner-body { position: relative; z-index: 2; padding: 26px 28px 64px; max-width: 64%; }
+.lp2-banner-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--ink); background: rgba(255,255,255,0.7); border: 1px solid rgba(38,33,92,0.12); padding: 7px 14px; border-radius: 999px; }
+.lp2-banner-title { margin: 18px 0 0; font-family: 'DM Sans', sans-serif; font-weight: 900; font-size: clamp(30px, 5.4vw, 52px); line-height: 1.04; letter-spacing: -0.02em; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.lp2-banner-title mark { background: #C7F24D; color: #1c2400; padding: 2px 12px; border-radius: 6px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.lp2-banner-tag { margin-top: 16px; font-size: clamp(14px, 2.4vw, 17px); font-weight: 600; color: var(--a-dark); }
+.lp2-banner-brand { display: flex; align-items: center; gap: 14px; margin-top: 22px; }
+.lp2-banner-brandmark { display: inline-flex; align-items: center; gap: 8px; border-right: 1.5px solid rgba(38,33,92,0.25); padding-right: 14px; }
+.lp2-banner-mc { font-family: 'DM Sans', sans-serif; font-weight: 800; font-size: 12px; letter-spacing: 0.06em; color: var(--ink); }
+.lp2-banner-credit { font-size: 12.5px; line-height: 1.45; color: var(--ink); }
+.lp2-banner-credit b { font-weight: 700; }
+.lp2-banner-free { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--a-dark); border: 1px solid var(--a); border-radius: 5px; padding: 2px 7px; margin-right: 8px; }
+.lp2-banner-photo { position: absolute; right: 0; bottom: 0; top: 0; width: 42%; z-index: 1; }
+.lp2-banner-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 22%); mask-image: linear-gradient(90deg, transparent 0%, #000 22%); }
+.lp2-banner-strip { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; display: flex; align-items: center; gap: 14px; padding: 12px 28px; background: var(--ink); color: #fff; font-size: 13.5px; }
+.lp2-banner-strip b { font-weight: 700; }
+.lp2-strip-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--lavender); }
+@media (max-width: 560px) {
+  .lp2-banner-body { max-width: 100%; padding-bottom: 200px; }
+  .lp2-banner-photo { width: 70%; top: auto; height: 200px; opacity: 0.9; }
+  .lp2-banner-photo img { -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 30%); mask-image: linear-gradient(180deg, transparent 0%, #000 30%); }
+  .lp2-banner-strip { position: static; }
+}
+
+/* Left column */
+.lp2-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--a-dark); margin-bottom: 14px; }
+.lp2-title { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: clamp(28px, 5.4vw, 48px); line-height: 1.1; color: var(--ink); margin-bottom: 16px; }
+.lp2-subtitle { font-size: clamp(15px, 2.3vw, 17px); line-height: 1.6; color: var(--text-muted); max-width: 620px; }
+.lp2-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+.lp2-meta-pill { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 500; color: var(--ink); background: var(--cream); border: 1px solid rgba(186,117,23,0.18); padding: 8px 14px; border-radius: 10px; }
+.lp2-meta-pill b { font-weight: 400; }
+
+.lp2-mentor { display: flex; gap: 20px; align-items: flex-start; margin-top: 34px; padding: 22px; background: var(--parchment); border: 1px solid rgba(186,117,23,0.16); border-radius: 16px; }
+.lp2-mentor-img { width: 120px; height: 120px; flex-shrink: 0; object-fit: cover; border-radius: 14px; background: #ddd; }
+.lp2-mentor-label { font-size: 10.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--a-dark); margin-bottom: 4px; }
+.lp2-mentor-name { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--ink); line-height: 1.1; }
+.lp2-mentor-role { font-size: 13px; color: var(--a-dark); font-weight: 600; margin-bottom: 8px; }
+.lp2-mentor-bio { font-size: 13.5px; line-height: 1.6; color: var(--text-muted); }
+.lp2-mentor-creds { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.lp2-mentor-creds li { font-size: 12.5px; color: var(--ink); padding-left: 20px; position: relative; }
+.lp2-mentor-creds li::before { content: '★'; position: absolute; left: 0; color: var(--a); font-size: 11px; }
+
+.lp2-block { margin-top: 44px; }
+.lp2-h2 { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: clamp(22px, 3.6vw, 30px); line-height: 1.15; color: var(--ink); margin-bottom: 18px; }
+.lp2-h2 em { font-style: italic; color: var(--a); }
+
+.lp2-learn { display: flex; flex-direction: column; gap: 12px; }
+.lp2-learn-item { display: flex; gap: 16px; align-items: flex-start; background: #fff; border: 1px solid rgba(38,33,92,0.1); border-radius: 14px; padding: 18px 20px; }
+.lp2-learn-n { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--a); flex-shrink: 0; }
+.lp2-learn-t { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+.lp2-learn-d { font-size: 13px; line-height: 1.55; color: var(--text-muted); }
+
+.lp2-for { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.lp2-for li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--ink); line-height: 1.5; }
+.lp2-check { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; flex-shrink: 0; background: #E1F5EE; color: var(--forest); border-radius: 50%; font-size: 11px; font-weight: 700; }
+
+.lp2-get { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.lp2-get-card { background: var(--cream); border: 1px solid rgba(186,117,23,0.16); border-radius: 14px; padding: 18px 20px; }
+.lp2-get-t { font-size: 14.5px; font-weight: 600; color: var(--a-dark); margin-bottom: 5px; }
+.lp2-get-d { font-size: 12.5px; line-height: 1.55; color: var(--text-muted); }
+
+.lp2-quote { margin-top: 44px; padding: 26px 28px; background: var(--ink); color: #EEEDFE; border-radius: 16px; font-family: 'DM Serif Display', serif; font-style: italic; font-size: clamp(16px, 2.6vw, 20px); line-height: 1.5; }
+.lp2-quote span { display: block; margin-top: 14px; font-family: 'DM Sans', sans-serif; font-style: normal; font-size: 12.5px; color: var(--lavender); }
+
+/* Right column — sticky form */
+.lp2-form-card { background: #fff; border: 1px solid rgba(38,33,92,0.12); border-radius: 18px; padding: 26px 24px; box-shadow: 0 24px 60px rgba(38,33,92,0.12); }
+.lp2-price-row { display: flex; align-items: baseline; gap: 10px; }
+.lp2-price { font-family: 'DM Serif Display', serif; font-size: 40px; color: var(--ink); line-height: 1; }
+.lp2-price-orig { font-size: 16px; color: var(--text-muted); text-decoration: line-through; }
+.lp2-seats { margin-top: 8px; font-size: 12.5px; font-weight: 600; color: var(--a-dark); }
+.lp2-form-h { margin-top: 16px; margin-bottom: 12px; font-size: 15px; font-weight: 600; color: var(--ink); }
+.lp2-input { width: 100%; padding: 12px 14px; margin-bottom: 10px; border: 1px solid rgba(38,33,92,0.2); border-radius: 10px; font-family: inherit; font-size: 14px; color: var(--ink); }
+.lp2-input:focus { outline: none; border-color: var(--a); box-shadow: 0 0 0 3px rgba(186,117,23,0.14); }
+.lp2-submit { width: 100%; margin-top: 4px; background: var(--a); color: #fff; border: none; font-family: inherit; font-size: 15.5px; font-weight: 600; padding: 14px; border-radius: 11px; cursor: pointer; box-shadow: 0 12px 26px rgba(186,117,23,0.3); transition: opacity .15s, transform .15s; }
+.lp2-submit:hover { opacity: .95; transform: translateY(-1px); }
+.lp2-submit:disabled { opacity: .6; cursor: default; transform: none; }
+.lp2-err { margin-top: 10px; font-size: 12.5px; color: #A32D2D; }
+.lp2-assure { list-style: none; margin: 16px 0 0; padding: 14px 0 0; border-top: 1px solid rgba(38,33,92,0.08); display: flex; flex-direction: column; gap: 7px; }
+.lp2-assure li { font-size: 12.5px; color: var(--ink); }
+.lp2-fine { margin-top: 12px; font-size: 11px; line-height: 1.5; color: var(--text-muted); }
+.lp2-success { text-align: center; padding: 18px 6px; }
+.lp2-success-tick { width: 52px; height: 52px; margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; background: #E1F5EE; color: var(--forest); border-radius: 50%; font-size: 26px; font-weight: 700; }
+.lp2-success-h { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--ink); margin-bottom: 8px; }
+.lp2-success-p { font-size: 13.5px; line-height: 1.6; color: var(--text-muted); }
+
+/* Explore-programs cards under the form — side by side, compact (one-screen fit) */
+.lp2-explore { margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.lp2-explore-label { grid-column: 1 / -1; font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px; }
+.lp2-explore .cluster-card { width: 100%; margin: 0; padding: 20px 18px 18px; }
+.lp2-explore .cluster-card .cluster-num { font-size: 10.5px; padding: 4px 10px; margin-bottom: 12px; }
+.lp2-explore .cluster-card .cluster-name { font-size: 17.5px; margin-bottom: 8px; line-height: 1.18; }
+.lp2-explore .cluster-card .cluster-sets { font-size: 12.5px; line-height: 1.55; margin-bottom: 16px; padding-bottom: 16px; }
+.lp2-explore .cluster-card .cluster-btn { font-size: 13.5px; padding: 11px 14px; }
+
+/* Mobile sticky bottom CTA → jump to form */
+.lp2-stickybar { display: none; }
+@media (max-width: 900px) {
+  .lp2-aside { margin-top: 28px; }
+  .lp2-stickybar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px; background: var(--ink); color: #fff; text-decoration: none; box-shadow: 0 -8px 24px rgba(0,0,0,0.18); }
+  .lp2-stickybar span { font-size: 13px; }
+  .lp2-stickybar b { color: #FFF6E1; }
+  .lp2-stickybar-btn { background: var(--a); padding: 9px 18px; border-radius: 9px; font-weight: 600; font-size: 13.5px; }
+  .lp2-foot { padding-bottom: 76px; }
+}
+
+.lp2-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 22px clamp(16px, 5vw, 48px); background: var(--ink); font-size: 12px; color: rgba(238,237,254,0.55); }
+.lp2-foot a { color: rgba(238,237,254,0.8); text-decoration: none; }
+.lp2-foot a:hover { color: #fff; }
 .apt-sheet-gate .apt-lead-label { margin-bottom: 10px; }
 .apt-answers > summary::-webkit-details-marker { display: none; }
 .apt-answers-body { padding: 4px 16px 16px; }
