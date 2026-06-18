@@ -160,7 +160,7 @@ export default function Home() {
   const projects = useContent(PROJECTS_QUERY, PROJECTS);
   // Editable page copy (hero + CTA) from Sanity; each field falls back to the
   // original hardcoded design when not set in the Studio.
-  const home = useContent('*[_type == "homePage"][0]{hero, ctaBanner}', null);
+  const home = useContent('*[_type == "homePage"][0]{hero, programs, projects, toolstack, ctaBanner}', null);
   const visibleProjects = HOME_PROJECT_SLUGS
     .map(slug => projects.find(p => p.slug === slug))
     .filter(Boolean);
@@ -244,9 +244,11 @@ export default function Home() {
 
       {/* ── PROGRAMS ── */}
       <section className="section prog-section" style={{ background: 'var(--parchment)', paddingTop: 40, paddingBottom: 28 }} ref={programsRef}>
-        <p className="section-label">Choose your program</p>
-        <h2 className="section-h2">Two Paths, One Outcome <br /><em>AI Native You!</em></h2>
-        <p className="section-sub prog-sub-wide">Both fellowships lead to a recognised AI Specialist credential and active career support.<br />Pick the one that fits your background.</p>
+        <p className="section-label">{home?.programs?.label || 'Choose your program'}</p>
+        <h2 className="section-h2">{home?.programs?.heading || 'Two Paths, One Outcome'} <br /><em>{home?.programs?.headingEm || 'AI Native You!'}</em></h2>
+        {home?.programs?.sub
+          ? <p className="section-sub prog-sub-wide" style={{ whiteSpace: 'pre-line' }}>{home.programs.sub}</p>
+          : <p className="section-sub prog-sub-wide">Both fellowships lead to a recognised AI Specialist credential and active career support.<br />Pick the one that fits your background.</p>}
         <div className="prog-compare">
           <div className="prog-card gen">
             <span className="prog-card-badge">No coding required</span>
@@ -306,9 +308,11 @@ export default function Home() {
 
       {/* ── WHAT YOU BUILD ── */}
       <section className="section" style={{ background: 'white', paddingTop: 48, paddingBottom: 32 }}>
-        <p className="section-label">What you build</p>
-        <h2 className="section-h2">Real Projects.<br /><em>Across Every Domain.</em></h2>
-        <p className="section-sub proj-build-sub">Every Menler fellow ships a portfolio of domain specific projects.<br />Not toy demos actual systems built for real use cases.</p>
+        <p className="section-label">{home?.projects?.label || 'What you build'}</p>
+        <h2 className="section-h2">{home?.projects?.heading || 'Real Projects.'}<br /><em>{home?.projects?.headingEm || 'Across Every Domain.'}</em></h2>
+        {home?.projects?.sub
+          ? <p className="section-sub proj-build-sub" style={{ whiteSpace: 'pre-line' }}>{home.projects.sub}</p>
+          : <p className="section-sub proj-build-sub">Every Menler fellow ships a portfolio of domain specific projects.<br />Not toy demos actual systems built for real use cases.</p>}
         <div className="proj-grid proj-grid--4 proj-grid--home">
           {visibleProjects.map((p, i) => (
             <Reveal
@@ -344,8 +348,8 @@ export default function Home() {
 
       {/* ── TECH STACK ── */}
       <section className="section toolstack-section" style={{ paddingBottom: 72 }}>
-        <h2 className="toolstack-title">Your GenAI toolstack</h2>
-        <p className="toolstack-sub">Get hands on with AI tools from your first prompt to your first real project.</p>
+        <h2 className="toolstack-title">{home?.toolstack?.title || 'Your GenAI toolstack'}</h2>
+        <p className="toolstack-sub">{home?.toolstack?.sub || 'Get hands on with AI tools from your first prompt to your first real project.'}</p>
         <div className="toolstack-grid">
           {[TECH.slice(0, 5), TECH.slice(5, 11), TECH.slice(11, 16)].map((row, ri) => (
             <div key={ri} className="toolstack-row">
