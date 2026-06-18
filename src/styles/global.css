@@ -1682,7 +1682,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 
 /* ── Workshop registration landing page (/ai-kickstarter) ──
    Left column scrolls, right column (form) is sticky. Amber Kickstarter theme. */
-.lp2 { --a: #BA7517; --a-dark: #854F0B; --cream: #FFF6E1; background: #fff; color: var(--ink); min-height: 100vh; }
+.lp2 { --a: #BA7517; --a-dark: #854F0B; --cream: #FFF6E1; --banner-from: #FFF1CC; --banner-to: #F6D77E; --hl-bg: #C7F24D; --hl-text: #1c2400; background: #fff; color: var(--ink); min-height: 100vh; }
 .lp2-top { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; justify-content: space-between; padding: 13px clamp(16px, 5vw, 48px); background: rgba(255,255,255,0.94); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(38,33,92,0.08); }
 .lp2-top-tag { font-size: 10.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--a-dark); background: var(--cream); padding: 5px 11px; border-radius: 999px; }
 
@@ -1694,11 +1694,11 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 }
 
 /* Banner hero (Scaler-style) */
-.lp2-banner { position: relative; overflow: hidden; border-radius: 18px; background: linear-gradient(120deg, #FFF1CC 0%, #FCE6A8 55%, #F6D77E 100%); min-height: 320px; display: flex; }
+.lp2-banner { position: relative; overflow: hidden; border-radius: 18px; background: linear-gradient(120deg, var(--banner-from) 0%, var(--banner-to) 100%); min-height: 320px; display: flex; }
 .lp2-banner-body { position: relative; z-index: 2; padding: 26px 28px 64px; max-width: 64%; }
 .lp2-banner-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--ink); background: rgba(255,255,255,0.7); border: 1px solid rgba(38,33,92,0.12); padding: 7px 14px; border-radius: 999px; }
 .lp2-banner-title { margin: 18px 0 0; font-family: 'DM Sans', sans-serif; font-weight: 900; font-size: clamp(30px, 5.4vw, 52px); line-height: 1.04; letter-spacing: -0.02em; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
-.lp2-banner-title mark { background: #C7F24D; color: #1c2400; padding: 2px 12px; border-radius: 6px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.lp2-banner-title mark { background: var(--hl-bg); color: var(--hl-text); padding: 2px 12px; border-radius: 6px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
 .lp2-banner-tag { margin-top: 16px; font-size: clamp(14px, 2.4vw, 17px); font-weight: 600; color: var(--a-dark); }
 .lp2-banner-brand { display: flex; align-items: center; gap: 14px; margin-top: 22px; }
 .lp2-banner-brandmark { display: inline-flex; align-items: center; gap: 8px; border-right: 1.5px solid rgba(38,33,92,0.25); padding-right: 14px; }

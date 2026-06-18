@@ -74,6 +74,7 @@ const FALLBACK = {
   price: WORKSHOP.price,
   origPrice: WORKSHOP.origPrice,
   seatsNote: WORKSHOP.seatsNote,
+  themeAccent: '', themeAccentDark: '', bannerFrom: '', bannerTo: '', highlightBg: '', highlightText: '',
   mentorName: WORKSHOP.mentor.name,
   mentorRole: WORKSHOP.mentor.role,
   mentorPhoto: WORKSHOP.mentor.img,
@@ -88,6 +89,7 @@ const FALLBACK = {
 const CAMPAIGN_QUERY = `*[_type == "campaignPage" && slug.current == $slug][0]{
   bannerBadge, bannerLine1, bannerLine2, bannerTagline, subtitle,
   date, time, format, price, origPrice, seatsNote,
+  themeAccent, themeAccentDark, bannerFrom, bannerTo, highlightBg, highlightText,
   mentorName, mentorRole, "mentorPhoto": mentorPhoto.asset->url, mentorBio, mentorCreds,
   learn[]{title, detail}, forYou, get[]{title, detail}
 }`;
@@ -112,6 +114,18 @@ export default function KickstarterLanding() {
   const heading = `${d.bannerLine1} ${d.bannerLine2}`.trim();
   const num = (i) => String(i + 1).padStart(2, '0');
 
+  // Per-campaign colour theme — only set a CSS var when the client provided a
+  // value, otherwise the default (amber) theme from the stylesheet applies.
+  const themeStyle = {};
+  const setVar = (name, val) => { if (has(val)) themeStyle[name] = val; };
+  setVar('--a', d.themeAccent);
+  setVar('--a-dark', d.themeAccentDark);
+  setVar('--banner-from', d.bannerFrom);
+  setVar('--cream', d.bannerFrom);
+  setVar('--banner-to', d.bannerTo);
+  setVar('--hl-bg', d.highlightBg);
+  setVar('--hl-text', d.highlightText);
+
   const register = async (e) => {
     e.preventDefault();
     setErr(false); setBusy(true);
@@ -126,7 +140,7 @@ export default function KickstarterLanding() {
   };
 
   return (
-    <div className="lp2">
+    <div className="lp2" style={themeStyle}>
       <Seo title={`${heading} | Menler Workshop`} description={d.subtitle} noindex />
 
       {/* Minimal top bar */}

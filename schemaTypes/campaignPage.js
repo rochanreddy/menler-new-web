@@ -9,6 +9,7 @@ export default defineType({
   type: 'document',
   groups: [
     { name: 'setup', title: 'Setup' },
+    { name: 'theme', title: 'Colours / Theme' },
     { name: 'banner', title: 'Banner / Hero' },
     { name: 'schedule', title: 'Schedule & Price' },
     { name: 'mentor', title: 'Mentor' },
@@ -23,6 +24,14 @@ export default defineType({
       options: { source: 'title', maxLength: 96 },
       validation: (r) => r.required(),
     }),
+
+    // ── Theme colours (hex codes; leave blank to keep the default amber theme) ──
+    defineField({ name: 'themeAccent', title: 'Accent colour — buttons & links', type: 'string', group: 'theme', description: 'Hex code, e.g. #BA7517. Leave blank for default.' }),
+    defineField({ name: 'themeAccentDark', title: 'Accent colour — dark (labels)', type: 'string', group: 'theme', description: 'Hex code, e.g. #854F0B' }),
+    defineField({ name: 'bannerFrom', title: 'Banner gradient — start (top-left)', type: 'string', group: 'theme', description: 'Hex code, e.g. #FFF1CC. Also tints pills/cards.' }),
+    defineField({ name: 'bannerTo', title: 'Banner gradient — end (bottom-right)', type: 'string', group: 'theme', description: 'Hex code, e.g. #F6D77E' }),
+    defineField({ name: 'highlightBg', title: 'Title highlight — background', type: 'string', group: 'theme', description: 'Hex code, e.g. #C7F24D (the boxes behind the big title)' }),
+    defineField({ name: 'highlightText', title: 'Title highlight — text', type: 'string', group: 'theme', description: 'Hex code, e.g. #1C2400' }),
 
     // ── Banner / hero ──
     defineField({ name: 'bannerBadge', title: 'Badge text', type: 'string', group: 'banner' }),
