@@ -73,40 +73,10 @@ export default function Checkout() {
     <div className="cox">
       <Seo title="Checkout | Menler" noindex />
 
-      {/* ── LEFT: white — contact (read-only) + add-ons ── */}
-      <div className="cox-light">
-        <div className="cox-light-inner">
-          <button className="cox-back" onClick={() => navigate(-1)} aria-label="Back">←</button>
-
-          <h3 className="cox-h3" style={{ marginTop: 0 }}>Contact information</h3>
-          <div className="cox-info">
-            <div className="cox-info-row"><span>Name</span><b>{reg.name || '—'}</b></div>
-            <div className="cox-info-row"><span>Email</span><b>{reg.email || '—'}</b></div>
-            <div className="cox-info-row"><span>Phone</span><b>{reg.phone || '—'}</b></div>
-          </div>
-
-          <h3 className="cox-h3">Add playbooks &amp; catalogs</h3>
-          <div className="cox-addons">
-            {CATALOG.map((i) => {
-              const added = cart.has(i.id);
-              return (
-                <button type="button" key={i.id} className={`cox-addon${added ? ' cox-addon--on' : ''}`} onClick={() => toggle(i.id)}>
-                  <span className="cox-addon-check">{added ? '✓' : '+'}</span>
-                  <span className="cox-addon-info">
-                    <span className="cox-addon-t">{i.title}</span>
-                    <span className="cox-addon-d">{i.desc}</span>
-                  </span>
-                  <span className="cox-addon-price"><s>₹{i.price}</s> Free</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* ── RIGHT: dark — order summary + complete ── */}
+      {/* ── LEFT: dark (blue) — order summary + complete ── */}
       <div className="cox-dark">
         <div className="cox-dark-inner">
+          <button className="cox-back" onClick={() => navigate(-1)} aria-label="Back">←</button>
           <div className="cox-brand"><MenlerWordmark size={26} theme="dark" /></div>
           <p className="cox-eyebrow">Register for</p>
           <p className="cox-name">{workshopTitle}</p>
@@ -134,6 +104,35 @@ export default function Checkout() {
           </button>
           {err && <p className="cox-err cox-err--ondark">Something went wrong — please try again.</p>}
           <p className="cox-note cox-note--ondark">🔒 No payment needed — your seat is free during launch. Card payments coming soon.</p>
+        </div>
+      </div>
+
+      {/* ── RIGHT: white — contact (read-only) + add-ons ── */}
+      <div className="cox-light">
+        <div className="cox-light-inner">
+          <h3 className="cox-h3" style={{ marginTop: 0 }}>Contact information</h3>
+          <div className="cox-info">
+            <div className="cox-info-row"><span>Name</span><b>{reg.name || '—'}</b></div>
+            <div className="cox-info-row"><span>Email</span><b>{reg.email || '—'}</b></div>
+            <div className="cox-info-row"><span>Phone</span><b>{reg.phone || '—'}</b></div>
+          </div>
+
+          <h3 className="cox-h3">Add playbooks &amp; catalogs</h3>
+          <div className="cox-addons">
+            {CATALOG.map((i) => {
+              const added = cart.has(i.id);
+              return (
+                <button type="button" key={i.id} className={`cox-addon${added ? ' cox-addon--on' : ''}`} onClick={() => toggle(i.id)}>
+                  <span className="cox-addon-check">{added ? '✓' : '+'}</span>
+                  <span className="cox-addon-info">
+                    <span className="cox-addon-t">{i.title}</span>
+                    <span className="cox-addon-d">{i.desc}</span>
+                  </span>
+                  <span className="cox-addon-price"><s>₹{i.price}</s> Free</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
