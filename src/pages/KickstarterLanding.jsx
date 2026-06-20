@@ -138,7 +138,7 @@ export default function KickstarterLanding() {
     setErr(false); setBusy(true);
     try {
       await submitLead({ ...form, source: 'campaign-workshop', campaign: activeSlug, workshop: heading });
-      setDone(true);
+      navigate('/checkout', { state: { workshop: heading, price: d.price, name: form.name, email: form.email, phone: form.phone, campaign: activeSlug } });
     } catch {
       setErr(true);
     } finally {
