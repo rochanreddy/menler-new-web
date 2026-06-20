@@ -1781,8 +1781,16 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-success-h { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--ink); margin-bottom: 8px; }
 .lp2-success-p { font-size: 13.5px; line-height: 1.6; color: var(--text-muted); }
 
-/* Explore-programs cards under the form — side by side, compact (one-screen fit) */
-.lp2-explore { margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+/* AI Aptitude Test promo card (right column, under the form) */
+.lp2-apt-card { margin-top: 16px; background: var(--ink); color: #fff; border-radius: 16px; padding: 22px 20px; }
+.lp2-apt-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--lavender); margin-bottom: 8px; }
+.lp2-apt-title { font-family: 'DM Serif Display', serif; font-size: 20px; line-height: 1.2; margin-bottom: 8px; }
+.lp2-apt-desc { font-size: 13px; line-height: 1.6; color: rgba(238,237,254,0.72); margin-bottom: 16px; }
+.lp2-apt-btn { width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #fff; color: var(--ink); border: none; font-family: inherit; font-size: 13.5px; font-weight: 600; padding: 12px 18px; border-radius: 11px; cursor: pointer; transition: opacity .15s, transform .15s; }
+.lp2-apt-btn:hover { opacity: .92; transform: translateY(-1px); }
+
+/* Explore-programs cards — two across, in the left column */
+.lp2-explore { margin-top: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .lp2-explore-label { grid-column: 1 / -1; font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px; }
 .lp2-explore .cluster-card { width: 100%; margin: 0; padding: 20px 18px 18px; }
 .lp2-explore .cluster-card .cluster-num { font-size: 10.5px; padding: 4px 10px; margin-bottom: 12px; }

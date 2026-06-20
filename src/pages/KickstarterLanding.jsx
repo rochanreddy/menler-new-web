@@ -237,6 +237,25 @@ export default function KickstarterLanding() {
             you'll build something you didn't think you could.”
             <span>— {d.mentorName}, {d.mentorRole}</span>
           </div>
+
+          {/* Explore Menler Programs */}
+          <section className="lp2-block">
+            <h2 className="lp2-h2">Explore Menler <em>Programs</em></h2>
+            <div className="lp2-explore">
+              <div className="cluster-card cluster-card--kick">
+                <p className="cluster-num">For beginners</p>
+                <p className="cluster-name">Menler AI Kickstarter</p>
+                <p className="cluster-sets">AI fundamentals + your first portfolio in 14 days.</p>
+                <button className="cluster-btn" onClick={() => go('/kickstarter')}>Explore Kickstarter</button>
+              </div>
+              <div className="cluster-card cluster-card--gen">
+                <p className="cluster-num">Students &amp; professionals</p>
+                <p className="cluster-name">Menler AI Generalist Fellowship</p>
+                <p className="cluster-sets">Apply AI across business — 10-week fellowship.</p>
+                <button className="cluster-btn" onClick={() => go('/generalist')}>Explore Fellowship</button>
+              </div>
+            </div>
+          </section>
         </div>
 
         {/* ── RIGHT: sticky registration form ── */}
@@ -266,21 +285,12 @@ export default function KickstarterLanding() {
             )}
           </div>
 
-          {/* Explore Menler Programs */}
-          <div className="lp2-explore">
-            <p className="lp2-explore-label">Explore Menler Programs</p>
-            <div className="cluster-card cluster-card--kick">
-              <p className="cluster-num">For beginners</p>
-              <p className="cluster-name">Menler AI Kickstarter</p>
-              <p className="cluster-sets">AI fundamentals + your first portfolio in 14 days.</p>
-              <button className="cluster-btn" onClick={() => go('/kickstarter')}>Explore Kickstarter</button>
-            </div>
-            <div className="cluster-card cluster-card--gen">
-              <p className="cluster-num">Students &amp; professionals</p>
-              <p className="cluster-name">Menler AI Generalist Fellowship</p>
-              <p className="cluster-sets">Apply AI across business — 10-week fellowship.</p>
-              <button className="cluster-btn" onClick={() => go('/generalist')}>Explore Fellowship</button>
-            </div>
+          {/* AI Aptitude Test promo */}
+          <div className="lp2-apt-card">
+            <p className="lp2-apt-eyebrow">Not sure where to start?</p>
+            <p className="lp2-apt-title">Check out our AI Aptitude Test</p>
+            <p className="lp2-apt-desc">Find your AI level in 5 minutes and get a personalised program recommendation — free.</p>
+            <button className="lp2-apt-btn" onClick={() => go('/aptitude')}>Take the Aptitude Test →</button>
           </div>
         </aside>
       </div>
