@@ -345,7 +345,7 @@ export default function Generalist() {
                         return (
                       <div className="curric-detail--split curric-detail--triple">
                         <div className="curric-detail-main">
-                          <p className="curric-label">Modulesk</p>
+                          <p className="curric-label">Module</p>
                           <ul className="curric-weeks">
                             {p.modules.map((m, wi) => (
                               <li key={m.w} className={`curric-week${selWeek === wi ? ' on' : ''}`}>
@@ -396,7 +396,7 @@ export default function Generalist() {
                         </div>
                         <div className="curric-detail--split curric-detail--triple" style={{ marginTop: 22 }}>
                           <div className="curric-detail-main">
-                            <p className="curric-label">Modules · week by week</p>
+                            <p className="curric-label">Module</p>
                             <ul className="curric-weeks">
                               {dom.weeks.map((m, wi) => (
                                 <li key={m.w} className={`curric-week${domainWeek === wi ? ' on' : ''}`}>
