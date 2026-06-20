@@ -156,6 +156,8 @@ const CAMPAIGN = {
     { title: 'Workshop recording', detail: 'Rewatch anytime, follow at your own pace.' },
     { title: 'Prompt & tool starter pack', detail: 'Templates and resources to keep building after.' },
     { title: 'Certificate of participation', detail: 'LinkedIn-shareable proof of hands-on AI work.' },
+    { title: 'Live Q&A with the mentor', detail: 'Ask anything and get unstuck in real time.' },
+    { title: 'Exclusive community access', detail: 'Join a network of AI builders and keep learning.' },
   ],
 };
 const keyed = (arr) => arr.map((o, i) => ({ _type: 'object', _key: `i${i}`, ...o }));

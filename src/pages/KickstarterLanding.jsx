@@ -59,6 +59,8 @@ const GET = [
   { t: 'Workshop recording', d: 'Rewatch anytime, follow at your own pace.' },
   { t: 'Prompt & tool starter pack', d: 'Templates and resources to keep building after.' },
   { t: 'Certificate of participation', d: 'LinkedIn-shareable proof of hands-on AI work.' },
+  { t: 'Live Q&A with the mentor', d: 'Ask anything and get unstuck in real time.' },
+  { t: 'Exclusive community access', d: 'Join a network of AI builders and keep learning.' },
 ];
 
 // Fallback shaped to match the Sanity query result.
@@ -193,14 +195,6 @@ export default function KickstarterLanding() {
                 </div>
               ))}
             </div>
-          </section>
-
-          {/* Who it's for */}
-          <section className="lp2-block">
-            <h2 className="lp2-h2">Who it's <em>for</em></h2>
-            <ul className="lp2-for">
-              {d.forYou.map((f) => <li key={f}><span className="lp2-check">✓</span>{f}</li>)}
-            </ul>
           </section>
 
           {/* What you get */}
