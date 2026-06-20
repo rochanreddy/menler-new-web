@@ -1780,12 +1780,12 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-cert-note { font-size: 12.5px; color: var(--text-muted); }
 
 /* Join WhatsApp community — narrow bar */
-.lp2-wa { display: flex; align-items: center; gap: 14px; margin-top: 28px; padding: 14px 18px; border-radius: 14px; background: linear-gradient(100deg, #1FA855 0%, #25D366 100%); color: #fff; text-decoration: none; box-shadow: 0 12px 28px rgba(37,211,102,0.28); transition: transform .15s, box-shadow .15s; }
-.lp2-wa:hover { transform: translateY(-1px); box-shadow: 0 16px 34px rgba(37,211,102,0.34); }
-.lp2-wa-icon { flex-shrink: 0; width: 30px; height: 30px; display: inline-flex; }
+.lp2-wa { display: flex; align-items: center; gap: 14px; margin-top: 28px; padding: 14px 18px; border-radius: 14px; background: #fff; border: 1px solid rgba(38,33,92,0.12); color: var(--ink); text-decoration: none; box-shadow: 0 10px 26px rgba(38,33,92,0.08); transition: transform .15s, box-shadow .15s, border-color .15s; }
+.lp2-wa:hover { transform: translateY(-1px); border-color: #25D366; box-shadow: 0 14px 32px rgba(37,211,102,0.18); }
+.lp2-wa-icon { flex-shrink: 0; width: 30px; height: 30px; display: inline-flex; color: #25D366; }
 .lp2-wa-icon svg { width: 30px; height: 30px; }
-.lp2-wa-text { flex: 1; font-size: 14px; font-weight: 600; line-height: 1.4; }
-.lp2-wa-btn { flex-shrink: 0; background: #fff; color: #1FA855; font-size: 13px; font-weight: 700; padding: 9px 18px; border-radius: 9px; }
+.lp2-wa-text { flex: 1; font-size: 14px; font-weight: 600; line-height: 1.4; color: var(--ink); }
+.lp2-wa-btn { flex-shrink: 0; background: #25D366; color: #fff; font-size: 13px; font-weight: 700; padding: 9px 18px; border-radius: 9px; }
 @media (max-width: 480px) { .lp2-wa-text { font-size: 12.5px; } .lp2-wa-btn { padding: 8px 12px; font-size: 12px; } }
 
 /* Right column — sticky form */
