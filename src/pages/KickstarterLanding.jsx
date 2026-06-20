@@ -275,13 +275,13 @@ export default function KickstarterLanding() {
             <div className="lp2-explore">
               <div className="cluster-card cluster-card--kick">
                 <p className="cluster-num">For beginners</p>
-                <p className="cluster-name">Menler AI Kickstarter</p>
+                <p className="cluster-name">Menler Gen AI Kickstarter</p>
                 <p className="cluster-sets">AI fundamentals + your first portfolio in 14 days.</p>
                 <button className="cluster-btn" onClick={() => go('/kickstarter')}>Explore Kickstarter</button>
               </div>
               <div className="cluster-card cluster-card--gen">
                 <p className="cluster-num">Students &amp; professionals</p>
-                <p className="cluster-name">Menler AI Generalist Fellowship</p>
+                <p className="cluster-name">Menler Claude AI Generalist Fellowship</p>
                 <p className="cluster-sets">Apply AI across business — 10-week fellowship.</p>
                 <button className="cluster-btn" onClick={() => go('/generalist')}>Explore Fellowship</button>
               </div>
