@@ -73,43 +73,11 @@ export default function Checkout() {
     <div className="cox">
       <Seo title="Checkout | Menler" noindex />
 
-      {/* ── LEFT: dark (blue) — order summary + complete ── */}
-      <div className="cox-dark">
-        <div className="cox-dark-inner">
+      {/* ── LEFT: blue — contact (read-only) + add-ons ── */}
+      <div className="cox-form">
+        <div className="cox-form-inner">
           <button className="cox-back" onClick={() => navigate(-1)} aria-label="Back">←</button>
-          <div className="cox-brand"><MenlerWordmark size={26} theme="dark" /></div>
-          <p className="cox-eyebrow">Register for</p>
-          <p className="cox-name">{workshopTitle}</p>
-          <p className="cox-price">₹{total}<span> · free seat</span></p>
 
-          <div className="cox-items">
-            <div className="cox-row">
-              <div><p className="cox-row-t">{workshopTitle}</p><p className="cox-row-d">Live workshop seat</p></div>
-              <span className="cox-row-amt">Free</span>
-            </div>
-            {addedItems.map((i) => (
-              <div className="cox-row" key={i.id}>
-                <div><p className="cox-row-t">{i.title}</p><p className="cox-row-d">Resource pack</p></div>
-                <span className="cox-row-amt"><s>₹{i.price}</s> Free</span>
-              </div>
-            ))}
-          </div>
-
-          <div className="cox-sub-line"><span>Subtotal</span><span>₹{total}</span></div>
-          <div className="cox-sub-line cox-sub-line--muted"><span>Taxes</span><span>₹0</span></div>
-          <div className="cox-total"><span>Total due today</span><span>₹{total}</span></div>
-
-          <button className="cox-complete cox-complete--ondark" onClick={pay} disabled={placing}>
-            {placing ? 'Processing…' : 'Complete registration · ₹0'}
-          </button>
-          {err && <p className="cox-err cox-err--ondark">Something went wrong — please try again.</p>}
-          <p className="cox-note cox-note--ondark">🔒 No payment needed — your seat is free during launch. Card payments coming soon.</p>
-        </div>
-      </div>
-
-      {/* ── RIGHT: white — contact (read-only) + add-ons ── */}
-      <div className="cox-light">
-        <div className="cox-light-inner">
           <h3 className="cox-h3" style={{ marginTop: 0 }}>Contact information</h3>
           <div className="cox-info">
             <div className="cox-info-row"><span>Name</span><b>{reg.name || '—'}</b></div>
@@ -133,6 +101,39 @@ export default function Checkout() {
               );
             })}
           </div>
+        </div>
+      </div>
+
+      {/* ── RIGHT: white — order summary + complete ── */}
+      <div className="cox-order">
+        <div className="cox-order-inner">
+          <div className="cox-brand"><MenlerWordmark size={26} theme="light" /></div>
+          <p className="cox-eyebrow">Register for</p>
+          <p className="cox-name">{workshopTitle}</p>
+          <p className="cox-price">₹{total}<span> · free seat</span></p>
+
+          <div className="cox-items">
+            <div className="cox-row">
+              <div><p className="cox-row-t">{workshopTitle}</p><p className="cox-row-d">Live workshop seat</p></div>
+              <span className="cox-row-amt">Free</span>
+            </div>
+            {addedItems.map((i) => (
+              <div className="cox-row" key={i.id}>
+                <div><p className="cox-row-t">{i.title}</p><p className="cox-row-d">Resource pack</p></div>
+                <span className="cox-row-amt"><s>₹{i.price}</s> Free</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="cox-sub-line"><span>Subtotal</span><span>₹{total}</span></div>
+          <div className="cox-sub-line cox-sub-line--muted"><span>Taxes</span><span>₹0</span></div>
+          <div className="cox-total"><span>Total due today</span><span>₹{total}</span></div>
+
+          <button className="cox-complete" onClick={pay} disabled={placing}>
+            {placing ? 'Processing…' : 'Complete registration · ₹0'}
+          </button>
+          {err && <p className="cox-err">Something went wrong — please try again.</p>}
+          <p className="cox-note">🔒 No payment needed — your seat is free during launch. Card payments coming soon.</p>
         </div>
       </div>
     </div>

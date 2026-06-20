@@ -1841,62 +1841,56 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-foot a { color: rgba(238,237,254,0.8); text-decoration: none; }
 .lp2-foot a:hover { color: #fff; }
 
-/* ── Checkout page (/checkout) — Stripe-style split: white form (left), dark summary (right) ── */
+/* ── Checkout page (/checkout) — split: blue contact (left), white order summary (right) ── */
 .cox { display: flex; min-height: 100vh; align-items: stretch; }
 @media (max-width: 860px) { .cox { flex-direction: column; } }
 
-/* White panel — contact + add-ons (LEFT). Content hugs the centre divider. */
-.cox-light { flex: 1; background: #fff; color: var(--ink); display: flex; justify-content: flex-end; padding: clamp(36px, 6vw, 72px) clamp(24px, 5vw, 60px); }
-.cox-light-inner { width: 100%; max-width: 440px; }
+/* LEFT — blue panel: contact + add-ons. Content hugs the centre divider. */
+.cox-form { flex: 1; background: var(--ink); color: #fff; display: flex; justify-content: flex-end; padding: clamp(36px, 6vw, 72px) clamp(24px, 5vw, 60px); }
+.cox-form-inner { width: 100%; max-width: 440px; }
+.cox-back { background: none; border: none; color: rgba(238,237,254,0.7); font-size: 20px; cursor: pointer; padding: 0; margin-bottom: 18px; }
+.cox-back:hover { color: #fff; }
+.cox-h3 { font-size: 13px; font-weight: 700; color: #fff; margin: 30px 0 12px; }
+.cox-info { display: flex; flex-direction: column; border: 1px solid rgba(255,255,255,0.16); border-radius: 11px; overflow: hidden; }
+.cox-info-row { display: flex; justify-content: space-between; gap: 12px; padding: 12px 14px; font-size: 13.5px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.cox-info-row:last-child { border-bottom: none; }
+.cox-info-row span { color: rgba(238,237,254,0.6); }
+.cox-info-row b { color: #fff; font-weight: 600; text-align: right; word-break: break-word; }
+.cox-addons { display: flex; flex-direction: column; gap: 10px; }
+.cox-addon { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); border-radius: 11px; padding: 13px 14px; cursor: pointer; font-family: inherit; transition: border-color .15s, box-shadow .15s; }
+.cox-addon:hover { border-color: var(--lavender); }
+.cox-addon--on { border-color: var(--lavender); box-shadow: 0 0 0 1px var(--lavender); }
+.cox-addon-check { flex-shrink: 0; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; border: 1.5px solid rgba(255,255,255,0.35); color: var(--lavender); font-size: 13px; font-weight: 700; }
+.cox-addon--on .cox-addon-check { background: var(--lavender); border-color: var(--lavender); color: var(--ink); }
+.cox-addon-info { flex: 1; min-width: 0; }
+.cox-addon-t { display: block; font-size: 13.5px; font-weight: 600; color: #fff; }
+.cox-addon-d { display: block; font-size: 11.5px; line-height: 1.45; color: rgba(238,237,254,0.6); margin-top: 2px; }
+.cox-addon-price { flex-shrink: 0; font-size: 12px; color: #9FE1CB; font-weight: 600; white-space: nowrap; }
+.cox-addon-price s { color: rgba(238,237,254,0.45); font-weight: 400; margin-right: 4px; }
 
-/* Dark panel — order summary + complete (RIGHT). Content hugs the centre divider. */
-.cox-dark { flex: 1; background: var(--ink); color: #fff; display: flex; justify-content: flex-start; padding: clamp(36px, 6vw, 72px) clamp(24px, 5vw, 60px); }
-.cox-dark-inner { width: 100%; max-width: 440px; }
-
-.cox-back { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 0; margin-bottom: 18px; }
-.cox-back:hover { color: var(--ink); }
+/* RIGHT — white panel: order summary + complete. Content hugs the centre divider. */
+.cox-order { flex: 1; background: #fff; color: var(--ink); display: flex; justify-content: flex-start; padding: clamp(36px, 6vw, 72px) clamp(24px, 5vw, 60px); }
+.cox-order-inner { width: 100%; max-width: 440px; }
 .cox-brand { margin-bottom: 30px; }
-.cox-eyebrow { font-size: 13px; color: rgba(238,237,254,0.6); margin-bottom: 6px; }
-.cox-name { font-size: 18px; font-weight: 600; color: #fff; }
-.cox-price { font-family: 'DM Serif Display', serif; font-size: 40px; color: #fff; margin: 8px 0 28px; }
-.cox-price span { font-family: 'DM Sans', sans-serif; font-size: 14px; color: rgba(238,237,254,0.55); }
-.cox-items { border-top: 1px solid rgba(255,255,255,0.12); }
-.cox-row { display: flex; justify-content: space-between; gap: 16px; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
-.cox-row-t { font-size: 14px; font-weight: 500; color: #fff; }
-.cox-row-d { font-size: 12px; color: rgba(238,237,254,0.55); margin-top: 2px; }
-.cox-row-amt { font-size: 13.5px; color: rgba(238,237,254,0.85); white-space: nowrap; }
-.cox-row-amt s { color: rgba(238,237,254,0.4); margin-right: 5px; }
-.cox-sub-line { display: flex; justify-content: space-between; font-size: 13.5px; color: rgba(238,237,254,0.8); padding: 8px 0 0; }
-.cox-sub-line--muted { color: rgba(238,237,254,0.55); }
-.cox-total { display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; color: #fff; margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.12); }
-
-.cox-complete { width: 100%; background: var(--specialist); color: #fff; border: none; font-family: inherit; font-size: 15.5px; font-weight: 600; padding: 15px; border-radius: 12px; cursor: pointer; box-shadow: 0 12px 26px rgba(83,74,183,0.35); transition: opacity .15s, transform .15s; }
+.cox-eyebrow { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
+.cox-name { font-size: 18px; font-weight: 600; color: var(--ink); }
+.cox-price { font-family: 'DM Serif Display', serif; font-size: 40px; color: var(--ink); margin: 8px 0 28px; }
+.cox-price span { font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text-muted); }
+.cox-items { border-top: 1px solid rgba(38,33,92,0.12); }
+.cox-row { display: flex; justify-content: space-between; gap: 16px; padding: 16px 0; border-bottom: 1px solid rgba(38,33,92,0.08); }
+.cox-row-t { font-size: 14px; font-weight: 500; color: var(--ink); }
+.cox-row-d { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.cox-row-amt { font-size: 13.5px; color: var(--forest); font-weight: 600; white-space: nowrap; }
+.cox-row-amt s { color: var(--text-muted); font-weight: 400; margin-right: 5px; }
+.cox-sub-line { display: flex; justify-content: space-between; font-size: 13.5px; color: var(--ink); padding: 8px 0 0; }
+.cox-sub-line--muted { color: var(--text-muted); }
+.cox-total { display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; color: var(--ink); margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(38,33,92,0.12); }
+.cox-complete { width: 100%; margin-top: 22px; background: var(--specialist); color: #fff; border: none; font-family: inherit; font-size: 15.5px; font-weight: 600; padding: 15px; border-radius: 12px; cursor: pointer; box-shadow: 0 12px 26px rgba(83,74,183,0.28); transition: opacity .15s, transform .15s; }
 .cox-complete:hover { opacity: .95; transform: translateY(-1px); }
 .cox-complete:disabled { opacity: .6; cursor: default; transform: none; }
-.cox-complete--ondark { margin-top: 22px; }
 .cox-complete--inline { width: auto; max-width: 240px; margin: 0 auto; }
 .cox-note { margin-top: 12px; font-size: 12px; line-height: 1.5; color: var(--text-muted); text-align: center; }
-.cox-note--ondark { color: rgba(238,237,254,0.6); }
-.cox-h3 { font-size: 13px; font-weight: 700; color: var(--ink); margin: 30px 0 12px; }
-.cox-info { display: flex; flex-direction: column; border: 1px solid rgba(38,33,92,0.12); border-radius: 11px; overflow: hidden; }
-.cox-info-row { display: flex; justify-content: space-between; gap: 12px; padding: 12px 14px; font-size: 13.5px; border-bottom: 1px solid rgba(38,33,92,0.08); }
-.cox-info-row:last-child { border-bottom: none; }
-.cox-info-row span { color: var(--text-muted); }
-.cox-info-row b { color: var(--ink); font-weight: 600; text-align: right; word-break: break-word; }
-.cox-addons { display: flex; flex-direction: column; gap: 10px; }
-.cox-addon { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: #fff; border: 1px solid rgba(38,33,92,0.16); border-radius: 11px; padding: 13px 14px; cursor: pointer; font-family: inherit; transition: border-color .15s, box-shadow .15s; }
-.cox-addon:hover { border-color: var(--specialist); }
-.cox-addon--on { border-color: var(--specialist); box-shadow: 0 0 0 1px var(--specialist); }
-.cox-addon-check { flex-shrink: 0; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; border: 1.5px solid rgba(38,33,92,0.3); color: var(--specialist); font-size: 13px; font-weight: 700; }
-.cox-addon--on .cox-addon-check { background: var(--specialist); border-color: var(--specialist); color: #fff; }
-.cox-addon-info { flex: 1; min-width: 0; }
-.cox-addon-t { display: block; font-size: 13.5px; font-weight: 600; color: var(--ink); }
-.cox-addon-d { display: block; font-size: 11.5px; line-height: 1.45; color: var(--text-muted); margin-top: 2px; }
-.cox-addon-price { flex-shrink: 0; font-size: 12px; color: var(--forest); font-weight: 600; white-space: nowrap; }
-.cox-addon-price s { color: var(--text-muted); font-weight: 400; margin-right: 4px; }
 .cox-err { margin-top: 10px; font-size: 12.5px; color: #A32D2D; }
-.cox-err--ondark { color: #FF9B9B; }
-.cox-foot { margin-top: 22px; font-size: 11px; color: var(--text-muted); text-align: center; }
 
 /* Confirmation */
 .cox--confirm { background: var(--parchment); align-items: center; justify-content: center; }
