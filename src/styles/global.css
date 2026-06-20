@@ -1765,6 +1765,29 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-quote { margin-top: 44px; padding: 26px 28px; background: var(--ink); color: #EEEDFE; border-radius: 16px; font-family: 'DM Serif Display', serif; font-style: italic; font-size: clamp(16px, 2.6vw, 20px); line-height: 1.5; }
 .lp2-quote span { display: block; margin-top: 14px; font-family: 'DM Sans', sans-serif; font-style: normal; font-size: 12.5px; color: var(--lavender); }
 
+/* Sample certificate */
+.lp2-cert { display: flex; flex-direction: column; gap: 12px; }
+.lp2-cert-img { width: 100%; max-width: 640px; border-radius: 14px; border: 1px solid rgba(38,33,92,0.12); box-shadow: 0 16px 40px rgba(38,33,92,0.1); }
+.lp2-cert-mock { max-width: 560px; text-align: center; padding: 30px 32px; border-radius: 14px; background: linear-gradient(160deg, #FFFDF8 0%, var(--cream) 100%); border: 2px solid var(--a); box-shadow: 0 16px 40px rgba(186,117,23,0.14); position: relative; }
+.lp2-cert-mock::after { content: ''; position: absolute; inset: 7px; border: 1px solid rgba(186,117,23,0.35); border-radius: 9px; pointer-events: none; }
+.lp2-cert-mock-top { display: flex; align-items: center; justify-content: space-between; }
+.lp2-cert-mock-seal { color: var(--a); font-size: 22px; }
+.lp2-cert-mock-kicker { margin-top: 18px; font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--a-dark); }
+.lp2-cert-mock-to { margin-top: 14px; font-size: 12px; color: var(--text-muted); }
+.lp2-cert-mock-name { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--ink); margin: 4px 0; }
+.lp2-cert-mock-for { font-size: 13px; line-height: 1.6; color: var(--ink); }
+.lp2-cert-mock-sign { margin-top: 18px; padding-top: 12px; border-top: 1px solid rgba(38,33,92,0.15); display: inline-block; font-size: 12px; color: var(--text-muted); }
+.lp2-cert-note { font-size: 12.5px; color: var(--text-muted); }
+
+/* Join WhatsApp community — narrow bar */
+.lp2-wa { display: flex; align-items: center; gap: 14px; margin-top: 28px; padding: 14px 18px; border-radius: 14px; background: linear-gradient(100deg, #1FA855 0%, #25D366 100%); color: #fff; text-decoration: none; box-shadow: 0 12px 28px rgba(37,211,102,0.28); transition: transform .15s, box-shadow .15s; }
+.lp2-wa:hover { transform: translateY(-1px); box-shadow: 0 16px 34px rgba(37,211,102,0.34); }
+.lp2-wa-icon { flex-shrink: 0; width: 30px; height: 30px; display: inline-flex; }
+.lp2-wa-icon svg { width: 30px; height: 30px; }
+.lp2-wa-text { flex: 1; font-size: 14px; font-weight: 600; line-height: 1.4; }
+.lp2-wa-btn { flex-shrink: 0; background: #fff; color: #1FA855; font-size: 13px; font-weight: 700; padding: 9px 18px; border-radius: 9px; }
+@media (max-width: 480px) { .lp2-wa-text { font-size: 12.5px; } .lp2-wa-btn { padding: 8px 12px; font-size: 12px; } }
+
 /* Right column — sticky form */
 .lp2-form-card { background: #fff; border: 1px solid rgba(38,33,92,0.12); border-radius: 18px; padding: 26px 24px; box-shadow: 0 24px 60px rgba(38,33,92,0.12); }
 .lp2-price-row { display: flex; align-items: baseline; gap: 10px; }

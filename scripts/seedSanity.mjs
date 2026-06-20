@@ -159,6 +159,9 @@ const CAMPAIGN = {
     { title: 'Live Q&A with the mentor', detail: 'Ask anything and get unstuck in real time.' },
     { title: 'Exclusive community access', detail: 'Join a network of AI builders and keep learning.' },
   ],
+  certificateNote: 'A Menler Certificate of Participation — shareable on LinkedIn.',
+  whatsappUrl: '',
+  whatsappText: 'Join our WhatsApp community for updates, resources & support.',
 };
 const keyed = (arr) => arr.map((o, i) => ({ _type: 'object', _key: `i${i}`, ...o }));
 
@@ -242,6 +245,9 @@ async function run() {
     learn: keyed(CAMPAIGN.learn),
     forYou: CAMPAIGN.forYou,
     get: keyed(CAMPAIGN.get),
+    certificateNote: CAMPAIGN.certificateNote,
+    whatsappUrl: CAMPAIGN.whatsappUrl,
+    whatsappText: CAMPAIGN.whatsappText,
   });
   console.log('  ✓ campaignPage');
 

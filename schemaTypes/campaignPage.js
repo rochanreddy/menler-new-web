@@ -81,6 +81,12 @@ export default defineType({
         preview: { select: { title: 'title', subtitle: 'detail' } },
       }],
     }),
+
+    // ── Sample certificate + WhatsApp community ──
+    defineField({ name: 'certificateImage', title: 'Sample certificate image', type: 'image', options: { hotspot: true }, group: 'sections', description: 'Upload a sample certificate. If empty, a default certificate mock-up is shown.' }),
+    defineField({ name: 'certificateNote', title: 'Certificate caption', type: 'string', group: 'sections' }),
+    defineField({ name: 'whatsappUrl', title: 'WhatsApp community invite link', type: 'url', group: 'sections', description: 'The WhatsApp group/community join link.' }),
+    defineField({ name: 'whatsappText', title: 'WhatsApp bar text', type: 'string', group: 'sections' }),
   ],
   preview: { select: { title: 'title', subtitle: 'slug.current' } },
 });
