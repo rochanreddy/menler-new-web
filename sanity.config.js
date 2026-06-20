@@ -41,6 +41,7 @@ export default defineConfig({
             S.documentTypeListItem('campaignPage').title('Campaign Landing Pages'),
             orderableDocumentListDeskItem({ type: 'mentor', title: 'Mentors', S, context }),
             orderableDocumentListDeskItem({ type: 'project', title: 'Projects', S, context }),
+            orderableDocumentListDeskItem({ type: 'playbook', title: 'Playbooks / Catalogs', S, context }),
           ]),
     }),
     visionTool(),

@@ -203,6 +203,26 @@ async function run() {
     console.log(`  ✓ ${p.title}`);
   }
 
+  // Playbooks / catalogs (checkout add-ons). createIfNotExists so we don't
+  // clobber edits the client has made; deterministic IDs keep it idempotent.
+  console.log('Playbooks / catalogs...');
+  const PLAYBOOKS = [
+    { id: 'prompts', title: '100+ AI Prompts Playbook', desc: 'Tested prompts across business, engineering & beginner tracks.', price: 499 },
+    { id: 'agents', title: 'AI Agent Build Templates', desc: 'Ready-to-use agent blueprints, MCP recipes & workflows.', price: 799 },
+    { id: 'domain', title: 'Domain Track Playbooks (×9)', desc: 'One deep-dive playbook per Generalist domain track.', price: 999 },
+    { id: 'tools', title: 'GenAI Toolstack Starter Kit', desc: 'Setup guides & cheat-sheets for the full Menler toolstack.', price: 399 },
+  ];
+  for (let i = 0; i < PLAYBOOKS.length; i++) {
+    const pb = PLAYBOOKS[i];
+    await client.createIfNotExists({
+      _id: `playbook-${pb.id}`,
+      _type: 'playbook',
+      orderRank: rank(i),
+      title: pb.title, desc: pb.desc, price: pb.price, active: true,
+    });
+    console.log(`  ✓ ${pb.title}`);
+  }
+
   // Page singletons: createIfNotExists so we DON'T overwrite content you've
   // already edited in the Studio (hero copy, pricing, etc.).
   console.log('Page singletons (only if missing)...');

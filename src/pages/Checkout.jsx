@@ -3,9 +3,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import MenlerWordmark from '../components/common/MenlerWordmark';
 import Seo from '../components/common/Seo';
 import { submitLead } from '../services/leadService';
+import { useContent } from '../lib/useContent';
 
 // Optional add-ons. Priced for show; FREE during launch (total ₹0). When a
 // payment gateway (Razorpay) is added, charge `total` and flip these to paid.
+// These are the fallback; the client edits the live list in Sanity (Playbooks / Catalogs).
 const CATALOG = [
   { id: 'prompts', title: '100+ AI Prompts Playbook', desc: 'Tested prompts across business, engineering & beginner tracks.', price: 499 },
   { id: 'agents', title: 'AI Agent Build Templates', desc: 'Ready-to-use agent blueprints, MCP recipes & workflows.', price: 799 },
@@ -13,11 +15,16 @@ const CATALOG = [
   { id: 'tools', title: 'GenAI Toolstack Starter Kit', desc: 'Setup guides & cheat-sheets for the full Menler toolstack.', price: 399 },
 ];
 
+// Active playbooks/catalogs from Sanity, ordered; falls back to CATALOG above.
+const CATALOG_QUERY = `*[_type=="playbook" && active != false]|order(orderRank){"id":_id, title, desc, price}`;
+
 export default function Checkout() {
   const navigate = useNavigate();
   const { state } = useLocation();
   const reg = state || {};
   const workshopTitle = reg.workshop || 'Menler Workshop';
+
+  const catalog = useContent(CATALOG_QUERY, CATALOG);
 
   const [cart, setCart] = useState(() => new Set());
   const [placing, setPlacing] = useState(false);
@@ -29,7 +36,7 @@ export default function Checkout() {
     n.has(id) ? n.delete(id) : n.add(id);
     return n;
   });
-  const addedItems = CATALOG.filter((i) => cart.has(i.id));
+  const addedItems = catalog.filter((i) => cart.has(i.id));
   const total = 0; // launch offer — everything free
 
   const pay = async () => {
@@ -87,7 +94,7 @@ export default function Checkout() {
 
           <h3 className="cox-h3">Add playbooks &amp; catalogs</h3>
           <div className="cox-addons">
-            {CATALOG.map((i) => {
+            {catalog.map((i) => {
               const added = cart.has(i.id);
               return (
                 <button type="button" key={i.id} className={`cox-addon${added ? ' cox-addon--on' : ''}`} onClick={() => toggle(i.id)}>
