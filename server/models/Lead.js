@@ -17,6 +17,15 @@ const leadSchema = new mongoose.Schema(
     utm_medium: { type: String, default: '' },
     utm_campaign: { type: String, default: '' },
     utm_content: { type: String, default: '' },
+    utm_term: { type: String, default: '' },
+
+    // Ad-click IDs + attribution + consent (for CRM tracking).
+    gclid: { type: String, default: '' },
+    fbclid: { type: String, default: '' },
+    page_url: { type: String, default: '' },
+    referrer_url: { type: String, default: '' },
+    cta_label: { type: String, default: '' },
+    communication_optin: { type: Boolean, default: true },
 
     // Any extra fields a form sends are preserved here.
     extra: { type: mongoose.Schema.Types.Mixed, default: {} },
