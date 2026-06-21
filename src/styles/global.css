@@ -1856,17 +1856,40 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .cox-info-row:last-child { border-bottom: none; }
 .cox-info-row span { color: rgba(238,237,254,0.6); }
 .cox-info-row b { color: #fff; font-weight: 600; text-align: right; word-break: break-word; }
+/* Aligns "Contact information" (left) with "Register for" (right, under the logo). */
+.cox-brand-spacer { height: 56px; }
+@media (max-width: 860px) { .cox-brand-spacer { display: none; } }
+
+/* Add-ons heading row with live cart counter */
+.cox-addons-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin: 30px 0 14px; }
+.cox-addons-head .cox-h3 { margin: 0; }
+.cox-addons-head .cox-addons-sub { margin: 4px 0 0; }
+.cox-addons-sub { font-size: 12px; color: rgba(238,237,254,0.6); }
+.cox-cart { position: relative; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); color: rgba(238,237,254,0.8); transition: color .2s, border-color .2s, background .2s; }
+.cox-cart svg { width: 20px; height: 20px; }
+.cox-cart--active { color: #fff; border-color: var(--lavender); background: rgba(124,109,242,0.18); }
+.cox-cart-count { position: absolute; top: -8px; right: -8px; min-width: 21px; height: 21px; padding: 0 6px; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; background: var(--lavender); color: var(--ink); font-size: 11px; font-weight: 800; box-shadow: 0 2px 8px rgba(0,0,0,0.35); transform: scale(0); transition: transform .25s cubic-bezier(.34,1.56,.64,1); }
+.cox-cart--active .cox-cart-count { transform: scale(1); }
+
 .cox-addons { display: flex; flex-direction: column; gap: 10px; }
-.cox-addon { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); border-radius: 11px; padding: 13px 14px; cursor: pointer; font-family: inherit; transition: border-color .15s, box-shadow .15s; }
-.cox-addon:hover { border-color: var(--lavender); }
+.cox-addon { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); border-radius: 11px; padding: 13px 14px; cursor: pointer; font-family: inherit; transition: border-color .15s, box-shadow .15s, transform .15s, background .15s; }
+.cox-addon:hover { border-color: var(--lavender); transform: translateY(-1px); }
 .cox-addon--on { border-color: var(--lavender); box-shadow: 0 0 0 1px var(--lavender); }
 .cox-addon-check { flex-shrink: 0; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; border: 1.5px solid rgba(255,255,255,0.35); color: var(--lavender); font-size: 13px; font-weight: 700; }
 .cox-addon--on .cox-addon-check { background: var(--lavender); border-color: var(--lavender); color: var(--ink); }
 .cox-addon-info { flex: 1; min-width: 0; }
 .cox-addon-t { display: block; font-size: 13.5px; font-weight: 600; color: #fff; }
 .cox-addon-d { display: block; font-size: 11.5px; line-height: 1.45; color: rgba(238,237,254,0.6); margin-top: 2px; }
-.cox-addon-price { flex-shrink: 0; font-size: 12px; color: #9FE1CB; font-weight: 600; white-space: nowrap; }
+.cox-addon-right { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+.cox-addon-price { font-size: 12px; color: #9FE1CB; font-weight: 600; white-space: nowrap; }
 .cox-addon-price s { color: rgba(238,237,254,0.45); font-weight: 400; margin-right: 4px; }
+.cox-addon-action { font-size: 11px; font-weight: 700; letter-spacing: .02em; color: var(--lavender); white-space: nowrap; }
+.cox-addon--on .cox-addon-action { color: #9FE1CB; }
+
+/* Back button (top of the left panel). */
+.cox-back-btn { background: transparent; border: 1px solid rgba(255,255,255,0.3); color: #fff; font-family: inherit; font-size: 13.5px; font-weight: 600; padding: 10px 18px; border-radius: 10px; cursor: pointer; transition: background .15s, border-color .15s; }
+.cox-back-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.5); }
+.cox-back-btn--top { margin: 0 0 18px; }
 
 /* RIGHT — white panel: order summary + complete. Content hugs the centre divider. */
 .cox-order { flex: 1; background: #fff; color: var(--ink); display: flex; justify-content: flex-start; padding: clamp(36px, 6vw, 72px) clamp(24px, 5vw, 60px); }
@@ -1898,6 +1921,10 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .cox-confirm-tick { width: 64px; height: 64px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; background: #E1F5EE; color: var(--forest); border-radius: 50%; font-size: 32px; font-weight: 700; }
 .cox-confirm-h { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: clamp(26px, 5vw, 38px); color: var(--ink); margin-bottom: 12px; }
 .cox-confirm-p { font-size: 15px; line-height: 1.7; color: var(--text-muted); margin-bottom: 26px; }
+.cox-confirm-actions { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.cox-wa { display: inline-flex; align-items: center; gap: 10px; max-width: 420px; background: #25D366; color: #06311f; font-size: 14px; font-weight: 700; line-height: 1.35; text-align: left; padding: 13px 22px; border-radius: 12px; text-decoration: none; box-shadow: 0 10px 24px rgba(37,211,102,0.28); transition: background .15s, transform .15s; }
+.cox-wa:hover { background: #1ebe5a; transform: translateY(-1px); }
+.cox-wa-ico { font-size: 18px; }
 .apt-sheet-gate .apt-lead-label { margin-bottom: 10px; }
 .apt-answers > summary::-webkit-details-marker { display: none; }
 .apt-answers-body { padding: 4px 16px 16px; }

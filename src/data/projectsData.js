@@ -26,7 +26,7 @@ export const PROJECTS = [
   {
     slug: 'deal-flow-triage-agent', image: '/projects/dEAL_fLOW_tRIAGE.png',
     tag: 'Finance Operations', tagCls: 't-vc', title: 'Deal-flow triage agent',
-    desc: 'Ingests pitch decks, founder emails, and public data — outputs a partner-ready memo on fit, market, traction, and follow-up questions.',
+    desc: 'Ingests pitch decks, founder emails, and public data, then outputs a partner-ready memo on fit, market, traction, and follow-up questions.',
     stack: ['Claude API', 'Tool use', 'RAG'], outcome: 'Cuts initial screening time by 70%',
     doc: {
       overview: "A first-pass analyst that turns an inbox full of pitch decks into partner-ready memos, so the team only spends time on the deals worth a conversation.",

@@ -70,7 +70,13 @@ export default function Checkout() {
             {reg.email ? <> to <b>{reg.email}</b></> : null}
             {addedItems.length ? <>, with your {addedItems.length} playbook{addedItems.length > 1 ? 's' : ''}.</> : '.'}
           </p>
-          <button className="cox-complete cox-complete--inline" onClick={() => navigate('/')}>Back to home</button>
+          <div className="cox-confirm-actions">
+            <a className="cox-wa" href={reg.whatsappUrl || '#'} target="_blank" rel="noopener noreferrer">
+              <span className="cox-wa-ico" aria-hidden="true">💬</span>
+              {reg.whatsappText || 'Join our WhatsApp community for updates, resources & support.'}
+            </a>
+            <button className="cox-complete cox-complete--inline" onClick={() => navigate('/')}>Back to home</button>
+          </div>
         </div>
       </div>
     );
@@ -83,7 +89,7 @@ export default function Checkout() {
       {/* ── LEFT: blue — contact (read-only) + add-ons ── */}
       <div className="cox-form">
         <div className="cox-form-inner">
-          <button className="cox-back" onClick={() => navigate(-1)} aria-label="Back">←</button>
+          <button className="cox-back-btn cox-back-btn--top" onClick={() => navigate(-1)}>← Back</button>
 
           <h3 className="cox-h3" style={{ marginTop: 0 }}>Contact information</h3>
           <div className="cox-info">
@@ -92,7 +98,20 @@ export default function Checkout() {
             <div className="cox-info-row"><span>Phone</span><b>{reg.phone || '—'}</b></div>
           </div>
 
-          <h3 className="cox-h3">Add playbooks &amp; catalogs</h3>
+          <div className="cox-addons-head">
+            <div className="cox-addons-head-text">
+              <h3 className="cox-h3">Add playbooks &amp; catalogs</h3>
+              <p className="cox-addons-sub">Optional — handpicked resources, free during launch.</p>
+            </div>
+            <div className={`cox-cart${cart.size ? ' cox-cart--active' : ''}`} aria-label={`${cart.size} item${cart.size === 1 ? '' : 's'} added`} title={`${cart.size} added`}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+              </svg>
+              <span className="cox-cart-count">{cart.size}</span>
+            </div>
+          </div>
           <div className="cox-addons">
             {catalog.map((i) => {
               const added = cart.has(i.id);
@@ -103,7 +122,10 @@ export default function Checkout() {
                     <span className="cox-addon-t">{i.title}</span>
                     <span className="cox-addon-d">{i.desc}</span>
                   </span>
-                  <span className="cox-addon-price"><s>₹{i.price}</s> Free</span>
+                  <span className="cox-addon-right">
+                    <span className="cox-addon-price"><s>₹{i.price}</s> Free</span>
+                    <span className="cox-addon-action">{added ? '✓ Added' : '+ Add'}</span>
+                  </span>
                 </button>
               );
             })}
@@ -134,7 +156,7 @@ export default function Checkout() {
 
           <div className="cox-sub-line"><span>Subtotal</span><span>₹{total}</span></div>
           <div className="cox-sub-line cox-sub-line--muted"><span>Taxes</span><span>₹0</span></div>
-          <div className="cox-total"><span>Total due today</span><span>₹{total}</span></div>
+          <div className="cox-total"><span>Total</span><span>₹{total}</span></div>
 
           <button className="cox-complete" onClick={pay} disabled={placing}>
             {placing ? 'Processing…' : 'Complete registration · ₹0'}

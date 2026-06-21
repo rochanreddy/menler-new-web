@@ -40,6 +40,7 @@ const GEN_PRICING = {
   ],
 };
 const GEN_PRICING_QUERY = '*[_type == "generalistPage"][0].pricing{pill, name, tagline, price, origPrice, priceSub, features, chips}';
+const GEN_CURRICULUM_QUERY = '*[_type == "generalistPage"][0].curriculum[]{label, weeks, title, modules[]{w, lessons}, tools, projects, domains[]{name, weeks[]{w, lessons}, tools, projects}}';
 
 const CURRICULUM = [
   {
@@ -256,6 +257,7 @@ export default function Generalist() {
   };
   const openApply = useApply();
   const genPricing = useContent(GEN_PRICING_QUERY, GEN_PRICING);
+  const curriculum = useContent(GEN_CURRICULUM_QUERY, CURRICULUM);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -316,7 +318,7 @@ export default function Generalist() {
         <h2 className="section-h2">From curious<br /><em>to Claude Specialist.</em></h2>
         <p className="section-sub">Three phases, no code just Claude mastery applied to your domain.<br />Pick a phase to open its modules, tools, and projects.</p>
         <div className="curric-acc">
-          {CURRICULUM.map((p, i) => {
+          {curriculum.map((p, i) => {
             const open = activePhase === i;
             return (
               <div className={`curric-acc-item${open ? ' open' : ''}`} key={i}>

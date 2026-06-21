@@ -56,6 +56,8 @@ const KS_PRICING = {
   ],
 };
 const KS_PRICING_QUERY = '*[_type == "kickstarterPage"][0].pricing{pill, name, tagline, price, origPrice, priceSub, features, chips}';
+const KS_DAYS_QUERY = '*[_type == "kickstarterPage"][0].days[]{num, topic, tool, cap}';
+const KS_MODULES_QUERY = '*[_type == "kickstarterPage"][0].modules[]{label, span, title, desc, lessons, tools, project}';
 
 // GenAI toolstack — same set/design as the home page (4 / 5 / 4 rows).
 const TOOLS = [
@@ -150,6 +152,8 @@ export default function Kickstarter() {
   const moduleDetailRef = useRef(null);
   const openApply = useApply();
   const ksPricing = useContent(KS_PRICING_QUERY, KS_PRICING);
+  const days = useContent(KS_DAYS_QUERY, DAYS);
+  const modules = useContent(KS_MODULES_QUERY, MODULES);
 
   // Pick a module. On mobile, the detail panel stacks below the module list,
   // so scroll it into view (after the state-driven re-render) to make the
@@ -225,7 +229,7 @@ export default function Kickstarter() {
         <p className="section-label" style={{ textAlign: 'center', color: '#854F0B' }}>14-day timeline</p>
         <h2 className="section-h2" style={{ textAlign: 'center', color: '#854F0B' }}>From curious<br /><em style={{ color: '#BA7517' }}>to fluent in two weeks.</em></h2>
         <div className="timeline-grid">
-          {DAYS.map((d, i) => (
+          {days.map((d, i) => (
             <div key={i} className={`day-card${d.cap ? ' cap' : ''}`}>
               <p className="day-num">{d.num}</p>
               <p className="day-topic">{d.topic}</p>
@@ -241,7 +245,7 @@ export default function Kickstarter() {
         <h2 className="section-h2" style={{ color: '#854F0B' }}>Four modules.<br /><em style={{ color: '#BA7517' }}>Click to open the plan.</em></h2>
         <p className="section-sub">Each module opens its lesson plan, the tool stack you'll use, and the project you'll build.</p>
         <div className="curric-acc">
-          {MODULES.map((m, i) => {
+          {modules.map((m, i) => {
             const open = activeModule === i;
             return (
               <div className={`curric-acc-item${open ? ' open' : ''}`} key={i}>
@@ -375,7 +379,7 @@ export default function Kickstarter() {
 
         <PricingCard
           {...ksPricing}
-          ctaLabel="Pay now"
+          ctaLabel="Enroll now"
           description={<>Build your AI foundation in just two weekends.<span className="kp-desc-line2">Learn AI fundamentals, build real workflows, and ship your first projects.</span></>}
           onCta={openApply}
         />
