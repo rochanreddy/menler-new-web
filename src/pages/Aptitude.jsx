@@ -6,6 +6,15 @@ import FaqList from '../components/common/FaqList';
 import { submitLead } from '../services/leadService';
 import { getRecommendation, maxScoreForQuestions } from '../data/aptitudeQuestions';
 import { CLUSTERS, buildRoadmap, getSetQuestions, getAllAboutAIQuestions } from '../data/aptitudeClusters';
+import { getGeneralistSession } from '../data/generalistAptitude';
+import { getStudentSession } from '../data/studentAptitude';
+import { getProductSession } from '../data/productAptitude';
+import { getMarketingSession } from '../data/marketingAptitude';
+import { getHrSession } from '../data/hrAptitude';
+import { getFoundersSession } from '../data/foundersAptitude';
+import { getFinanceSession } from '../data/financeAptitude';
+import { getAnalystsSession } from '../data/analystsAptitude';
+import { getEngineeringSession } from '../data/engineeringAptitude';
 import { APTITUDE_FAQS } from '../data/faqData';
 
 const TRUST_CARDS = [
@@ -52,6 +61,20 @@ function buildDimensions(length) {
 
 const blankArr = (len, fill) => Array(len).fill(fill);
 const INIT = { view: 'landing', cluster: null, setIdx: 0, idx: 0, questions: [], answers: [], marked: [] };
+
+// Domains shown in the "Choose your domain" pop-up (after Start the test).
+// Per-domain question PDFs are wired in as they're provided.
+const EXAM_DOMAINS = [
+  { name: 'Student', getQuestions: () => getStudentSession(15) },
+  { name: 'Generalist', getQuestions: () => getGeneralistSession(15) },
+  { name: 'Engineer', getQuestions: () => getEngineeringSession(15) },
+  { name: 'Analysts', getQuestions: () => getAnalystsSession(15) },
+  { name: 'Finance', getQuestions: () => getFinanceSession(15) },
+  { name: "Founder's Office", getQuestions: () => getFoundersSession(15) },
+  { name: 'HR', getQuestions: () => getHrSession(15) },
+  { name: 'Marketing & Sales', getQuestions: () => getMarketingSession(15) },
+  { name: 'PM', getQuestions: () => getProductSession(15) },
+];
 
 function reducer(state, action) {
   switch (action.type) {
@@ -131,6 +154,18 @@ export default function Aptitude() {
   const navigate = useNavigate();
   const go = (path) => { navigate(path); window.scrollTo(0, 0); };
   const [state, dispatch] = useReducer(reducer, INIT);
+
+  // "Choose your domain" pop-up (opens when the hero "Start the test" is clicked).
+  const [domainOpen, setDomainOpen] = useState(false);
+  const [chosenDomain, setChosenDomain] = useState(null);
+  const [exitConfirm, setExitConfirm] = useState(false);
+  const startChosenDomain = () => {
+    if (!chosenDomain) return;
+    if (chosenDomain.getQuestions) dispatch({ type: 'START_TEST', cluster: chosenDomain.name, questions: chosenDomain.getQuestions() });
+    else if (chosenDomain.mixed) dispatch({ type: 'START_TEST', cluster: 'All About AI', questions: getAllAboutAIQuestions(15) });
+    else dispatch({ type: 'START_TEST', cluster: chosenDomain.name });
+    setDomainOpen(false);
+  };
 
   // Jump to the top of the page whenever the view changes (landing → sets → runner → report).
   // Jump to the top on every view change. Use Lenis if it's running (plain
@@ -249,17 +284,29 @@ export default function Aptitude() {
     const lowTime = remaining <= 60;
     return (
       <section className="apt-runner apt-runner--exam">
+        {exitConfirm && (
+          <div className="apt-modal-overlay" onClick={() => setExitConfirm(false)}>
+            <div className="apt-modal apt-modal--confirm" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+              <h2 className="apt-modal-h">Exit the test?</h2>
+              <p className="apt-modal-sub">Your progress won't be saved — you'll have to start this test again.</p>
+              <div className="apt-confirm-actions">
+                <button className="apt-confirm-cancel" onClick={() => setExitConfirm(false)}>Cancel</button>
+                <button className="apt-confirm-exit" onClick={() => { setExitConfirm(false); dispatch({ type: 'TO_CLUSTERS' }); }}>Exit test</button>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="runner-layout">
           <div className="runner-main">
             <div className="runner-topbar">
-              <button className="runner-btn runner-exit" onClick={() => dispatch({ type: 'TO_SETS' })}>← Exit to sets</button>
+              <button className="runner-btn runner-exit" onClick={() => setExitConfirm(true)}>← Exit</button>
               {/* Compact timer shown beside Exit on mobile only (the aside timer is hidden there). */}
               <div className={`runner-timer runner-timer--inline${lowTime ? ' low' : ''}`}>
                 <span className="runner-timer-label">Time left</span>
                 <span className="runner-timer-val">{mm}:{ss}</span>
               </div>
             </div>
-            <p className="runner-set-tag">Set {state.setIdx + 1} · {state.cluster}</p>
+            <p className="runner-set-tag">{state.cluster}</p>
             <div className="runner-progress"><div className="runner-progress-fill" style={{ width: `${pct}%` }} /></div>
             <p className="runner-meta">Question {state.idx + 1} of {total} · {answeredCount} answered</p>
             <p className="runner-q">{q.q}</p>
@@ -527,9 +574,34 @@ export default function Aptitude() {
           <p className="apt-eyebrow">Free · No signup to start</p>
           <h1 className="apt-h1">Where do you stand<br /><em>on the AI Curve?</em></h1>
           <p className="apt-sub">A 15 question AI Aptitude Test designed to assess your AI readiness<br />and recommend the most relevant learning pathway for your goals.</p>
-          <button className="apt-cta-big" onClick={() => dispatch({ type: 'START_TEST', cluster: 'All About AI', questions: getAllAboutAIQuestions(15) })}>Start the test</button>
+          <button className="apt-cta-big" onClick={() => { setChosenDomain(null); setDomainOpen(true); }}>Start the test</button>
         </div>
       </section>
+
+      {domainOpen && (
+        <div className="apt-modal-overlay" onClick={() => setDomainOpen(false)}>
+          <div className="apt-modal" role="dialog" aria-modal="true" aria-labelledby="apt-dm-h" onClick={(e) => e.stopPropagation()}>
+            <button className="apt-modal-x" onClick={() => setDomainOpen(false)} aria-label="Close">×</button>
+            <h2 className="apt-modal-h" id="apt-dm-h">Choose your domain</h2>
+            <p className="apt-modal-sub">Pick the domain you'd like to be tested on.</p>
+            <div className="apt-modal-grid">
+              {EXAM_DOMAINS.map((d) => {
+                const on = chosenDomain?.name === d.name;
+                return (
+                  <button key={d.name} type="button" className={`apt-dm-card${on ? ' on' : ''}`} onClick={() => setChosenDomain(d)} aria-pressed={on}>
+                    <span className="apt-dm-radio" aria-hidden="true" />
+                    <span className="apt-dm-text">
+                      <span className="apt-dm-name">{d.name}</span>
+                      {d.sub && <span className="apt-dm-sub">{d.sub}</span>}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            <button className="apt-modal-start" disabled={!chosenDomain} onClick={startChosenDomain}>Start the test →</button>
+          </div>
+        </div>
+      )}
 
       <section className="section" style={{ background: 'white', paddingTop: 48, paddingBottom: 0 }}>
         <p className="section-label" style={{ textAlign: 'center' }}>The assessment</p>
