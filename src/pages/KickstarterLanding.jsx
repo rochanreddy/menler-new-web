@@ -314,7 +314,7 @@ export default function KickstarterLanding() {
           <div className="lp2-apt-card">
             <p className="lp2-apt-eyebrow">Not sure where to start?</p>
             <p className="lp2-apt-title">Check out our AI Aptitude Test</p>
-            <p className="lp2-apt-desc">Find your AI level in 5 minutes and get a personalised program recommendation — free.</p>
+            <p className="lp2-apt-desc">Find your AI fluency in 15 minutes for free.<br />15 questions, One AI pathway and no sign-up</p>
             <button className="lp2-apt-btn" onClick={() => go('/aptitude')}>Take the Aptitude Test →</button>
           </div>
         </aside>

@@ -5188,30 +5188,20 @@ export function maxScoreForQuestions(questions) {
   return questions?.length || 0;
 }
 
-export function getRecommendation(score, maxScore = MAX_SCORE) {
-  const pct = maxScore ? score / maxScore : 0;
-  if (pct >= 0.85) {
+export function getRecommendation(score) {
+  // Score-based recommendation (1 mark/question): 7 or fewer → Kickstarter, 8 or more → Fellowship.
+  if (score >= 8) {
     return {
-      band: 'Advanced — AI Power User',
-      program: 'Claude AI Engineering',
-      path: '/engineering',
-      rationale: 'Your responses show systems thinking and precision prompting. You\'re ready for API, RAG, MCP, and agent architectures.',
-      color: 'var(--forest)',
-      bg: '#E1F5EE',
-    };
-  }
-  if (pct >= 0.60) {
-    return {
-      band: 'Intermediate — AI Specialist path',
-      program: 'Claude AI Generalist',
+      band: 'Fellowship track — AI Specialist path',
+      program: 'Claude AI Generalist Fellowship',
       path: '/generalist',
-      rationale: 'You have solid intuition. The Generalist program will sharpen your prompting, build real domain projects, and earn you the Specialist certification.',
+      rationale: 'You have solid intuition. The Generalist Fellowship will sharpen your prompting, build real domain projects, and earn you the Specialist certification.',
       color: 'var(--specialist)',
       bg: 'var(--cloud)',
     };
   }
   return {
-    band: 'Foundational — AI Beginner',
+    band: 'Foundational — start with the Kickstarter',
     program: 'Gen AI Kickstarter',
     path: '/kickstarter',
     rationale: 'Start with the 14-day Kickstarter to build confident AI fluency. Five mini-builds will transform how you think about AI workflows.',
