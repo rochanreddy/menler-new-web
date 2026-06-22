@@ -1822,6 +1822,66 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-wa-btn { flex-shrink: 0; background: #25D366; color: #fff; font-size: 13px; font-weight: 700; padding: 9px 18px; border-radius: 9px; }
 @media (max-width: 480px) { .lp2-wa-text { font-size: 12.5px; } .lp2-wa-btn { padding: 8px 12px; font-size: 12px; } }
 
+/* Join our Menler community — single wide floating card */
+.lp2-community {
+  margin: 36px auto 0; width: 100%; max-width: 1100px;
+  display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px;
+  padding: 38px 40px; border-radius: 24px;
+  background: #fff;
+  border: 1.5px solid var(--specialist, #5a3fd6);
+  box-shadow: 0 22px 50px rgba(38,33,92,0.12);
+  position: relative; overflow: hidden;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.lp2-community:hover { transform: translateY(-4px); box-shadow: 0 30px 64px rgba(38,33,92,0.16); }
+.lp2-comm-h { position: relative; font-size: clamp(22px, 3vw, 30px); font-weight: 800; color: var(--ink); margin: 0 0 6px; letter-spacing: -0.02em; }
+.lp2-comm-h em { font-style: italic; color: var(--specialist, #5a3fd6); }
+.lp2-comm-sub { position: relative; font-size: 15px; line-height: 1.55; color: var(--ink-soft, #5b5872); max-width: 520px; margin: 0 auto 24px; }
+/* Logos only, in one row */
+.lp2-comm-grid { position: relative; display: flex; justify-content: center; align-items: center; gap: 22px; flex-wrap: wrap; }
+.lp2-comm-card {
+  width: 52px; height: 52px; border-radius: 15px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--cloud, #f4f3fb); border: 1px solid rgba(38,33,92,0.10);
+  color: var(--ink); text-decoration: none;
+  box-shadow: 0 8px 20px rgba(38,33,92,0.08);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.lp2-comm-card svg { width: 24px; height: 24px; }
+.lp2-comm-card:hover { transform: translateY(-4px) scale(1.06); }
+.lp2-comm-card--discord { color: #5865F2; }
+.lp2-comm-card--discord:hover { box-shadow: 0 16px 30px rgba(88,101,242,0.45); }
+.lp2-comm-card--whatsapp { color: #25D366; }
+.lp2-comm-card--whatsapp:hover { box-shadow: 0 16px 30px rgba(37,211,102,0.45); }
+.lp2-comm-card--facebook { color: #1877F2; }
+.lp2-comm-card--facebook:hover { box-shadow: 0 16px 30px rgba(24,119,242,0.45); }
+@media (max-width: 480px) {
+  .lp2-community { padding: 28px 20px; }
+  .lp2-comm-card { width: 48px; height: 48px; border-radius: 14px; } .lp2-comm-card svg { width: 22px; height: 22px; }
+}
+
+/* Campaign variant: heading outside the card, horizontal layout */
+.lp2-community-wrap { margin: 36px auto 0; width: 100%; max-width: 1100px; text-align: center; }
+.lp2-comm-h-out { font-size: clamp(22px, 3vw, 30px); font-weight: 800; color: var(--ink); margin: 0 0 16px; letter-spacing: -0.02em; }
+.lp2-comm-h-out em { font-style: italic; color: var(--specialist, #5a3fd6); }
+.lp2-community--row {
+  margin: 0; flex-direction: row; justify-content: space-between; align-items: center;
+  text-align: left; gap: 28px; padding: 24px 36px;
+}
+.lp2-community--row .lp2-comm-sub { margin: 0; text-align: left; max-width: none; flex: 1; }
+.lp2-community--row .lp2-comm-grid { flex-wrap: nowrap; flex-shrink: 0; }
+@media (max-width: 640px) {
+  .lp2-community--row { flex-direction: column; text-align: center; gap: 18px; padding: 24px 22px; }
+  .lp2-community--row .lp2-comm-sub { text-align: center; }
+}
+/* Compact community card on the checkout confirmation screen */
+.cox-confirm-actions .lp2-community { max-width: 440px; padding: 20px 22px; gap: 4px; }
+.cox-confirm-actions .lp2-comm-h { font-size: 18px; margin-bottom: 4px; }
+.cox-confirm-actions .lp2-comm-sub { font-size: 13px; margin-bottom: 14px; max-width: 320px; }
+.cox-confirm-actions .lp2-comm-grid { gap: 14px; }
+.cox-confirm-actions .lp2-comm-card { width: 44px; height: 44px; border-radius: 13px; }
+.cox-confirm-actions .lp2-comm-card svg { width: 21px; height: 21px; }
+
 /* Right column — sticky form */
 .lp2-form-card { background: #fff; border: 1px solid rgba(38,33,92,0.12); border-radius: 18px; padding: 26px 24px; box-shadow: 0 24px 60px rgba(38,33,92,0.12); }
 .lp2-price-row { display: flex; align-items: baseline; gap: 10px; }
@@ -1923,7 +1983,8 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 /* Back button (top of the left panel). */
 .cox-back-btn { background: transparent; border: 1px solid rgba(255,255,255,0.3); color: #fff; font-family: inherit; font-size: 13.5px; font-weight: 600; padding: 10px 18px; border-radius: 10px; cursor: pointer; transition: background .15s, border-color .15s; }
 .cox-back-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.5); }
-.cox-back-btn--top { margin: 0 0 18px; }
+.cox-back-btn--top { margin: 0 0 18px; background: #fff; color: var(--ink, #26215c); border: none; border-radius: 999px; padding: 10px 20px; box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
+.cox-back-btn--top:hover { background: #f1f0fa; border-color: transparent; box-shadow: 0 8px 20px rgba(0,0,0,0.16); transform: translateY(-1px); }
 
 /* RIGHT — white panel: order summary + complete. Content hugs the centre divider. */
 .cox-order { flex: 1; background: #fff; color: var(--ink); display: flex; justify-content: flex-start; padding: clamp(36px, 6vw, 72px) clamp(24px, 5vw, 60px); }
