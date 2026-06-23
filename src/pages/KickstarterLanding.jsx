@@ -278,7 +278,7 @@ export default function KickstarterLanding() {
 
           {/* Explore Menler Programs */}
           <section className="lp2-block">
-            <h2 className="lp2-h2">Explore Menler <em>Programs</em></h2>
+            <h2 className="lp2-h2">Explore More <em>Programs</em></h2>
             <div className="lp2-explore">
               <div className="cluster-card cluster-card--kick">
                 <p className="cluster-num">For beginners</p>

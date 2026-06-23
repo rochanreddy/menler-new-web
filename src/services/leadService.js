@@ -45,6 +45,36 @@ export async function submitLead(payload) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error('Lead submission failed');
+  if (!res.ok) throw new Error(await errorMessage(res, 'Lead submission failed'));
+  return res.json();
+}
+
+// Pull a user-facing reason out of the API's JSON error body, if present.
+async function errorMessage(res, fallback) {
+  try {
+    const j = await res.json();
+    if (j && j.error) return j.error;
+  } catch { /* not JSON */ }
+  return fallback;
+}
+
+/**
+ * Request a gated resource (PDF). Stores an unverified lead and emails a magic
+ * link; the PDF is delivered only after the user clicks it (double opt-in).
+ * `payload` must include `email` and `pdf` (the resource's public path).
+ */
+export async function requestResource(payload) {
+  const data = {
+    ...payload,
+    ...getTracking(),
+    page: window.location.pathname,
+  };
+
+  const res = await fetch(`${API_URL}/leads/resource-request`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error(await errorMessage(res, 'Resource request failed'));
   return res.json();
 }

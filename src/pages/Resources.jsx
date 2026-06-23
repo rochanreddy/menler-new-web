@@ -236,7 +236,7 @@ export default function Resources() {
 
       {/* ── EXPLORE MENLER PROGRAMS ── */}
       <section className="section" style={{ background: 'white', paddingTop: 48, paddingBottom: 32 }}>
-        <p className="section-label" style={{ textAlign: 'center' }}>Explore Menler Programs</p>
+        <p className="section-label" style={{ textAlign: 'center' }}>Explore More Programs</p>
         <h2 className="section-h2" style={{ textAlign: 'center' }}>Continue your <em>AI journey.</em></h2>
         <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto' }}>Ready to go beyond assessment? Explore the Menler programs designed to help you<br />build capability, portfolio, and career momentum.</p>
         <div className="cluster-grid" style={{ marginTop: 28 }}>

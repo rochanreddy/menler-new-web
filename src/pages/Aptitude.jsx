@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Footer from '../components/layout/Footer';
 import Seo from '../components/common/Seo';
 import FaqList from '../components/common/FaqList';
-import { submitLead } from '../services/leadService';
+import { submitLead, requestResource } from '../services/leadService';
 import { getRecommendation, maxScoreForQuestions } from '../data/aptitudeQuestions';
 import { CLUSTERS, buildRoadmap, getSetQuestions, getAllAboutAIQuestions } from '../data/aptitudeClusters';
 import { getGeneralistSession } from '../data/generalistAptitude';
@@ -157,13 +157,13 @@ export default function Aptitude() {
 
   // "Choose your domain" pop-up (opens when the hero "Start the test" is clicked).
   const [domainOpen, setDomainOpen] = useState(false);
-  const [chosenDomain, setChosenDomain] = useState(null);
   const [exitConfirm, setExitConfirm] = useState(false);
-  const startChosenDomain = () => {
-    if (!chosenDomain) return;
-    if (chosenDomain.getQuestions) dispatch({ type: 'START_TEST', cluster: chosenDomain.name, questions: chosenDomain.getQuestions() });
-    else if (chosenDomain.mixed) dispatch({ type: 'START_TEST', cluster: 'All About AI', questions: getAllAboutAIQuestions(15) });
-    else dispatch({ type: 'START_TEST', cluster: chosenDomain.name });
+  // Clicking a domain starts the test immediately (no separate Start button).
+  const startDomain = (d) => {
+    if (!d) return;
+    if (d.getQuestions) dispatch({ type: 'START_TEST', cluster: d.name, questions: d.getQuestions() });
+    else if (d.mixed) dispatch({ type: 'START_TEST', cluster: 'All About AI', questions: getAllAboutAIQuestions(15) });
+    else dispatch({ type: 'START_TEST', cluster: d.name });
     setDomainOpen(false);
   };
 
@@ -238,26 +238,17 @@ export default function Aptitude() {
   const [qbForm, setQbForm] = useState({ name: '', email: '', phone: '' });
   const [qbBusy, setQbBusy] = useState(false);
   const [qbErr, setQbErr] = useState(false);
+  const [qbSent, setQbSent] = useState(false);
   const setQ = (k, v) => setQbForm(f => ({ ...f, [k]: v }));
-  const doDownloadQB = () => {
-    if (!qbBank.pdf) return;
-    const a = document.createElement('a');
-    a.href = encodeURI(qbBank.pdf);
-    a.download = '';
-    a.target = '_blank';
-    a.rel = 'noopener';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  };
-  // Save the lead first, then download — so the data always reaches the admin.
+  // Email a secure download link (double opt-in) — the PDF is delivered only
+  // after the user clicks it, so we capture verified, quality leads.
   const submitQB = async (e) => {
     e.preventDefault();
     setQbErr(false); setQbBusy(true);
     try {
-      await submitLead({ ...qbForm, topic: qbBank.name, source: 'aptitude-question-bank' });
+      await requestResource({ ...qbForm, resource: `${qbBank.label} Question Bank`, pdf: qbBank.pdf, topic: qbBank.name, source: 'aptitude-question-bank' });
       setQbFormOpen(false);
-      doDownloadQB();
+      setQbSent(true);
     } catch {
       setQbErr(true);
     } finally {
@@ -529,7 +520,7 @@ export default function Aptitude() {
 
         {/* ── EXPLORE MENLER PROGRAMS ── */}
         <section className="section" style={{ background: 'white', paddingTop: 48, paddingBottom: 32 }}>
-          <p className="section-label" style={{ textAlign: 'center' }}>Explore Menler Programs</p>
+          <p className="section-label" style={{ textAlign: 'center' }}>Explore More Programs</p>
           <h2 className="section-h2" style={{ textAlign: 'center' }}>Continue your <em>AI journey.</em></h2>
           <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto' }}>Ready to go beyond assessment? Explore the Menler programs designed to help you<br />build capability, portfolio, and career momentum.</p>
           <div className="cluster-grid" style={{ marginTop: 28 }}>
@@ -574,7 +565,7 @@ export default function Aptitude() {
           <p className="apt-eyebrow">Free · No signup to start</p>
           <h1 className="apt-h1">Where do you stand<br /><em>on the AI Curve?</em></h1>
           <p className="apt-sub">A 15 question AI Aptitude Test designed to assess your AI readiness<br />and recommend the most relevant learning pathway for your goals.</p>
-          <button className="apt-cta-big" onClick={() => { setChosenDomain(null); setDomainOpen(true); }}>Start the test</button>
+          <button className="apt-cta-big" onClick={() => setDomainOpen(true)}>Start the test</button>
         </div>
       </section>
 
@@ -585,20 +576,18 @@ export default function Aptitude() {
             <h2 className="apt-modal-h" id="apt-dm-h">Choose your domain</h2>
             <p className="apt-modal-sub">Pick the domain you'd like to be tested on.</p>
             <div className="apt-modal-grid">
-              {EXAM_DOMAINS.map((d) => {
-                const on = chosenDomain?.name === d.name;
-                return (
-                  <button key={d.name} type="button" className={`apt-dm-card${on ? ' on' : ''}`} onClick={() => setChosenDomain(d)} aria-pressed={on}>
-                    <span className="apt-dm-radio" aria-hidden="true" />
-                    <span className="apt-dm-text">
-                      <span className="apt-dm-name">{d.name}</span>
-                      {d.sub && <span className="apt-dm-sub">{d.sub}</span>}
-                    </span>
-                  </button>
-                );
-              })}
+              {EXAM_DOMAINS.map((d) => (
+                <button key={d.name} type="button" className="apt-dm-card" onClick={() => startDomain(d)}>
+                  <span className="apt-dm-text">
+                    <span className="apt-dm-name">{d.name}</span>
+                    {d.sub && <span className="apt-dm-sub">{d.sub}</span>}
+                  </span>
+                  <span className="apt-dm-radio" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  </span>
+                </button>
+              ))}
             </div>
-            <button className="apt-modal-start" disabled={!chosenDomain} onClick={startChosenDomain}>Start the test →</button>
           </div>
         </div>
       )}
@@ -646,7 +635,7 @@ export default function Aptitude() {
             <button
               key={b.name}
               className={`qb-filter-pill${qbFilter === b.name ? ' active' : ''}`}
-              onClick={() => setQbFilter(b.name)}
+              onClick={() => { setQbFilter(b.name); setQbFormOpen(false); setQbSent(false); setQbErr(false); }}
               aria-pressed={qbFilter === b.name}
             >
               {b.name}
@@ -654,18 +643,23 @@ export default function Aptitude() {
           ))}
         </div>
         <div style={{ textAlign: 'center', marginTop: 32 }}>
-          {!qbFormOpen ? (
+          {qbSent ? (
+            <div className="apt-lead" style={{ maxWidth: 540, margin: '0 auto' }}>
+              <p className="apt-lead-label" style={{ textAlign: 'center' }}>✓ Check your inbox</p>
+              <p className="qb-sub" style={{ marginTop: 6 }}>We’ve emailed a secure download link for the <b>{qbBank.label}</b> question bank to <b>{qbForm.email}</b>. Click it to confirm your email and open your PDF.</p>
+            </div>
+          ) : !qbFormOpen ? (
             <button className="btn-primary" onClick={() => qbBank.pdf && setQbFormOpen(true)} disabled={!qbBank.pdf}>
-              {qbBank.pdf ? `Download Question Bank — ${qbBank.name}` : `${qbBank.name} — coming soon`}
+              {qbBank.pdf ? `Get Question Bank — ${qbBank.name}` : `${qbBank.name} — coming soon`}
             </button>
           ) : (
             <form className="apt-lead" style={{ maxWidth: 540, margin: '0 auto', textAlign: 'left' }} onSubmit={submitQB}>
-              <p className="apt-lead-label">Enter your details to download the {qbBank.name} question bank</p>
+              <p className="apt-lead-label">Enter your details and we’ll email your {qbBank.name} question bank</p>
               <div className="apt-lead-row apt-lead-row--col">
                 <input type="text" required placeholder="Your name" value={qbForm.name} onChange={e => setQ('name', e.target.value)} />
                 <input type="email" required placeholder="you@email.com" value={qbForm.email} onChange={e => setQ('email', e.target.value)} />
                 <input type="tel" required placeholder="Phone number" value={qbForm.phone} onChange={e => setQ('phone', e.target.value)} />
-                <button type="submit" disabled={qbBusy}>{qbBusy ? 'Saving…' : 'Download PDF'}</button>
+                <button type="submit" disabled={qbBusy}>{qbBusy ? 'Sending…' : 'Email me the PDF'}</button>
               </div>
               {qbErr && <p className="apt-gate-err">Couldn't submit — please check your connection and try again.</p>}
             </form>
@@ -677,7 +671,7 @@ export default function Aptitude() {
 
       {/* ── EXPLORE MENLER PROGRAMS ── */}
       <section className="section" style={{ background: 'white', paddingTop: 48, paddingBottom: 32 }}>
-        <p className="section-label" style={{ textAlign: 'center' }}>Explore Menler Programs</p>
+        <p className="section-label" style={{ textAlign: 'center' }}>Explore More Programs</p>
         <h2 className="section-h2" style={{ textAlign: 'center' }}>Continue your <em>AI journey.</em></h2>
         <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto' }}>Ready to go beyond assessment? Explore the Menler programs designed to help you<br />build capability, portfolio, and career momentum.</p>
         <div className="cluster-grid" style={{ marginTop: 28 }}>

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { submitLead } from '../../services/leadService';
+import { suggestEmail } from '../../lib/emailHints';
 import { useToast } from '../common/Toast';
 
 export default function LeadForm({ defaultProgram = '' }) {
@@ -11,6 +12,8 @@ export default function LeadForm({ defaultProgram = '' }) {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [consent, setConsent] = useState(false);
+  const [hp, setHp] = useState(''); // honeypot — real users never fill this
+  const [emailHint, setEmailHint] = useState(null); // "did you mean …?" suggestion
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
@@ -18,11 +21,11 @@ export default function LeadForm({ defaultProgram = '' }) {
     e.preventDefault();
     setLoading(true);
     try {
-      await submitLead({ ...form, source: 'lead-form' });
+      await submitLead({ ...form, source: 'lead-form', hp_field: hp });
       setSubmitted(true);
       toast.success("Application received — we'll be in touch within 48 hours.");
-    } catch {
-      toast.error("Something went wrong sending your details. Please try again.");
+    } catch (err) {
+      toast.error(err?.message || "Something went wrong sending your details. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -39,6 +42,17 @@ export default function LeadForm({ defaultProgram = '' }) {
 
   return (
     <form className="lead-form" onSubmit={handleSubmit}>
+      {/* Honeypot — hidden from humans; bots fill it and get silently dropped. */}
+      <input
+        type="text"
+        name="company_website"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        value={hp}
+        onChange={e => setHp(e.target.value)}
+        style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }}
+      />
       <span className="lead-form-label">Express interest</span>
       <p className="lead-form-title">Start your Menler journey.</p>
 
@@ -50,7 +64,28 @@ export default function LeadForm({ defaultProgram = '' }) {
       <div className="lf-row">
         <div className="lf-field">
           <label>Email</label>
-          <input required type="email" placeholder="you@domain.com" value={form.email} onChange={e => set('email', e.target.value)} autoComplete="email" />
+          <input
+            required
+            type="email"
+            placeholder="you@domain.com"
+            value={form.email}
+            onChange={e => { set('email', e.target.value); if (emailHint) setEmailHint(null); }}
+            onBlur={e => setEmailHint(suggestEmail(e.target.value))}
+            autoComplete="email"
+          />
+          {emailHint && (
+            <p className="lf-email-hint" style={{ fontSize: 12, marginTop: 6, color: 'var(--text-muted)' }}>
+              Did you mean{' '}
+              <button
+                type="button"
+                onClick={() => { set('email', emailHint); setEmailHint(null); }}
+                style={{ background: 'none', border: 'none', padding: 0, color: 'var(--specialist, #5a3fd6)', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}
+              >
+                {emailHint}
+              </button>
+              ?
+            </p>
+          )}
         </div>
         <div className="lf-field">
           <label>Phone / WhatsApp</label>

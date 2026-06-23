@@ -27,6 +27,13 @@ const leadSchema = new mongoose.Schema(
     cta_label: { type: String, default: '' },
     communication_optin: { type: Boolean, default: true },
 
+    // Resource/PDF gated downloads + double opt-in email verification.
+    // A lead becomes a "quality lead" only after clicking the emailed link.
+    resource: { type: String, default: '' },
+    resource_pdf: { type: String, default: '' },
+    verified: { type: Boolean, default: false },
+    verified_at: { type: Date, default: null },
+
     // Any extra fields a form sends are preserved here.
     extra: { type: mongoose.Schema.Types.Mixed, default: {} },
   },

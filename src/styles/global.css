@@ -1488,9 +1488,9 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .apt-dm-card { display: flex; align-items: center; gap: 12px; min-height: 66px; text-align: left; background: var(--white, #fff); border: 1.5px solid rgba(38,33,92,0.14); border-radius: 13px; padding: 13px 14px; cursor: pointer; font-family: inherit; transition: border-color .15s, box-shadow .15s, transform .15s; }
 .apt-dm-card:hover { border-color: var(--specialist); transform: translateY(-1px); }
 .apt-dm-card.on { border-color: var(--specialist); box-shadow: 0 0 0 1px var(--specialist), 0 8px 22px rgba(83,74,183,0.12); }
-.apt-dm-radio { flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(38,33,92,0.3); position: relative; transition: border-color .15s; }
-.apt-dm-card.on .apt-dm-radio { border-color: var(--specialist); }
-.apt-dm-card.on .apt-dm-radio::after { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: var(--specialist); }
+.apt-dm-radio { flex-shrink: 0; margin-left: auto; width: 26px; height: 26px; border-radius: 50%; border: 2px solid rgba(38,33,92,0.28); display: inline-flex; align-items: center; justify-content: center; color: rgba(38,33,92,0.55); transition: border-color .15s, color .15s, background .15s; }
+.apt-dm-radio svg { width: 13px; height: 13px; }
+.apt-dm-card:hover .apt-dm-radio { border-color: var(--specialist); background: var(--specialist); color: #fff; }
 .apt-dm-text { min-width: 0; }
 .apt-dm-name { display: block; font-size: 14px; font-weight: 600; color: var(--ink); }
 .apt-dm-sub { display: block; font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }

@@ -17,6 +17,21 @@ export function verifySession(token) {
   }
 }
 
+// ── Resource-download magic link (double opt-in for gated PDFs) ──
+// Short-lived signed token embedding the lead id + the exact PDF to deliver.
+// Because it's signed with JWT_SECRET, the payload can't be tampered with.
+export function signResourceToken(payload) {
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
+}
+
+export function verifyResourceToken(token) {
+  try {
+    return jwt.verify(token, JWT_SECRET);
+  } catch {
+    return null;
+  }
+}
+
 export function sessionCookieOptions() {
   // In production the frontend and API live on different domains (e.g. Vercel +
   // Render), so the cookie must be SameSite=None + Secure to be sent cross-site.

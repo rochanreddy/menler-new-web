@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { submitLead } from '../../services/leadService';
+import { requestResource } from '../../services/leadService';
 import PdfView from './PdfView';
 
 /**
@@ -13,6 +13,7 @@ export default function PlaybookModal({ item, onClose }) {
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
+  const [err, setErr] = useState(false);
   const [pdfReady, setPdfReady] = useState(null); // null = checking, true/false
   const [formOpen, setFormOpen] = useState(false); // mobile: reveal form after tapping Download
 
@@ -20,6 +21,7 @@ export default function PlaybookModal({ item, onClose }) {
     if (!item) return;
     setForm({ name: '', email: '', phone: '' });
     setDone(false);
+    setErr(false);
     setFormOpen(false);
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
     document.addEventListener('keydown', onKey);
@@ -50,23 +52,18 @@ export default function PlaybookModal({ item, onClose }) {
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
-  const triggerDownload = () => {
-    if (!item.pdf) return;
-    const a = document.createElement('a');
-    a.href = item.pdf;
-    a.download = item.pdf.split('/').pop();
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErr(false);
     setSubmitting(true);
-    try { await submitLead({ ...form, resource: item.title, source: 'playbook-download' }); } catch {}
-    setSubmitting(false);
-    setDone(true);
-    triggerDownload();
+    try {
+      await requestResource({ ...form, resource: item.title, pdf: item.pdf, source: 'playbook-download' });
+      setDone(true);
+    } catch {
+      setErr(true);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -92,9 +89,8 @@ export default function PlaybookModal({ item, onClose }) {
           {done ? (
             <div className="pb-modal-done">
               <div className="pb-done-icon">✓</div>
-              <h3 className="pb-modal-title">Your download is ready</h3>
-              <p className="pb-modal-sub">If it didn’t start automatically, use the button below.</p>
-              <button className="pb-modal-btn" onClick={triggerDownload}>Download again</button>
+              <h3 className="pb-modal-title">Check your inbox</h3>
+              <p className="pb-modal-sub">We’ve emailed a secure download link for <b>{item.title}</b> to <b>{form.email}</b>. Click it to confirm your email and open your PDF.</p>
             </div>
           ) : (
             <>
@@ -103,7 +99,7 @@ export default function PlaybookModal({ item, onClose }) {
               <p className="pb-modal-sub">{item.desc}</p>
               {!formOpen && (
                 <button type="button" className="pb-modal-btn pb-gate-btn" onClick={() => setFormOpen(true)} disabled={!item.pdf}>
-                  {item.pdf ? 'Download PDF' : 'Coming soon'}
+                  {item.pdf ? 'Get the PDF' : 'Coming soon'}
                 </button>
               )}
               <form className={`pb-form${formOpen ? ' open' : ''}`} onSubmit={handleSubmit}>
@@ -119,8 +115,9 @@ export default function PlaybookModal({ item, onClose }) {
                   <label>Phone</label>
                   <input type="tel" required value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+91 98765 43210" autoComplete="tel" />
                 </div>
-                <button className="pb-modal-btn" type="submit" disabled={submitting || !item.pdf}>{submitting ? 'Submitting…' : item.pdf ? 'Download PDF' : 'Coming soon'}</button>
-                <p className="lf-fineprint">We’ll email you the resource and occasional Menler updates. Unsubscribe anytime.</p>
+                <button className="pb-modal-btn" type="submit" disabled={submitting || !item.pdf}>{submitting ? 'Sending…' : item.pdf ? 'Email me the PDF' : 'Coming soon'}</button>
+                {err && <p className="lf-fineprint" style={{ color: '#c0392b' }}>Couldn’t send — please check your connection and try again.</p>}
+                <p className="lf-fineprint">We’ll email you a secure link to the resource and occasional Menler updates. Unsubscribe anytime.</p>
               </form>
             </>
           )}

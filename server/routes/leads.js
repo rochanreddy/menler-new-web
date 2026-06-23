@@ -1,6 +1,9 @@
 import { Router } from 'express';
 
 import { Lead } from '../models/Lead.js';
+import { sendMail } from '../utils/email.js';
+import { signResourceToken, verifyResourceToken } from '../utils/token.js';
+import { validateEmail } from '../utils/emailValidation.js';
 
 const router = Router();
 
@@ -8,7 +11,7 @@ const KNOWN_FIELDS = new Set([
   'name', 'email', 'phone', 'program', 'track', 'background', 'message',
   'source', 'page', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content',
   'utm_term', 'gclid', 'fbclid', 'page_url', 'referrer_url', 'cta_label',
-  'communication_optin', 'lead_source', 'lead_sub_source',
+  'communication_optin', 'lead_source', 'lead_sub_source', 'resource',
 ]);
 
 // ── Amplifeed CRM webhook ──────────────────────────────────────────────────
@@ -57,6 +60,8 @@ function buildAmplifeedPayload(lead) {
     program: lead.program || undefined,
     track: lead.track || undefined,
     description: lead.message || undefined,
+    resource: lead.resource || undefined,
+    lead_quality: lead.verified ? 'verified' : 'unverified',
     submitted_at: lead.createdAt,
     // Campaign / form-specific custom fields (campaign, workshop, score, etc.)
     ...extra,
@@ -110,8 +115,20 @@ async function forwardLeadToCrm(lead) {
 router.post('/', async (req, res) => {
   try {
     const body = req.body || {};
+
+    // Honeypot: a hidden field only bots fill. Pretend success, store nothing.
+    if (body.hp_field) return res.status(201).json({ ok: true, id: null });
+
+    // Email quality gate (only when an email is supplied): reject malformed,
+    // disposable, and non-existent-domain addresses before saving.
+    if (body.email) {
+      const v = await validateEmail(body.email);
+      if (!v.ok) return res.status(400).json({ error: v.reason });
+    }
+
     const doc = { extra: {} };
     for (const [key, value] of Object.entries(body)) {
+      if (key === 'hp_field') continue;
       if (KNOWN_FIELDS.has(key)) doc[key] = value;
       else doc.extra[key] = value;
     }
@@ -124,6 +141,91 @@ router.post('/', async (req, res) => {
     console.error('lead capture error', err);
     res.status(500).json({ error: 'Could not submit. Please try again.' });
   }
+});
+
+/* ── Gated resource download via double opt-in (magic link) ──────────────── */
+const FRONTEND_BASE = () =>
+  (process.env.FRONTEND_URL || 'https://menler.in').split(',')[0].trim().replace(/\/+$/, '');
+
+// Only our own static PDF folders are deliverable. The token is signed, so it
+// can't be tampered with — this guards what we store/redirect to on intake.
+function isAllowedPdf(p) {
+  return typeof p === 'string'
+    && (p.startsWith('/pdfs/') || p.startsWith('/question_banks/'))
+    && p.toLowerCase().endsWith('.pdf')
+    && !p.includes('..');
+}
+
+// 1) Request a gated resource: store an UNVERIFIED lead, then email a magic
+//    link. The PDF is NOT delivered until they click it (proves a real inbox).
+router.post('/resource-request', async (req, res) => {
+  try {
+    const body = req.body || {};
+
+    // Honeypot: silently accept-and-drop obvious bots.
+    if (body.hp_field) return res.status(201).json({ ok: true });
+
+    const email = String(body.email || '').trim();
+    const pdf = String(body.pdf || '');
+    if (!email || !isAllowedPdf(pdf)) {
+      return res.status(400).json({ error: 'A valid email and resource are required.' });
+    }
+    const v = await validateEmail(email);
+    if (!v.ok) return res.status(400).json({ error: v.reason });
+
+    const doc = { extra: {}, verified: false, resource: body.resource || '', resource_pdf: pdf };
+    for (const [key, value] of Object.entries(body)) {
+      if (key === 'pdf' || key === 'hp_field') continue;
+      if (KNOWN_FIELDS.has(key)) doc[key] = value;
+      else if (!(key in doc)) doc.extra[key] = value;
+    }
+    const lead = await Lead.create(doc);
+
+    const token = signResourceToken({ leadId: lead._id.toString(), email, pdf, resource: lead.resource });
+    const proto = req.headers['x-forwarded-proto'] || req.protocol;
+    const link = `${proto}://${req.get('host')}/leads/resource/${token}`;
+
+    await sendMail({
+      to: email,
+      subject: `Your Menler resource${lead.resource ? `: ${lead.resource}` : ''}`,
+      text: `Hi${lead.name ? ' ' + lead.name : ''},
+
+Thanks for your interest! Click the link below to confirm your email and open your resource${lead.resource ? ` — ${lead.resource}` : ''}:
+
+${link}
+
+This link expires in 7 days. If you didn't request this, you can safely ignore this email.
+
+— Team Menler`,
+    });
+
+    res.status(201).json({ ok: true });
+  } catch (err) {
+    console.error('resource-request error', err);
+    res.status(500).json({ error: 'Could not send the email. Please try again.' });
+  }
+});
+
+// 2) Magic-link target: verify token → mark the lead verified (a "quality
+//    lead") → forward to CRM → redirect the browser to the actual PDF.
+router.get('/resource/:token', async (req, res) => {
+  const front = FRONTEND_BASE();
+  const claims = verifyResourceToken(req.params.token);
+  if (!claims || !isAllowedPdf(claims.pdf)) {
+    return res.redirect(302, `${front}/resources?resource=expired`);
+  }
+  try {
+    const lead = await Lead.findById(claims.leadId);
+    if (lead && !lead.verified) {
+      lead.verified = true;
+      lead.verified_at = new Date();
+      await lead.save();
+      forwardLeadToCrm(lead); // only verified (quality) leads reach the CRM
+    }
+  } catch (err) {
+    console.error('resource verify error', err);
+  }
+  return res.redirect(302, `${front}${claims.pdf}`);
 });
 
 export default router;
