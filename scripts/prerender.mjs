@@ -1,22 +1,48 @@
 // Build-time SEO prerender.
 //
-// The site is a client-rendered SPA, so the per-page <Seo> tags are injected by
-// JavaScript and are invisible to non-JS crawlers / AI tools (ChatGPT, Bing,
-// social scrapers). This script runs AFTER `vite build` and, for each known
-// route, clones the built dist/index.html and bakes that route's real SEO
-// (title, description, keywords, canonical, OG/Twitter, JSON-LD) plus a text
-// fallback into the HTML — so bots see full SEO + content without running JS.
-// React still boots and renders the full interactive app over the fallback.
+// The site is a client-rendered SPA, so per-page <Seo> tags are injected by JS
+// and are invisible to non-JS crawlers / AI tools (ChatGPT, Bing, social
+// scrapers). This runs AFTER `vite build` and, for every indexable route, clones
+// the built dist/index.html and bakes in that route's real SEO — title,
+// description, keywords, canonical, OG/Twitter, and rich structured data
+// (Course / Quiz / FAQPage / BreadcrumbList / CreativeWork / BlogPosting) — plus
+// a text fallback. React still boots and renders the full app over the fallback.
 
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { dirname, join } from 'path';
+import { PROJECTS } from '../src/data/projectsData.js';
+import { HOME_FAQS } from '../src/data/faqData.js';
+import { POLICIES } from '../src/data/policyContent.js';
 
 const SITE = 'https://menler.in';
 const DIST = 'dist';
+const ORG = { '@type': 'Organization', name: 'Menler', url: SITE, sameAs: SITE };
 
-const ORG = { '@type': 'Organization', name: 'Menler', sameAs: 'https://menler.in' };
+// Schema helpers ------------------------------------------------------------
+const crumbs = (items) => ({
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, item: SITE + it.path })),
+});
 
-const ROUTES = [
+const course = (name, description, weeks, mode) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Course',
+  name,
+  description,
+  provider: ORG,
+  inLanguage: 'en',
+  ...(mode ? { hasCourseInstance: { '@type': 'CourseInstance', courseMode: 'online', courseWorkload: weeks } } : {}),
+});
+
+const faqPage = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: HOME_FAQS.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+};
+
+// Routes --------------------------------------------------------------------
+const STATIC_ROUTES = [
   {
     path: '/', file: 'index.html', nav: 'Home',
     title: 'Menler — AI Learning India · Claude AI Fellowship & Courses',
@@ -24,6 +50,7 @@ const ROUTES = [
     keywords: 'AI learning India, AI courses India, AI fellowship India, Claude AI fellowship, AI upskilling India, AI skills training, AI-native work, AI-native workforce, AI careers India, AI jobs future, AI workflows, AI automation workflows, best AI tools, AI productivity tools, large language models explained, enterprise AI transformation, AI adoption, AI bootcamp India',
     h1: "Menler — India's Claude-native AI learning",
     intro: 'AI courses and fellowships: the no-code Claude AI Generalist, the Claude AI Engineering fellowship, and the 14-day Gen AI Kickstarter. Learn AI, build real projects, and get placement support.',
+    jsonLd: [faqPage],
   },
   {
     path: '/generalist', file: 'generalist.html', nav: 'Generalist Fellowship',
@@ -32,7 +59,10 @@ const ROUTES = [
     keywords: 'Claude AI Generalist course, no-code AI fellowship, AI generalist program India, AI fellowship for non-tech, AI workflows, AI-native work, AI upskilling India, AI course India',
     h1: 'Claude AI Generalist Fellowship',
     intro: 'A 10-week no-code Claude AI fellowship for non-technical professionals and students — master AI workflows across marketing, finance, product, HR and operations, with real projects and placement support.',
-    jsonLd: { '@context': 'https://schema.org', '@type': 'Course', name: 'Claude AI Generalist Fellowship', description: '10-week no-code Claude AI fellowship for non-technical professionals — domain AI workflows, real projects and placement support.', provider: ORG },
+    jsonLd: [
+      course('Claude AI Generalist Fellowship', '10-week no-code Claude AI fellowship for non-technical professionals — domain AI workflows, real projects and placement support.', '10 weeks', true),
+      crumbs([{ name: 'Home', path: '/' }, { name: 'Generalist Fellowship', path: '/generalist' }]),
+    ],
   },
   {
     path: '/engineering', file: 'engineering.html', nav: 'Engineering Fellowship',
@@ -41,7 +71,10 @@ const ROUTES = [
     keywords: 'Claude AI engineering fellowship, AI engineering course India, agentic AI engineering, AI engineering roadmap, AI systems engineering, Claude API engineering, RAG engineering, MCP, agentic AI workflows, AI specialist program India',
     h1: 'Claude AI Engineering Fellowship',
     intro: 'A 12-week Claude AI engineering fellowship for developers — build production AI systems: API, RAG, MCP, agents, evals and LLMOps, with placement support.',
-    jsonLd: { '@context': 'https://schema.org', '@type': 'Course', name: 'Claude AI Engineering Fellowship', description: '12-week Claude AI engineering fellowship — production AI systems: API, RAG, MCP, agents, evals and LLMOps, with placement support.', provider: ORG },
+    jsonLd: [
+      course('Claude AI Engineering Fellowship', '12-week Claude AI engineering fellowship — production AI systems: API, RAG, MCP, agents, evals and LLMOps, with placement support.', '12 weeks', true),
+      crumbs([{ name: 'Home', path: '/' }, { name: 'Engineering Fellowship', path: '/engineering' }]),
+    ],
   },
   {
     path: '/kickstarter', file: 'kickstarter.html', nav: 'Gen AI Kickstarter',
@@ -50,7 +83,10 @@ const ROUTES = [
     keywords: 'AI bootcamp India, beginner AI course, Gen AI Kickstarter, AI tools onboarding, AI upskilling, learn AI India',
     h1: 'Gen AI Kickstarter',
     intro: 'A 14-day beginner AI bootcamp — get hands-on with 10+ AI tools, build your first AI projects, and become AI-fluent with no prerequisites.',
-    jsonLd: { '@context': 'https://schema.org', '@type': 'Course', name: 'Gen AI Kickstarter', description: '14-day beginner AI bootcamp — hands-on with 10+ AI tools and first real AI projects, no prerequisites.', provider: ORG },
+    jsonLd: [
+      course('Gen AI Kickstarter', '14-day beginner AI bootcamp — hands-on with 10+ AI tools and first real AI projects, no prerequisites.', '14 days', true),
+      crumbs([{ name: 'Home', path: '/' }, { name: 'Gen AI Kickstarter', path: '/kickstarter' }]),
+    ],
   },
   {
     path: '/aptitude', file: 'aptitude.html', nav: 'AI Aptitude Test',
@@ -59,7 +95,10 @@ const ROUTES = [
     keywords: 'AI aptitude test, AI readiness test, AI test, AI assessment, free AI test, AI generalist mock test, AI engineering mock test, AI workflow aptitude test, AI beginner assessment test, Claude API engineering test, agentic AI engineering test, AI skills assessment, AI career test',
     h1: 'AI Aptitude Test',
     intro: 'A free 15-question AI readiness assessment — get a personalised score, a learning roadmap, and a downloadable question bank. No signup to start.',
-    jsonLd: { '@context': 'https://schema.org', '@type': 'Quiz', name: 'AI Aptitude Test', about: 'AI readiness assessment', educationalLevel: 'Beginner to Advanced', provider: ORG },
+    jsonLd: [
+      { '@context': 'https://schema.org', '@type': 'Quiz', name: 'AI Aptitude Test', about: 'AI readiness assessment', educationalLevel: 'Beginner to Advanced', provider: ORG },
+      crumbs([{ name: 'Home', path: '/' }, { name: 'AI Aptitude Test', path: '/aptitude' }]),
+    ],
   },
   {
     path: '/resources', file: 'resources.html', nav: 'Resources',
@@ -68,6 +107,7 @@ const ROUTES = [
     keywords: 'AI learning resources, free AI resources, AI question bank, AI prompts library, Claude prompts, AI project ideas, AI capstone projects, AI tool setup guide, AI tools ecosystem, AI stack map, AI cheat sheets, AI templates, AI glossary, AI terms explained, agentic AI explained, agentic AI workflows, AI careers India',
     h1: 'The Menler library — free AI learning resources',
     intro: 'Free AI learning resources: a Claude prompt library, an AI stack map, templates, cheat sheets and an AI glossary — the knowledge layer for the AI-native workforce.',
+    jsonLd: [crumbs([{ name: 'Home', path: '/' }, { name: 'Resources', path: '/resources' }])],
   },
   {
     path: '/outcomes', file: 'outcomes.html', nav: 'Outcomes',
@@ -76,6 +116,7 @@ const ROUTES = [
     keywords: 'AI placement programs, AI jobs after AI course, AI career outcomes India, AI fellowship placement, AI salaries India',
     h1: 'AI placement & outcomes',
     intro: 'Placement outcomes from the Menler AI fellowship — salary bands, hiring partners, fellow portfolios, and the AI jobs our fellows land after the program.',
+    jsonLd: [crumbs([{ name: 'Home', path: '/' }, { name: 'Outcomes', path: '/outcomes' }])],
   },
   {
     path: '/about', file: 'about.html', nav: 'About',
@@ -84,22 +125,65 @@ const ROUTES = [
     keywords: 'About Menler, About Menler AI, AI learning company India, Menler AI, AI-native workforce, AI fellowship India',
     h1: 'About Menler',
     intro: "Menler is India's Claude-native AI learning company. Our vision: depth over breadth, outcomes over completion — turning learners into AI-native specialists.",
+    jsonLd: [crumbs([{ name: 'Home', path: '/' }, { name: 'About', path: '/about' }])],
   },
   {
     path: '/blog', file: 'blog.html', nav: 'Blog',
     title: 'Menler Blog — AI Build Logs, Workflows & Careers | India',
-    description: 'The Menler blog: real Claude build logs, agentic AI workflows, AI career guides, and AI-native ways of working — written by operators, for India\'s AI-native workforce.',
+    description: "The Menler blog: real Claude build logs, agentic AI workflows, AI career guides, and AI-native ways of working — written by operators, for India's AI-native workforce.",
     keywords: 'AI blog India, AI learning blog, agentic AI explained, agentic AI workflows, AI build logs, AI careers India, AI jobs future, AI workflows',
     h1: 'The Menler blog',
-    intro: 'Real Claude build logs, agentic AI workflows, AI career guides, and AI-native ways of working — written by operators, for India\'s AI-native workforce.',
+    intro: "Real Claude build logs, agentic AI workflows, AI career guides, and AI-native ways of working — written by operators, for India's AI-native workforce.",
+    jsonLd: [crumbs([{ name: 'Home', path: '/' }, { name: 'Blog', path: '/blog' }])],
+  },
+  {
+    path: '/blog/earnings-agent', file: 'blog/earnings-agent.html', nav: 'Earnings agent build log', type: 'article',
+    title: 'How we shipped a Claude-native earnings agent in six days | Menler',
+    description: "Full prompt, full MCP map, full failure log — the Claude-native earnings agent build that shaped Menler's Finance track. Agentic AI workflows explained by operators.",
+    keywords: 'agentic AI explained, agentic AI workflows, Claude earnings agent, MCP, AI build log, AI blog India, enterprise AI use cases',
+    h1: 'How we shipped a Claude-native earnings agent in six days',
+    intro: "Full prompt, full MCP map, full failure log — the Claude-native earnings agent build that shaped Menler's Finance track.",
+    jsonLd: [
+      { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: 'How we shipped a Claude-native earnings agent in six days', description: "Full prompt, full MCP map, full failure log — the Claude-native earnings agent build that shaped Menler's Finance track.", author: ORG, publisher: ORG, mainEntityOfPage: `${SITE}/blog/earnings-agent`, inLanguage: 'en' },
+      crumbs([{ name: 'Home', path: '/' }, { name: 'Blog', path: '/blog' }, { name: 'Earnings agent', path: '/blog/earnings-agent' }]),
+    ],
   },
 ];
 
+// Project detail pages (in the sitemap, but were invisible to crawlers).
+const PROJECT_ROUTES = PROJECTS.map((p) => ({
+  path: `/projects/${p.slug}`,
+  file: `projects/${p.slug}.html`,
+  nav: p.title,
+  title: `${p.title} — Menler AI Project`,
+  description: p.desc,
+  keywords: `${p.tag}, AI project, Claude AI, ${(p.stack || []).join(', ')}, agentic AI workflow`,
+  h1: p.title,
+  intro: p.desc,
+  extra: `${p.tag ? p.tag + ' · ' : ''}${(p.stack || []).length ? 'Stack: ' + p.stack.join(', ') + '. ' : ''}${p.outcome ? 'Outcome: ' + p.outcome : ''}`,
+  jsonLd: [
+    { '@context': 'https://schema.org', '@type': 'CreativeWork', name: p.title, description: p.desc, about: p.tag, creator: ORG, url: `${SITE}/projects/${p.slug}`, inLanguage: 'en' },
+    crumbs([{ name: 'Home', path: '/' }, { name: p.title, path: `/projects/${p.slug}` }]),
+  ],
+}));
+
+// Policy pages.
+const POLICY_ROUTES = Object.entries(POLICIES).map(([slug, p]) => ({
+  path: `/policy/${slug}`,
+  file: `policy/${slug}.html`,
+  nav: p.title,
+  title: `${p.title} | Menler`,
+  description: `${p.title} for Menler Learning Systems Private Limited — how we operate, your rights, and the terms of using Menler's programs and services.`,
+  h1: p.title,
+  intro: `${p.title} for Menler Learning Systems Private Limited.`,
+}));
+
+const ROUTES = [...STATIC_ROUTES, ...PROJECT_ROUTES, ...POLICY_ROUTES];
+
+// Rendering -----------------------------------------------------------------
 const escText = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const escAttr = (s) => escText(s).replace(/"/g, '&quot;');
 
-// Replace the inner content of a matched (open)(inner)(close) pattern, or insert
-// the tag before </head> if it isn't already present.
 function swap(html, re, value, insertIfMissing) {
   if (re.test(html)) return html.replace(re, (_m, p1, p2) => p1 + value + p2);
   return insertIfMissing ? html.replace('</head>', `    ${insertIfMissing(value)}\n  </head>`) : html;
@@ -111,13 +195,14 @@ function setMeta(html, attr, key, value) {
 }
 
 function fallback(route) {
-  const links = ROUTES
+  const links = STATIC_ROUTES
     .filter((r) => r.path !== route.path)
     .map((r) => `<a href="${r.path}">${escText(r.nav)}</a>`)
     .join(' · ');
+  const extra = route.extra ? `<p>${escText(route.extra)}</p>` : '';
   return (
     `<main style="max-width:880px;margin:0 auto;padding:48px 20px;font-family:system-ui,sans-serif;line-height:1.6;color:#26215c">` +
-    `<h1>${escText(route.h1)}</h1><p>${escText(route.intro)}</p>` +
+    `<h1>${escText(route.h1)}</h1><p>${escText(route.intro)}</p>${extra}` +
     `<nav aria-label="Menler pages">${links}</nav></main>`
   );
 }
@@ -132,31 +217,26 @@ function render(template, route) {
   html = swap(html, /(<link rel="canonical" href=")[^"]*(")/i, escAttr(canonical),
     (v) => `<link rel="canonical" href="${v}" />`);
 
-  // Open Graph + Twitter
   html = setMeta(html, 'property', 'og:title', route.title);
   html = setMeta(html, 'property', 'og:description', route.description);
   html = setMeta(html, 'property', 'og:url', canonical);
+  html = setMeta(html, 'property', 'og:type', route.type || 'website');
   html = setMeta(html, 'name', 'twitter:title', route.title);
   html = setMeta(html, 'name', 'twitter:description', route.description);
 
-  // Page-specific JSON-LD (Course / Quiz) — appended alongside the site-wide org schema.
-  if (route.jsonLd) {
-    html = html.replace('</head>',
-      `  <script type="application/ld+json">${JSON.stringify(route.jsonLd)}</script>\n</head>`);
+  const lds = route.jsonLd ? (Array.isArray(route.jsonLd) ? route.jsonLd : [route.jsonLd]) : [];
+  for (const ld of lds) {
+    html = html.replace('</head>', `  <script type="application/ld+json">${JSON.stringify(ld)}</script>\n</head>`);
   }
 
-  // Content fallback inside #root (replaced by React on load; visible to no-JS bots).
   html = html.replace('<div id="root"></div>', `<div id="root">${fallback(route)}</div>`);
   return html;
 }
 
 const template = readFileSync(join(DIST, 'index.html'), 'utf8');
-let count = 0;
 for (const route of ROUTES) {
   const out = join(DIST, route.file);
   mkdirSync(dirname(out), { recursive: true });
   writeFileSync(out, render(template, route), 'utf8');
-  count++;
-  console.log(`  prerendered ${route.path.padEnd(14)} -> ${route.file}`);
 }
-console.log(`\n✓ Prerendered ${count} routes with baked-in SEO.`);
+console.log(`✓ Prerendered ${ROUTES.length} routes (${STATIC_ROUTES.length} static + ${PROJECT_ROUTES.length} projects + ${POLICY_ROUTES.length} policies) with baked-in SEO + structured data.`);
