@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { adminApi } from '../lib/adminApi';
+import Seo from '../components/common/Seo';
 
 /* ── helpers ─────────────────────────────────────────────────────────────── */
 
@@ -40,6 +41,7 @@ function AdminLogin({ onSuccess }) {
 
   return (
     <div className="admin-login-wrap">
+      <Seo noindex />
       <form className="admin-login-card" onSubmit={submit} noValidate>
         <p className="admin-login-brand">menler · admin</p>
         <h1 className="admin-login-title">Sign in</h1>
@@ -478,6 +480,7 @@ function AdminPanel({ onLogout }) {
 
   return (
     <div className="admin-shell">
+      <Seo noindex />
       <header className="admin-topbar">
         <div className="admin-topbar-brand">
           menler <span>admin</span>

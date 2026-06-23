@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MenlerLogo from '../components/common/MenlerLogo';
+import Seo from '../components/common/Seo';
 
 const EyeIcon = ({ open }) => open ? (
   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -54,6 +55,7 @@ export default function Login() {
 
   return (
     <div className="auth-page">
+      <Seo noindex />
       <div className="auth-card">
         <div className="auth-logo" onClick={() => navigate('/')}>
           <MenlerLogo color="#534AB7" />

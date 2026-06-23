@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import MenlerLogo from '../components/common/MenlerLogo';
+import Seo from '../components/common/Seo';
 import { supabase } from '../lib/supabase';
 
 /* ── Shared icons ── */
@@ -73,6 +74,7 @@ function SignUpForm({ onSwitch }) {
 
   return (
     <>
+      <Seo noindex />
       {error && <div className="auth-error">{error}</div>}
       <form onSubmit={handleSubmit} noValidate>
         <div className="auth-field">
@@ -138,6 +140,7 @@ function LoginForm({ onSwitch }) {
 
   return (
     <>
+      <Seo noindex />
       {error && <div className="auth-error">{error}</div>}
       <form onSubmit={handleSubmit} noValidate>
         <div className="auth-field">

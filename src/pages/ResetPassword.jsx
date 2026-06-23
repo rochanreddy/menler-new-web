@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import MenlerLogo from '../components/common/MenlerLogo';
+import Seo from '../components/common/Seo';
 import { supabase } from '../lib/supabase';
 
 const EyeIcon = ({ open }) => open ? (
@@ -43,6 +44,7 @@ export default function ResetPassword() {
   if (done) {
     return (
       <div className="auth-page">
+        <Seo noindex />
         <div className="auth-card" style={{ textAlign: 'center' }}>
           <div style={{ width: 52, height: 52, background: '#E1F5EE', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--placed)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -61,6 +63,7 @@ export default function ResetPassword() {
 
   return (
     <div className="auth-page">
+      <Seo noindex />
       <div className="auth-card">
         <div className="auth-logo" onClick={() => navigate('/')}>
           <MenlerLogo color="#534AB7" />

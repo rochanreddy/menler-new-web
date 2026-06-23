@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MenlerLogo from '../components/common/MenlerLogo';
+import Seo from '../components/common/Seo';
 import { supabase } from '../lib/supabase';
 
 export default function ForgotPassword() {
@@ -28,6 +29,7 @@ export default function ForgotPassword() {
 
   return (
     <div className="auth-page">
+      <Seo noindex />
       <div className="auth-card">
         <div className="auth-logo" onClick={() => navigate('/')}>
           <MenlerLogo color="#534AB7" />

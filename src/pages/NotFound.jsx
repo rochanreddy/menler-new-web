@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import Footer from '../components/layout/Footer';
+import Seo from '../components/common/Seo';
 
 const LINKS = [
   { label: 'Programs', path: '/#programs' },
@@ -15,6 +16,7 @@ export default function NotFound() {
 
   return (
     <>
+      <Seo title="404 — Page Not Found | Menler" noindex />
       <section className="notfound">
         <div className="notfound-rings" aria-hidden="true">
           <span /><span /><span />

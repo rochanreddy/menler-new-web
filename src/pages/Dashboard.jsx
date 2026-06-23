@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../components/layout/Footer';
+import Seo from '../components/common/Seo';
 import { supabase } from '../lib/supabase';
 
 const DEGREES = [
@@ -121,6 +122,7 @@ export default function Dashboard() {
 
   return (
     <>
+      <Seo noindex />
       <div className="dash-page">
         <div className="dash-inner">
 

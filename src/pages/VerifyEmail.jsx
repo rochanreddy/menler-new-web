@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import MenlerLogo from '../components/common/MenlerLogo';
+import Seo from '../components/common/Seo';
 import { supabase } from '../lib/supabase';
 
 export default function VerifyEmail() {
@@ -45,6 +46,7 @@ export default function VerifyEmail() {
 
   return (
     <div className="auth-page">
+      <Seo noindex />
       <div className="auth-card">
         <div className="auth-logo" onClick={() => navigate('/')}>
           <MenlerLogo color="#534AB7" />
