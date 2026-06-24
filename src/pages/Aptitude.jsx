@@ -181,6 +181,7 @@ export default function Aptitude() {
   useEffect(() => {
     if (state.view !== 'runner') return;
     setElapsed(0);
+    setSheetUnlocked(false);
     const t = setInterval(() => setElapsed(e => e + 1), 1000);
     return () => clearInterval(t);
   }, [state.view, state.setIdx]);
@@ -204,32 +205,29 @@ export default function Aptitude() {
     return () => window.removeEventListener('keydown', onKey);
   }, [state.view, state.idx, state.answers, state.questions]);
 
-  const [leadForm, setLeadForm] = useState({ name: '', email: '' });
-  const [leadDone, setLeadDone] = useState(false);
-  const setL = (k, v) => setLeadForm(f => ({ ...f, [k]: v }));
-
-  // Answer sheet is gated behind a short form: click "View answer sheet" → fill
-  // the form → the sheet is revealed.
-  const [sheetFormOpen, setSheetFormOpen] = useState(false); // form is showing
-  const [sheetUnlocked, setSheetUnlocked] = useState(false); // sheet is revealed
-  const [sheetForm, setSheetForm] = useState({ name: '', email: '', phone: '' });
-  const [sheetBusy, setSheetBusy] = useState(false);
-  const [sheetErr, setSheetErr] = useState(false);
-  const setS = (k, v) => setSheetForm(f => ({ ...f, [k]: v }));
-  // Only reveal the sheet AFTER the lead is saved — so the data always reaches
-  // the admin panel. If the save fails, show an error and let them retry.
-  const unlockSheet = async (e) => {
+  // The report (score) is gated behind a details form: after submitting the
+  // exam, the user enters name/email/phone (captured as a lead) and only then
+  // sees their score and full report.
+  const [reportUnlocked, setReportUnlocked] = useState(false);
+  const [gateForm, setGateForm] = useState({ name: '', email: '', phone: '' });
+  const [gateBusy, setGateBusy] = useState(false);
+  const [gateErr, setGateErr] = useState('');
+  const setG = (k, v) => setGateForm(f => ({ ...f, [k]: v }));
+  const submitGate = async (e) => {
     e.preventDefault();
-    setSheetErr(false); setSheetBusy(true);
+    setGateErr(''); setGateBusy(true);
     try {
-      await submitLead({ ...sheetForm, cluster: state.cluster, set: state.setIdx + 1, score: calcScore(state.answers, state.questions), source: 'aptitude-answer-sheet' });
-      setSheetUnlocked(true);
-    } catch {
-      setSheetErr(true);
+      await submitLead({ ...gateForm, cluster: state.cluster, set: state.setIdx + 1, score: calcScore(state.answers, state.questions), source: 'aptitude-report' });
+      setReportUnlocked(true);
+    } catch (err) {
+      setGateErr(err?.message || 'Couldn’t submit — please check your connection and try again.');
     } finally {
-      setSheetBusy(false);
+      setGateBusy(false);
     }
   };
+
+  // Answer sheet opens directly on click (no form gate).
+  const [sheetUnlocked, setSheetUnlocked] = useState(false);
 
   // Question-bank topic selector + per-topic PDF download (gated behind a form).
   const [qbFilter, setQbFilter] = useState('All');
@@ -254,11 +252,6 @@ export default function Aptitude() {
     } finally {
       setQbBusy(false);
     }
-  };
-  const saveReport = async (e) => {
-    e.preventDefault();
-    try { await submitLead({ ...leadForm, cluster: state.cluster, set: state.setIdx + 1, score: calcScore(state.answers, state.questions), source: 'aptitude-report' }); } catch { /* non-blocking */ }
-    setLeadDone(true);
   };
 
   // ── QUIZ RUNNER ──
@@ -366,6 +359,19 @@ export default function Aptitude() {
       <>
         <section className="apt-runner">
           <div className="runner-shell apt-report">
+            {!reportUnlocked ? (
+            <form className="apt-lead" onSubmit={submitGate}>
+              <p className="apt-lead-label">Enter your details to see your score &amp; full report</p>
+              <div className="apt-lead-row apt-lead-row--col">
+                <input type="text" required placeholder="Your name" value={gateForm.name} onChange={e => setG('name', e.target.value)} />
+                <input type="email" required placeholder="you@email.com" value={gateForm.email} onChange={e => setG('email', e.target.value)} />
+                <input type="tel" required placeholder="Phone number" value={gateForm.phone} onChange={e => setG('phone', e.target.value)} />
+                <button type="submit" disabled={gateBusy}>{gateBusy ? 'Submitting…' : 'See my score'}</button>
+              </div>
+              {gateErr && <p className="apt-gate-err">{gateErr}</p>}
+            </form>
+            ) : (
+            <>
             <p className="runner-meta">Set {state.setIdx + 1} · {state.cluster} · Your report</p>
             <p className="runner-score">{score}<em>/{maxScore}</em></p>
             <p className="runner-band">{rec.band}</p>
@@ -379,22 +385,10 @@ export default function Aptitude() {
               ))}
             </div>
 
-            {/* Answer sheet — gated behind a short form */}
+            {/* Answer sheet — opens directly, no form */}
             <div className="apt-answers">
-              {!sheetUnlocked && !sheetFormOpen && (
-                <button type="button" className="apt-answers-toggle" onClick={() => setSheetFormOpen(true)}>View answer sheet</button>
-              )}
-              {!sheetUnlocked && sheetFormOpen && (
-                <form className="apt-sheet-gate" onSubmit={unlockSheet}>
-                  <p className="apt-lead-label">Enter your details to view the answer sheet</p>
-                  <div className="apt-lead-row">
-                    <input type="text" required placeholder="Your name" value={sheetForm.name} onChange={e => setS('name', e.target.value)} />
-                    <input type="email" required placeholder="you@email.com" value={sheetForm.email} onChange={e => setS('email', e.target.value)} />
-                    <input type="tel" required placeholder="Phone number" value={sheetForm.phone} onChange={e => setS('phone', e.target.value)} />
-                    <button type="submit" disabled={sheetBusy}>{sheetBusy ? 'Saving…' : 'View answer sheet'}</button>
-                  </div>
-                  {sheetErr && <p className="apt-gate-err">Couldn't submit — please check your connection and try again.</p>}
-                </form>
+              {!sheetUnlocked && (
+                <button type="button" className="apt-answers-toggle" onClick={() => setSheetUnlocked(true)}>View answer sheet</button>
               )}
               {sheetUnlocked && (
               <div className="apt-answers-body">
@@ -459,20 +453,6 @@ export default function Aptitude() {
               <button className="btn-primary" style={{ background: rec.color, marginTop: 16 }} onClick={() => go(rec.path)}>Explore {rec.program}</button>
             </div>
 
-            {/* Lead magnet — save / email the full report */}
-            {leadDone ? (
-              <p className="apt-saved">✓ Report saved — check your inbox for your roadmap.</p>
-            ) : (
-              <form className="apt-lead" onSubmit={saveReport}>
-                <p className="apt-lead-label">Save your report &amp; 14-day roadmap</p>
-                <div className="apt-lead-row">
-                  <input type="text" required placeholder="Your name" value={leadForm.name} onChange={e => setL('name', e.target.value)} />
-                  <input type="email" required placeholder="you@email.com" value={leadForm.email} onChange={e => setL('email', e.target.value)} />
-                  <button type="submit">Email me the report</button>
-                </div>
-              </form>
-            )}
-
             {/* 14-day roadmap */}
             <p className="apt-roadmap-label">Your 14-day learning roadmap</p>
             <div className="apt-roadmap">
@@ -488,6 +468,8 @@ export default function Aptitude() {
               <button className="runner-btn" onClick={() => dispatch({ type: 'RETAKE' })}>Retake this set</button>
               <button className="runner-btn" onClick={() => dispatch({ type: 'TO_CLUSTERS' })}>Choose another cluster</button>
             </div>
+            </>
+            )}
           </div>
         </section>
         <Footer />
