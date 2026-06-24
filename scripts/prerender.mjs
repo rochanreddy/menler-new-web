@@ -239,7 +239,11 @@ function render(template, route) {
 
 const template = readFileSync(join(DIST, 'index.html'), 'utf8');
 for (const route of ROUTES) {
-  const out = join(DIST, route.file);
+  // Directory-index form (e.g. /generalist -> generalist/index.html) so Vercel
+  // serves it at the clean path WITHOUT cleanUrls — which keeps the catch-all
+  // SPA-fallback rewrite working for non-prerendered routes (e.g. /admin).
+  const rel = route.path === '/' ? 'index.html' : `${route.path.replace(/^\/+/, '')}/index.html`;
+  const out = join(DIST, rel);
   mkdirSync(dirname(out), { recursive: true });
   writeFileSync(out, render(template, route), 'utf8');
 }
