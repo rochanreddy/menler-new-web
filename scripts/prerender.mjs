@@ -200,8 +200,12 @@ function fallback(route) {
     .map((r) => `<a href="${r.path}">${escText(r.nav)}</a>`)
     .join(' · ');
   const extra = route.extra ? `<p>${escText(route.extra)}</p>` : '';
+  // Visually hidden (sr-only): present in the HTML for non-JS crawlers/AI, but
+  // never shown to users — so there's no flash of fallback text before React
+  // boots and replaces #root.
+  const srOnly = 'position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0';
   return (
-    `<main style="max-width:880px;margin:0 auto;padding:48px 20px;font-family:system-ui,sans-serif;line-height:1.6;color:#26215c">` +
+    `<main style="${srOnly}">` +
     `<h1>${escText(route.h1)}</h1><p>${escText(route.intro)}</p>${extra}` +
     `<nav aria-label="Menler pages">${links}</nav></main>`
   );
