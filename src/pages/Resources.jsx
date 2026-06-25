@@ -99,7 +99,7 @@ export default function Resources() {
     : PROJECTS.filter(p => projectDomain(p) === projFilter);
   const handleNewsletter = async (e) => {
     e.preventDefault();
-    try { await submitLead({ email, source: 'resources-newsletter' }); } catch {}
+    try { await submitLead({ email, source: 'resources-newsletter', cta_label: 'Resources newsletter', section: 'Resources' }); } catch {}
     setDone(true);
   };
 

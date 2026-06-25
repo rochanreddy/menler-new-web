@@ -217,7 +217,7 @@ export default function Aptitude() {
     e.preventDefault();
     setGateErr(''); setGateBusy(true);
     try {
-      await submitLead({ ...gateForm, cluster: state.cluster, set: state.setIdx + 1, score: calcScore(state.answers, state.questions), source: 'aptitude-report' });
+      await submitLead({ ...gateForm, cluster: state.cluster, set: state.setIdx + 1, score: calcScore(state.answers, state.questions), source: 'aptitude-report', cta_label: `Aptitude report: ${state.cluster}`, section: `Aptitude · ${state.cluster}` });
       setReportUnlocked(true);
     } catch (err) {
       setGateErr(err?.message || 'Couldn’t submit — please check your connection and try again.');
@@ -244,7 +244,7 @@ export default function Aptitude() {
     e.preventDefault();
     setQbErr(false); setQbBusy(true);
     try {
-      await requestResource({ ...qbForm, resource: `${qbBank.label} Question Bank`, pdf: qbBank.pdf, topic: qbBank.name, source: 'aptitude-question-bank' });
+      await requestResource({ ...qbForm, resource: `${qbBank.label} Question Bank`, pdf: qbBank.pdf, topic: qbBank.name, source: 'aptitude-question-bank', cta_label: `Question Bank: ${qbBank.label}`, section: `Question Bank · ${qbBank.label}` });
       setQbFormOpen(false);
       setQbSent(true);
     } catch {

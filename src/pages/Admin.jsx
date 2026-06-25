@@ -307,13 +307,13 @@ function LeadsTab() {
           <thead>
             <tr>
               <th>Name</th><th>Email</th><th>Phone</th>
-              <th>Program</th><th>Source</th><th>Page</th><th>Created</th>
+              <th>Program</th><th>Source</th><th>Section</th><th>CTA / button</th><th>Page</th><th>Created</th>
             </tr>
           </thead>
           <tbody>
-            {loading && <tr><td colSpan={7} className="admin-empty">Loading…</td></tr>}
+            {loading && <tr><td colSpan={9} className="admin-empty">Loading…</td></tr>}
             {!loading && data.rows.length === 0 && (
-              <tr><td colSpan={7} className="admin-empty">No leads found.</td></tr>
+              <tr><td colSpan={9} className="admin-empty">No leads found.</td></tr>
             )}
             {!loading && data.rows.map((l) => (
               <tr key={l._id} onClick={() => setSelected(l)}>
@@ -322,6 +322,8 @@ function LeadsTab() {
                 <td>{dash(l.phone)}</td>
                 <td>{l.program ? <span className="admin-pill">{l.program}</span> : '—'}</td>
                 <td>{dash(l.source)}</td>
+                <td className="admin-muted">{dash(l.section)}</td>
+                <td className="admin-muted">{dash(l.cta_label || l.resource)}</td>
                 <td className="admin-muted">{dash(l.page)}</td>
                 <td className="admin-muted">{fmtDate(l.createdAt)}</td>
               </tr>
@@ -345,6 +347,9 @@ function LeadsTab() {
             ['Background', selected.background],
             ['Message', selected.message],
             ['Source', selected.source],
+            ['Section', selected.section],
+            ['CTA / button', selected.cta_label],
+            ['Resource', selected.resource],
             ['Page', selected.page],
             ['UTM Source', selected.utm_source],
             ['UTM Medium', selected.utm_medium],
@@ -353,7 +358,6 @@ function LeadsTab() {
             ['UTM Term', selected.utm_term],
             ['Google Click ID (gclid)', selected.gclid],
             ['Facebook Click ID (fbclid)', selected.fbclid],
-            ['CTA label', selected.cta_label],
             ['Communication opt-in', selected.communication_optin === false ? 'No' : 'Yes'],
             ['Referrer URL', selected.referrer_url],
             ['Page URL', selected.page_url],

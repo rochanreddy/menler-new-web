@@ -181,7 +181,7 @@ export default function Home() {
   const handleMiniLead = async (e) => {
     e.preventDefault();
     try {
-      await submitLead({ email: miniEmail, program: miniProgram, source: 'mini-lead' });
+      await submitLead({ email: miniEmail, program: miniProgram, source: 'mini-lead', cta_label: 'Home mini-lead', section: miniProgram || 'Home' });
       setMiniDone(true);
       toast.success('Brochure on its way — check your inbox.');
     } catch {

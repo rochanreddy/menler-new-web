@@ -57,7 +57,7 @@ export default function PlaybookModal({ item, onClose }) {
     setErr(false);
     setSubmitting(true);
     try {
-      await requestResource({ ...form, resource: item.title, pdf: item.pdf, source: 'playbook-download' });
+      await requestResource({ ...form, resource: item.title, pdf: item.pdf, source: 'playbook-download', cta_label: `Download: ${item.title}`, section: item.badge || item.cat || 'Playbook' });
       setDone(true);
     } catch {
       setErr(true);

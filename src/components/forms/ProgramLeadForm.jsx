@@ -14,7 +14,7 @@ export default function ProgramLeadForm({ program, programColor = 'var(--special
     e.preventDefault();
     setLoading(true);
     try {
-      await submitLead({ ...form, program });
+      await submitLead({ ...form, program, cta_label: 'Program interest', section: program || 'Program lead' });
       setDone(true);
       toast.success("Brochure on its way — check your inbox shortly.");
     } catch {

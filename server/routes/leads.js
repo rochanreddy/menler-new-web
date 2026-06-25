@@ -11,7 +11,7 @@ const KNOWN_FIELDS = new Set([
   'name', 'email', 'phone', 'program', 'track', 'background', 'message',
   'source', 'page', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content',
   'utm_term', 'gclid', 'fbclid', 'page_url', 'referrer_url', 'cta_label',
-  'communication_optin', 'lead_source', 'lead_sub_source', 'resource',
+  'communication_optin', 'lead_source', 'lead_sub_source', 'resource', 'section',
 ]);
 
 // ── Amplifeed CRM webhook ──────────────────────────────────────────────────
@@ -61,6 +61,7 @@ function buildAmplifeedPayload(lead) {
     track: lead.track || undefined,
     description: lead.message || undefined,
     resource: lead.resource || undefined,
+    section: lead.section || undefined,
     lead_quality: lead.verified ? 'verified' : 'unverified',
     submitted_at: lead.createdAt,
     // Campaign / form-specific custom fields (campaign, workshop, score, etc.)

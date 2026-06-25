@@ -50,7 +50,7 @@ export default function Engineering() {
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try { await submitLead({ ...form, program: 'engineering', source: 'engineering-page' }); } catch {}
+    try { await submitLead({ ...form, program: 'engineering', source: 'engineering-page', cta_label: 'Apply: Engineering', section: 'Engineering Fellowship' }); } catch {}
     setDone(true);
   };
 

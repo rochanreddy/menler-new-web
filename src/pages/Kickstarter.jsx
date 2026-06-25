@@ -172,7 +172,7 @@ export default function Kickstarter() {
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try { await submitLead({ ...form, program: 'kickstarter', source: 'kickstarter-page' }); } catch {}
+    try { await submitLead({ ...form, program: 'kickstarter', source: 'kickstarter-page', cta_label: 'Apply: Kickstarter', section: 'Gen AI Kickstarter' }); } catch {}
     setDone(true);
   };
 

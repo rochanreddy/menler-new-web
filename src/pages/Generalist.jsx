@@ -261,7 +261,7 @@ export default function Generalist() {
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try { await submitLead({ ...form, program: 'generalist', source: 'generalist-page' }); } catch {}
+    try { await submitLead({ ...form, program: 'generalist', source: 'generalist-page', cta_label: 'Apply: Generalist', section: 'Generalist Fellowship' }); } catch {}
     setDone(true);
   };
 

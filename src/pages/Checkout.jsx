@@ -48,6 +48,8 @@ export default function Checkout() {
       await submitLead({
         name: reg.name, email: reg.email, phone: reg.phone,
         source: 'checkout-order',
+        cta_label: `Checkout: ${workshopTitle}`,
+        section: `Checkout · ${workshopTitle}`,
         campaign: reg.campaign,
         workshop: workshopTitle,
         items: ['Workshop: ' + workshopTitle, ...addedItems.map((i) => i.title)].join(' | '),

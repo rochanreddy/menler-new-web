@@ -140,7 +140,7 @@ export default function KickstarterLanding() {
     e.preventDefault();
     setErr(false); setBusy(true);
     try {
-      await submitLead({ ...form, source: 'campaign-workshop', campaign: activeSlug, workshop: heading });
+      await submitLead({ ...form, source: 'campaign-workshop', campaign: activeSlug, workshop: heading, cta_label: `Register: ${heading}`, section: `Campaign · ${activeSlug}` });
       navigate('/checkout', { state: { workshop: heading, price: d.price, name: form.name, email: form.email, phone: form.phone, campaign: activeSlug, whatsappUrl: d.whatsappUrl, whatsappText: d.whatsappText } });
     } catch {
       setErr(true);

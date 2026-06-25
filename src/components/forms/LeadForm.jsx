@@ -21,7 +21,7 @@ export default function LeadForm({ defaultProgram = '' }) {
     e.preventDefault();
     setLoading(true);
     try {
-      await submitLead({ ...form, source: 'lead-form', hp_field: hp });
+      await submitLead({ ...form, source: 'lead-form', hp_field: hp, cta_label: 'Express interest', section: form.program || 'Express interest' });
       setSubmitted(true);
       toast.success("Application received — we'll be in touch within 48 hours.");
     } catch (err) {

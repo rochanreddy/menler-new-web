@@ -27,6 +27,10 @@ const leadSchema = new mongoose.Schema(
     cta_label: { type: String, default: '' },
     communication_optin: { type: Boolean, default: true },
 
+    // Attribution: which area/framework (section) and which exact button (cta_label,
+    // already above) the lead came from — used to bifurcate CRM automation.
+    section: { type: String, default: '' },
+
     // Resource/PDF gated downloads + double opt-in email verification.
     // A lead becomes a "quality lead" only after clicking the emailed link.
     resource: { type: String, default: '' },

@@ -13,7 +13,7 @@ export default function MiniLeadForm({ defaultProgram = '' }) {
     e.preventDefault();
     setLoading(true);
     try {
-      await submitLead({ email, program });
+      await submitLead({ email, program, cta_label: 'Mini lead form', section: program || 'Mini lead' });
       setDone(true);
       toast.success("You're on the list — we'll reach out soon.");
     } catch {

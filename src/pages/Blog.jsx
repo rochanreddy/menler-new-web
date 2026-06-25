@@ -23,7 +23,7 @@ export default function Blog() {
   const handleNewsletter = async (e) => {
     e.preventDefault();
     try {
-      await submitLead({ email, source: 'blog-newsletter' });
+      await submitLead({ email, source: 'blog-newsletter', cta_label: 'Blog newsletter', section: 'Blog' });
       setDone(true);
       toast.success("Subscribed — first issue lands Friday.");
     } catch {
