@@ -16,6 +16,7 @@ const Engineering = lazy(() => import('./pages/Engineering'));
 const Projects = lazy(() => import('./pages/Projects'));
 const Outcomes = lazy(() => import('./pages/Outcomes'));
 const Aptitude = lazy(() => import('./pages/Aptitude'));
+const Report = lazy(() => import('./pages/Report'));
 const Resources = lazy(() => import('./pages/Resources'));
 const Blog = lazy(() => import('./pages/Blog'));
 const BlogArticle = lazy(() => import('./pages/BlogArticle'));
@@ -102,6 +103,7 @@ export default function App() {
             <Route path="/projects/:slug" element={<Projects />} />
             <Route path="/outcomes" element={<Outcomes />} />
             <Route path="/aptitude" element={<Aptitude />} />
+            <Route path="/report/:id" element={<Report />} />
             <Route path="/resources" element={<Resources />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/earnings-agent" element={<BlogArticle />} />

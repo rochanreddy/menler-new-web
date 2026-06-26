@@ -10,6 +10,7 @@ import authRoutes from './routes/auth.js';
 import googleRoutes from './routes/google.js';
 import profileRoutes from './routes/profile.js';
 import leadRoutes from './routes/leads.js';
+import reportRoutes from './routes/reports.js';
 import adminRoutes from './routes/admin.js';
 
 const app = express();
@@ -50,6 +51,7 @@ app.use('/auth', authRoutes);
 app.use('/auth/google', googleRoutes);
 app.use('/profile', profileRoutes);
 app.use('/leads', leadRoutes);
+app.use('/reports', reportRoutes);
 app.use('/admin', adminRoutes);
 
 async function start() {

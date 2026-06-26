@@ -350,6 +350,7 @@ function LeadsTab() {
             ['Section', selected.section],
             ['CTA / button', selected.cta_label],
             ['Resource', selected.resource],
+            ['Report link', selected.report_url],
             ['Page', selected.page],
             ['UTM Source', selected.utm_source],
             ['UTM Medium', selected.utm_medium],

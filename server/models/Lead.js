@@ -31,6 +31,9 @@ const leadSchema = new mongoose.Schema(
     // already above) the lead came from — used to bifurcate CRM automation.
     section: { type: String, default: '' },
 
+    // Shareable aptitude report link (so the CRM can open the candidate's result).
+    report_url: { type: String, default: '' },
+
     // Resource/PDF gated downloads + double opt-in email verification.
     // A lead becomes a "quality lead" only after clicking the emailed link.
     resource: { type: String, default: '' },

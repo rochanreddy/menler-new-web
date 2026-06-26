@@ -49,6 +49,20 @@ export async function submitLead(payload) {
   return res.json();
 }
 
+/**
+ * Create a shareable aptitude report. Returns { id, url } — the url is a public
+ * read-only report page (/report/:id) that can be attached to the lead/CRM.
+ */
+export async function createReport(payload) {
+  const res = await fetch(`${API_URL}/reports`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error('Report create failed');
+  return res.json();
+}
+
 // Pull a user-facing reason out of the API's JSON error body, if present.
 async function errorMessage(res, fallback) {
   try {

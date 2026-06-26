@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Footer from '../components/layout/Footer';
 import Seo from '../components/common/Seo';
 import FaqList from '../components/common/FaqList';
-import { submitLead, requestResource } from '../services/leadService';
+import { submitLead, requestResource, createReport } from '../services/leadService';
 import { getRecommendation, maxScoreForQuestions } from '../data/aptitudeQuestions';
 import { CLUSTERS, buildRoadmap, getSetQuestions, getAllAboutAIQuestions } from '../data/aptitudeClusters';
 import { getGeneralistSession } from '../data/generalistAptitude';
@@ -182,6 +182,7 @@ export default function Aptitude() {
     if (state.view !== 'runner') return;
     setElapsed(0);
     setSheetUnlocked(false);
+    setShareCopied(false);
     const t = setInterval(() => setElapsed(e => e + 1), 1000);
     return () => clearInterval(t);
   }, [state.view, state.setIdx]);
@@ -209,6 +210,8 @@ export default function Aptitude() {
   // exam, the user enters name/email/phone (captured as a lead) and only then
   // sees their score and full report.
   const [reportUnlocked, setReportUnlocked] = useState(false);
+  const [reportUrl, setReportUrl] = useState(''); // shareable /report/:id link
+  const [shareCopied, setShareCopied] = useState(false);
   const [gateForm, setGateForm] = useState({ name: '', email: '', phone: '' });
   const [gateBusy, setGateBusy] = useState(false);
   const [gateErr, setGateErr] = useState('');
@@ -217,7 +220,18 @@ export default function Aptitude() {
     e.preventDefault();
     setGateErr(''); setGateBusy(true);
     try {
-      await submitLead({ ...gateForm, cluster: state.cluster, set: state.setIdx + 1, score: calcScore(state.answers, state.questions), source: 'aptitude-report', cta_label: `Aptitude report: ${state.cluster}`, section: `Aptitude · ${state.cluster}` });
+      const score = calcScore(state.answers, state.questions);
+      const maxScore = maxScoreForQuestions(state.questions);
+      const dims = buildDimensions(state.questions.length).map(d => {
+        const slice = state.questions.slice(d.from, d.to);
+        const got = state.answers.slice(d.from, d.to).reduce((a, ans, i) => (ans !== null && ans === bestIdx(slice[i]) ? a + 1 : a), 0);
+        return { label: d.label, pct: slice.length ? Math.round((got / slice.length) * 100) : 0 };
+      });
+      // Create the shareable report first so its URL can ride along to the CRM.
+      let url = '';
+      try { const r = await createReport({ name: gateForm.name, cluster: state.cluster, setIdx: state.setIdx, score, maxScore, dims }); url = r.url; } catch { /* non-blocking */ }
+      setReportUrl(url);
+      await submitLead({ ...gateForm, cluster: state.cluster, set: state.setIdx + 1, score, source: 'aptitude-report', cta_label: `Aptitude report: ${state.cluster}`, section: `Aptitude · ${state.cluster}`, report_url: url });
       setReportUnlocked(true);
     } catch (err) {
       setGateErr(err?.message || 'Couldn’t submit — please check your connection and try again.');
@@ -452,6 +466,17 @@ export default function Aptitude() {
               <p className="runner-rec-desc">{rec.rationale}</p>
               <button className="btn-primary" style={{ background: rec.color, marginTop: 16 }} onClick={() => go(rec.path)}>Explore {rec.program}</button>
             </div>
+
+            {/* Shareable report link */}
+            {reportUrl && (
+              <form className="apt-lead" onSubmit={e => e.preventDefault()}>
+                <p className="apt-lead-label">Share your report</p>
+                <div className="apt-lead-row">
+                  <input type="text" readOnly value={reportUrl} onFocus={e => e.target.select()} />
+                  <button type="button" onClick={() => { try { navigator.clipboard.writeText(reportUrl); } catch { /* ignore */ } setShareCopied(true); }}>{shareCopied ? 'Copied ✓' : 'Copy link'}</button>
+                </div>
+              </form>
+            )}
 
             {/* 14-day roadmap */}
             <p className="apt-roadmap-label">Your 14-day learning roadmap</p>
