@@ -228,13 +228,23 @@ export default function KickstarterLanding() {
                 <div className="lp2-cert-mock">
                   <div className="lp2-cert-mock-top">
                     <MenlerWordmark size={24} theme="light" />
-                    <span className="lp2-cert-mock-seal">★</span>
+                    <span className="lp2-cert-mock-issued">Issued by Menler</span>
                   </div>
                   <p className="lp2-cert-mock-kicker">Certificate of Participation</p>
-                  <p className="lp2-cert-mock-to">This certifies that</p>
+                  <p className="lp2-cert-mock-to">This is proudly presented to</p>
                   <p className="lp2-cert-mock-name">Your Name</p>
-                  <p className="lp2-cert-mock-for">has successfully completed<br /><b>{heading}</b></p>
-                  <p className="lp2-cert-mock-sign">{d.mentorName} · {d.mentorRole}</p>
+                  <span className="lp2-cert-rule" />
+                  <p className="lp2-cert-mock-for">for successfully completing<br /><b>{heading}</b></p>
+                  <div className="lp2-cert-foot">
+                    <span className="lp2-cert-seal">
+                      <span className="lp2-cert-seal-star">★</span>
+                      <span className="lp2-cert-seal-txt">MENLER<br />VERIFIED</span>
+                    </span>
+                    <span className="lp2-cert-sign">
+                      <span className="lp2-cert-sign-name">{d.mentorName}</span>
+                      <span className="lp2-cert-sign-role">{d.mentorRole}</span>
+                    </span>
+                  </div>
                 </div>
               )}
               {d.certificateNote && <p className="lp2-cert-note">{d.certificateNote}</p>}

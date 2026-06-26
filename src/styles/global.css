@@ -1728,9 +1728,11 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 }
 
 /* Banner hero (Scaler-style) */
-.lp2-banner { position: relative; overflow: hidden; border-radius: 18px; background: linear-gradient(120deg, var(--banner-from) 0%, var(--banner-to) 100%); min-height: 320px; display: flex; }
+.lp2-banner { position: relative; overflow: hidden; border-radius: 20px; background: linear-gradient(120deg, var(--banner-from) 0%, var(--banner-to) 100%); min-height: 320px; display: flex; box-shadow: 0 20px 50px rgba(38,33,92,0.16); }
+.lp2-banner::before { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(70% 110% at 10% -10%, rgba(255,255,255,0.42), transparent 55%); }
+.lp2-banner::after { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: 0.5; background-image: radial-gradient(rgba(38,33,92,0.07) 1px, transparent 1px); background-size: 16px 16px; -webkit-mask-image: linear-gradient(120deg, #000 0%, transparent 55%); mask-image: linear-gradient(120deg, #000 0%, transparent 55%); }
 .lp2-banner-body { position: relative; z-index: 2; padding: 26px 28px 64px; max-width: 64%; }
-.lp2-banner-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--ink); background: rgba(255,255,255,0.7); border: 1px solid rgba(38,33,92,0.12); padding: 7px 14px; border-radius: 999px; }
+.lp2-banner-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--ink); background: rgba(255,255,255,0.55); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.7); padding: 8px 15px; border-radius: 999px; box-shadow: 0 4px 14px rgba(38,33,92,0.08); }
 .lp2-banner-title { margin: 18px 0 0; font-family: 'DM Sans', sans-serif; font-weight: 900; font-size: clamp(30px, 5.4vw, 52px); line-height: 1.04; letter-spacing: -0.02em; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
 .lp2-banner-title mark { background: var(--hl-bg); color: var(--hl-text); padding: 2px 12px; border-radius: 6px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
 .lp2-banner-tag { margin-top: 16px; font-size: clamp(14px, 2.4vw, 17px); font-weight: 600; color: var(--a-dark); }
@@ -1742,8 +1744,9 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-banner-free { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--a-dark); border: 1px solid var(--a); border-radius: 5px; padding: 2px 7px; margin-right: 8px; }
 .lp2-banner-photo { position: absolute; right: 0; bottom: 0; top: 0; width: 42%; z-index: 1; }
 .lp2-banner-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 22%); mask-image: linear-gradient(90deg, transparent 0%, #000 22%); }
-.lp2-banner-strip { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; display: flex; align-items: center; gap: 14px; padding: 12px 28px; background: var(--ink); color: #fff; font-size: 13.5px; }
+.lp2-banner-strip { position: absolute; left: 26px; bottom: 22px; right: auto; z-index: 3; display: inline-flex; align-items: center; gap: 12px; padding: 10px 18px; border-radius: 999px; background: rgba(255,255,255,0.72); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.65); color: var(--ink); font-size: 13px; font-weight: 600; box-shadow: 0 10px 28px rgba(38,33,92,0.16); }
 .lp2-banner-strip b { font-weight: 700; }
+.lp2-banner-strip span:first-child::before { content: '📅'; margin-right: 8px; }
 .lp2-strip-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--lavender); }
 @media (max-width: 560px) {
   /* Stack vertically: text → photo → full-width date strip (no side bar). */
@@ -1751,7 +1754,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .lp2-banner-body { max-width: 100%; padding: 22px 22px 14px; }
   .lp2-banner-photo { position: static; width: 100%; height: 230px; }
   .lp2-banner-photo img { object-position: center 18%; -webkit-mask-image: none; mask-image: none; }
-  .lp2-banner-strip { position: static; justify-content: center; }
+  .lp2-banner-strip { position: static; justify-content: center; margin: 14px 22px 4px; }
 }
 
 /* Left column */
@@ -1800,18 +1803,44 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-quote span { display: block; margin-top: 14px; font-family: 'DM Sans', sans-serif; font-style: normal; font-size: 12.5px; color: var(--lavender); }
 
 /* Sample certificate */
-.lp2-cert { display: flex; flex-direction: column; gap: 12px; }
+.lp2-cert { display: flex; flex-direction: column; gap: 14px; }
 .lp2-cert-img { width: 100%; max-width: 640px; border-radius: 14px; border: 1px solid rgba(38,33,92,0.12); box-shadow: 0 16px 40px rgba(38,33,92,0.1); }
-.lp2-cert-mock { max-width: 560px; text-align: center; padding: 30px 32px; border-radius: 14px; background: linear-gradient(160deg, #FFFDF8 0%, var(--cream) 100%); border: 2px solid var(--a); box-shadow: 0 16px 40px rgba(186,117,23,0.14); position: relative; }
-.lp2-cert-mock::after { content: ''; position: absolute; inset: 7px; border: 1px solid rgba(186,117,23,0.35); border-radius: 9px; pointer-events: none; }
+
+/* Premium certificate mock — double gold frame, seal + signature */
+.lp2-cert-mock {
+  max-width: 600px; text-align: center; padding: 40px 44px 32px; border-radius: 16px;
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(186,117,23,0.07), transparent 60%),
+    linear-gradient(160deg, #FFFDF8 0%, var(--cream) 100%);
+  border: 1px solid rgba(186,117,23,0.4);
+  box-shadow: 0 22px 54px rgba(186,117,23,0.18);
+  position: relative; overflow: hidden;
+}
+.lp2-cert-mock::before { content: ''; position: absolute; inset: 11px; border: 1.5px solid var(--a); border-radius: 11px; pointer-events: none; }
+.lp2-cert-mock::after { content: ''; position: absolute; inset: 15px; border: 1px solid rgba(186,117,23,0.3); border-radius: 8px; pointer-events: none; }
+.lp2-cert-mock > * { position: relative; z-index: 1; }
 .lp2-cert-mock-top { display: flex; align-items: center; justify-content: space-between; }
-.lp2-cert-mock-seal { color: var(--a); font-size: 22px; }
-.lp2-cert-mock-kicker { margin-top: 18px; font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--a-dark); }
-.lp2-cert-mock-to { margin-top: 14px; font-size: 12px; color: var(--text-muted); }
-.lp2-cert-mock-name { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--ink); margin: 4px 0; }
-.lp2-cert-mock-for { font-size: 13px; line-height: 1.6; color: var(--ink); }
-.lp2-cert-mock-sign { margin-top: 18px; padding-top: 12px; border-top: 1px solid rgba(38,33,92,0.15); display: inline-block; font-size: 12px; color: var(--text-muted); }
+.lp2-cert-mock-issued { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--a-dark); }
+.lp2-cert-mock-kicker { margin-top: 22px; font-size: 12px; font-weight: 800; letter-spacing: .22em; text-transform: uppercase; color: var(--a-dark); }
+.lp2-cert-mock-kicker::before, .lp2-cert-mock-kicker::after { content: ''; display: inline-block; width: 22px; height: 1px; vertical-align: middle; margin: 0 10px; background: var(--a); opacity: .55; }
+.lp2-cert-mock-to { margin-top: 16px; font-size: 12px; color: var(--text-muted); font-style: italic; }
+.lp2-cert-mock-name { font-family: 'DM Serif Display', serif; font-size: clamp(26px, 5vw, 34px); color: var(--ink); margin: 6px 0 0; }
+.lp2-cert-rule { display: block; width: 190px; height: 1px; margin: 12px auto 0; background: linear-gradient(90deg, transparent, var(--a), transparent); }
+.lp2-cert-mock-for { margin-top: 14px; font-size: 13.5px; line-height: 1.6; color: var(--ink); }
+.lp2-cert-mock-for b { color: var(--ink); font-weight: 700; }
+.lp2-cert-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 28px; gap: 16px; }
+.lp2-cert-seal { flex-shrink: 0; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; width: 66px; height: 66px; border-radius: 50%; background: radial-gradient(circle at 50% 32%, #F6C457, var(--a)); color: #fff; box-shadow: 0 8px 18px rgba(186,117,23,0.45); border: 2px solid rgba(255,255,255,0.75); }
+.lp2-cert-seal-star { font-size: 18px; line-height: 1; }
+.lp2-cert-seal-txt { font-size: 7px; font-weight: 800; letter-spacing: .08em; line-height: 1.15; margin-top: 3px; }
+.lp2-cert-sign { display: inline-flex; flex-direction: column; align-items: flex-end; text-align: right; }
+.lp2-cert-sign-name { font-family: 'DM Serif Display', serif; font-size: 17px; color: var(--ink); border-bottom: 1px solid rgba(38,33,92,0.3); padding: 0 6px 4px; }
+.lp2-cert-sign-role { font-size: 11px; color: var(--text-muted); margin-top: 5px; }
 .lp2-cert-note { font-size: 12.5px; color: var(--text-muted); }
+@media (max-width: 480px) {
+  .lp2-cert-mock { padding: 30px 22px 26px; }
+  .lp2-cert-foot { flex-direction: column-reverse; gap: 18px; align-items: center; }
+  .lp2-cert-sign { align-items: center; text-align: center; }
+}
 
 /* Join WhatsApp community — narrow bar */
 .lp2-wa { display: flex; align-items: center; gap: 14px; margin-top: 28px; padding: 14px 18px; border-radius: 14px; background: #fff; border: 1px solid rgba(38,33,92,0.12); color: var(--ink); text-decoration: none; box-shadow: 0 10px 26px rgba(38,33,92,0.08); transition: transform .15s, box-shadow .15s, border-color .15s; }
