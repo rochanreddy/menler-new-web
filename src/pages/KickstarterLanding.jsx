@@ -109,11 +109,17 @@ const has = (v) => v != null && v !== '' && !(Array.isArray(v) && v.length === 0
 export default function KickstarterLanding() {
   const navigate = useNavigate();
   const go = (p) => { navigate(p); window.scrollTo(0, 0); };
-  const [form, setForm] = useState({ name: '', email: '', phone: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', city: '', background: '', otp: '' });
   const [busy, setBusy] = useState(false);
-  const [err, setErr] = useState(false);
+  const [err, setErr] = useState(null);
   const [done, setDone] = useState(false);
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+
+  const handlePhoneChange = (val) => {
+    const clean = val.replace(/\D/g, '');
+    const truncated = clean.slice(0, 10);
+    setForm((f) => ({ ...f, phone: truncated }));
+  };
 
   // Sanity-editable content for this slug, merged per-field over the fallback.
   const { slug } = useParams();
@@ -138,12 +144,31 @@ export default function KickstarterLanding() {
 
   const register = async (e) => {
     e.preventDefault();
-    setErr(false); setBusy(true);
+    if (form.phone.length !== 10) {
+      setErr("Phone number must be exactly 10 digits.");
+      return;
+    }
+    setErr(null); setBusy(true);
     try {
       await submitLead({ ...form, source: 'campaign-workshop', campaign: activeSlug, workshop: heading, cta_label: `Register: ${heading}`, section: `Campaign · ${activeSlug}` });
-      navigate('/checkout', { state: { workshop: heading, price: d.price, name: form.name, email: form.email, phone: form.phone, campaign: activeSlug, whatsappUrl: d.whatsappUrl, whatsappText: d.whatsappText } });
+      navigate('/checkout', {
+        state: {
+          workshop: heading,
+          price: d.price,
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          city: form.city,
+          background: form.background,
+          otp: form.otp,
+          campaign: activeSlug,
+          whatsappUrl: d.whatsappUrl,
+          whatsappText: d.whatsappText,
+          communityText: d.communityText
+        }
+      });
     } catch {
-      setErr(true);
+      setErr("Couldn't register — please check your connection and try again.");
     } finally {
       setBusy(false);
     }
@@ -165,6 +190,9 @@ export default function KickstarterLanding() {
           {/* Banner hero */}
           <section className="lp2-banner">
             <div className="lp2-banner-body">
+              <div className="lp2-banner-logo" style={{ marginBottom: '14px' }}>
+                <MenlerWordmark size={22} theme="light" />
+              </div>
               <span className="lp2-banner-badge">✦ {d.bannerBadge}</span>
               <h1 className="lp2-banner-title">
                 <mark>{d.bannerLine1}</mark>
@@ -172,11 +200,7 @@ export default function KickstarterLanding() {
               </h1>
               <p className="lp2-banner-tag">{d.bannerTagline}</p>
               <div className="lp2-banner-brand">
-                <span className="lp2-banner-brandmark">
-                  <MenlerWordmark size={20} theme="light" />
-                  <b className="lp2-banner-mc">MASTERCLASS</b>
-                </span>
-                <span className="lp2-banner-credit"><span className="lp2-banner-free">Free Guidance</span>By <b>{d.mentorName}</b> — {d.mentorRole}</span>
+                <span className="lp2-banner-credit">By <b>{d.mentorName}</b> — {d.mentorRole}</span>
               </div>
             </div>
             <div className="lp2-banner-photo"><img src={d.mentorPhoto} alt={d.mentorName} /></div>
@@ -322,9 +346,33 @@ export default function KickstarterLanding() {
                 <form onSubmit={register}>
                   <input className="lp2-input" type="text" required placeholder="Full name" value={form.name} onChange={(e) => set('name', e.target.value)} />
                   <input className="lp2-input" type="email" required placeholder="Email address" value={form.email} onChange={(e) => set('email', e.target.value)} />
-                  <input className="lp2-input" type="tel" required placeholder="Phone number" value={form.phone} onChange={(e) => set('phone', e.target.value)} />
+                  <input
+                    className="lp2-input"
+                    type="tel"
+                    required
+                    placeholder="Phone number"
+                    inputMode="numeric"
+                    pattern="[0-9]{10}"
+                    value={form.phone}
+                    onChange={(e) => handlePhoneChange(e.target.value)}
+                  />
+                  <input className="lp2-input" type="text" required placeholder="City" value={form.city} onChange={(e) => set('city', e.target.value)} />
+                  <select
+                    className="lp2-input"
+                    required
+                    style={{ color: form.background ? 'var(--ink)' : 'rgba(38,33,92,0.45)', background: 'white', cursor: 'pointer' }}
+                    value={form.background}
+                    onChange={(e) => set('background', e.target.value)}
+                  >
+                    <option value="" disabled hidden>Select background...</option>
+                    <option value="student">Student</option>
+                    <option value="working professional">Working Professional</option>
+                    <option value="graduate">Graduate</option>
+                    <option value="business owner">Business Owner</option>
+                  </select>
+                  <input className="lp2-input" type="text" required placeholder="OTP" value={form.otp} onChange={(e) => set('otp', e.target.value)} />
                   <button className="lp2-submit" type="submit" disabled={busy}>{busy ? 'Reserving…' : 'Register now'}</button>
-                  {err && <p className="lp2-err">Couldn't register — please check your connection and try again.</p>}
+                  {err && <p className="lp2-err">{typeof err === 'string' ? err : "Couldn't register — please check your connection and try again."}</p>}
                 </form>
               </>
             )}
