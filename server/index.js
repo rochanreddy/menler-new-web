@@ -6,6 +6,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
 import { connectDb } from './db.js';
+import { isSmtpConfigured } from './utils/email.js';
 import authRoutes from './routes/auth.js';
 import googleRoutes from './routes/google.js';
 import profileRoutes from './routes/profile.js';
@@ -59,6 +60,11 @@ async function start() {
     await connectDb();
     app.listen(port, () => {
       console.log(`Meridian API listening on http://localhost:${port}`);
+      if (isSmtpConfigured()) {
+        console.log('SMTP email delivery: enabled');
+      } else {
+        console.log('SMTP email delivery: disabled — emails log to console until SMTP_HOST, SMTP_USER, and SMTP_PASS are set');
+      }
     });
   } catch (err) {
     console.error('Failed to start server:', err);

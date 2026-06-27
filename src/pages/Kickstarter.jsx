@@ -11,7 +11,7 @@ import HiringJobs from '../components/common/HiringJobs';
 import PricingCard from '../components/common/PricingCard';
 import { useContent } from '../lib/useContent';
 import { KICKSTARTER_FAQS } from '../data/faqData';
-import { submitLead } from '../services/leadService';
+import { requestBrochure } from '../services/leadService';
 
 const DAYS = [
   { num: '01', topic: 'The AI Landscape', tool: 'Claude, ChatGPT, Gemini', cap: false },
@@ -170,10 +170,20 @@ export default function Kickstarter() {
     }
   };
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
-  const handleSubmit = async (e) => {
+  const handleBrochure = async (e) => {
     e.preventDefault();
-    try { await submitLead({ ...form, program: 'kickstarter', source: 'kickstarter-page', cta_label: 'Apply: Kickstarter', section: 'Gen AI Kickstarter' }); } catch {}
-    setDone(true);
+    try {
+      await requestBrochure({
+        email: form.email,
+        program: 'kickstarter',
+        track: form.role,
+        resource: 'Gen AI Kickstarter Brochure',
+        source: 'kickstarter-page',
+        cta_label: 'Brochure: Kickstarter',
+        section: 'Gen AI Kickstarter',
+      });
+      setDone(true);
+    } catch { /* keep form open for retry */ }
   };
 
   return (
@@ -349,7 +359,7 @@ export default function Kickstarter() {
           {done ? (
             <div className="mini-lead-success">✓ Brochure on its way.</div>
           ) : (
-            <form className="mini-lead-form" onSubmit={handleSubmit}>
+            <form className="mini-lead-form" onSubmit={handleBrochure}>
               <input type="email" required aria-label="Email address" placeholder="you@domain.com" value={form.email} onChange={e => set('email', e.target.value)} autoComplete="email" />
               <select required aria-label="You are" value={form.role} onChange={e => set('role', e.target.value)}>
                 <option value="">You are…</option>

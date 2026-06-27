@@ -8,7 +8,7 @@ import MentorsRail from '../components/common/MentorsRail';
 import { useApply } from '../components/common/ApplyContext';
 import HiringJobs from '../components/common/HiringJobs';
 import { ENGINEERING_FAQS } from '../data/faqData';
-import { submitLead } from '../services/leadService';
+import { requestBrochure } from '../services/leadService';
 
 // Hiring section content for the Engineering page only — edit freely, it does
 // NOT affect the Generalist / Kickstarter hiring sections.
@@ -48,10 +48,20 @@ export default function Engineering() {
   const [done, setDone] = useState(false);
   const openApply = useApply();
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
-  const handleSubmit = async (e) => {
+  const handleBrochure = async (e) => {
     e.preventDefault();
-    try { await submitLead({ ...form, program: 'engineering', source: 'engineering-page', cta_label: 'Apply: Engineering', section: 'Engineering Fellowship' }); } catch {}
-    setDone(true);
+    try {
+      await requestBrochure({
+        email: form.email,
+        program: 'engineering',
+        track: form.role,
+        resource: 'Engineering Fellowship Brochure',
+        source: 'engineering-page',
+        cta_label: 'Brochure: Engineering',
+        section: 'Engineering Fellowship',
+      });
+      setDone(true);
+    } catch { /* keep form open for retry */ }
   };
 
   return (
@@ -132,7 +142,7 @@ export default function Engineering() {
           {done ? (
             <div className="mini-lead-success">✓ Brochure on its way.</div>
           ) : (
-            <form className="mini-lead-form" onSubmit={handleSubmit}>
+            <form className="mini-lead-form" onSubmit={handleBrochure}>
               <input type="email" required aria-label="Email address" placeholder="you@domain.com" value={form.email} onChange={e => set('email', e.target.value)} autoComplete="email" />
               <select required aria-label="Current role" value={form.role} onChange={e => set('role', e.target.value)}>
                 <option value="">You are…</option>

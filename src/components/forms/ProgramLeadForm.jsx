@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { submitLead } from '../../services/leadService';
+import { requestBrochure } from '../../services/leadService';
 import { useToast } from '../common/Toast';
 
 export default function ProgramLeadForm({ program, programColor = 'var(--specialist)', buttonBg = 'var(--specialist)' }) {
@@ -14,7 +14,14 @@ export default function ProgramLeadForm({ program, programColor = 'var(--special
     e.preventDefault();
     setLoading(true);
     try {
-      await submitLead({ ...form, program, cta_label: 'Program interest', section: program || 'Program lead' });
+      await requestBrochure({
+        ...form,
+        program: program || 'generalist',
+        resource: `${program || 'Menler'} Brochure`,
+        source: 'program-lead-form',
+        cta_label: 'Program brochure',
+        section: program || 'Program lead',
+      });
       setDone(true);
       toast.success("Brochure on its way — check your inbox shortly.");
     } catch {
@@ -27,7 +34,7 @@ export default function ProgramLeadForm({ program, programColor = 'var(--special
   if (done) {
     return (
       <div className="lead-ok">
-        ✓ Got it! We'll send your brochure + cohort details within a few hours.
+        ✓ Got it! Your brochure is on its way — check your inbox for the PDF attachment.
       </div>
     );
   }

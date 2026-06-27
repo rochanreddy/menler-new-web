@@ -654,7 +654,7 @@ export default function Aptitude() {
           {qbSent ? (
             <div className="apt-lead" style={{ maxWidth: 540, margin: '0 auto' }}>
               <p className="apt-lead-label" style={{ textAlign: 'center' }}>✓ Check your inbox</p>
-              <p className="qb-sub" style={{ marginTop: 6 }}>We’ve emailed a secure download link for the <b>{qbBank.label}</b> question bank to <b>{qbForm.email}</b>. Click it to confirm your email and open your PDF.</p>
+              <p className="qb-sub" style={{ marginTop: 6 }}>We’ve emailed the <b>{qbBank.label}</b> question bank as a PDF attachment to <b>{qbForm.email}</b>. Check your inbox (and spam folder).</p>
             </div>
           ) : !qbFormOpen ? (
             <button className="btn-primary" onClick={() => qbBank.pdf && setQbFormOpen(true)} disabled={!qbBank.pdf}>

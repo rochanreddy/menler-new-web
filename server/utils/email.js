@@ -4,6 +4,10 @@ const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, MAIL_FROM } = process.env;
 
 const smtpConfigured = Boolean(SMTP_HOST && SMTP_USER && SMTP_PASS);
 
+export function isSmtpConfigured() {
+  return smtpConfigured;
+}
+
 let transporter = null;
 if (smtpConfigured) {
   transporter = nodemailer.createTransport({
@@ -16,22 +20,26 @@ if (smtpConfigured) {
 
 /**
  * Send an email. When SMTP isn't configured (dev), the message is logged to
- * the server console instead — so OTP codes and reset links are still visible.
+ * the server console instead — attachment filenames are listed when present.
  */
-export async function sendMail({ to, subject, text }) {
+export async function sendMail({ to, subject, text, attachments = [] }) {
   if (!transporter) {
-    console.log('\n──────── 📧  EMAIL (dev console — no SMTP configured) ────────');
+    console.log('\n──────── EMAIL (dev console — no SMTP configured) ────────');
     console.log(`To:      ${to}`);
     console.log(`Subject: ${subject}`);
+    if (attachments.length) {
+      console.log(`Attachments: ${attachments.map((a) => a.filename).join(', ')}`);
+    }
     console.log(`Body:\n${text}`);
     console.log('──────────────────────────────────────────────────────────────\n');
     return;
   }
 
   await transporter.sendMail({
-    from: MAIL_FROM || 'Meridian <no-reply@meridian.local>',
+    from: MAIL_FROM || 'Menler <no-reply@menler.in>',
     to,
     subject,
     text,
+    attachments,
   });
 }

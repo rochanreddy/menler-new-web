@@ -73,9 +73,7 @@ async function errorMessage(res, fallback) {
 }
 
 /**
- * Request a gated resource (PDF). Stores an unverified lead and emails a magic
- * link; the PDF is delivered only after the user clicks it (double opt-in).
- * `payload` must include `email` and `pdf` (the resource's public path).
+ * Request a gated resource (PDF). Saves the lead and emails the PDF as an attachment.
  */
 export async function requestResource(payload) {
   const data = {
@@ -90,5 +88,44 @@ export async function requestResource(payload) {
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error(await errorMessage(res, 'Resource request failed'));
+  return res.json();
+}
+
+/**
+ * Request a program brochure by email. The server picks the PDF and attaches it.
+ */
+export async function requestBrochure(payload) {
+  const data = {
+    ...payload,
+    ...getTracking(),
+    page: window.location.pathname,
+  };
+
+  const res = await fetch(`${API_URL}/leads/brochure-request`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error(await errorMessage(res, 'Brochure request failed'));
+  return res.json();
+}
+
+/**
+ * Email multiple PDF resources in one message (e.g. checkout add-ons).
+ * `resources` is an array of { title, pdf, resource? }.
+ */
+export async function deliverResources(payload) {
+  const data = {
+    ...payload,
+    ...getTracking(),
+    page: window.location.pathname,
+  };
+
+  const res = await fetch(`${API_URL}/leads/resource-batch`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error(await errorMessage(res, 'Resource delivery failed'));
   return res.json();
 }

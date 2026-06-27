@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import MenlerWordmark from '../components/common/MenlerWordmark';
 import Seo from '../components/common/Seo';
 import MenlerCommunitySection from '../components/common/MenlerCommunitySection';
+import { MENLER_WHATSAPP_URL } from '../data/communityLinks';
 import { submitLead } from '../services/leadService';
 import { useContent } from '../lib/useContent';
 
@@ -88,7 +89,7 @@ const FALLBACK = {
   get: GET.map((g) => ({ title: g.t, detail: g.d })),
   certificateImage: '',
   certificateNote: 'A Menler Certificate of Participation — shareable on LinkedIn.',
-  whatsappUrl: '',
+  whatsappUrl: MENLER_WHATSAPP_URL,
   discordUrl: '',
   facebookUrl: '',
   whatsappText: 'Join our WhatsApp community for updates, resources & support.',
@@ -325,7 +326,7 @@ export default function KickstarterLanding() {
 
           <MenlerCommunitySection
             className="lp2-community-wrap"
-            whatsappUrl={d.whatsappUrl}
+            whatsappUrl={d.whatsappUrl || MENLER_WHATSAPP_URL}
             communityText={d.communityText}
           />
 

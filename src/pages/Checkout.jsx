@@ -3,25 +3,10 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import MenlerWordmark from '../components/common/MenlerWordmark';
 import Seo from '../components/common/Seo';
 import MenlerCommunitySection from '../components/common/MenlerCommunitySection';
-import { submitLead } from '../services/leadService';
+import { submitLead, deliverResources } from '../services/leadService';
+import { CHECKOUT_CATALOG } from '../data/resourceCatalog';
 
-// Optional add-ons. Priced for show; FREE during launch (total ₹0). When a
-// payment gateway (Razorpay) is added, charge `total` and flip these to paid.
-// All library PDFs + Claude playbooks (excludes aptitude question banks).
-const CATALOG = [
-  { id: 'prompt-library', title: 'Prompt Library', desc: '100+ tested prompts across business, engineering, and beginner tracks.', price: 499 },
-  { id: 'ai-stack-map', title: 'AI stack map', desc: 'Visual guide to the best AI tools by category.', price: 399 },
-  { id: 'connector-projects', title: 'Project connectors docs', desc: '10 hands-on project walkthroughs led by the program instructors.', price: 799 },
-  { id: 'ai-glossary', title: 'AI glossary', desc: '100+ AI terms explained in simple, beginner-friendly language.', price: 299 },
-  { id: 'claude-code', title: 'Claude Code Playbook', desc: 'Build, refactor, and ship real code with Claude in your terminal and editor.', price: 499 },
-  { id: 'claude-chat', title: 'Claude Chat Playbook', desc: 'Everyday prompting — research, writing, analysis, and fast answers.', price: 499 },
-  { id: 'claude-cowork', title: 'Claude Cowork Playbook', desc: 'Multi-document, multi-step work that turns raw inputs into finished deliverables.', price: 499 },
-  { id: 'claude-design', title: 'Claude Design Playbook', desc: 'Generate visuals, mockups, and on-brand design assets with Claude.', price: 499 },
-  { id: 'claude-ms', title: 'Claude in MS', desc: 'Use Claude across Microsoft 365 — Word, Excel, PowerPoint, and Teams.', price: 499 },
-];
-
-// Menler community links — set the real Discord / WhatsApp / Facebook URLs here.
-const COMMUNITY_LINKS = { discord: '#', whatsapp: '#', facebook: '#' };
+import { MENLER_WHATSAPP_URL } from '../data/communityLinks';
 
 export default function Checkout() {
   const navigate = useNavigate();
@@ -29,7 +14,7 @@ export default function Checkout() {
   const reg = state || {};
   const workshopTitle = reg.workshop || 'Menler Workshop';
 
-  const catalog = CATALOG;
+  const catalog = CHECKOUT_CATALOG;
 
   const [cart, setCart] = useState(() => new Set());
   const [placing, setPlacing] = useState(false);
@@ -57,6 +42,16 @@ export default function Checkout() {
         items: ['Workshop: ' + workshopTitle, ...addedItems.map((i) => i.title)].join(' | '),
         amount: total,
       });
+      if (addedItems.length && reg.email) {
+        await deliverResources({
+          name: reg.name,
+          email: reg.email,
+          phone: reg.phone,
+          source: 'checkout-resources',
+          section: `Checkout · ${workshopTitle}`,
+          resources: addedItems.map((i) => ({ title: i.title, pdf: i.pdf, resource: i.title })),
+        });
+      }
       setPlaced(true);
       window.scrollTo(0, 0);
     } catch {
@@ -78,12 +73,12 @@ export default function Checkout() {
           <p className="cox-confirm-p">
             You're all set for <b>{workshopTitle}</b>. We've sent the joining details
             {reg.email ? <> to <b>{reg.email}</b></> : null}
-            {addedItems.length ? <>, along with your {addedItems.length} playbook{addedItems.length > 1 ? 's' : ''}.</> : '.'}
+            {addedItems.length ? <>, along with your {addedItems.length} resource{addedItems.length > 1 ? 's' : ''} attached to your email.</> : '.'}
           </p>
 
           <MenlerCommunitySection
             className="menler-community--confirm"
-            whatsappUrl={reg.whatsappUrl || COMMUNITY_LINKS.whatsapp}
+            whatsappUrl={reg.whatsappUrl || MENLER_WHATSAPP_URL}
             communityText={reg.whatsappText || reg.communityText}
           />
 

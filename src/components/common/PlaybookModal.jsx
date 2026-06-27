@@ -90,7 +90,7 @@ export default function PlaybookModal({ item, onClose }) {
             <div className="pb-modal-done">
               <div className="pb-done-icon">✓</div>
               <h3 className="pb-modal-title">Check your inbox</h3>
-              <p className="pb-modal-sub">We’ve emailed a secure download link for <b>{item.title}</b> to <b>{form.email}</b>. Click it to confirm your email and open your PDF.</p>
+              <p className="pb-modal-sub">We’ve emailed <b>{item.title}</b> as a PDF attachment to <b>{form.email}</b>. Check your inbox (and spam folder).</p>
             </div>
           ) : (
             <>
@@ -117,7 +117,7 @@ export default function PlaybookModal({ item, onClose }) {
                 </div>
                 <button className="pb-modal-btn" type="submit" disabled={submitting || !item.pdf}>{submitting ? 'Sending…' : item.pdf ? 'Email me the PDF' : 'Coming soon'}</button>
                 {err && <p className="lf-fineprint" style={{ color: '#c0392b' }}>Couldn’t send — please check your connection and try again.</p>}
-                <p className="lf-fineprint">We’ll email you a secure link to the resource and occasional Menler updates. Unsubscribe anytime.</p>
+                <p className="lf-fineprint">We’ll email the PDF to you directly and occasional Menler updates. Unsubscribe anytime.</p>
               </form>
             </>
           )}

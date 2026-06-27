@@ -2,10 +2,60 @@ import { Router } from 'express';
 
 import { Lead } from '../models/Lead.js';
 import { sendMail } from '../utils/email.js';
-import { signResourceToken, verifyResourceToken } from '../utils/token.js';
+import { pdfAttachments, isAllowedPdf } from '../utils/pdfAttachments.js';
+import { verifyResourceToken } from '../utils/token.js';
 import { validateEmail } from '../utils/emailValidation.js';
 
 const router = Router();
+
+const BROCHURE_PDFS = {
+  kickstarter: '/pdfs/1_updated_Menler AI Kickstarter Brochure_2026.pdf',
+  generalist: '/pdfs/Menler_Claude_Gen_brochure.pdf',
+  engineering: '/pdfs/Menler_Claude_Gen_brochure.pdf',
+};
+
+function brochurePdfForProgram(program) {
+  const key = String(program || '').toLowerCase();
+  if (key.includes('kick')) return BROCHURE_PDFS.kickstarter;
+  if (key.includes('eng')) return BROCHURE_PDFS.engineering;
+  return BROCHURE_PDFS.generalist;
+}
+
+function buildAttachmentEmail({ name, labels }) {
+  const items = labels.filter(Boolean);
+  const greeting = name ? `Hi ${name},` : 'Hi,';
+  const list = items.map((l) => `• ${l}`).join('\n');
+
+  return `${greeting}
+
+Thanks for your interest! Your PDF${items.length > 1 ? 's are' : ' is'} attached to this email:
+
+${list}
+
+If you didn't request this, you can safely ignore this email.
+
+— Team Menler`;
+}
+
+async function emailPdfAttachments({ to, name, subject, labels, pdfPaths }) {
+  const attachments = pdfAttachments(pdfPaths);
+  await sendMail({
+    to,
+    subject,
+    text: buildAttachmentEmail({ name, labels }),
+    attachments,
+  });
+}
+
+async function markLeadDelivered(lead) {
+  if (!lead) return;
+  if (!lead.verified) {
+    lead.verified = true;
+    lead.verified_at = new Date();
+    await lead.save();
+  }
+  forwardLeadToCrm(lead);
+}
 
 const KNOWN_FIELDS = new Set([
   'name', 'email', 'phone', 'program', 'track', 'background', 'message',
@@ -145,26 +195,15 @@ router.post('/', async (req, res) => {
   }
 });
 
-/* ── Gated resource download via double opt-in (magic link) ──────────────── */
+/* ── PDF delivery by email attachment ────────────────────────────────────── */
 const FRONTEND_BASE = () =>
   (process.env.FRONTEND_URL || 'https://menler.in').split(',')[0].trim().replace(/\/+$/, '');
 
-// Only our own static PDF folders are deliverable. The token is signed, so it
-// can't be tampered with — this guards what we store/redirect to on intake.
-function isAllowedPdf(p) {
-  return typeof p === 'string'
-    && (p.startsWith('/pdfs/') || p.startsWith('/question_banks/'))
-    && p.toLowerCase().endsWith('.pdf')
-    && !p.includes('..');
-}
-
-// 1) Request a gated resource: store an UNVERIFIED lead, then email a magic
-//    link. The PDF is NOT delivered until they click it (proves a real inbox).
+// 1) Request a gated resource — save lead, attach PDF to email.
 router.post('/resource-request', async (req, res) => {
   try {
     const body = req.body || {};
 
-    // Honeypot: silently accept-and-drop obvious bots.
     if (body.hp_field) return res.status(201).json({ ok: true });
 
     const email = String(body.email || '').trim();
@@ -182,52 +221,133 @@ router.post('/resource-request', async (req, res) => {
       else if (!(key in doc)) doc.extra[key] = value;
     }
     const lead = await Lead.create(doc);
+    const label = lead.resource || 'Menler resource';
 
-    const token = signResourceToken({ leadId: lead._id.toString(), email, pdf, resource: lead.resource });
-    const proto = req.headers['x-forwarded-proto'] || req.protocol;
-    const link = `${proto}://${req.get('host')}/leads/resource/${token}`;
-
-    await sendMail({
+    await emailPdfAttachments({
       to: email,
-      subject: `Your Menler resource${lead.resource ? `: ${lead.resource}` : ''}`,
-      text: `Hi${lead.name ? ' ' + lead.name : ''},
-
-Thanks for your interest! Click the link below to confirm your email and open your resource${lead.resource ? ` — ${lead.resource}` : ''}:
-
-${link}
-
-This link expires in 7 days. If you didn't request this, you can safely ignore this email.
-
-— Team Menler`,
+      name: lead.name,
+      subject: `Your Menler resource${label ? `: ${label}` : ''}`,
+      labels: [label],
+      pdfPaths: [pdf],
     });
 
+    await markLeadDelivered(lead);
     res.status(201).json({ ok: true });
   } catch (err) {
     console.error('resource-request error', err);
-    res.status(500).json({ error: 'Could not send the email. Please try again.' });
+    const msg = err.message?.includes('PDF not found')
+      ? 'This resource is temporarily unavailable. Please try again later.'
+      : 'Could not send the email. Please try again.';
+    res.status(500).json({ error: msg });
   }
 });
 
-// 2) Magic-link target: verify token → mark the lead verified (a "quality
-//    lead") → forward to CRM → redirect the browser to the actual PDF.
+// Brochure request — program → PDF is resolved server-side, then emailed as attachment.
+router.post('/brochure-request', async (req, res) => {
+  try {
+    const body = req.body || {};
+    if (body.hp_field) return res.status(201).json({ ok: true });
+
+    const email = String(body.email || '').trim();
+    const program = body.program || body.track || body.section || '';
+    const pdf = brochurePdfForProgram(program);
+    if (!email || !isAllowedPdf(pdf)) {
+      return res.status(400).json({ error: 'A valid email and program are required.' });
+    }
+
+    const v = await validateEmail(email);
+    if (!v.ok) return res.status(400).json({ error: v.reason });
+
+    const resourceLabel = body.resource || `${program || 'Menler'} Brochure`;
+    const doc = {
+      extra: {},
+      verified: false,
+      resource: resourceLabel,
+      resource_pdf: pdf,
+      program: program || undefined,
+    };
+    for (const [key, value] of Object.entries(body)) {
+      if (key === 'hp_field') continue;
+      if (KNOWN_FIELDS.has(key)) doc[key] = value;
+      else if (!(key in doc)) doc.extra[key] = value;
+    }
+    const lead = await Lead.create(doc);
+
+    await emailPdfAttachments({
+      to: email,
+      name: lead.name,
+      subject: `Your Menler brochure${program ? `: ${program}` : ''}`,
+      labels: [resourceLabel],
+      pdfPaths: [pdf],
+    });
+
+    await markLeadDelivered(lead);
+    res.status(201).json({ ok: true });
+  } catch (err) {
+    console.error('brochure-request error', err);
+    const msg = err.message?.includes('PDF not found')
+      ? 'This brochure is temporarily unavailable. Please try again later.'
+      : 'Could not send the brochure email. Please try again.';
+    res.status(500).json({ error: msg });
+  }
+});
+
+// Batch resource delivery (checkout add-ons) — one email, all PDFs attached.
+router.post('/resource-batch', async (req, res) => {
+  try {
+    const body = req.body || {};
+    if (body.hp_field) return res.status(201).json({ ok: true });
+
+    const email = String(body.email || '').trim();
+    const items = Array.isArray(body.resources) ? body.resources : [];
+    const valid = items.filter((i) => i && isAllowedPdf(String(i.pdf || '')));
+    if (!email || !valid.length) {
+      return res.status(400).json({ error: 'A valid email and at least one resource are required.' });
+    }
+
+    const v = await validateEmail(email);
+    if (!v.ok) return res.status(400).json({ error: v.reason });
+
+    const labels = valid.map((i) => i.title || i.resource).filter(Boolean);
+    const doc = {
+      extra: { resource_items: labels },
+      verified: false,
+      resource: labels.join(' | ') || 'Menler resources',
+    };
+    for (const [key, value] of Object.entries(body)) {
+      if (key === 'hp_field' || key === 'resources') continue;
+      if (KNOWN_FIELDS.has(key)) doc[key] = value;
+      else if (!(key in doc)) doc.extra[key] = value;
+    }
+    const lead = await Lead.create(doc);
+
+    await emailPdfAttachments({
+      to: email,
+      name: lead.name,
+      subject: `Your Menler resources (${valid.length})`,
+      labels: labels.length ? labels : valid.map((i) => 'Resource'),
+      pdfPaths: valid.map((i) => String(i.pdf)),
+    });
+
+    await markLeadDelivered(lead);
+    res.status(201).json({ ok: true, count: valid.length });
+  } catch (err) {
+    console.error('resource-batch error', err);
+    const msg = err.message?.includes('PDF not found')
+      ? 'One or more resources are temporarily unavailable. Please try again later.'
+      : 'Could not send the resource email. Please try again.';
+    res.status(500).json({ error: msg });
+  }
+});
+
+// Legacy magic-link route — old emails may still hit this; redirect to resources page.
 router.get('/resource/:token', async (req, res) => {
   const front = FRONTEND_BASE();
   const claims = verifyResourceToken(req.params.token);
   if (!claims || !isAllowedPdf(claims.pdf)) {
     return res.redirect(302, `${front}/resources?resource=expired`);
   }
-  try {
-    const lead = await Lead.findById(claims.leadId);
-    if (lead && !lead.verified) {
-      lead.verified = true;
-      lead.verified_at = new Date();
-      await lead.save();
-      forwardLeadToCrm(lead); // only verified (quality) leads reach the CRM
-    }
-  } catch (err) {
-    console.error('resource verify error', err);
-  }
-  return res.redirect(302, `${front}${claims.pdf}`);
+  return res.redirect(302, `${front}/resources?resource=emailed`);
 });
 
 export default router;

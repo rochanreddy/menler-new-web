@@ -11,7 +11,7 @@ import HiringJobs from '../components/common/HiringJobs';
 import PricingCard from '../components/common/PricingCard';
 import { useContent } from '../lib/useContent';
 import { GENERALIST_FAQS } from '../data/faqData';
-import { submitLead } from '../services/leadService';
+import { requestBrochure } from '../services/leadService';
 
 // ── Pricing card content ──
 const GEN_PRICE_FEATS = [
@@ -259,10 +259,20 @@ export default function Generalist() {
   const genPricing = useContent(GEN_PRICING_QUERY, GEN_PRICING);
   const curriculum = useContent(GEN_CURRICULUM_QUERY, CURRICULUM);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
-  const handleSubmit = async (e) => {
+  const handleBrochure = async (e) => {
     e.preventDefault();
-    try { await submitLead({ ...form, program: 'generalist', source: 'generalist-page', cta_label: 'Apply: Generalist', section: 'Generalist Fellowship' }); } catch {}
-    setDone(true);
+    try {
+      await requestBrochure({
+        email: form.email,
+        program: 'generalist',
+        track: form.track,
+        resource: 'Generalist Fellowship Brochure',
+        source: 'generalist-page',
+        cta_label: 'Brochure: Generalist',
+        section: 'Generalist Fellowship',
+      });
+      setDone(true);
+    } catch { /* keep form open for retry */ }
   };
 
   return (
@@ -467,7 +477,7 @@ export default function Generalist() {
           {done ? (
             <div className="mini-lead-success">✓ Brochure on its way.</div>
           ) : (
-            <form className="mini-lead-form" onSubmit={handleSubmit}>
+            <form className="mini-lead-form" onSubmit={handleBrochure}>
               <input type="email" required aria-label="Email address" placeholder="you@domain.com" value={form.email} onChange={e => set('email', e.target.value)} autoComplete="email" />
               <select required aria-label="Track of interest" value={form.track} onChange={e => set('track', e.target.value)}>
                 <option value="">Choose a track…</option>

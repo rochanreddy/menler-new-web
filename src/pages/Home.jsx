@@ -12,7 +12,7 @@ import MenlerCommunitySection from '../components/common/MenlerCommunitySection'
 import { useToast } from '../components/common/Toast';
 const Hero3D = lazy(() => import('../components/common/Hero3D'));
 import { HOME_FAQS } from '../data/faqData';
-import { submitLead } from '../services/leadService';
+import { submitLead, requestBrochure } from '../services/leadService';
 import { PROJECTS, PROJECTS_QUERY, tagClassFor } from '../data/projectsData';
 import { useContent } from '../lib/useContent';
 import ErrorBoundary from '../components/common/ErrorBoundary';
@@ -182,7 +182,14 @@ export default function Home() {
   const handleMiniLead = async (e) => {
     e.preventDefault();
     try {
-      await submitLead({ email: miniEmail, program: miniProgram, source: 'mini-lead', cta_label: 'Home mini-lead', section: miniProgram || 'Home' });
+      await requestBrochure({
+        email: miniEmail,
+        program: miniProgram || 'generalist',
+        resource: `${miniProgram || 'Menler'} Brochure`,
+        source: 'mini-lead',
+        cta_label: 'Home mini-lead brochure',
+        section: miniProgram || 'Home',
+      });
       setMiniDone(true);
       toast.success('Brochure on its way — check your inbox.');
     } catch {
