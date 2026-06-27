@@ -113,6 +113,8 @@ export default function KickstarterLanding() {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState(null);
   const [done, setDone] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpBusy, setOtpBusy] = useState(false);
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
   const handlePhoneChange = (val) => {
@@ -142,10 +144,28 @@ export default function KickstarterLanding() {
   setVar('--hl-bg', d.highlightBg);
   setVar('--hl-text', d.highlightText);
 
-  const register = async (e) => {
+  // Step 1 — validate fields, then reveal the OTP box.
+  const sendOtp = (e) => {
     e.preventDefault();
     if (form.phone.length !== 10) {
-      setErr("Phone number must be exactly 10 digits.");
+      setErr('Phone number must be exactly 10 digits.');
+      return;
+    }
+    if (!form.name.trim() || !form.email.trim() || !form.city.trim() || !form.background) {
+      setErr('Please fill in all fields before verifying.');
+      return;
+    }
+    setErr(null);
+    setOtpBusy(true);
+    // Simulate a brief "sending" delay for UX then reveal OTP input.
+    setTimeout(() => { setOtpBusy(false); setOtpSent(true); }, 800);
+  };
+
+  // Step 2 — complete registration with OTP.
+  const register = async (e) => {
+    e.preventDefault();
+    if (!form.otp.trim()) {
+      setErr('Please enter the OTP sent to your phone.');
       return;
     }
     setErr(null); setBusy(true);
@@ -343,9 +363,11 @@ export default function KickstarterLanding() {
                   {d.origPrice && <span className="lp2-price-orig">₹{d.origPrice}</span>}
                 </div>
                 <p className="lp2-form-h">Reserve your seat</p>
-                <form onSubmit={register}>
-                  <input className="lp2-input" type="text" required placeholder="Full name" value={form.name} onChange={(e) => set('name', e.target.value)} />
-                  <input className="lp2-input" type="email" required placeholder="Email address" value={form.email} onChange={(e) => set('email', e.target.value)} />
+
+                {/* ── Step 1: details form ── */}
+                <form onSubmit={otpSent ? register : sendOtp}>
+                  <input className="lp2-input" type="text" required placeholder="Full name" value={form.name} onChange={(e) => set('name', e.target.value)} disabled={otpSent} />
+                  <input className="lp2-input" type="email" required placeholder="Email address" value={form.email} onChange={(e) => set('email', e.target.value)} disabled={otpSent} />
                   <input
                     className="lp2-input"
                     type="tel"
@@ -355,14 +377,16 @@ export default function KickstarterLanding() {
                     pattern="[0-9]{10}"
                     value={form.phone}
                     onChange={(e) => handlePhoneChange(e.target.value)}
+                    disabled={otpSent}
                   />
-                  <input className="lp2-input" type="text" required placeholder="City" value={form.city} onChange={(e) => set('city', e.target.value)} />
+                  <input className="lp2-input" type="text" required placeholder="City" value={form.city} onChange={(e) => set('city', e.target.value)} disabled={otpSent} />
                   <select
                     className="lp2-input"
                     required
-                    style={{ color: form.background ? 'var(--ink)' : 'rgba(38,33,92,0.45)', background: 'white', cursor: 'pointer' }}
+                    style={{ color: form.background ? 'var(--ink)' : 'rgba(38,33,92,0.45)', background: otpSent ? '#f5f5f5' : 'white', cursor: otpSent ? 'default' : 'pointer' }}
                     value={form.background}
                     onChange={(e) => set('background', e.target.value)}
+                    disabled={otpSent}
                   >
                     <option value="" disabled hidden>Select background...</option>
                     <option value="student">Student</option>
@@ -370,8 +394,36 @@ export default function KickstarterLanding() {
                     <option value="graduate">Graduate</option>
                     <option value="business owner">Business Owner</option>
                   </select>
-                  <input className="lp2-input" type="text" required placeholder="OTP" value={form.otp} onChange={(e) => set('otp', e.target.value)} />
-                  <button className="lp2-submit" type="submit" disabled={busy}>{busy ? 'Reserving…' : 'Register now'}</button>
+
+                  {/* ── Step 2: OTP box — slides in after Verify Now ── */}
+                  {otpSent && (
+                    <div className="lp2-otp-wrap">
+                      <p className="lp2-otp-hint">📱 OTP sent to <b>+91 {form.phone}</b></p>
+                      <input
+                        className="lp2-input lp2-otp-input"
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={6}
+                        placeholder="Enter 6-digit OTP"
+                        value={form.otp}
+                        onChange={(e) => set('otp', e.target.value.replace(/\D/g, '').slice(0, 6))}
+                        autoFocus
+                      />
+                      <button type="button" className="lp2-otp-resend" onClick={() => { setOtpSent(false); setForm(f => ({ ...f, otp: '' })); setErr(null); }}>
+                        ← Change details
+                      </button>
+                    </div>
+                  )}
+
+                  {!otpSent ? (
+                    <button className="lp2-submit" type="submit" disabled={otpBusy}>
+                      {otpBusy ? 'Sending OTP…' : '🔐 Verify Now'}
+                    </button>
+                  ) : (
+                    <button className="lp2-submit" type="submit" disabled={busy}>
+                      {busy ? 'Registering…' : 'Complete Registration →'}
+                    </button>
+                  )}
                   {err && <p className="lp2-err">{typeof err === 'string' ? err : "Couldn't register — please check your connection and try again."}</p>}
                 </form>
               </>
