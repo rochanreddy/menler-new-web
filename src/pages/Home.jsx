@@ -8,6 +8,7 @@ import Footer from '../components/layout/Footer';
 import Seo from '../components/common/Seo';
 import Reveal from '../components/common/Reveal';
 import MentorsRail from '../components/common/MentorsRail';
+import MenlerCommunitySection from '../components/common/MenlerCommunitySection';
 import { useToast } from '../components/common/Toast';
 const Hero3D = lazy(() => import('../components/common/Hero3D'));
 import { HOME_FAQS } from '../data/faqData';
@@ -385,6 +386,8 @@ export default function Home() {
 
       {/* ── MENTORS ── */}
       <MentorsRail style={{ paddingTop: 48, paddingBottom: 32 }} />
+
+      <MenlerCommunitySection className="menler-community--page" />
 
       {/* ── HIRING PARTNERS & ROLES ── */}
       <section className="section jobs-section" style={{ paddingTop: 48, paddingBottom: 32 }}>

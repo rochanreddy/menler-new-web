@@ -2,6 +2,7 @@ import { useReducer, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../components/layout/Footer';
 import Seo from '../components/common/Seo';
+import MenlerCommunitySection from '../components/common/MenlerCommunitySection';
 import FaqList from '../components/common/FaqList';
 import { submitLead, requestResource, createReport } from '../services/leadService';
 import { getRecommendation, maxScoreForQuestions } from '../data/aptitudeQuestions';
@@ -673,6 +674,8 @@ export default function Aptitude() {
           )}
         </div>
       </section>
+
+      <MenlerCommunitySection className="menler-community--page" />
 
       <hr style={{ border: 'none', borderTop: '1px solid rgba(38,33,92,0.12)', maxWidth: 1080, margin: '0 auto' }} />
 

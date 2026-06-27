@@ -4,6 +4,7 @@ import CtaBanner from '../components/common/CtaBanner';
 import Footer from '../components/layout/Footer';
 import Seo from '../components/common/Seo';
 import MentorsRail from '../components/common/MentorsRail';
+import MenlerCommunitySection from '../components/common/MenlerCommunitySection';
 import MenlerWordmark from '../components/common/MenlerWordmark';
 import { useApply } from '../components/common/ApplyContext';
 
@@ -102,6 +103,8 @@ export default function About() {
           <MentorsRail bare rows={1} />
         </div>
       </section>
+
+      <MenlerCommunitySection className="menler-community--page" />
 
       {/* ── WORKING WITH US ── */}
       <section id="working-with-us" className="section" style={{ background: 'white' }}>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import MenlerWordmark from '../components/common/MenlerWordmark';
 import Seo from '../components/common/Seo';
+import MenlerCommunitySection from '../components/common/MenlerCommunitySection';
 import { submitLead } from '../services/leadService';
 import { useContent } from '../lib/useContent';
 
@@ -106,10 +107,19 @@ const CAMPAIGN_QUERY = `*[_type == "campaignPage" && slug.current == $slug][0]{
 
 const has = (v) => v != null && v !== '' && !(Array.isArray(v) && v.length === 0);
 
+const COUNTRY_CODES = [
+  { code: '+91', label: 'IN +91' },
+  { code: '+1', label: 'US +1' },
+  { code: '+44', label: 'UK +44' },
+  { code: '+971', label: 'AE +971' },
+  { code: '+65', label: 'SG +65' },
+  { code: '+61', label: 'AU +61' },
+];
+
 export default function KickstarterLanding() {
   const navigate = useNavigate();
   const go = (p) => { navigate(p); window.scrollTo(0, 0); };
-  const [form, setForm] = useState({ name: '', email: '', phone: '', city: '', background: '', otp: '' });
+  const [form, setForm] = useState({ name: '', email: '', countryCode: '+91', phone: '', city: '', background: '', otp: '' });
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState(null);
   const [done, setDone] = useState(false);
@@ -119,9 +129,11 @@ export default function KickstarterLanding() {
 
   const handlePhoneChange = (val) => {
     const clean = val.replace(/\D/g, '');
-    const truncated = clean.slice(0, 10);
-    setForm((f) => ({ ...f, phone: truncated }));
+    const maxLen = form.countryCode === '+91' ? 10 : 15;
+    setForm((f) => ({ ...f, phone: clean.slice(0, maxLen) }));
   };
+
+  const phoneMinLen = form.countryCode === '+91' ? 10 : 8;
 
   // Sanity-editable content for this slug, merged per-field over the fallback.
   const { slug } = useParams();
@@ -147,8 +159,8 @@ export default function KickstarterLanding() {
   // Step 1 — validate fields, then reveal the OTP box.
   const sendOtp = (e) => {
     e.preventDefault();
-    if (form.phone.length !== 10) {
-      setErr('Phone number must be exactly 10 digits.');
+    if (form.phone.length < phoneMinLen) {
+      setErr(`Phone number must be at least ${phoneMinLen} digits.`);
       return;
     }
     if (!form.name.trim() || !form.email.trim() || !form.city.trim() || !form.background) {
@@ -170,14 +182,14 @@ export default function KickstarterLanding() {
     }
     setErr(null); setBusy(true);
     try {
-      await submitLead({ ...form, source: 'campaign-workshop', campaign: activeSlug, workshop: heading, cta_label: `Register: ${heading}`, section: `Campaign · ${activeSlug}` });
+      await submitLead({ ...form, phone: `${form.countryCode} ${form.phone}`, source: 'campaign-workshop', campaign: activeSlug, workshop: heading, cta_label: `Register: ${heading}`, section: `Campaign · ${activeSlug}` });
       navigate('/checkout', {
         state: {
           workshop: heading,
           price: d.price,
           name: form.name,
           email: form.email,
-          phone: form.phone,
+          phone: `${form.countryCode} ${form.phone}`,
           city: form.city,
           background: form.background,
           otp: form.otp,
@@ -201,7 +213,7 @@ export default function KickstarterLanding() {
       {/* Minimal top bar */}
       <header className="lp2-top">
         <MenlerWordmark size={26} theme="light" />
-        <span className="lp2-top-tag">Live Workshop</span>
+        <span className="lp2-top-tag">Live Workshop<span className="lp2-top-tag-dot" aria-hidden="true" /></span>
       </header>
 
       <div className="lp2-grid">
@@ -311,21 +323,11 @@ export default function KickstarterLanding() {
             </div>
           </section>
 
-          {/* Join our Menler community — WhatsApp */}
-          <section className="lp2-community-wrap">
-            <div className="mini-lead lp2-wa-card">
-              <div className="mini-lead-inner">
-                <div className="mini-lead-copy">
-                  <h3>Join our Menler<br /><em>community.</em></h3>
-                  <p>{d.communityText}</p>
-                </div>
-                <a className="lp2-wa-join" href={d.whatsappUrl || '#'} target="_blank" rel="noopener noreferrer">
-                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.82 11.82 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.978-1.607zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
-                  Join on WhatsApp
-                </a>
-              </div>
-            </div>
-          </section>
+          <MenlerCommunitySection
+            className="lp2-community-wrap"
+            whatsappUrl={d.whatsappUrl}
+            communityText={d.communityText}
+          />
 
           {/* Explore Menler Programs */}
           <section className="lp2-block">
@@ -358,27 +360,39 @@ export default function KickstarterLanding() {
               </div>
             ) : (
               <>
+                <p className="lp2-form-h">Reserve your seat</p>
                 <div className="lp2-price-row">
                   <span className="lp2-price">₹{d.price}</span>
                   {d.origPrice && <span className="lp2-price-orig">₹{d.origPrice}</span>}
                 </div>
-                <p className="lp2-form-h">Reserve your seat</p>
 
                 {/* ── Step 1: details form ── */}
                 <form onSubmit={otpSent ? register : sendOtp}>
                   <input className="lp2-input" type="text" required placeholder="Full name" value={form.name} onChange={(e) => set('name', e.target.value)} disabled={otpSent} />
                   <input className="lp2-input" type="email" required placeholder="Email address" value={form.email} onChange={(e) => set('email', e.target.value)} disabled={otpSent} />
-                  <input
-                    className="lp2-input"
-                    type="tel"
-                    required
-                    placeholder="Phone number"
-                    inputMode="numeric"
-                    pattern="[0-9]{10}"
-                    value={form.phone}
-                    onChange={(e) => handlePhoneChange(e.target.value)}
-                    disabled={otpSent}
-                  />
+                  <div className="lp2-phone-row">
+                    <select
+                      className="lp2-input lp2-country-code"
+                      value={form.countryCode}
+                      onChange={(e) => setForm((f) => ({ ...f, countryCode: e.target.value, phone: '' }))}
+                      disabled={otpSent}
+                      aria-label="Country code"
+                    >
+                      {COUNTRY_CODES.map(({ code, label }) => (
+                        <option key={code} value={code}>{label}</option>
+                      ))}
+                    </select>
+                    <input
+                      className="lp2-input lp2-phone-input"
+                      type="tel"
+                      required
+                      placeholder="Phone number"
+                      inputMode="numeric"
+                      value={form.phone}
+                      onChange={(e) => handlePhoneChange(e.target.value)}
+                      disabled={otpSent}
+                    />
+                  </div>
                   <input className="lp2-input" type="text" required placeholder="City" value={form.city} onChange={(e) => set('city', e.target.value)} disabled={otpSent} />
                   <select
                     className="lp2-input"
@@ -398,30 +412,30 @@ export default function KickstarterLanding() {
                   {/* ── Step 2: OTP box — slides in after Verify Now ── */}
                   {otpSent && (
                     <div className="lp2-otp-wrap">
-                      <p className="lp2-otp-hint">📱 OTP sent to <b>+91 {form.phone}</b></p>
+                      <p className="lp2-otp-hint">OTP sent to <b>{form.countryCode} {form.phone}</b></p>
                       <input
                         className="lp2-input lp2-otp-input"
                         type="text"
                         inputMode="numeric"
                         maxLength={6}
-                        placeholder="Enter 6-digit OTP"
+                        placeholder="Enter OTP"
                         value={form.otp}
                         onChange={(e) => set('otp', e.target.value.replace(/\D/g, '').slice(0, 6))}
                         autoFocus
                       />
                       <button type="button" className="lp2-otp-resend" onClick={() => { setOtpSent(false); setForm(f => ({ ...f, otp: '' })); setErr(null); }}>
-                        ← Change details
+                        Edit details
                       </button>
                     </div>
                   )}
 
                   {!otpSent ? (
                     <button className="lp2-submit" type="submit" disabled={otpBusy}>
-                      {otpBusy ? 'Sending OTP…' : '🔐 Verify Now'}
+                      {otpBusy ? 'Sending OTP…' : 'Verify to register'}
                     </button>
                   ) : (
                     <button className="lp2-submit" type="submit" disabled={busy}>
-                      {busy ? 'Registering…' : 'Complete Registration →'}
+                      {busy ? 'Registering…' : 'Complete Registration'}
                     </button>
                   )}
                   {err && <p className="lp2-err">{typeof err === 'string' ? err : "Couldn't register — please check your connection and try again."}</p>}

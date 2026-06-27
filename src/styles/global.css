@@ -1718,7 +1718,8 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
    Left column scrolls, right column (form) is sticky. Amber Kickstarter theme. */
 .lp2 { --a: #BA7517; --a-dark: #854F0B; --cream: #FFF6E1; --banner-from: #FFF1CC; --banner-to: #F6D77E; --hl-bg: #C7F24D; --hl-text: #1c2400; background: #fff; color: var(--ink); min-height: 100vh; }
 .lp2-top { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; justify-content: space-between; padding: 13px clamp(16px, 5vw, 48px); background: rgba(255,255,255,0.94); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(38,33,92,0.08); }
-.lp2-top-tag { font-size: 10.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--a-dark); background: var(--cream); padding: 5px 11px; border-radius: 999px; }
+.lp2-top-tag { display: inline-flex; align-items: center; gap: 7px; font-size: 10.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--a-dark); background: var(--cream); padding: 5px 11px; border-radius: 999px; }
+.lp2-top-tag-dot { width: 7px; height: 7px; border-radius: 50%; background: #1D9E75; flex-shrink: 0; box-shadow: 0 0 0 2px rgba(29,158,117,0.25); }
 
 .lp2-grid { max-width: 1280px; margin: 0 auto; padding: clamp(28px, 5vw, 56px) clamp(16px, 5vw, 48px) 64px; }
 @media (min-width: 901px) {
@@ -1897,7 +1898,68 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-wa-join svg { width: 20px; height: 20px; }
 
 /* Campaign variant: heading outside the card, horizontal layout */
-.lp2-community-wrap { margin: 36px auto 0; width: 100%; max-width: 1100px; text-align: center; }
+.lp2-community-wrap,
+.menler-community.lp2-community-wrap { margin: 36px auto 0; width: 100%; max-width: 1100px; text-align: center; padding: 0 clamp(16px, 4vw, 24px); }
+.menler-community.lp2-community-wrap .menler-community-card { padding: 24px clamp(20px, 4vw, 32px); }
+
+/* Shared Menler community block (campaign, home, about, aptitude, checkout) */
+.menler-community { width: 100%; }
+.menler-community-card { border-radius: 18px; }
+.menler-community .mini-lead-inner { gap: 14px; }
+.menler-community .lp2-wa-join { gap: 6px; }
+
+/* Full-width cloud band on home, about, aptitude */
+.menler-community--page {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 28px var(--gutter);
+  background: var(--cloud);
+  box-sizing: border-box;
+}
+.menler-community--page .menler-community-card.mini-lead {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+}
+.menler-community--page .mini-lead-inner {
+  justify-content: flex-start;
+  gap: 4px;
+}
+
+/* Checkout thank-you — bordered narrow rectangle */
+.menler-community--confirm {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 0;
+}
+.menler-community--confirm .menler-community-card {
+  padding: 16px 20px;
+  border-radius: 14px;
+  text-align: left;
+  background: #fff;
+  border: 1px solid rgba(83,74,183,0.18);
+  box-shadow: 0 6px 24px rgba(83,74,183,0.07);
+}
+.menler-community--confirm .mini-lead-inner {
+  gap: 12px;
+  align-items: center;
+}
+.menler-community--confirm .mini-lead-copy h3 { font-size: 18px; margin-bottom: 2px; }
+.menler-community--confirm .mini-lead-copy p { font-size: 11.5px; line-height: 1.45; }
+.menler-community--confirm .lp2-wa-join {
+  font-size: 12.5px;
+  padding: 10px 16px;
+  white-space: nowrap;
+}
+.menler-community--confirm .lp2-wa-join svg { width: 16px; height: 16px; }
+@media (max-width: 520px) {
+  .menler-community--confirm .mini-lead-inner { flex-direction: column; align-items: stretch; }
+  .menler-community--confirm .lp2-wa-join { justify-content: center; }
+}
 .lp2-comm-h-out { font-size: clamp(22px, 3vw, 30px); font-weight: 800; color: var(--ink); margin: 0 0 16px; letter-spacing: -0.02em; }
 .lp2-comm-h-out em { font-style: italic; color: var(--specialist, #5a3fd6); }
 .lp2-community--row {
@@ -1920,11 +1982,27 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 
 /* Right column — sticky form */
 .lp2-form-card { background: #fff; border: 1px solid rgba(38,33,92,0.12); border-radius: 18px; padding: 26px 24px; box-shadow: 0 24px 60px rgba(38,33,92,0.12); }
-.lp2-price-row { display: flex; align-items: baseline; gap: 10px; }
+.lp2-price-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; }
 .lp2-price { font-family: 'DM Serif Display', serif; font-size: 40px; color: var(--ink); line-height: 1; }
 .lp2-price-orig { font-size: 16px; color: var(--text-muted); text-decoration: line-through; }
 .lp2-seats { margin-top: 8px; font-size: 12.5px; font-weight: 600; color: var(--a-dark); }
-.lp2-form-h { margin-top: 16px; margin-bottom: 12px; font-size: 15px; font-weight: 600; color: var(--ink); }
+.lp2-form-h { margin-top: 0; margin-bottom: 10px; font-size: 15px; font-weight: 600; color: var(--ink); }
+.lp2-phone-row { display: flex; align-items: stretch; gap: 8px; margin-bottom: 10px; width: 100%; }
+.lp2-phone-row .lp2-country-code {
+  flex: 0 0 82px;
+  width: 82px;
+  max-width: 82px;
+  margin-bottom: 0;
+  padding: 12px 24px 12px 10px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.lp2-phone-row .lp2-phone-input {
+  flex: 1 1 0;
+  width: 0;
+  min-width: 0;
+  margin-bottom: 0;
+}
 .lp2-input { width: 100%; padding: 12px 14px; margin-bottom: 10px; border: 1px solid rgba(38,33,92,0.2); border-radius: 10px; font-family: inherit; font-size: 14px; color: var(--ink); }
 .lp2-input:focus { outline: none; border-color: var(--a); box-shadow: 0 0 0 3px rgba(186,117,23,0.14); }
 .lp2-input:disabled { background: #f5f5f7; color: var(--text-muted); cursor: default; }
@@ -2092,11 +2170,31 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   justify-content: center;
   min-height: 100vh;
 }
+.cox-confirm-back {
+  align-self: center;
+  margin: 20px 0 0;
+  background: var(--specialist);
+  border: none;
+  color: #fff;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(83,74,183,0.28);
+  transition: background .15s, box-shadow .15s, transform .15s;
+}
+.cox-confirm-back:hover {
+  background: var(--ink);
+  box-shadow: 0 6px 18px rgba(38,33,92,0.22);
+  transform: translateY(-1px);
+}
 .cox-confirm {
   max-width: 560px;
   margin: 0 auto;
   text-align: center;
-  padding: clamp(56px, 10vw, 100px) 24px clamp(48px, 8vw, 80px);
+  padding: clamp(36px, 7vw, 64px) 24px clamp(48px, 8vw, 80px);
   display: flex;
   flex-direction: column;
   align-items: center;

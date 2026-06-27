@@ -2,7 +2,7 @@ import { defineField, defineType } from 'sanity';
 import { orderRankField } from '@sanity/orderable-document-list';
 
 // A playbook / catalog add-on shown on the checkout page (/checkout) under
-// "Add playbooks & catalogs". Mirrors the CATALOG array in src/pages/Checkout.jsx.
+// "Add resources". Mirrors the CATALOG array in src/pages/Checkout.jsx.
 export default defineType({
   name: 'playbook',
   title: 'Playbook / Catalog',

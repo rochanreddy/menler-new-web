@@ -35,10 +35,15 @@ const client = createClient({ projectId, dataset, apiVersion: '2025-01-01', toke
 const rank = (i) => String(i).padStart(6, '0');
 
 const PLAYBOOKS = [
-  { id: 'prompts', title: '100+ AI Prompts Playbook', desc: 'Tested prompts across business, engineering & beginner tracks.', price: 499 },
-  { id: 'agents', title: 'AI Agent Build Templates', desc: 'Ready-to-use agent blueprints, MCP recipes & workflows.', price: 799 },
-  { id: 'domain', title: 'Domain Track Playbooks (×9)', desc: 'One deep-dive playbook per Generalist domain track.', price: 999 },
-  { id: 'tools', title: 'GenAI Toolstack Starter Kit', desc: 'Setup guides & cheat-sheets for the full Menler toolstack.', price: 399 },
+  { id: 'prompt-library', title: 'Prompt Library', desc: '100+ tested prompts across business, engineering, and beginner tracks.', price: 499 },
+  { id: 'ai-stack-map', title: 'AI stack map', desc: 'Visual guide to the best AI tools by category.', price: 399 },
+  { id: 'connector-projects', title: 'Project connectors docs', desc: '10 hands-on project walkthroughs led by the program instructors.', price: 799 },
+  { id: 'ai-glossary', title: 'AI glossary', desc: '100+ AI terms explained in simple, beginner-friendly language.', price: 299 },
+  { id: 'claude-code', title: 'Claude Code Playbook', desc: 'Build, refactor, and ship real code with Claude in your terminal and editor.', price: 499 },
+  { id: 'claude-chat', title: 'Claude Chat Playbook', desc: 'Everyday prompting — research, writing, analysis, and fast answers.', price: 499 },
+  { id: 'claude-cowork', title: 'Claude Cowork Playbook', desc: 'Multi-document, multi-step work that turns raw inputs into finished deliverables.', price: 499 },
+  { id: 'claude-design', title: 'Claude Design Playbook', desc: 'Generate visuals, mockups, and on-brand design assets with Claude.', price: 499 },
+  { id: 'claude-ms', title: 'Claude in MS', desc: 'Use Claude across Microsoft 365 — Word, Excel, PowerPoint, and Teams.', price: 499 },
 ];
 
 async function run() {
