@@ -26,6 +26,9 @@ export default function AmplifeedOtpForm({ channels = 'email', fields = 'name,em
     s.src = 'https://www.amplifeed.tech/embed/amplifeed-otp.js';
     s.async = true;
     s.setAttribute('data-amplifeed-otp', '');
+    // data-base tells the widget where to send the final submit. Without it the
+    // widget falls back to a placeholder host and the submit fails ("Network error").
+    s.setAttribute('data-base', 'https://www.amplifeed.tech');
     document.body.appendChild(s);
   }, [ready]);
 
