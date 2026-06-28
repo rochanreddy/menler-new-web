@@ -10,6 +10,7 @@ import { useApply } from '../components/common/ApplyContext';
 import HiringJobs from '../components/common/HiringJobs';
 import PricingCard from '../components/common/PricingCard';
 import { useContent } from '../lib/useContent';
+import { downloadFile } from '../lib/download';
 import { GENERALIST_FAQS } from '../data/faqData';
 import { requestBrochure } from '../services/leadService';
 
@@ -448,7 +449,7 @@ export default function Generalist() {
           })}
         </div>
         <div style={{ textAlign: 'center', marginTop: 28 }}>
-          <button className="btn-primary" onClick={openApply}>Download Curriculum</button>
+          <button className="btn-primary" onClick={() => downloadFile('/pdfs/Menler_Claude_Gen_brochure.pdf', 'Menler-Generalist-Curriculum.pdf')}>Download Curriculum</button>
         </div>
       </section>
 

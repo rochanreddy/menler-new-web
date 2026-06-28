@@ -10,6 +10,7 @@ import { useApply } from '../components/common/ApplyContext';
 import HiringJobs from '../components/common/HiringJobs';
 import PricingCard from '../components/common/PricingCard';
 import { useContent } from '../lib/useContent';
+import { downloadFile } from '../lib/download';
 import { KICKSTARTER_FAQS } from '../data/faqData';
 import { requestBrochure } from '../services/leadService';
 
@@ -303,7 +304,7 @@ export default function Kickstarter() {
           })}
         </div>
         <div style={{ textAlign: 'center', marginTop: 28 }}>
-          <button className="btn-primary" style={{ background: '#BA7517', minWidth: 200 }} onClick={openApply}>Download curriculum</button>
+          <button className="btn-primary" style={{ background: '#BA7517', minWidth: 200 }} onClick={() => downloadFile('/pdfs/1_updated_Menler AI Kickstarter Brochure_2026.pdf', 'Menler-Kickstarter-Curriculum.pdf')}>Download curriculum</button>
         </div>
       </section>
 
