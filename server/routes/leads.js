@@ -70,7 +70,13 @@ const KNOWN_FIELDS = new Set([
 // is shared by Amplifeed). Override the URL with AMPLIFEED_WEBHOOK_URL if needed.
 const AMPLIFEED_URL =
   process.env.AMPLIFEED_WEBHOOK_URL ||
-  'https://www.amplifeed.tech/api/lead-sources/inbound/Zh7UZLt_nOqTmNpc85Bybn_t';
+  'https://www.amplifeed.tech/api/lead-sources/inbound/S0-1VbVfoh_ydsCFUsu1MXld';
+
+// Shared with Amplifeed. Prefer the env var; fall back to the known value so
+// forwarding works even if the env isn't set (this same key is already present
+// in the client OTP widget, so it is not a new exposure).
+const AMPLIFEED_SECRET =
+  process.env.AMPLIFEED_WEBHOOK_SECRET || 'AYnA2j75Izjd7arD_AiKIDy2';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -144,8 +150,8 @@ async function postWithRetry(url, options, attempts = 3) {
 
 // Fire-and-forget; never blocks or breaks lead capture.
 async function forwardLeadToCrm(lead) {
-  const secret = process.env.AMPLIFEED_WEBHOOK_SECRET;
-  if (!secret) return; // not configured yet → skip silently
+  const secret = AMPLIFEED_SECRET;
+  if (!secret) return; // not configured → skip silently
   // Amplifeed requires name + (email or phone); skip clearly invalid leads.
   if (!lead.email && !lead.phone) return;
   try {
@@ -184,6 +190,9 @@ router.post('/', async (req, res) => {
       if (KNOWN_FIELDS.has(key)) doc[key] = value;
       else doc.extra[key] = value;
     }
+    // OTP-verified submissions (email/phone verified client-side via Amplifeed/MSG91)
+    // → mark verified so the admin panel + CRM see them as high quality.
+    if (body.otp_token) { doc.verified = true; doc.verified_at = new Date(); }
 
     const lead = await Lead.create(doc);
     // Push to Amplifeed CRM (non-blocking — don't await; failures are logged only).

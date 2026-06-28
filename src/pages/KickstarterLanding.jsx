@@ -6,7 +6,7 @@ import MenlerCommunitySection from '../components/common/MenlerCommunitySection'
 import { MENLER_WHATSAPP_URL } from '../data/communityLinks';
 import { submitLead } from '../services/leadService';
 import { useContent } from '../lib/useContent';
-import AmplifeedOtpForm from '../components/common/AmplifeedOtpForm';
+import { loadOtpProvider, sendOtp } from '../lib/amplifeedOtp';
 
 // ── Single-mentor workshop registration landing page (/ai-kickstarter) ──
 // Left column scrolls (mentor + workshop details); right column is a STATIC
@@ -158,53 +158,52 @@ export default function KickstarterLanding() {
   setVar('--hl-bg', d.highlightBg);
   setVar('--hl-text', d.highlightText);
 
-  // Step 1 — validate fields, then reveal the OTP box.
-  const sendOtp = (e) => {
+  // Validate → verify email via real OTP (Amplifeed/MSG91 shows its own code-entry
+  // UI) → submit the lead → go straight to checkout. No manual "submit OTP" step.
+  const register = async (e) => {
     e.preventDefault();
-    if (form.phone.length < phoneMinLen) {
-      setErr(`Phone number must be at least ${phoneMinLen} digits.`);
-      return;
-    }
     if (!form.name.trim() || !form.email.trim() || !form.city.trim() || !form.background) {
       setErr('Please fill in all fields before verifying.');
       return;
     }
-    setErr(null);
-    setOtpBusy(true);
-    // Simulate a brief "sending" delay for UX then reveal OTP input.
-    setTimeout(() => { setOtpBusy(false); setOtpSent(true); }, 800);
-  };
-
-  // Step 2 — complete registration with OTP.
-  const register = async (e) => {
-    e.preventDefault();
-    if (!form.otp.trim()) {
-      setErr('Please enter the OTP sent to your phone.');
+    if (form.phone.length < phoneMinLen) {
+      setErr(`Phone number must be at least ${phoneMinLen} digits.`);
       return;
     }
-    setErr(null); setBusy(true);
+    setErr(null);
+    setOtpBusy(true);
     try {
-      await submitLead({ ...form, phone: `${form.countryCode} ${form.phone}`, source: 'campaign-workshop', campaign: activeSlug, workshop: heading, cta_label: `Register: ${heading}`, section: `Campaign · ${activeSlug}` });
+      await loadOtpProvider();
+      const token = await sendOtp(form.email.trim()); // email OTP
+      setOtpBusy(false);
+      setBusy(true);
+      const phone = `${form.countryCode} ${form.phone}`;
+      await submitLead({
+        name: form.name, email: form.email, phone,
+        city: form.city, background: form.background,
+        otp_token: token, otp_channel: 'email', otp_identifier: form.email.trim(),
+        source: 'campaign-workshop', campaign: activeSlug, workshop: heading,
+        cta_label: `Register: ${heading}`, section: `Campaign · ${activeSlug}`,
+      });
       navigate('/checkout', {
         state: {
           workshop: heading,
           price: d.price,
           name: form.name,
           email: form.email,
-          phone: `${form.countryCode} ${form.phone}`,
+          phone,
           city: form.city,
           background: form.background,
-          otp: form.otp,
           campaign: activeSlug,
           whatsappUrl: d.whatsappUrl,
           whatsappText: d.whatsappText,
-          communityText: d.communityText
-        }
+          communityText: d.communityText,
+        },
       });
-    } catch {
-      setErr("Couldn't register — please check your connection and try again.");
-    } finally {
+    } catch (e2) {
+      setOtpBusy(false);
       setBusy(false);
+      setErr(e2?.message || 'Verification failed. Please try again.');
     }
   };
 
@@ -368,15 +367,54 @@ export default function KickstarterLanding() {
                   {d.origPrice && <span className="lp2-price-orig">₹{d.origPrice}</span>}
                 </div>
 
-                {/* Real Amplifeed OTP form — verifies the email and captures the lead in the
-                    CRM, then routes to checkout once Amplifeed confirms the submission. */}
-                <AmplifeedOtpForm
-                  fields="name,email,phone,city"
-                  verifyLabel="Verify to register"
-                  onSuccess={(lead) => navigate('/checkout', {
-                    state: { workshop: heading, price: d.price, name: lead.name, email: lead.email, phone: lead.phone },
-                  })}
-                />
+                {/* Our own form — real email OTP via Amplifeed/MSG91, lead saved to our
+                    backend (admin + CRM), then straight to checkout. */}
+                <form onSubmit={register}>
+                  <input className="lp2-input" type="text" required placeholder="Full name" value={form.name} onChange={(e) => set('name', e.target.value)} disabled={busy || otpBusy} />
+                  <input className="lp2-input" type="email" required placeholder="Email address" value={form.email} onChange={(e) => set('email', e.target.value)} disabled={busy || otpBusy} />
+                  <div className="lp2-phone-row">
+                    <select
+                      className="lp2-input lp2-country-code"
+                      value={form.countryCode}
+                      onChange={(e) => setForm((f) => ({ ...f, countryCode: e.target.value, phone: '' }))}
+                      disabled={busy || otpBusy}
+                      aria-label="Country code"
+                    >
+                      {COUNTRY_CODES.map(({ code, label }) => (
+                        <option key={code} value={code}>{label}</option>
+                      ))}
+                    </select>
+                    <input
+                      className="lp2-input lp2-phone-input"
+                      type="tel"
+                      required
+                      placeholder="Phone number"
+                      inputMode="numeric"
+                      value={form.phone}
+                      onChange={(e) => handlePhoneChange(e.target.value)}
+                      disabled={busy || otpBusy}
+                    />
+                  </div>
+                  <input className="lp2-input" type="text" required placeholder="City" value={form.city} onChange={(e) => set('city', e.target.value)} disabled={busy || otpBusy} />
+                  <select
+                    className="lp2-input"
+                    required
+                    style={{ color: form.background ? 'var(--ink)' : 'rgba(38,33,92,0.45)' }}
+                    value={form.background}
+                    onChange={(e) => set('background', e.target.value)}
+                    disabled={busy || otpBusy}
+                  >
+                    <option value="" disabled hidden>Select background...</option>
+                    <option value="student">Student</option>
+                    <option value="working professional">Working Professional</option>
+                    <option value="graduate">Graduate</option>
+                    <option value="business owner">Business Owner</option>
+                  </select>
+                  <button className="lp2-submit" type="submit" disabled={busy || otpBusy}>
+                    {otpBusy ? 'Sending OTP…' : busy ? 'Registering…' : 'Verify to register'}
+                  </button>
+                  {err && <p className="lp2-err">{typeof err === 'string' ? err : "Couldn't register — please try again."}</p>}
+                </form>
               </>
             )}
           </div>
