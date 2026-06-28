@@ -3083,5 +3083,71 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
   .kp-chips { grid-template-columns: 1fr 1fr; }
 }
 
-/* Amplifeed OTP embed form */
-.amplifeed-form { max-width: 480px; margin: 0 auto; }
+/* Amplifeed OTP embed form — restyled to match the site. The widget renders in
+   light DOM but sets inline styles, so overrides need !important. */
+.amplifeed-form { max-width: 480px; margin: 0 auto; font-family: inherit; }
+
+/* Text fields + dropdowns → mirror .lp2-input */
+.amplifeed-form input,
+.amplifeed-form select,
+.amplifeed-form textarea {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 12px 14px !important;
+  margin-bottom: 10px !important;
+  border: 1px solid rgba(38,33,92,0.2) !important;
+  border-radius: 10px !important;
+  font-family: inherit !important;
+  font-size: 14px !important;
+  color: var(--ink) !important;
+  background: #fff !important;
+  box-shadow: none !important;
+}
+.amplifeed-form input:focus,
+.amplifeed-form select:focus,
+.amplifeed-form textarea:focus {
+  outline: none !important;
+  border-color: var(--a) !important;
+  box-shadow: 0 0 0 3px rgba(186,117,23,0.14) !important;
+}
+.amplifeed-form input::placeholder { color: rgba(38,33,92,0.45) !important; }
+
+/* Primary action button → mirror .lp2-submit */
+.amplifeed-form button[type="submit"],
+.amplifeed-form button:not([type="button"]) {
+  width: 100% !important;
+  margin-top: 4px !important;
+  background: var(--a) !important;
+  color: #fff !important;
+  border: none !important;
+  font-family: inherit !important;
+  font-size: 15.5px !important;
+  font-weight: 600 !important;
+  padding: 14px !important;
+  border-radius: 11px !important;
+  cursor: pointer !important;
+  box-shadow: 0 12px 26px rgba(186,117,23,0.3) !important;
+  transition: opacity .15s, transform .15s !important;
+}
+.amplifeed-form button[type="submit"]:hover,
+.amplifeed-form button:not([type="button"]):hover {
+  opacity: .95 !important;
+  transform: translateY(-1px) !important;
+}
+/* Secondary buttons (resend / edit) → quiet text link in the accent colour */
+.amplifeed-form button[type="button"] {
+  background: none !important;
+  border: none !important;
+  color: var(--a) !important;
+  font-family: inherit !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  padding: 6px 0 !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  width: auto !important;
+}
+
+/* Labels / hint / error text */
+.amplifeed-form label { font-family: inherit !important; font-size: 13px !important; color: var(--ink) !important; font-weight: 600 !important; }
+.amplifeed-form p, .amplifeed-form small, .amplifeed-form span { font-family: inherit !important; }
