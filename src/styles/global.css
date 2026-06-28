@@ -3082,3 +3082,6 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
   .kp-feats { grid-template-columns: 1fr; gap: 14px; }
   .kp-chips { grid-template-columns: 1fr 1fr; }
 }
+
+/* Amplifeed OTP embed form */
+.amplifeed-form { max-width: 480px; margin: 0 auto; }
