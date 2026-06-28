@@ -1,460 +1,460 @@
 // AI for Product Management question bank — 75 questions (5 sets × 15).
-// In the source PDF the correct answer is always the 2nd option (B); we shuffle
-// option order at session build so the correct answer isn't always in one spot.
+// Correct answers VARY (A/B/C/D); the correct option line is prefixed with "*".
+// Option order is shuffled at session build.
 //
-// getProductSession(n) → a fresh random n-question session in the runner's format:
-// { q, options: [{ t, s }] } (s = 1 for the correct option).
+// getProductSession(n) → a fresh random n-question session in the runner's
+// format: { q, options: [{ t, s }] } (s = 1 for the correct option).
 
 const RAW = String.raw`
-What is the most effective use of Claude in the product discovery phase?
-Ask Claude to identify what features your product should build next.
-Use Claude to synthesise research inputs, structure problem statements, and generate hypotheses to test — while actual customer discovery remains human-conducted.
-Ask Claude to analyse competitor products and replicate their features.
-Use Claude to predict which product ideas will succeed before testing them.
-===
-You have 30 user interview transcripts to analyse. What is the most effective AI-assisted approach?
-Ask Claude to read all transcripts and tell you what to build.
-Define specific research questions first — what problems came up, what workflows are broken, what outcomes users need — then use Claude to identify patterns across transcripts against those questions.
-Ask Claude to summarise each transcript individually.
-Use Claude to rank user quotes by how compelling they are.
-===
-Claude generates a list of user pain points for your product category. What should you do with it?
-Use the list directly as the basis for your next sprint.
-Treat it as a hypothesis set to validate with actual user research — AI-generated pain points reflect training data patterns, not your specific users' actual experience.
-Share it with engineering immediately to start solution design.
-Trust it if it matches what your customer success team has heard anecdotally.
-===
-What is the most effective use of Claude to help write a user research discussion guide?
-Ask Claude to write the guide without any context.
-Brief Claude on the research objective, the stage of discovery, what you already know, and what you need to learn — then review the guide to ensure questions are open-ended and bias-free.
-Ask Claude to write questions that will confirm your existing hypotheses.
-Use Claude to write closed questions that are faster for users to answer.
-===
-You want to use Claude to help synthesise research from multiple sources — interviews, surveys, support tickets, and NPS comments. What approach works best?
-Paste everything into Claude and ask for insights.
-Organise inputs by source type first, define the themes you want to investigate, then use Claude to identify patterns within each source and across sources — with human judgment applied to reconcile conflicting signals.
-Ask Claude to determine which source type is most reliable.
-Use only the source with the most data points for AI analysis.
-===
-What is the most important limitation of AI-generated user personas?
-AI cannot create user personas — only UX researchers can.
-AI personas are based on general patterns, not your specific users — they risk creating fictional archetypes that feel credible but do not reflect the actual people using your product.
-AI personas are only useful for consumer products, not B2B.
-AI personas require too much data to generate accurately.
-===
-What is the most appropriate use of AI for usability testing?
-Have AI conduct usability tests with users.
-Use Claude to help design the test protocol, create task scenarios, and analyse session notes — while actual usability sessions are conducted and observed by humans.
-Replace usability testing with AI prediction of usability issues.
-Use AI to automatically identify usability issues from screen recordings.
-===
-How should Claude be used to help identify the right problem to solve before building a feature?
-Ask Claude what problem you should solve next.
-Share your research evidence — user interviews, support data, churn signals — and ask Claude to help structure a problem statement that distinguishes the symptom from the underlying root cause.
-Ask Claude to analyse your competitors' features to identify problem gaps.
-Use Claude to predict which problem is worth the most revenue if solved.
-===
-You receive conflicting signals from user research — some users want feature A, others want feature B. What is the most effective use of Claude to process this?
-Ask Claude to decide which group of users is right.
-Brief Claude on both signal types, the user segments they come from, and the business context — ask Claude to help structure a framework for deciding which signal to weight more and why.
-Use Claude to predict which feature will generate more revenue.
-Ask Claude to average the two signals into a compromise solution.
-===
-What is the most effective prompt for using Claude to help with jobs-to-be-done (JTBD) analysis?
-"Analyse our product's jobs to be done."
-"Here are five user interview quotes: [quotes]. For each, identify the functional job the user is trying to accomplish, the emotional dimension of that job, and any social context. Then identify common themes across all five."
-"What jobs do customers want our product to do?"
-"Generate a JTBD framework for our product category."
-===
-What is the most valuable outcome of AI-assisted product discovery?
-Faster feature ideation and specification.
-More rigorous hypothesis generation and synthesis — so the product team enters user research conversations with better questions and analyses research outputs more systematically.
-Reduced need for user research as AI can infer user needs.
-Automated generation of product requirements from research data.
-===
-You are conducting discovery for a feature that requires deep domain expertise your team does not have. How does Claude help most?
-Ask Claude to substitute for domain expert knowledge.
-Use Claude to research the domain, generate a list of questions to ask domain experts, and help you understand concepts well enough to have productive expert conversations.
-Trust Claude's domain knowledge as equivalent to an expert's.
-Claude cannot help with domain-specific product discovery.
-===
-What is the most appropriate role for AI in synthesising support ticket data for product insights?
-Have AI automatically generate product requirements from support tickets.
-Use AI to categorise and cluster support tickets by theme, quantify frequency patterns, and surface the most common underlying problems — with PM judgment applied to determine which patterns represent genuine product opportunities.
-Support ticket data should never be used for product discovery.
-AI can determine which support issues represent product bugs vs user error.
-===
-What is the most important thing a PM must bring to AI-assisted product discovery?
-A large enough dataset for AI to analyse effectively.
-A clear point of view on the business context, strategic priorities, and user segments that makes AI-generated insights relevant rather than generic.
-Technical knowledge of how AI discovery tools work.
-Enough time to review all AI-generated outputs thoroughly.
-===
-What is the most important professional obligation when using AI to assist in user research?
-Disclosing AI use to research participants.
-Ensuring that AI assistance enhances rather than replaces genuine empathy for users — product decisions must be grounded in real understanding of user needs, not just pattern-matched AI outputs.
-Using only AI tools approved by the research team.
-Documenting AI usage in all research reports.
-===
-What is the most effective use of Claude to help build a product roadmap?
-Ask Claude to generate the product roadmap from your backlog.
-Brief Claude on strategic objectives, known user needs, technical constraints, and business priorities — use Claude to help structure themes and sequence logic while PM judgment drives the actual prioritisation decisions.
-Ask Claude to prioritise your backlog automatically.
-Use Claude to copy the roadmap structure of a successful competitor.
-===
-You have 50 feature requests in your backlog. What does Claude help with most in the prioritisation process?
-Selecting which 10 features to build next.
-Structuring the evaluation framework, grouping similar requests by underlying need, and drafting the rationale for each prioritisation decision — with PM judgment applied to the actual ranking.
-Predicting which features will generate the most revenue.
-Removing features from the backlog that AI determines are low value.
-===
-A stakeholder pressures you to add their feature to the top of the roadmap. How does Claude help you respond professionally?
-Ask Claude to support the stakeholder's request.
-Use Claude to help structure a clear explanation of the prioritisation criteria and where this feature sits against the current roadmap — and prepare for the stakeholder conversation with data and reasoning.
-Ask Claude to predict the revenue impact of the requested feature.
-Have Claude send the stakeholder a response on your behalf.
-===
-What is the most effective use of AI when applying a prioritisation framework like RICE or ICE?
-Have AI calculate RICE/ICE scores automatically from your backlog.
-Use Claude to help apply the framework consistently across items — generating first-cut scores with documented assumptions — then review each score with the team to challenge assumptions and refine.
-Ask Claude which prioritisation framework to use.
-Trust AI-calculated prioritisation scores without human review.
-===
-What is the most important limitation of AI-assisted roadmap planning?
-AI cannot process enough data for effective roadmap planning.
-AI lacks knowledge of your specific organisational dynamics, engineering capacity realities, stakeholder relationships, and competitive context that are essential inputs to good roadmap decisions.
-AI roadmap tools are only useful for B2C product companies.
-AI cannot understand product strategy concepts.
-===
-How should Claude be used to help communicate roadmap decisions to a cross-functional team?
-Have Claude write and distribute roadmap communications without PM review.
-Use Claude to draft the roadmap narrative — explaining the strategic rationale, what is in and what is not, and why — then the PM reviews, personalises for the audience, and presents it.
-Roadmap communications should always be written entirely manually.
-Ask Claude to present the roadmap to the team in a meeting.
-===
-What is the most effective use of Claude when planning a product quarter?
-Ask Claude to plan the quarter without team input.
-Use Claude to structure the planning document, draft objective statements, identify dependencies across teams, and generate the risk log — while the actual commitments come from team capacity and PM judgment.
-Quarterly planning is too complex for any AI involvement.
-Ask Claude to allocate engineering capacity across initiatives.
-===
-You need to say no to a feature request that has strong executive sponsorship. What does Claude help you prepare?
-Ask Claude to draft a rejection email to the executive.
-Use Claude to help structure the business case for the decision — framing the trade-off clearly, quantifying the opportunity cost, and preparing the conversation with data and alternative proposals.
-Ask Claude to predict whether the executive will accept the rejection.
-Have Claude rewrite the feature request as a lower priority item.
-===
-What is the most valuable use of AI for now/next/later roadmap planning?
-Have AI populate all three horizons based on backlog data.
-Use Claude to help articulate the strategic rationale for each horizon, ensure items are genuinely connected to the strategy, and draft the narrative that explains how now enables next.
-Ask Claude to predict when each roadmap item will be ready.
-AI is not useful for now/next/later planning as it lacks temporal reasoning.
-===
-A new competitor launches a feature that appears on your backlog. How does Claude help you decide whether to accelerate it?
-Ask Claude to recommend whether to accelerate or hold the feature.
-Use Claude to structure a rapid analysis — competitive differentiation impact, current roadmap disruption cost, user importance of this feature type — then make the decision with the PM team.
-Accelerate the feature automatically when any competitor launches it.
-Ask Claude to predict how many customers you will lose without this feature.
-===
-What is the most important thing a good roadmap communicates beyond the list of features?
-The exact delivery dates for each feature.
-The strategic rationale — why these items, in this order, will create the most value for users and the business in this period — which AI can help draft once the PM has defined the underlying logic.
-The engineering effort required for each item.
-The ROI calculation for every feature on the roadmap.
-===
-What is the most effective way to use Claude to help manage technical debt on the roadmap?
-Ask Claude to estimate how much technical debt your product has.
-Use Claude to help articulate the business impact of specific technical debt items in language stakeholders understand — making the case for investment in ways that connect to outcomes, not engineering metrics.
-Technical debt decisions should never involve AI.
-Ask Claude to recommend which technical debt items to ignore.
-===
-What is the most effective use of AI for OKR setting in product teams?
-Have Claude generate OKRs for the product team.
-Brief Claude on strategic priorities and the outcome you are trying to achieve — use Claude to draft OKR language, ensure key results are genuinely measurable, and check that they distinguish outcomes from outputs.
-OKRs should always be set by leadership without AI assistance.
-Ask Claude to benchmark your OKRs against industry standards.
-===
-What is the most important signal that a roadmap needs to be revised?
-A competitor launches a new product.
-New information — from user research, market signals, or business results — that invalidates one or more of the strategic assumptions the current roadmap is built on.
-The engineering team says the roadmap is too ambitious.
-A senior stakeholder expresses dissatisfaction with the roadmap.
-===
-What is the most important professional skill for PMs using AI in roadmapping?
-The ability to use AI prioritisation tools proficiently.
-The ability to make and communicate confident, well-reasoned prioritisation decisions — AI structures the analysis but the PM must own and defend every roadmap choice.
-The ability to process more roadmap data than non-AI PMs.
-Technical knowledge of how AI roadmapping tools work.
-===
-What is the most effective use of Claude to help write a product requirements document (PRD)?
-Ask Claude to write the PRD from a one-line feature description.
-Provide Claude with the user problem, the research evidence, the proposed solution, success metrics, constraints, and edge cases — use Claude to structure and draft the PRD, then review for completeness and accuracy.
-Use Claude to copy a PRD template from a well-known product company.
-PRDs should always be written entirely by the PM without AI assistance.
-===
-You ask Claude to write acceptance criteria for a new feature. What information must you provide?
-Just the feature name and a brief description.
-The specific user behaviours the feature must enable, the edge cases it must handle, the performance requirements, and what 'done' looks like from a user perspective.
-The engineering implementation approach.
-The business revenue target for the feature.
-===
-What is the most important review step after using Claude to draft a technical specification?
-Check that the specification is well-formatted.
-Have engineering review the specification for technical feasibility and completeness — AI can miss implementation implications, system interactions, and constraints that engineers know from the codebase.
-Ask Claude to check its own specification for technical accuracy.
-Check that the specification matches the style of previous specs.
-===
-What is the most effective use of Claude for writing user stories?
-Ask Claude to generate all user stories for a feature without context.
-Provide Claude with the user persona, the job they are trying to do, the specific scenarios, and the acceptance criteria framework — then review stories for specificity and testability.
-User stories should always be written in sprint planning without AI.
-Ask Claude to generate as many user stories as possible for every feature.
-===
-How should Claude be used to help maintain a product wiki or knowledge base?
-Have Claude automatically update all wiki pages when the product changes.
-Use Claude to draft new wiki content, update outdated sections when briefed on changes, and maintain consistent structure — with human review before any content is published.
-Product wikis should never use AI for content generation.
-Ask Claude to determine which wiki pages are outdated.
-===
-You are writing a feature brief for a design sprint. What makes the Claude-assisted brief most effective?
-Ask Claude to write a comprehensive feature brief covering all possibilities.
-Brief Claude with the specific design challenge, the user problem to solve, key constraints, what success looks like for the user, and what you are NOT trying to solve in this sprint.
-Ask Claude to copy the structure of a feature brief from a design thinking template.
-Design sprint briefs should always be written by the design team.
-===
-What is the most effective way to use Claude to document API requirements for engineering?
-Ask Claude to write the API specification without PM input.
-Provide Claude with the use cases the API must support, the data inputs and expected outputs, the error conditions to handle, and performance requirements — then have engineering review for technical completeness.
-API documentation should always be written by engineering, not PM.
-Claude cannot help with technical API documentation.
-===
-What is the most appropriate use of AI in writing product release notes?
-Have Claude generate release notes automatically from the code commit log.
-Brief Claude on each change — what it does, who it helps, and why it matters — and ask Claude to write customer-facing descriptions that communicate value, not technical implementation details.
-Release notes should always be written by technical writers.
-AI release notes are not suitable for external customer audiences.
-===
-You want Claude to help create a product FAQ document. What produces the most useful output?
-Ask Claude to generate all possible questions about your product.
-Compile the questions you actually receive from users, prospects, and support — then use Claude to draft clear, accurate answers to each, reviewed against the actual product.
-Ask Claude to write questions and answers without any product input.
-FAQs should be written entirely by customer support, not PM.
-===
-What is the most important caution when using Claude to write product documentation that will be published externally?
-Ensure the documentation is comprehensive enough.
-Verify every feature description, interaction flow, and technical detail against the actual product — AI-generated documentation that does not match product behaviour damages user trust.
-Make sure the documentation matches competitor documentation quality.
-Confirm that Claude's writing style is consistent with your brand.
-===
-What is the most effective use of Claude to help write a product strategy document?
-Ask Claude to write the strategy document without PM direction.
-Share the strategic analysis, the key bets you are making, the rationale behind each, and the success metrics — use Claude to structure and articulate the narrative clearly.
-Product strategy documents should never use AI assistance.
-Ask Claude to recommend the best product strategy for your category.
-===
-You are creating onboarding documentation for a new product feature. Which approach produces the most user-friendly output from Claude?
-"Write onboarding documentation for this feature."
-"Write step-by-step onboarding guidance for [feature] for a first-time user who has never used [product] before. Each step should include: what to click, what they will see, and what it enables them to do. Use plain language, no jargon."
-"Document the feature comprehensively."
-"Write documentation like the best SaaS products use."
-===
-What is the most effective way to use Claude to maintain consistency across a large product documentation set?
-Ask Claude to automatically update all documentation when changes occur.
-Define a documentation style guide, store it in a Claude Project, and use Claude to check new and updated content against the guide before publication — maintaining consistent voice, structure, and terminology.
-Documentation consistency requires dedicated technical writers only.
-Ask Claude to rewrite all existing documentation in one consistent style.
-===
-What is the most important skill for PMs using AI for product documentation?
-Being able to write faster with AI assistance.
-The ability to translate product thinking into precise briefs that give Claude the specific context it needs — because documentation quality is determined by brief quality.
-Technical knowledge of documentation tools.
-The ability to review AI documentation for grammar and style.
-===
-What is the most important thing to remember when publishing AI-assisted product documentation?
-Disclosing that documentation was AI-assisted.
-Taking full responsibility for accuracy — every claim in published documentation reflects on the product and brand, regardless of whether AI drafted it.
-Using a disclaimer that documentation may contain errors.
-Having legal review all AI-generated documentation before publication.
-===
-What is the most appropriate use of AI to help a PM interpret product analytics?
-Have AI determine what product changes to make from analytics data.
-Use Claude to structure the analytical framework, identify patterns in the data, and generate hypotheses to investigate — with PM judgment applied to interpretation and decision-making.
-Trust AI-generated analytics interpretations as definitive conclusions.
-Product analytics should always be analysed without AI assistance.
-===
-You see a significant drop in a key product metric. How does Claude help you investigate it?
-Ask Claude to diagnose the cause of the metric drop.
-Share the metric data, timeline, and relevant context with Claude — ask Claude to help structure a systematic diagnostic framework and generate plausible hypotheses — then investigate each hypothesis with data.
-Ask Claude to fix the metric drop.
-Have Claude predict when the metric will recover.
-===
-What is the most important caution when using Claude to generate insights from product usage data?
-Claude cannot process product usage data.
-AI insights reflect the patterns in the data provided — they do not account for context outside the data, and correlation patterns should not be treated as causal conclusions without further investigation.
-Product usage insights should only come from data scientists.
-Claude's insights are always less accurate than analyst-generated insights.
-===
-You want to use Claude to help define the success metrics for a new feature before it launches. What approach works best?
-Ask Claude to recommend the best metrics for your feature.
-Brief Claude on the user problem the feature solves, the behaviour change you expect, and the business objective — ask Claude to generate candidate metrics and evaluate whether each is leading or lagging, measurable, and actionable.
-Success metrics should always be defined by the data team.
-Ask Claude to benchmark your planned metrics against industry standards.
-===
-What is the most effective use of AI to help interpret qualitative feedback alongside quantitative data?
-Have AI determine which data type is more reliable.
-Use Claude to structure the analysis so qualitative themes are connected to quantitative patterns — identifying where qualitative context explains quantitative signals and where they conflict.
-Qualitative and quantitative data should always be analysed separately.
-Trust quantitative data over qualitative data in all product decisions.
-===
-You want to use Claude to help evaluate the results of an A/B test. What information must you provide?
-Just the conversion rates for each variant.
-The test design, sample sizes, duration, statistical significance, the metric being measured, and the specific behavioural change each variant was designed to produce.
-Ask Claude to determine statistical significance from the raw data.
-Provide Claude with the business revenue impact of each variant.
-===
-What is the most important limitation of using AI to predict feature adoption rates?
-AI cannot make numerical predictions.
-Feature adoption predictions require understanding of your specific user base, their current behaviour patterns, and the context of the launch — factors that AI generalises from patterns rather than knowing specifically.
-AI adoption predictions are only accurate for large user bases.
-Adoption rate predictions should always come from the data science team.
-===
-You are building a dashboard for your product team to track key health metrics. What does Claude help with most?
-Building the actual dashboard in your analytics tool.
-Defining the metric framework — which metrics to track, how to define them, what the alert thresholds should be, and how to structure them into a coherent view of product health.
-Predicting which metrics will show the most important signals.
-Selecting the best dashboard tool for your team.
-===
-What is the most effective way to use Claude to help with cohort analysis?
-Ask Claude to perform cohort analysis on your user data.
-Define the cohort segmentation logic and the behaviour metrics you want to track per cohort — brief Claude on this — then use Claude to help interpret the patterns and generate actionable hypotheses.
-Cohort analysis is too complex for AI assistance.
-Ask Claude to identify which user cohort is most valuable.
-===
-A PM uses AI to analyse data and concludes that feature X causes retention. What additional step is essential before acting on this conclusion?
-Confirm the analysis with a second AI tool.
-Investigate whether the correlation reflects genuine causation — through controlled experimentation, qualitative research to understand the mechanism, and testing alternative explanations.
-Present the conclusion to leadership for approval.
-Build feature X immediately since the data is clear.
-===
-What is the most effective use of Claude to help communicate data insights to non-technical stakeholders?
-Have Claude present data insights directly to stakeholders.
-Use Claude to translate technical data findings into plain-language business implications — connecting metric patterns to customer outcomes and business results in terms stakeholders understand and can act on.
-Non-technical stakeholders should learn to interpret data themselves.
-Data communications should always be prepared by the data team.
-===
-What is the most important signal that your product analytics is misleading your decisions?
-When the data team disagrees with your interpretation.
-When user research findings consistently contradict what the quantitative data suggests — indicating the metrics are measuring the wrong things or missing important user behaviour.
-When competitors have different metrics for the same product area.
-When AI-generated insights conflict with stakeholder expectations.
-===
-You are reviewing AI-generated product experiment results. The results show statistical significance but a very small effect size. What is the most appropriate interpretation?
-A statistically significant result always means the experiment succeeded.
-Statistical significance tells you the effect is unlikely to be chance — it does not tell you whether the effect is large enough to matter for the business or the user experience.
-Small effect sizes are always too small to act on.
-Ask Claude to recommend whether to implement the change.
-===
-What is the most important professional obligation when presenting AI-assisted product analytics to leadership?
-Disclosing which AI tool was used in the analysis.
-Taking full accountability for the accuracy of the analysis and the soundness of the conclusions — and being transparent about the limitations and assumptions in the data.
-Having a data scientist validate all AI-generated insights before presentation.
-Presenting AI-generated insights as more objective than human analysis.
-===
-What is the single most important thing that distinguishes PMs who use data effectively from those who do not?
-Access to better analytics tools.
-The discipline of connecting data to decisions — ensuring every analytical exercise is anchored to a specific question that, when answered, will change what the team does.
-More data sources to draw from.
-Faster analytical processing enabled by AI tools.
-===
-What is the most important principle for PMs using AI in product work?
-Using AI for all product tasks to maximise output velocity.
-The product manager remains fully accountable for every decision, specification, and recommendation — AI assists the work but does not share accountability for its quality or outcomes.
-AI use in product management should always be disclosed to engineering.
-AI is only appropriate for documentation tasks, not strategic product decisions.
-===
-What is the most significant risk of over-relying on AI for product strategy?
-AI strategic advice is always generic.
-Gradual atrophy of the product intuition and market judgment that comes from deep customer immersion — AI-generated strategy reflects training patterns, not the earned insight that comes from being deeply in the market.
-AI strategy tools are too slow for fast-moving product decisions.
-AI product strategy tools are only available to large teams.
-===
-What does "PM judgment" mean and why can AI not replace it?
-The ability to use data to make product decisions.
-The ability to make good product decisions despite incomplete information, conflicting stakeholder inputs, and genuine uncertainty — drawing on deep user empathy, business understanding, and pattern recognition that AI cannot fully replicate.
-The seniority and experience required to approve product decisions.
-The skill of reviewing AI-generated product recommendations.
-===
-A PM discovers that an AI-generated PRD they approved and shipped contained a significant error that degraded user experience. Who is professionally accountable?
-The AI tool manufacturer.
-The PM who approved and shipped the specification — professional accountability for product decisions does not transfer to AI tools.
-Accountability is shared between the PM and the AI tool.
-The engineering team that implemented the specification.
-===
-What is the most important thing PMs must maintain as AI assists more of their work?
-Proficiency in as many AI tools as possible.
-Deep, direct customer connection — the empathy and understanding of real user needs that grounds product decisions in human reality rather than data patterns.
-The ability to review AI outputs faster than before.
-Technical knowledge of how AI product tools work.
-===
-You discover that an AI tool you use for user research synthesis has been producing outputs with a systematic bias that skewed several product decisions. What is the professional response?
-Continue using the tool since the bias may correct itself.
-Assess the scope of impact, correct affected product decisions where possible, implement improved validation processes, and investigate what decisions were made based on the biased outputs.
-Report the issue to the AI tool manufacturer and wait for a fix.
-Stop using all AI tools for user research synthesis immediately.
-===
-What is the most appropriate attitude toward AI-generated feature ideas?
-Implement them quickly to move faster than competitors.
-Treat them as hypotheses to validate — AI-generated ideas reflect general patterns, not your specific users' actual needs, and must be tested before shaping the roadmap.
-Reject AI-generated ideas in favour of user research-generated ones.
-AI-generated ideas are always less creative than human-generated ones.
-===
-What is "product intuition" and how should AI be used to develop rather than replace it?
-The ability to use analytical tools effectively.
-The earned ability to quickly sense which user problems matter most and which solutions will work — developed through direct user contact, ship-and-learn cycles, and pattern recognition across product decisions. AI accelerates analysis but should not substitute for the direct experience that builds intuition.
-Intuition is unreliable and should be replaced by AI data analysis.
-Product intuition is only relevant for consumer product managers.
-===
-What is the most important consideration when using AI to help with stakeholder communication?
-Using AI to communicate more frequently.
-Ensuring every AI-drafted communication accurately reflects your actual product thinking — stakeholders must be able to trust that what you communicate reflects your genuine understanding and judgment.
-Using AI only for written communication, not verbal presentations.
-Disclosing AI assistance in all stakeholder communications.
-===
-What is the most effective way to develop AI fluency as a PM without compromising professional development?
-Use AI for all tasks to build familiarity as quickly as possible.
-Use AI to accelerate well-understood tasks while deliberately doing the harder, judgment-intensive work manually — maintaining the professional development that comes from struggling with difficult decisions.
-Avoid AI for the first year of PM work to develop fundamentals first.
-AI fluency and professional development are mutually exclusive.
-===
-What makes a PM 'AI-fluent' rather than just 'AI-dependent'?
-Using AI tools consistently across all product tasks.
-Knowing when to use AI, when not to, and maintaining the ability to evaluate AI outputs critically and take full accountability for every product decision.
-Being able to explain how AI tools work technically.
-Using AI to produce more output than peers who do not use AI.
-===
-What is the most important ethical consideration for PMs building AI-powered product features?
-Ensuring AI features generate sufficient revenue to justify development.
-Designing AI features that are transparent about AI involvement, handle AI failures gracefully, do not produce discriminatory outcomes, and maintain human accountability for consequential decisions.
-Avoiding AI features until the technology is fully mature.
-Disclosing AI involvement in all product features to users.
-===
-A PM says: "AI can now do most of what junior PMs do, so we don't need to hire them." What is the most accurate response?
-They are correct — AI will replace junior PM roles entirely.
-AI can replicate the surface-level output of junior PM work but cannot develop the judgment, customer empathy, and cross-functional relationship skills that make senior PMs effective — skills that develop through junior PM experience.
-They are correct for product documentation but not for strategy.
-The answer depends entirely on the specific company and product type.
-===
-What is the most important long-term investment for a PM using AI extensively in their work?
-Staying current with every new AI PM tool that launches.
-Investing deliberately in deep customer connection, cross-functional relationship building, and the judgment-intensive product work that compounds professional capability over time.
-Learning to build AI tools rather than just using them.
-Building a personal brand around AI-augmented PM productivity.
-===
-As a PM, what is the single most important commitment when using AI in your product work?
-Producing more output and moving faster than non-AI PMs.
-Maintaining full accountability for every product decision — ensuring AI assistance makes your thinking more rigorous and your decisions better, without reducing your ownership of or responsibility for product outcomes.
-Disclosing AI assistance in all product documentation.
-Using AI tools approved by your organisation's technology governance team.
+You use AI to generate product feature ideas. The most important next step is:
+Prioritise the ideas by the effort required to implement them.
+*Validate which ideas address real, frequently occurring user problems.
+Share all ideas with the engineering team for feasibility assessment.
+Ask AI to rank the ideas by projected business impact.
+===
+You use Claude to write a product strategy document. What is the highest-risk gap?
+The strategy may not align with your company's existing technical capabilities.
+The strategy will be too generic for the engineering team to implement.
+The strategy may not address regulatory requirements in your market.
+*The strategy lacks your specific market context, user data, and competitive intelligence.
+===
+What is the most reliable AI use case in product discovery?
+*Synthesising patterns from large volumes of user feedback quickly.
+Determining which user problems are worth solving for your business.
+Predicting which product features will have the highest adoption rate.
+Replacing user interviews with AI-generated personas and insights.
+===
+A product manager uses AI to define target user personas. What is the most important limitation?
+AI cannot model personas for niche or emerging user segments.
+AI-generated personas are too detailed for practical use in roadmaps.
+*AI personas reflect general patterns, not your actual user base.
+AI personas lack the emotional depth needed for empathy-based design.
+===
+You use AI to analyse competitor products. What is the most critical verification step?
+Check that the analysis covers all major competitors in your space.
+*Verify specific product claims by using the actual competitor product.
+Have a product designer review the analysis for completeness.
+Run the competitor analysis again to confirm consistent outputs.
+===
+What is the most effective use of AI in writing a product requirements document?
+*Drafting the structure and standard sections for human expert completion.
+Writing the complete PRD based on the product brief you provide.
+Generating the acceptance criteria for all features automatically.
+Replacing the need for product spec reviews with AI-generated docs.
+===
+Which question should guide every AI-assisted product decision?
+"What does AI recommend for this decision type based on industry patterns?"
+"Is the AI output good enough for us to move forward without validation?"
+"How would a top-tier product company make this decision?"
+*"Does this decision serve the user problem we validated, or just what AI suggested?"
+===
+You are using AI to prioritise your product backlog. What is the most important input to provide?
+The complete list of features and bugs in the current backlog.
+Your company's overall product vision and strategy documents.
+*Your validated user impact data, business goals, and technical effort estimates.
+Examples of how competitors have prioritised similar features.
+===
+A product leader says "we should use AI to define our product roadmap." The most important challenge is:
+*Roadmaps reflect strategic choices about what not to build — AI cannot make these tradeoffs.
+AI roadmaps do not account for the technical dependencies between features.
+AI cannot prioritise between competing stakeholder requirements reliably.
+Roadmaps require quarterly updates that AI cannot maintain automatically.
+===
+What is the most valuable AI capability during a product discovery sprint?
+Selecting which hypotheses to test based on strategic alignment.
+Conducting user interviews autonomously at scale.
+Predicting which discovery hypotheses will be validated by testing.
+*Rapidly generating a wide set of problem hypotheses from user research inputs.
+===
+What is the most important quality a product manager needs when working with AI?
+Technical understanding of how AI models generate their outputs.
+*Critical evaluation of AI outputs against actual user evidence.
+Speed in using AI to produce more product artefacts than competitors.
+Ability to demonstrate AI-generated outputs to stakeholders convincingly.
+===
+You use AI to generate OKRs for your product team. What is the most important revision before adopting them?
+Ensure the key results are time-bound and assigned to specific team members.
+Check that the OKRs are ambitious enough to drive meaningful stretch.
+*Replace generic outcome metrics with those that specifically reflect your product's goals.
+Have the engineering team validate the key results are achievable.
+===
+What is the most important step before using AI to analyse user research data?
+Ensure the research data is structured for AI to process efficiently.
+Select the AI tool most suited to qualitative data analysis.
+Verify that the research sample size is sufficient for pattern identification.
+*Define the research questions the analysis should answer.
+===
+You run a design sprint and use AI to synthesise the outcomes. What is the most important verification step?
+Have the sprint facilitator review the AI synthesis for accuracy.
+*Compare the AI synthesis to your original notes to check for omissions or distortions.
+Check that all participant perspectives are represented in the synthesis.
+Ensure the synthesis connects to the product strategy document.
+===
+What is the most accurate description of AI's role in product strategy?
+*AI accelerates production of strategy artefacts; humans provide the judgment.
+AI can develop product strategy autonomously given sufficient context.
+AI is most useful for execution planning, not for strategy development.
+AI and human product managers produce strategy of equivalent quality.
+===
+What is the most effective use of AI in writing user stories?
+Defining the acceptance criteria based on the product vision.
+Determining which user stories belong in the current sprint.
+*Drafting the initial user story format for each validated feature.
+Estimating story points for each AI-generated user story.
+===
+You use AI to generate a product specification. An engineer reads it and says "this is ambiguous on the edge cases." What does this reveal?
+*AI specifications require PM expertise to close gaps before engineering handoff.
+The engineer should ask the AI to clarify the ambiguous sections.
+AI product specifications are not yet reliable enough for engineering use.
+The PM should regenerate the spec with a more detailed prompt.
+===
+What is the most important AI use case during the engineering build phase of a product?
+Automatically managing the sprint board based on development progress.
+Replacing code reviews with AI-driven quality assessment.
+Predicting which features will require the most engineering effort.
+*Helping engineers write, review, and debug code more efficiently.
+===
+A PM wants to use AI to write the release notes for a product update. What is non-negotiable?
+The tone must match the company's established release note style.
+*Every feature and bug fix mentioned must be verified as actually shipped.
+The release notes must be reviewed by the engineering lead.
+The release notes must list features in order of user impact.
+===
+What is the correct use of AI when managing stakeholder feedback on a product roadmap?
+Determining which stakeholder preferences should influence the roadmap.
+Responding to individual stakeholders based on their feedback patterns.
+*Synthesising patterns across stakeholder inputs to surface common priorities.
+Making the final roadmap prioritisation based on AI-weighted feedback.
+===
+You use AI to generate a go-to-market plan for a new feature. The most important input you must provide is:
+The feature's technical specifications and implementation timeline.
+The budget available for marketing the new feature.
+Examples of GTM plans from comparable product launches.
+*The specific user segment, use case, and validated problem the feature solves.
+===
+What is the most important principle for AI use in sprint planning?
+*AI can assist preparation, but prioritisation decisions require human judgment.
+AI can automate sprint planning to free PMs for strategic work.
+AI should determine sprint capacity based on historical velocity data.
+AI can select which backlog items to include based on roadmap alignment.
+===
+You use AI to draft a product announcement email. What must you review specifically?
+The email's subject line and preview text for open rate optimisation.
+*Every product claim, feature description, and availability statement for accuracy.
+Whether the tone matches the company's established communication style.
+Whether the announcement highlights the features most valued by users.
+===
+What is the highest-risk AI use case in the product development lifecycle?
+Using AI to draft engineering tickets without human review.
+Using AI to suggest naming options for new product features.
+Using AI to summarise user research transcripts for PM review.
+*Using AI-generated user research synthesis as the sole basis for feature decisions.
+===
+What is the most important thing a PM learns from using AI systematically in their product workflow?
+How to write prompts that produce consistently structured product artefacts.
+Which AI tools perform best across different product development stages.
+*Which specific tasks AI can reliably accelerate and which require irreplaceable human judgment.
+How to communicate AI's product outputs effectively to different stakeholders.
+===
+You use AI to draft technical documentation for a product API. What is the most critical review step?
+The documentation must follow the company's technical writing style guide.
+*Every technical claim, parameter description, and example must be tested for accuracy.
+The documentation must be reviewed by the technical writer before publication.
+The examples must use realistic rather than placeholder data.
+===
+A product team uses AI to generate test cases for a new feature. What is the most important human contribution?
+*Identifying edge cases and failure scenarios that AI testing patterns may miss.
+Ensuring the test cases cover the full acceptance criteria of each story.
+Assigning test cases to the appropriate QA team members.
+Reviewing the test cases for completeness against the feature specification.
+===
+What is the most effective AI contribution to post-launch product analytics?
+Making recommendations on which product changes will improve retention.
+Replacing the product analyst's role in interpreting usage data.
+*Identifying patterns in user behaviour data that surface hypotheses to investigate.
+Predicting which users will churn based on their post-launch activity.
+===
+You are preparing for a product retrospective and use AI to summarise the sprint. What must you add?
+A comparison to AI benchmarks for sprint velocity in your product category.
+The engineering team's individual contributions for performance tracking.
+An AI-generated recommendation for the next sprint's focus areas.
+*The team's specific context, decisions, and learnings that were not in structured data.
+===
+What is the most important governance requirement for AI tools used in the product development workflow?
+Approval from the CTO for all AI tools used by the product team.
+*Human ownership of every output that informs a product decision.
+Documentation of every AI interaction in the product workflow.
+Quarterly review of AI tool performance across the product lifecycle.
+===
+You use AI to analyse user retention data. The most important analytical principle is:
+*Identify patterns that generate testable hypotheses before making product changes.
+Make product changes immediately based on AI-identified retention drivers.
+Compare your retention metrics to AI-sourced industry benchmarks.
+Use AI to predict which users will churn and target them with retention campaigns.
+===
+A PM uses AI to analyse feature usage data. The AI finds that Feature X has low usage. What is the correct conclusion?
+Feature X should be removed from the product to reduce complexity.
+Users do not understand how to use Feature X and need better onboarding.
+*Low usage is a signal worth investigating — not a conclusion about the feature's value.
+Feature X is not valuable and should be deprioritised in the roadmap.
+===
+What is the most reliable use of AI for product experimentation?
+Automatically selecting which experiments to run based on strategic priorities.
+*Generating multiple experiment hypotheses from user data and product context.
+Determining sample sizes and statistical significance thresholds for each experiment.
+Making the shipping decision based on A/B test results from the experiment.
+===
+You use AI to analyse product NPS scores and verbatim comments. What is the most valuable output?
+Prediction of which detractors will churn in the next 30 days.
+An overall NPS trend analysis compared to industry benchmarks.
+Automated responses to individual NPS comments at scale.
+*Specific themes in verbatim comments from promoters and detractors.
+===
+What is the most important skill for a PM interpreting AI-generated product analytics?
+*Asking whether the pattern reflects user behaviour or a data collection artefact.
+Understanding the statistical methods AI used to identify the pattern.
+Comparing AI analytics to the product team's intuitive understanding.
+Determining whether the finding is significant enough to share with leadership.
+===
+A product team uses AI to define success metrics for a new feature. What is the most important revision?
+Ensure metrics are measurable within the current product analytics infrastructure.
+*Replace generic metrics with those that specifically reflect the feature's user value hypothesis.
+Add leading indicators alongside lagging metrics for real-time tracking.
+Check that metrics are consistent with the company's overall product KPIs.
+===
+You use AI to analyse which features drive conversion in your product. The AI identifies Feature Y as a strong predictor. What is the risk in acting on this directly?
+Feature Y may be too complex to optimise for without significant engineering investment.
+The AI analysis may have included users outside your target segment.
+Feature Y's impact on conversion may differ across different user cohorts.
+*Feature Y may correlate with conversion because engaged users discover it, not because it causes conversion.
+===
+What is the most appropriate product metric to track AI's impact on user value?
+The number of AI interactions per user per session.
+User satisfaction scores for the AI-powered features.
+*Whether users achieve their core task goals faster or more successfully with AI features.
+The percentage of tasks completed using AI versus manual methods.
+===
+You are reviewing AI-generated product usage reports for a quarterly business review. The most important thing to do before the review is:
+Have the data team review the reports for accuracy before distribution.
+*Verify every metric against the primary data source and document any discrepancies.
+Check that the metrics align with what was tracked in the previous quarter.
+Ensure the report format meets the QBR presentation standards.
+===
+What is the most important analytical question when AI identifies a drop in a product metric?
+*"Is this a real behaviour change or a data collection or reporting issue?"
+"Which team member is responsible for the metric that dropped?"
+"How does this drop compare to historical seasonal patterns in this metric?"
+"What is the AI's recommended action to recover the metric?"
+===
+A PM presents an AI-generated cohort analysis showing strong product-market fit. What is the most important methodological check?
+Ensure the cohort size is above the threshold for statistical reliability.
+Compare the cohort analysis to industry benchmarks for PMF signals.
+*Confirm the cohort definition is consistent across all time periods in the analysis.
+Verify that the retention curves were calculated by the correct AI model.
+===
+What is the most valuable AI contribution to product roadmap communication?
+Predicting which roadmap items will generate the most stakeholder support.
+Ranking stakeholder concerns by importance to address in communications.
+Automatically producing the roadmap slides for the leadership presentation.
+*Generating clear, stakeholder-specific explanations of why items are on the roadmap.
+===
+You use AI to identify user friction in your onboarding flow. What must you do before acting on the findings?
+Share the findings with the design team for their assessment of severity.
+*Validate the AI-identified friction points through direct user sessions or testing.
+Quantify each friction point by its impact on activation rate.
+Ask AI to suggest the UX changes that would address each friction point.
+===
+What is the most important thing to remember about AI-generated product data insights?
+AI data insights are only reliable when the product has significant user volume.
+AI identifies patterns that human analysts would eventually find themselves.
+*AI identifies patterns, but correlation is not causation — test before you build.
+AI data insights require validation only for features with significant investment.
+===
+What is the most effective way for a PM to use AI throughout the product development cycle?
+*Direct AI for production tasks at each stage while owning every decision and output.
+Delegate all documentation tasks to AI to focus on strategic decisions.
+Use AI only for the stages where it demonstrably saves the most time.
+Use AI uniformly across all stages to build consistent skills across the team.
+===
+You are designing an AI-powered feature for your product. The first question to answer is:
+"Which AI model should we integrate for this feature?"
+"What will the AI feature be called in the product?"
+"How will we communicate AI's involvement to users?"
+*"What specific user problem does AI solve better than a non-AI approach?"
+===
+What is the most important design principle for an AI-powered product feature?
+Make the AI's decision process fully transparent to all users.
+*Give users meaningful control to review, override, or guide AI decisions.
+Ensure AI features are always faster than the non-AI alternative.
+Design AI features so users do not need to understand AI to use them.
+===
+A product team is deciding whether to use a third-party AI API or build a proprietary model for their AI feature. The most strategically important factor is:
+The cost difference between licensing an API and training a proprietary model.
+Whether the CTO has experience with the third-party API's technology stack.
+*Whether the feature requires data or capabilities unavailable in third-party APIs.
+Which option will be faster to ship for the upcoming product deadline.
+===
+You are building an AI recommendation engine for your product. What is the most important quality metric to track?
+*Whether recommendations lead to user outcomes, not just clicks.
+The click-through rate on AI-generated recommendations.
+The volume of recommendations generated per user session.
+User satisfaction ratings immediately after a recommendation is shown.
+===
+A user reports that an AI feature in your product gave them incorrect information. What is the correct immediate response?
+Explain that AI features are inherently probabilistic and errors are expected.
+Ask the user to provide more context so the AI can learn from the error.
+Direct the user to the feature's known limitations documentation.
+*Acknowledge the error, investigate the failure mode, and communicate what was done to fix it.
+===
+What is the most important consideration when adding AI to an existing product workflow?
+Whether the AI model is compatible with your product's technical infrastructure.
+Whether your users are ready to adopt AI-powered features.
+*Whether AI genuinely improves the workflow or adds friction and complexity.
+Whether competitors have already added AI to comparable workflows.
+===
+You are designing an AI feature that will make decisions that affect user accounts. What is the most critical design requirement?
+*Users must be able to review, understand, and reverse AI decisions.
+The AI must achieve 99% accuracy before the feature is launched.
+Users must be notified every time the AI makes a decision.
+The AI decisions must be explained using technical model outputs.
+===
+What is the most important user research question to answer before launching an AI product feature?
+"Are users excited about AI-powered features in this product category?"
+*"Do users understand what the AI is doing and when to trust its outputs?"
+"How does the AI feature perform in usability testing compared to the manual workflow?"
+"What percentage of users activate the AI feature in the first session?"
+===
+An AI product feature consistently makes errors for a specific user segment. What must you do?
+Add a disclaimer that the feature may not work for all user types.
+Monitor the error rate for another month to see if it self-corrects.
+*Stop the feature for that segment while investigating and correcting the issue.
+Ask that user segment to provide more training data to improve the model.
+===
+What is the most honest way to communicate AI feature limitations to users?
+Use general language like "AI-powered" without specific capability descriptions.
+Mention AI in marketing copy but not in the product interface itself.
+Tell users AI is experimental so they calibrate expectations appropriately.
+*State specifically what the AI does well and where users should verify or override.
+===
+What distinguishes an AI feature that builds user trust from one that erodes it?
+*Consistent, reliable performance over time within a clearly communicated scope.
+Using the most advanced AI model to minimise error rates.
+Explaining the AI's reasoning for every output it produces.
+Asking users to rate AI outputs to improve model quality over time.
+===
+A PM is evaluating whether to use a large language model or a rule-based system for a product feature. When is a rule-based system more appropriate?
+When the feature needs to handle a wide variety of natural language inputs.
+*When the task has clear, enumerable rules and errors have significant consequences.
+When the engineering team has more experience with rule-based systems.
+When the feature must operate without internet connectivity.
+===
+What is the most important product metric for evaluating whether an AI chatbot in your product is working?
+The average conversation length per user session.
+The percentage of conversations where the AI does not escalate to a human.
+User satisfaction ratings immediately after each chatbot interaction.
+*Whether users successfully complete the task they started the conversation for.
+===
+You are designing the error handling for an AI product feature. What is the most important principle?
+*Errors should degrade gracefully and inform users what to do next.
+Errors should be minimised through comprehensive testing before launch.
+Errors should be logged silently so as not to interrupt the user experience.
+Errors should always be escalated to a human agent for resolution.
+===
+What is the most important question a PM should ask about an AI vendor's model before integrating it into their product?
+"What is the model's accuracy score on standard benchmarks?"
+"How many companies are currently using this model in production?"
+*"How does the model perform on the specific tasks our users will actually use it for?"
+"What is the model's latency profile under our expected load?"
+===
+A major AI feature your team built has received negative user feedback after launch. What is the most productive first response?
+*Analyse the specific failure modes from user feedback to understand what went wrong.
+Revert the feature immediately until user satisfaction recovers.
+Reassure users that AI features improve over time with usage.
+Ask users to provide more detailed feedback through an in-app survey.
+===
+Your CEO requests that the product team add AI to every feature by next quarter. What is the most professionally sound response?
+Commit to the goal and begin integrating AI across all features immediately.
+Explain that adding AI everywhere would significantly slow the team's delivery velocity.
+Counter-propose that the team should add AI to the three highest-priority features only.
+*Propose evaluating each feature against the criterion of whether AI specifically improves user value.
+===
+A competitor launches an AI feature that your users are excited about. What is the correct product response?
+Immediately begin building a comparable feature to maintain competitive parity.
+*Understand what problem the feature solves for users before deciding to build a version.
+Wait six months to see how the feature performs before making a product decision.
+Ask your power users whether they want your version of the feature.
+===
+A B2B customer says "your AI feature gave my employee incorrect information that led to a customer service error." What is your responsibility?
+Point to your terms of service that disclaim AI output accuracy.
+Ask for the specific interaction log so the AI can learn from the error.
+*Investigate the failure, acknowledge the impact, and explain what has been fixed.
+Offer a credit for the inconvenience caused by the AI output.
+===
+Your product team has been using AI to generate all product documentation for six months. A new team member finds significant inaccuracies in several key docs. What does this reveal?
+*AI documentation was deployed without a verification workflow in place.
+The AI tool used for documentation has become less accurate over time.
+The new team member identified edge cases the existing team had not noticed.
+Documentation accuracy deteriorates when AI is used for long periods.
+===
+You want to use AI to conduct competitive analysis and recommend which features to build. What is the most important limitation to communicate to your team?
+AI competitive analysis is only useful for products with more than 50 competitor features to compare.
+The analysis will need to be repeated monthly to stay relevant to fast-moving markets.
+*Competitor intelligence from AI may be outdated and feature recommendations lack your specific strategic context.
+Engineering must validate the recommended features for technical feasibility.
+===
+A product analytics AI tool flags that your most-used feature has declining engagement. Before investigating, what is the most important question?
+"Which user segment shows the most significant engagement decline?"
+"Has a competitor recently released a comparable feature?"
+"Should we notify users of the change and gather their feedback?"
+*"Has anything changed in how this feature's usage is tracked or reported?"
+===
+Your product's AI feature performs excellently in testing but struggles in production with certain user inputs. What is the most likely cause?
+The AI model degrades in performance under higher production load.
+*Production user inputs are more diverse and unexpected than test scenarios covered.
+The production environment has different AI model configurations than testing.
+Users are interacting with the feature differently than the design intended.
+===
+A PM uses AI to decide which features to cut from the roadmap. What is the most important thing they must not outsource to AI?
+The analysis of which features have the lowest usage in production.
+The documentation of why each cut feature was removed from the roadmap.
+*The judgment about which features are strategically essential versus tactically convenient.
+The communication plan for informing stakeholders about the roadmap change.
+===
+What is the most important thing a PM must understand about users before designing an AI product feature?
+*Whether users can reliably identify when the AI output is correct versus incorrect.
+Whether users are generally positive or negative about AI technology.
+Whether users have prior experience with AI-powered products.
+Whether users are willing to share their data to train the AI model.
+===
+Your product team ships an AI feature that inadvertently creates a negative experience for users with accessibility needs. What must you do?
+Add accessibility disclaimers to the feature so affected users know to avoid it.
+*Stop the feature for affected users, fix the accessibility issue, and re-test before redeployment.
+Prioritise the accessibility fix in the next sprint without removing the feature.
+Offer affected users an alternative non-AI workflow as a workaround.
+===
+A startup wants to build an "AI product manager" to replace human PMs. What is the most accurate assessment?
+AI product managers are already working effectively in some companies.
+AI could replace junior PMs but not senior PMs with strategic experience.
+AI product managers would be more consistent but less creative than human PMs.
+*AI can assist PM tasks but cannot replace the judgment, relationships, and accountability PMs provide.
+===
+You discover that your AI recommendation feature has been surfacing content that subtly steers users toward higher-margin products regardless of fit. What is the correct response?
+Disclose the recommendation logic to users so they can make informed choices.
+Adjust the objective function to balance user fit and margin equally.
+*Stop the feature immediately, investigate the objective function, and redesign with user value as the primary optimisation target.
+Continue operating the feature since recommendation engines always involve business objectives.
+===
+What is the most important quality for a PM building AI-powered products?
+Technical expertise in machine learning and model evaluation.
+*The judgment to distinguish when AI genuinely serves users versus when it creates complexity.
+Speed of AI feature adoption compared to the competitive market.
+Ability to communicate AI feature benefits to sales and marketing teams.
+===
+Menler's AI for Product Management bank tests professionals at which level of AI maturity?
+Learning the foundational concepts of AI to start a career in product management.
+Building AI models and evaluating machine learning systems for product teams.
+Managing AI vendors and procurement processes for enterprise product teams.
+*Applying AI judgment to real product decisions with professional ownership of outcomes.
 `;
 
 // Fisher–Yates shuffle (client-only, so Math.random is fine).
@@ -467,13 +467,16 @@ function shuffle(arr) {
   return a;
 }
 
-// Parse RAW into { q, options:[{t,s}] }; the 2nd option (B) is correct.
+// Parse RAW into { q, options:[{t,s}] }; the option line prefixed with "*" is correct.
 const ITEMS = RAW.split(/^===$/m)
   .map((block) => block.split('\n').map((l) => l.trim()).filter(Boolean))
   .filter((lines) => lines.length >= 5)
   .map((lines) => ({
     q: lines[0],
-    options: lines.slice(1, 5).map((t, i) => ({ t, s: i === 1 ? 1 : 0 })),
+    options: lines.slice(1, 5).map((l) => {
+      const correct = l.startsWith('*');
+      return { t: correct ? l.replace(/^\*\s*/, '') : l, s: correct ? 1 : 0 };
+    }),
   }));
 
 export const PRODUCT_POOL_SIZE = ITEMS.length;

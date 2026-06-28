@@ -619,15 +619,15 @@ export default function Aptitude() {
       {/* ── CLUSTERS ── */}
       <section className="section" style={{ background: 'var(--parchment)', paddingTop: 48, paddingBottom: 32 }}>
         <p className="section-label">Choose your cluster</p>
-        <h2 className="section-h2">Pick a track.<br /><em>Take a set.</em></h2>
-        <p className="section-sub">Every track benchmarks a different AI capability from agentic thinking to engineering workflows.</p>
+        <h2 className="section-h2">Pick a domain.<br /><em>Take the test.</em></h2>
+        <p className="section-sub">Every track benchmarks a different domain from students and finance to marketing and engineering.</p>
         <div className="cluster-grid">
-          {CLUSTERS.map((c, i) => (
-            <div key={c.name} className="cluster-card">
+          {EXAM_DOMAINS.map((d, i) => (
+            <div key={d.name} className="cluster-card">
               <span className="cluster-num">{String(i + 1).padStart(2, '0')}</span>
-              <p className="cluster-name">{c.name}</p>
-              <p className="cluster-sets">{c.sets.length} sets · 15 questions each</p>
-              <button className="cluster-btn" onClick={() => dispatch({ type: 'PICK_CLUSTER', cluster: c.name })}>Take test</button>
+              <p className="cluster-name">{d.name}</p>
+              <p className="cluster-sets">15 questions · ~15 min</p>
+              <button className="cluster-btn" onClick={() => startDomain(d)}>Take test</button>
             </div>
           ))}
         </div>

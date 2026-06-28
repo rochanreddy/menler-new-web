@@ -1,460 +1,463 @@
-// AI for Founder's Office question bank — 75 questions (5 sets × 15).
-// In the source PDF the correct answer is always the 2nd option (B); we shuffle
-// option order at session build so the correct answer isn't always in one spot.
+// AI for the Founder's Office — AI Aptitude question bank: 75 questions (5 sets × 15).
+// Sets: Strategic Thinking · Founder Operating with AI · Product and AI ·
+// Founder Judgment Scenarios · Founder's AI OS.
+//
+// Correct answers VARY (A/B/C/D); the correct option line is prefixed with "*".
+// Option order is shuffled at session build.
 //
 // getFoundersSession(n) → a fresh random n-question session in the runner's
 // format: { q, options: [{ t, s }] } (s = 1 for the correct option).
 
 const RAW = String.raw`
-You are entering a new market. What is the most effective way to use Claude for competitive intelligence?
-Ask Claude to tell you everything about your competitors.
-Define specific intelligence questions first, then use Claude to research and structure findings against those questions.
-Ask Claude to predict which competitor will be the biggest threat.
-Use Claude to copy your competitor's strategy and adapt it.
-===
-Claude gives you a confident market size figure for your investor deck. What should you do first?
-Include it — Claude cited a source so it must be accurate.
-Trace the cited source directly and verify its methodology, recency, and applicability to your market definition.
-Round the number and include it with an estimate caveat.
-Ask Claude the same question again to confirm consistency.
-===
-Which approach produces the most actionable whitespace analysis from Claude?
-Ask Claude to list all opportunities in your industry.
-Brief Claude on your specific capabilities, customer problems you hear repeatedly, and constraints of existing solutions — then ask it to identify gaps you can realistically address.
-Ask Claude to analyse your industry and tell you what to build.
-Use Claude to summarise recent startup funding news in your sector.
-===
-You want Claude to help map the regulatory landscape before entering a new sector. What is the most responsible approach?
-Trust Claude's regulatory summary as current and complete.
-Use Claude to build an initial map of key bodies, acts, and requirements — then verify current status with a qualified consultant before any compliance decisions.
-Only proceed if Claude gives a clear go recommendation.
-Regulations are too complex for AI — avoid using Claude here.
-===
-Which use of Claude is most valuable when building a go-to-market strategy?
-Ask Claude to write your GTM strategy from scratch.
-Share your hypothesis on ICP, channels, and positioning — then ask Claude to challenge assumptions, identify gaps, and stress-test the logic.
-Ask Claude to predict which GTM strategy will succeed.
-Use Claude to copy the GTM strategy of your most successful competitor.
-===
-Your co-founder wants AI to build the product roadmap from customer interview notes. What is the right role for AI?
-Let AI build the roadmap — it can process notes faster and more objectively.
-Use AI to surface patterns in the notes, then apply founder judgment to interpret what those patterns mean for your product vision and execution capacity.
-AI analysis of customer interviews is not reliable enough for product decisions.
-Only use AI for note-taking — all analysis should be manual.
-===
-What information should you provide Claude when evaluating whether to pivot your product?
-Just describe the pivot idea and ask if it is a good idea.
-Provide current metrics, the problem the pivot addresses, evidence the new direction is better, what you would give up, and ask Claude to help structure the decision framework.
-Ask Claude to analyse competitor pivots and recommend a direction.
-Describe the pivot and ask Claude to estimate the probability of success.
-===
-What is the most important limitation to understand when using AI for strategic planning?
-AI cannot process large amounts of strategic information.
-AI does not know your specific market dynamics, team's execution capability, or competitive moats — it works from general patterns, not your specific context.
-AI strategic advice is only useful for early-stage startups.
-AI cannot help with strategy because strategy requires creativity.
-===
-How should you use Claude when preparing for a fundraising round?
-Ask Claude to write your pitch deck and investor emails.
-Use Claude to research investor thesis, stress-test your pitch narrative, and draft communications — then refine with your specific voice and relationship context.
-Ask Claude to predict which investors will fund you.
-Use Claude to copy a successful startup's pitch deck structure.
-===
-What is the most effective prompt approach for developing your startup's positioning statement?
-Ask Claude to write a positioning statement for your startup.
-Share your ICP, the specific problem you solve, how you differ from alternatives, and what customers say — then iterate with Claude until the language resonates.
-Ask Claude to analyse 10 competitor positioning statements and combine them.
-Positioning statements should never be developed with AI.
-===
-A co-founder challenges the strategic memo you built with Claude. What is the most productive next step?
-Ask Claude to defend its original reasoning.
-Ask Claude to write the strongest possible counter-argument to the memo — then use both to have a richer strategic discussion.
-Discard the Claude memo and restart without AI input.
-Ask Claude to judge which argument is stronger.
-===
-What is the biggest risk of using AI to generate your startup's strategy without sufficient founder input?
-The strategy will not be innovative enough.
-AI generates strategy from general patterns — your actual advantage comes from specific insights and market knowledge that AI does not have.
-AI strategies are too complex to execute.
-The risk is primarily reputational if people discover AI was used.
-===
-How should you calibrate reliance on AI-generated market intelligence in a fast-moving sector?
-AI market intelligence is always up-to-date and reliable.
-AI provides a useful baseline but has a knowledge cutoff — supplement with current sources, customer conversations, and industry contacts.
-AI market intelligence is only useful for stable, well-documented markets.
-Rely on AI completely — primary research is too slow.
-===
-What makes second-order thinking particularly valuable in AI-assisted strategic analysis?
-It means asking AI to think twice before responding.
-First-order thinking asks "what will happen?" — second-order asks "then what?" AI can rapidly map downstream consequences and unintended implications of strategic choices.
-It is a prompt engineering technique that improves AI output quality.
-It is only relevant for late-stage startup strategy.
-===
-What is the most important habit for a founder using AI for strategic work?
-Using AI for every strategic decision to ensure consistency.
-Bring your deepest market knowledge into every AI interaction — and always verify strategic conclusions against what you know from being in the market.
-Use AI only for tactical implementation, not strategic decisions.
-Keep all AI use confidential so investors do not question your thinking.
-===
-As a solo founder, what is the highest-leverage way to use AI?
-Use AI for all tasks equally to save time across the board.
-Identify the three tasks that take most time but require least founder judgment — typically communication drafts, research synthesis, and document structuring — and build AI workflows for those first.
-Use AI primarily for tasks you enjoy least.
-Delegate all operational tasks to AI before hiring your first employee.
-===
-What is the most efficient AI-assisted workflow for monthly investor update emails?
-Ask Claude to write the investor update without input each month.
-Create a Claude Project with your template, metric definitions, and tone guidelines — each month paste in current metrics, and Claude drafts the update in your voice for review.
-Have Claude automatically send investor updates without your review.
-Write investor updates manually — they are too important for AI.
-===
-You need to write a sensitive message to your team about a key departure. What is the most effective approach?
-Ask Claude to write the message and send it without editing.
-Draft the message yourself first, then use Claude to refine the language and ensure nothing inadvertently lands poorly.
-Ask Claude to write several versions and choose the best.
-Avoid using AI for sensitive internal communications.
-===
-How should you use Claude to prepare for a difficult conversation with a co-founder about performance?
-Ask Claude to write a script for the conversation.
-Use Claude to clarify your key points, anticipate likely responses, and identify where you might react emotionally — then have the conversation yourself.
-Send Claude's output directly to the co-founder instead of meeting.
-Difficult co-founder conversations should never involve AI preparation.
-===
-What is the most efficient approach for building your company's first employee handbook?
-Ask Claude to write a complete handbook from scratch.
-Brief Claude on your values, culture, size, and Indian labour law context — Claude generates a structured draft — then review with an HR or legal professional for compliance.
-Use a competitor's handbook and ask Claude to rewrite it.
-Employee handbooks require a dedicated HR professional — AI cannot help.
-===
-Which AI-assisted workflow produces the best board meeting preparation?
-Ask Claude to write the board deck from your raw data.
-Use Claude to structure the narrative, draft deck sections, and prepare responses to likely board questions — bringing your specific board dynamics and relationship context to each stage.
-Board meetings are too sensitive for AI involvement.
-Send Claude the board deck and ask it to identify weaknesses.
-===
-How should Claude be used when responding to a public customer complaint on social media?
-Ask Claude to write and post the response directly.
-Use Claude to draft a response that addresses the complaint and maintains brand voice — then review for accuracy and authenticity before posting yourself.
-Public complaints should never receive AI-assisted responses.
-Ask Claude to write five versions and post the highest-rated one.
-===
-What is the right design for an AI-assisted workflow for inbound partnership enquiries?
-Automate all responses without human review to handle volume.
-Use Claude to draft initial responses by enquiry type, with a human review step before sending.
-Partnership enquiries are too important for any AI involvement.
-Use Claude to score enquiries, then respond manually to the top ones.
-===
-What is the most effective use of Claude for hiring and recruiting as a founder?
-Ask Claude to screen CVs and make hiring recommendations.
-Use Claude to draft job descriptions, write outreach messages, structure interview questions, and draft offer letters — with human judgment applied to all actual hiring decisions.
-AI should not be involved in any stage of hiring.
-Ask Claude to compare candidates and recommend who to hire.
-===
-How does AI help most when documenting company processes before they exist only in founders' heads?
-Ask Claude to infer your processes from your product documentation.
-Walk Claude through how you currently do each process in detail, ask Claude to structure it as a written SOP — then review and correct against how you actually work.
-Process documentation should be done manually to ensure accuracy.
-Ask Claude to design optimal processes based on industry best practices.
-===
-What is the most important consideration when using Claude for founder email and communications volume?
-Speed — Claude should help you respond to everything as fast as possible.
-Authenticity and accuracy — AI-drafted communications sent without sufficient review can damage relationships or create unintended commitments.
-Cost — email responses should use the free AI tier to manage expenses.
-Volume — the more emails Claude helps process, the better.
-===
-You are deciding whether to raise a bridge round or cut costs to extend runway. What is Claude most useful for?
-Making the decision — Claude has processed thousands of similar scenarios.
-Structuring the decision framework — mapping all relevant variables, scenarios, and assumptions so you articulate what you are actually optimising for.
-Predicting the outcome of each option with probability scores.
-Telling you what other founders in similar situations have done.
-===
-An investor notices your communications have become more polished but less personal. What should you adjust?
-Increase the instruction detail in your prompts to improve quality.
-Inject more of your specific voice, relationship context, and personal references into your prompts — and spend more time on the editing that makes Claude's draft sound like you.
-Stop using AI for external communications entirely.
-Ask Claude to write in a more casual tone to compensate.
-===
-What is the most effective way to use Claude to build your personal brand as a founder?
-Ask Claude to write all your social media content and publish it automatically.
-Use Claude to develop content frameworks and draft posts based on your actual insights — with your genuine perspective as the source material, refined through Claude.
-Personal brand content should never use AI — authenticity requires manual writing.
-Ask Claude to copy the content style of successful founders you admire.
-===
-What is the single most important operational discipline for a founder using AI extensively?
-Using as many AI tools as possible to cover all bases.
-A regular review cadence — periodically checking whether AI-assisted outputs still meet your quality standard and whether any AI habits are degrading rather than improving your work.
-Keeping all AI use documented for potential regulatory or investor review.
-Limiting AI use to avoid over-dependence on any single tool.
-===
-What is the most effective role for Claude when building a Series A pitch deck?
-Have Claude build the complete deck from your one-line description.
-Use Claude to stress-test your narrative logic, draft slide content from your detailed briefing, and anticipate investor questions — while you drive the strategy and specific claims.
-Use Claude only for design layout recommendations.
-Pitch decks are too important for AI — write them entirely manually.
-===
-What information must you provide Claude to write a compelling problem slide?
-The industry you are in and the market size.
-Specific evidence of the problem — customer quotes, data points, examples of the status quo failing.
-The solution you have built, working backwards from it.
-The names of investors who have validated the problem.
-===
-An investor asks a specific question about methodology in your AI-assisted pitch deck and you cannot answer it. What does this reveal?
-The investor has asked an unfair question.
-AI-generated content you cannot defend creates credibility risk — every claim in a pitch must come from your own understanding, even if Claude helped articulate it.
-You need a technical co-founder who can answer methodology questions.
-This is normal — investors understand founders use AI for pitch preparation.
-===
-What is the most effective way to develop your founder story using Claude?
-Ask Claude to write a founder story based on your CV.
-Share the actual experiences and insights that led you to this problem — then use Claude to structure and sharpen the narrative into a compelling, authentic story.
-Ask Claude to write a founder story like a successful founder in your space.
-Founder stories should always be written entirely manually.
-===
-What is the most effective way to test your pitch narrative before meeting investors?
-Ask Claude to rate your pitch out of 10.
-Ask Claude to play a sceptical Series A investor and raise the hardest objections to each section of your pitch — then prepare substantive responses.
-Ask Claude to confirm that your pitch is compelling.
-Use Claude to compare your pitch to successful pitch decks.
-===
-What makes Claude most useful for writing a one-page executive summary for a strategic partner?
-Ask Claude to summarise your pitch deck into one page.
-Brief Claude on the specific partner, their strategic priorities, what you want from the partnership, and what value you offer them — then ask Claude to draft a summary framed around their perspective.
-Executive summaries should be written manually for important relationships.
-Ask Claude to write a general summary that works for all audiences.
-===
-What is the most common mistake founders make when using AI to help write their investor pitch?
-Using AI makes the pitch too long.
-Accepting AI-generated market size claims or competitive analyses without verifying them — creating a polished pitch that falls apart under due diligence.
-AI-assisted pitches are always too formal.
-Investors can tell when AI was used and react negatively.
-===
-What prompt produces the most effective website homepage copy from Claude?
-Ask Claude to write a homepage for a startup in your industry.
-Share your ICP, the specific job they are trying to do, how your solution differs, three customer proof points, and your desired tone — then iterate until it reflects your actual differentiation.
-Use Claude to copy the structure of a competitor's homepage and rewrite it.
-Websites should always be written by professional copywriters, not AI.
-===
-Which prompt produces the most effective cold email to an enterprise prospect?
-"Write a cold email to a potential customer."
-"Write a cold email to the VP of Operations at a mid-size Indian manufacturing company. Our product reduces procurement cycle time by 40%. Open with a specific insight about their procurement challenges, close with a low-commitment next step. Under 150 words."
-"Write a sales email that is compelling and professional."
-"Write an email like the ones successful SaaS companies send."
-===
-What is the most effective approach for preparing media and PR communications with Claude?
-Ask Claude to write press releases without input.
-Brief Claude on the news, why it is significant, which publication you are targeting, and what the ideal reader action is — then refine the draft against your actual news and voice.
-PR communications should never use AI assistance.
-Ask Claude to write in the style of a famous tech journalist.
-===
-How does Claude best help a founder explain a complex technical product to non-technical investors?
-Ask Claude to simplify your technical explanation.
-Share your technical explanation and ask Claude to generate multiple plain-language analogies at different simplicity levels — then test which one lands best with your target audience.
-Non-technical investors are not the right investors for a technical product.
-Ask Claude to write the technical explanation in simple words.
-===
-What makes an AI-assisted pitch narrative genuinely compelling versus just well-structured?
-Using more specific data points.
-Genuine insight that AI cannot generate — the specific, non-obvious market observation from being deeply in it — combined with AI's ability to structure and articulate it clearly.
-More slides with better visuals.
-A longer narrative that covers every possible investor question.
-===
-How do you use Claude to process conflicting feedback on your pitch deck from two advisors?
-Ask Claude to decide which advisor is right.
-Share both pieces of feedback and ask Claude to identify where advisors address different aspects versus where they genuinely conflict — then identify what questions to ask to clarify the disagreement.
-Use Claude to average the two pieces of feedback.
-Disregard the conflicting feedback and keep the original version.
-===
-What is the most important principle for maintaining authenticity in AI-assisted founder communication?
-Only use AI for first drafts that you rewrite completely.
-The specific insight, genuine conviction, and authentic experience must come from the founder — Claude structures and articulates, but the substance that makes communication credible must be real.
-Use AI only for written communication, not spoken presentations.
-Disclose AI assistance in all founder communications.
-===
-High engagement but low serious investor inbound after three months of AI-assisted founder content. What might explain this?
-Three months is not long enough to see results.
-The content may be optimised for engagement metrics rather than demonstrating the specific market expertise that attracts serious investors.
-Serious investors and customers do not use social media.
-You need to post more frequently to reach serious investors.
-===
-You have three competing priorities and limited resources. How does Claude help most with prioritisation?
-Ask Claude to rank the priorities.
-Share your metrics, what you are optimising for, your constraints, and evidence behind each priority — and ask Claude to build a decision framework that surfaces the key tradeoffs.
-Ask Claude to predict which priority will generate the highest return.
-Have Claude analyse competitors to determine what to focus on.
-===
-What is the most important thing to understand about AI's role in founder decisions under uncertainty?
-AI reduces uncertainty by providing more information.
-AI can help structure the decision and map scenarios — but it cannot resolve the fundamental uncertainty about the future that makes entrepreneurial decisions genuinely difficult.
-AI is most useful when uncertainty is highest.
-AI should replace gut instinct in high-stakes decisions.
-===
-A potential enterprise contract would represent 60% of your revenue. How does Claude help you think through the risk?
-Ask Claude if you should take the contract.
-Ask Claude to structure the concentration risk analysis — what happens if this customer churns, how long to replace their revenue, what obligations tie you to their roadmap.
-Ask Claude to calculate the expected value of the contract.
-Use Claude to draft the contract terms that protect you from concentration risk.
-===
-How should you approach using Claude to help assess a senior team member who is not meeting expectations?
-Ask Claude to make the decision based on the performance data you provide.
-Use Claude to structure your assessment — clarifying specific gaps, support provided, team impact, and what a fair process looks like — while keeping the decision and accountability yours.
-Share all team member details with Claude for a comprehensive assessment.
-People decisions are too sensitive for any AI involvement.
-===
-A trusted advisor recommends a direction that conflicts with your instinct. How does Claude help you process this?
-Ask Claude to tell you who is right.
-Ask Claude to steelman the advisor's position and your own instinct — then identify where the genuine disagreement lies and investigate who has better information on that specific point.
-Ask Claude to analyse the track record of both parties.
-Trust your instinct over the advisor since you know your business best.
-===
-What is the most effective AI workflow for a weekly founder review of company performance?
-Ask Claude to review your metrics and tell you what to focus on.
-Define a standard set of questions in advance, paste in the relevant metrics and context, and use Claude to structure your analysis against those questions consistently.
-Use Claude to generate a weekly report automatically without founder review.
-Weekly reviews are too important for AI involvement.
-===
-You are evaluating a potential acquisition target. Where does Claude help most?
-Ask Claude to value the company based on publicly available information.
-Use Claude to build the due diligence framework — what questions to investigate, what risks to probe, what synergies to validate — while valuation and final decision involve professional advisors.
-Ask Claude to recommend whether to proceed.
-Use Claude to draft the term sheet for the acquisition.
-===
-What is decision fatigue and how can AI help founders manage it?
-The exhaustion that comes from reading too many AI-generated reports.
-The cognitive depletion from making many decisions that reduces quality of subsequent ones — AI helps by handling routine decisions and information processing, preserving capacity for high-judgment decisions.
-Decision fatigue is a myth — good founders make excellent decisions all day.
-AI increases decision fatigue by providing too many options.
-===
-You are facing an ethical dilemma — a customer asking you to use your platform in a way that is legal but feels wrong. How does Claude help?
-Ask Claude to tell you what the ethical decision is.
-Use Claude to articulate the competing values, map consequences of each course of action, and surface considerations you may not have thought of — making your own ethical reasoning more rigorous.
-Ethical decisions should never involve AI.
-Ask Claude to find examples of how other companies handled similar situations.
-===
-What is the most dangerous pattern in founder AI use for decision-making?
-Using AI too infrequently for major decisions.
-Treating AI as an oracle rather than a thinking partner — accepting AI output as the basis for major decisions without applying founder market knowledge and context.
-Using AI for too many minor decisions.
-Relying on AI for financial projections.
-===
-You have made a major strategic error. How does AI help you process what went wrong?
-Ask Claude to diagnose why your strategy failed.
-Use Claude to structure a post-mortem — identifying what assumptions were wrong, what signals were available but missed, and what the genuine learning is.
-Use Claude to design a new strategy immediately.
-Claude cannot help with mistakes — only with future planning.
-===
-How does AI most effectively help founders manage burnout risk?
-Ask Claude to tell you when you are approaching burnout.
-Use Claude to manage time-consuming but clearly defined tasks efficiently — freeing founder capacity for high-energy work and relationships.
-AI cannot help with founder wellbeing — seek human support.
-Use Claude to create a detailed daily schedule that optimises energy.
-===
-You are deciding between two product directions with genuinely uncertain outcomes. What is Claude's most valuable contribution?
-Predicting which direction is more likely to succeed.
-Helping you identify what information would most reduce your uncertainty — what to learn, who to talk to, what small experiments to run.
-Analysing competitor moves to identify the safer direction.
-Writing product specs for both directions to evaluate side by side.
-===
-A board member disagrees with your strategic direction. How do you prepare for this conversation using Claude?
-Ask Claude to write arguments that will convince the board member.
-Use Claude to steelman the board member's concern as strongly as possible — then prepare to either address the risk or explain why you have weighed it differently.
-Ask Claude to help you explain why the board member is wrong.
-Use Claude to analyse the board member's investment track record.
-===
-What is the most important founder mindset for using AI in decision-making?
-Defer to AI analysis for all decisions where data is available.
-Treat AI as a tool that improves the quality of your thinking — making analysis more structured and blind spots more visible — while maintaining that founder judgment and accountability are irreplaceable.
-Use AI only for decisions where the stakes are low enough to risk being wrong.
-Be sceptical of AI in all decision contexts — human judgment is always superior.
-===
-You are building an AI-powered product. What is the most important consideration before launch?
-Whether the AI model you choose has the highest benchmark scores.
-Whether you have designed for AI failure — what happens when the AI produces a wrong or confusing output, and whether your product handles that gracefully.
-Whether your AI model is the most cost-efficient option.
-Whether your competitors have already used AI in similar features.
-===
-What is the most important data privacy consideration for a founder using AI tools operationally?
-Only use AI tools that are free to avoid legal complications.
-Understand which data — customer information, financial data, employee details — should not be processed by consumer AI tools under your obligations and applicable data protection law.
-Get written consent from all customers before using any AI tools.
-AI tools are exempt from data privacy obligations since they are software.
-===
-You use Claude to draft legal agreements. What is the most important professional caution?
-Claude cannot help with any legal documents.
-Claude can draft document structures as a starting point, but all legal agreements must be reviewed by a qualified lawyer — AI legal drafts are not legal advice.
-Claude legal drafts are as reliable as lawyer-drafted documents for straightforward agreements.
-Only use Claude for internal agreements — external ones require professional drafting.
-===
-What does responsible AI mean specifically for a founder building with AI?
-Only using AI tools from companies that have signed ethical AI pledges.
-Designing AI-powered products that are transparent about AI involvement, handle failures gracefully, do not produce discriminatory outcomes, protect user data, and maintain human accountability for consequential decisions.
-Avoiding any AI applications that could potentially be misused.
-Using open-source AI models instead of commercial ones.
-===
-You have built competitive advantage through proprietary AI workflows. What is the most important risk to manage?
-Competitors copying your AI workflows.
-Key person dependency — if your AI workflows exist primarily in one person's knowledge rather than documented systems, they are liabilities rather than assets.
-AI tools becoming too expensive as you scale.
-Your AI tools becoming obsolete as technology evolves.
-===
-What is the most important thing founders should understand about how Claude and other AI models are trained?
-AI models are trained by reading all publicly available internet content in real time.
-AI models are trained on large datasets with a specific cutoff date — they reflect the knowledge, biases, and patterns of their training data and do not know about developments after that cutoff.
-AI models are programmed with specific knowledge by their developers.
-AI models learn from each conversation they have with users.
-===
-You are using AI to automate customer communications at scale. What governance question is most important?
-Which AI tool is most cost-efficient at scale.
-At what point and under what conditions will a human review automated communications before they are sent — and who is accountable when something goes wrong.
-Whether the AI tool can perfectly match your brand voice.
-Whether customers will be able to tell communications are AI-generated.
-===
-What is the most significant risk of AI-generated content in a regulated industry like fintech or healthtech?
-AI content is always lower quality than human-written content.
-AI-generated content may contain claims or advice that violates regulatory standards — creating compliance and liability exposure the founder is accountable for regardless of whether AI generated it.
-Regulators in India do not allow AI-generated content in regulated industries.
-AI content is only risky if the company is large enough to attract regulatory attention.
-===
-As a founder, what is your responsibility when AI you use or build causes harm to a customer?
-The AI tool manufacturer is primarily responsible for harm caused by their model.
-The founder and company are responsible — the choice to use AI, the product design decisions, the absence of adequate safeguards, and the failure to detect and correct issues are all founder responsibilities.
-Responsibility depends on whether the harm was foreseeable.
-Responsibility is shared equally between the founder and the AI tool manufacturer.
-===
-What is the most honest framing of what AI can and cannot do for a startup in its early stages?
-AI can handle most startup operations, allowing founders to focus entirely on fundraising.
-AI dramatically accelerates clearly defined text-based tasks — giving early-stage founders significant leverage — while judgment, relationships, and market insight remain irreplaceably human.
-AI is only useful for startups that have reached product-market fit.
-AI capability for startups is still too immature to rely on for core operations.
-===
-You have built a product that uses AI to make recommendations to users. What is the single most important transparency design decision?
-Whether to tell users the recommendation engine uses AI.
-Being clear about what the AI recommendation is based on, what it cannot consider, and what a human review or alternative option looks like — so users make genuinely informed decisions about how much to rely on it.
-Transparency is a legal requirement, not a design decision.
-Only disclose AI involvement if a user specifically asks.
-===
-What capability most distinguishes good AI use from problematic AI use for founders?
-Technical understanding of how AI models work.
-Critical evaluation — reviewing AI outputs with the same professional rigor you would apply to any important business decision, catching errors and questioning assumptions.
-Access to the most advanced AI tools available.
-Speed — the ability to use AI tools faster than competitors.
-===
-What does it mean for a startup to be AI-native rather than just AI-enabled?
-Being AI-native means the startup's product is built entirely using AI.
-AI is embedded as a core assumption in how the startup operates — workflows, communication, research, and decisions are all designed with AI participation from the start, not added to existing manual processes.
-AI-native startups only use their own proprietary AI models.
-Being AI-native means having more AI capabilities than competitors.
-===
-When is it appropriate for a founder to disclose AI involvement to investors, customers, or partners?
-Never — AI use is competitive information to keep confidential.
-When AI involvement is material to the quality or accuracy of what you are providing — and when the other party would reasonably want to know to make informed decisions about relying on your work.
-Always — complete transparency about AI use is mandatory.
-Only when specifically asked about AI use.
-===
-What is the most important long-term competitive advantage a founder can build using AI?
-Building proprietary AI models that competitors cannot access.
-Developing organisational AI fluency — a company culture where every team member uses AI effectively, workflows are systematised and documented, and AI capability compounds over time.
-Being the first in your market to use a specific AI tool.
-Investing in the most expensive enterprise AI tools before competitors do.
+You are a first-time founder with limited resources. Which AI use case has the highest return on time?
+Building a custom AI model trained on your company's proprietary data.
+*Automating high-volume, repeatable tasks that currently consume founder time.
+Using AI to replace your first hire by handling multiple functions.
+Implementing AI across all business functions simultaneously.
+===
+What is the most important question to ask before choosing an AI tool for your startup?
+"What is the monthly cost at our projected scale?"
+"Which AI tool do our competitors use for this function?"
+"Does this tool integrate with our existing tech stack?"
+*"What specific problem does this solve and what happens when it fails?"
+===
+A founder says "we will build our own AI instead of using existing tools." When is this actually justified?
+*Only when existing tools genuinely cannot meet your specific requirements.
+When your team includes machine learning engineers.
+When your data is sensitive and cannot be shared externally.
+When you want to differentiate your product from competitors.
+===
+You use Claude to draft your investor pitch narrative. What is your responsibility before presenting it?
+Disclose to investors that Claude co-wrote the pitch.
+Check that the pitch matches the financial projections you prepared.
+*Verify every claim, own the narrative, and be able to defend every point.
+Have Claude refine the pitch iteratively until it is investor-ready.
+===
+Which business function benefits most from AI assistance for an early-stage startup?
+Product development — building features and fixing code autonomously.
+*Content and communication — drafts, outreach, proposals, and documentation.
+Finance — managing accounts, forecasting, and financial reporting.
+HR — hiring, onboarding, and performance management.
+===
+A potential enterprise client asks: "How do you ensure AI-generated outputs in your product are accurate?" What is the strongest answer?
+*"We have a human review layer for all high-stakes AI outputs and defined accuracy standards."
+"We use the most advanced AI models available to minimise error rates."
+"Our AI is trained on domain-specific data which improves accuracy."
+"We test our AI outputs regularly and update the model when errors occur."
+===
+What does "AI-native product" mean in a startup context?
+The product was built using AI tools rather than traditional code.
+The product is designed specifically to help other companies use AI.
+The product's engineering team uses AI-assisted development exclusively.
+*AI is embedded in the core value proposition, not added as a feature.
+===
+You are evaluating whether to use a third-party AI API or build on open-source models. The most important strategic factor is:
+The raw accuracy benchmark of each option on standard tests.
+Which option your technical team is more comfortable with.
+*Your dependency risk if the API provider changes pricing or terms.
+The monthly API cost at your current user volume.
+===
+A founder is tempted to automate customer success with AI to reduce headcount. What should they evaluate first?
+*Whether customer relationships are a competitive differentiator in their market.
+How much cost savings the automation would generate annually.
+Which AI tool performs best on customer service benchmarks.
+Whether competitors are automating their customer success teams.
+===
+What is the most accurate description of "product-led AI" in a B2B context?
+AI used in the sales process to identify and prioritise leads.
+AI that operates the product infrastructure without human intervention.
+Using AI to build the product faster than competitors.
+*AI features that users experience directly and that drive adoption and retention.
+===
+You use Claude to generate your company's content strategy. What does a strong founder do with this output?
+Implement it immediately — comprehensive AI strategy is reliable.
+*Use it as a starting structure, then inject market-specific knowledge and refine.
+Share it with the team as a draft to crowdsource improvements.
+Have Claude refine it in 3 iterations before treating it as usable.
+===
+Which data from your startup is most valuable to use in AI prompts for market analysis?
+Industry reports and publicly available market research.
+Competitor pricing and feature comparison data.
+*Real customer conversations, usage patterns, and conversion data.
+Internal team's opinions about what customers want.
+===
+When should a founder NOT use AI to make a decision?
+When the decision is complex and multi-variable.
+When the team has conflicting views on the right direction.
+When the decision has significant cost implications.
+*When the decision requires relationship context or personal accountability.
+===
+What is the first thing a founder should do when AI produces a go-to-market strategy they love?
+Implement the highest-impact recommendations immediately.
+*Pressure-test it against the specific constraints of your actual situation.
+Share it with your advisors to validate before implementation.
+Ask Claude to expand on the areas you find most compelling.
+===
+What does building "AI fluency" in a founding team mean operationally?
+*Every team member can effectively direct AI for their specific work tasks.
+Every team member has completed an AI certification programme.
+The CTO has deep technical AI expertise across the team.
+The team uses AI tools for at least 50% of all work tasks.
+===
+You need to hire your first employee. How should AI assist in the hiring process?
+Screening CVs autonomously to shortlist candidates for you to interview.
+Replacing the initial interview with an AI-administered assessment.
+*Drafting job descriptions and screening questions — with human decision-making throughout.
+Predicting candidate success based on their CV and LinkedIn profile.
+===
+You use Claude to write your cold outreach emails. Response rates are low. The most likely cause is:
+*The emails lack the specific personalisation that makes outreach convert.
+Cold email response rates are universally low regardless of quality.
+The AI writing style is detectable and reduces trust with recipients.
+You need to send higher volumes to improve the aggregate response rate.
+===
+Your co-founder wants to use AI to generate your company's 12-month financial model. What is your role in this process?
+Let AI generate the model and review it for obvious errors.
+Have AI generate 3 versions and select the most reasonable one.
+Use AI for the model and add your assumptions in a separate document.
+*Define every assumption, verify the model logic, and own the output.
+===
+A founder is tempted to outsource all writing to AI. The most important thing they will lose is:
+The ability to write effectively without AI in the future.
+*The founder's authentic voice, which is a competitive differentiator.
+Control over the accuracy of all written communications.
+Time spent on strategic thinking currently displaced by writing.
+===
+You use AI to respond to investor questions by email. What is the critical professional risk?
+Investors will know the emails were not written by you personally.
+AI email responses are legally weaker than personally written ones.
+*You may send inaccurate information to investors without realising it.
+You will lose the relationship-building value of personal communication.
+===
+What is the most valuable AI use case for founder-level strategic communication?
+Writing the final version of all strategic communications autonomously.
+Replacing the need for advisors and coaches on communication strategy.
+Generating templates for all recurring communication types.
+*Rapidly generating multiple framings of a complex idea to find the clearest one.
+===
+You are about to sign a contract a lawyer flagged as risky. You ask Claude for a second opinion. What is the correct use of this?
+*As one additional perspective — not as a substitute for your lawyer's professional judgment.
+As a definitive cross-check that can resolve the lawyer's concern.
+As a faster and cheaper alternative to seeking a second legal opinion.
+As validation that the contract is standard if Claude sees no issues.
+===
+Which productivity benefit from AI is most durable as a startup scales?
+Reducing the time required for senior founders to complete writing tasks.
+*Enabling a small team to produce output that would otherwise require more headcount.
+Allowing non-technical founders to perform technical tasks.
+Keeping costs low during early-stage growth phases.
+===
+You are building a product demo for investors using AI-generated content. What must you ensure?
+The demo uses the most visually compelling AI generation tool.
+The demo discloses that AI was used to create the content.
+The demo matches the visual style of your main competitors.
+*Every claim in the demo is accurate and can be substantiated.
+===
+What is the biggest mistake a founder makes with AI in their first six months?
+Not using enough AI tools across all business functions.
+Choosing the wrong AI tool for the most important tasks.
+*Using AI without establishing a verification habit for outputs.
+Spending too much time customising AI workflows before proving value.
+===
+A founder uses AI to identify their target customer segment. The output defines five distinct segments. What is the critical next step?
+Build product features that address all five segments simultaneously.
+*Validate the segments against real customer conversations and data.
+Select the most attractive segment based on AI's revenue projections.
+Use the segments as the basis for your investor pitch narrative.
+===
+You are a solo founder. What is the highest-value use of AI as a thinking partner?
+*Challenging your assumptions and surfacing alternatives you have not considered.
+Confirming that your strategic direction is sound and well-reasoned.
+Generating a complete business strategy based on your market description.
+Replacing the need for advisors by covering all strategic questions.
+===
+What is the most professional way to use AI when building investor relationships?
+Use AI only for internal documents — never for investor-facing content.
+Use AI only after the investor relationship is established.
+*Use AI to draft communications, then personalise and verify before sending.
+Disclose AI use to investors in all communications it assists with.
+===
+You are 3 months from running out of runway. Which AI use case should you prioritise?
+Building AI features that will increase your valuation for the next round.
+Using AI to reduce team headcount and extend runway.
+Using AI to generate a fundraising narrative for investors.
+*Accelerating sales outreach and follow-up to close revenue faster.
+===
+What is the most important AI skill for a founder to develop personally?
+The ability to build and deploy AI tools using available APIs.
+*The ability to direct AI precisely and evaluate outputs critically.
+The ability to train team members on which AI tools to use.
+The ability to explain AI concepts to investors and clients.
+===
+You are deciding whether to integrate an AI feature into your product. The most important user question to answer first is:
+*"Does AI solve a user problem better than a non-AI approach would?"
+"How many users will engage with the AI feature monthly?"
+"Does adding AI make our product roadmap more investor-friendly?"
+"Can we build this AI feature with our current engineering team?"
+===
+Your product uses AI to generate personalised recommendations. A user says the recommendations are always wrong. What is the first investigation step?
+Upgrade to a more advanced AI model to improve recommendation quality.
+Ask the user to provide more data to improve their personalisation.
+*Examine the data the AI is using to generate recommendations for this user.
+Lower the recommendation threshold to increase variety.
+===
+What is the correct user experience design principle for AI-powered product features?
+Hide AI's role to avoid user anxiety about automation.
+*Make AI's role transparent and give users control over AI decisions.
+Let AI make all decisions to provide a seamless experience.
+Allow users to see AI outputs but not to override them.
+===
+You are building an AI-powered B2B product. Your first enterprise prospect says "we need to understand your AI safety practices." What is the correct first step?
+Reassure the prospect that modern AI models are generally very safe.
+Explain that safety depends on how the customer uses the product.
+Offer a technical deep-dive with your engineering team.
+*Document your model selection rationale, data handling, and error protocols.
+===
+When is it appropriate to let AI make autonomous decisions in your product?
+*When decisions are low-stakes, reversible, and within a well-tested scope.
+When the AI model has been trained on your specific domain data.
+When the error rate is below 5% on benchmark testing.
+When the feature has been in production for more than 6 months.
+===
+A user of your AI product asks: "Is this AI or a real person?" What is the correct policy?
+Say it's AI only if the user asks explicitly during the interaction.
+*Always be transparent — AI systems should not claim to be human.
+You can be ambiguous if disclosing AI would reduce conversion rates.
+Disclosure is only required when the AI is handling financial transactions.
+===
+What is the most important metric to track for an AI-powered product feature?
+The number of AI interactions per user per session.
+The AI model's accuracy rate on benchmark datasets.
+The average response time of the AI feature.
+*User outcomes achieved versus what users attempted to achieve.
+===
+You are evaluating which AI model to use in your product. A key constraint is cost at scale. The most professional approach is:
+Use the cheapest model and upgrade later when you can afford better.
+Use the most capable model to maximise user experience regardless of cost.
+*Model the cost at your projected usage volumes and compare with output quality.
+Ask other founders what model they use for similar products.
+===
+An investor asks: "How defensible is your AI advantage?" What is the strongest honest answer?
+"We use the most advanced AI models so our quality is higher than competitors."
+*"Our defensibility comes from our data, workflow design, and customer relationships — not the model."
+"Our proprietary AI model is trained on our unique dataset."
+"AI is commoditising — our advantage comes from team expertise."
+===
+What is the most important user trust-building principle for AI product features?
+*Reliable, consistent performance over time is the strongest trust signal.
+Users trust AI more when they understand how the technology works.
+Users trust AI features more when they are offered by large companies.
+Trust is built by communicating AI capabilities prominently in the product.
+===
+You discover that your AI product feature is producing biased outputs for certain user segments. What is the correct immediate response?
+Add a disclaimer that AI outputs may not be accurate for all users.
+Monitor the bias metrics for another 30 days before taking action.
+*Stop or limit the feature for affected segments while investigating and correcting.
+Communicate to affected users that the AI is still learning.
+===
+What should a founder expect from Anthropic's Claude API when building a product?
+A complete AI solution that handles all product use cases out of the box.
+Guaranteed output accuracy for well-defined domain tasks.
+A model that improves automatically based on your product's usage data.
+*A capable AI foundation that requires product design choices to be made well.
+===
+What is the correct standard for launching an AI feature to users?
+The feature achieves 95% accuracy on internal test cases.
+*The feature works reliably enough that users benefit more than they are harmed.
+The feature has been reviewed by an AI safety specialist.
+The feature is clearly labelled as "Beta" to manage expectations.
+===
+Your AI product generates incorrect outputs 3% of the time. Is this acceptable?
+Yes — 97% accuracy is excellent for any AI application.
+No — all commercial AI products must achieve 100% accuracy.
+*Depends on the stakes of those outputs and how errors will be caught.
+Depends on whether 3% is better than your competitors' error rate.
+===
+What is the correct approach when your AI product fails a user in a visible way?
+*Acknowledge the failure, explain what happened, and show what has been fixed.
+Apologise and offer the user compensation for their inconvenience.
+Quietly patch the issue without drawing attention to what occurred.
+Communicate that AI failures are expected and are improving over time.
+===
+A journalist asks you to comment on AI risks in your industry. You are pro-AI. What is the most credible response?
+Defend AI's benefits and dismiss concerns as overstated.
+Decline to comment on industry risks and focus only on your product.
+Provide a list of AI benefits and let the journalist ask specific questions.
+*Acknowledge real risks while explaining how your approach addresses them.
+===
+You are in a competitive landscape where everyone is adding AI features. What is the most strategically sound response?
+Add AI to all features immediately to match the competitive baseline.
+*Focus on the user problems where AI specifically creates differentiated value.
+Wait until AI technology matures before committing to an AI approach.
+Position your product as AI-free for users who are wary of AI.
+===
+A potential enterprise client says "we are not sure your startup has the compliance practices we need for AI." The correct response is:
+Explain that you use an enterprise-grade AI provider, so compliance is covered.
+Offer to have their legal team review your model provider's terms of service.
+*Take it seriously — prepare a structured response addressing their specific concerns.
+Position your startup's flexibility as an advantage over compliance-heavy competitors.
+===
+A senior team member strongly disagrees with your AI-first strategy. The most productive response is:
+*Understand their specific concerns and incorporate valid objections into the strategy.
+Override their objection — founders must have conviction in their strategy.
+Put the strategy to a team vote and implement the majority view.
+Remove the team member from AI-related responsibilities.
+===
+You want to use AI to replace a team member's role. What is the most professionally responsible process?
+Make the replacement immediately — delay is unfair to the team member.
+Test AI in the role secretly before making any decision.
+Automate the role and offer the team member a different position.
+*Evaluate honestly whether AI can genuinely perform the role, then handle the transition with care.
+===
+A customer uses your AI product to generate content that is factually incorrect and shares it publicly. What is your responsibility?
+Disclaim all responsibility — users are responsible for verifying AI outputs.
+Contact the customer and ask them to delete the incorrect content.
+*Assess whether your product's design contributed to the error and improve accordingly.
+Issue a public statement noting that AI accuracy cannot be guaranteed.
+===
+Your startup's AI product is being evaluated by a large company. They ask for an independent audit of your AI's accuracy. What do you do?
+*Commission the audit — the information will help you and builds trust.
+Decline and offer your own internal testing data instead.
+Propose a pilot project as a practical alternative to a formal audit.
+Delay the audit until after you have closed the contract.
+===
+What is the founder's most important role in an AI-related product incident?
+Having the engineering team lead all communications externally.
+*Taking personal accountability and leading the response and resolution.
+Deferring to your AI model provider for technical explanations.
+Communicating that AI incidents are expected and will be reduced over time.
+===
+You are pitching an AI-powered product to a risk-averse enterprise. What framing is most effective?
+"Our AI is trained on industry-specific data so it is more accurate than general models."
+"AI is transforming this industry — early adopters gain a significant competitive advantage."
+*"Here is how we handle errors and what our human oversight process looks like."
+"Our AI works autonomously so your team does not need to change their workflows."
+===
+What is the most strategic reason for a founder to invest in understanding AI deeply, beyond just using tools?
+Technical AI knowledge is increasingly required to raise institutional venture funding.
+Deep AI understanding is necessary to build defensible competitive advantages.
+Founders who understand AI can reduce their dependence on technical co-founders.
+*Understanding AI limits and capabilities enables better product and hiring decisions.
+===
+You want to build a personal AI operating system as a founder. The highest-priority component is:
+*A reliable daily workflow for high-volume, recurring communication tasks.
+A custom AI model trained on your own writing and thinking.
+An AI tool that automates your calendar and email management.
+A comprehensive library of prompts covering all business functions.
+===
+You use Claude daily for strategic thinking. What practice produces the most durable value?
+Starting each session fresh to avoid any carry-over of previous constraints.
+*Saving and refining the best prompts and building on them over time.
+Using the same conversation thread across many days for context continuity.
+Rotating between different AI tools to get diverse perspectives.
+===
+What is the most important practice when using AI for high-stakes written communication?
+Have a team member review AI-generated communications before sending.
+Use AI only for a first draft and write the final version manually.
+Disclose AI use in all high-stakes communications.
+*Read every word before sending and own the content fully.
+===
+You want AI to help you think through a strategic decision. What approach produces the highest-quality output?
+*Describe the decision, the constraints, the options, and ask for challenges to your thinking.
+Describe the decision and ask Claude what you should do.
+Ask Claude to research the decision type and recommend best practices.
+Present your preferred option and ask Claude to validate it.
+===
+What is the correct mental model for AI as a co-founder's replacement on strategic thinking?
+AI can replace a strategic co-founder when operating as a solo founder.
+AI is better than a co-founder for strategy because it has no personal agenda.
+*AI is a structured thinking partner — not a decision-maker or accountability holder.
+AI can only support tactical execution, not strategic thinking.
+===
+You use AI to draft your company's culture documentation. The most important revision you must make is:
+*Infuse it with the specific values and behaviours that are genuinely true of your team.
+Ensure the language is formal enough for an HR or employment context.
+Have the team review and add their suggestions to the AI draft.
+Ask Claude to make the culture documentation more inspirational.
+===
+How should a founder handle an AI tool that stops working during a critical workflow?
+Purchase a backup subscription to a competing AI tool.
+Build redundancy by running two AI tools for all critical workflows.
+Avoid using AI for truly critical tasks where downtime is unacceptable.
+*Have a manual fallback process defined for every critical AI-dependent task.
+===
+What is the most effective way to use AI when preparing for a board meeting?
+Use AI to write the board presentation and review it for accuracy.
+*Use AI to generate questions the board is likely to ask, then prepare substantive answers.
+Use AI to simulate the board meeting and practise your responses.
+Use AI to research board members' priorities and tailor your narrative.
+===
+A founder's AI-assisted daily workflow breaks down when they are overwhelmed. What does this reveal?
+Founders should use AI less during high-stress periods to preserve clarity.
+AI tool selection should include stress-test scenarios in the evaluation.
+*AI workflows must be simple enough to maintain under high cognitive load.
+Daily AI workflows require dedicated review time to function sustainably.
+===
+What is the highest-leverage investment a founder can make in AI capability this year?
+*Developing a systematic practice of daily, verified AI use across key work tasks.
+Attending AI conferences and staying current on the latest model developments.
+Hiring a dedicated AI specialist to build systems for the founding team.
+Taking a technical AI course to understand model capabilities deeply.
+===
+You need to communicate a difficult business decision to your team. AI helps you draft the communication. What is the non-negotiable step?
+Have the AI draft reviewed by a co-founder before sending.
+Ask Claude to make the communication more empathetic.
+*Read and personally own every word before delivering it to the team.
+Test the communication with one trusted team member before the full team.
+===
+A potential hire asks about your AI policies before accepting the role. What is the strongest response?
+"We use AI extensively — it is part of how we stay lean."
+"We are still developing our formal AI policy."
+"AI use is at each employee's discretion within reasonable limits."
+*Share your current AI practices and the principles that guide them.
+===
+What does building "AI-native" operational processes mean in a startup?
+Operating entirely with AI tools and no manual fallback procedures.
+*Designing workflows where AI is embedded from the start, not added later.
+Using AI to automate all processes that previously required human judgment.
+Building internal AI tools rather than relying on third-party APIs.
+===
+You are considering using customer data to fine-tune your AI model. The first question is:
+Will fine-tuning meaningfully improve the model's performance for your use case?
+How much will fine-tuning cost at your current data volume?
+*Do your terms of service and privacy policy permit this use of customer data?
+Does your technical team have the capability to manage fine-tuning?
+===
+Your AI-assisted customer support handles 80% of tickets autonomously. The most important operational metric is:
+*The satisfaction rate and escalation rate for AI-handled tickets.
+The cost saving per ticket compared to human support.
+The average resolution time for AI-handled tickets.
+The percentage of tickets that the AI handles without escalation.
+===
+What is the most valuable thing a founder learns from their first year of serious AI use?
+Which AI tools are most cost-effective at different business functions.
+*The specific tasks where AI adds reliable value versus where it consistently falls short.
+How to write better prompts for all categories of business tasks.
+How to communicate AI capabilities to investors and customers credibly.
+===
+You are scaling your startup and AI is generating more content than your team can review. What is the right response?
+Lower the review standard since the AI has demonstrated reliability.
+Invest in AI tools that automatically review other AI outputs.
+Limit AI output to what your current review capacity can handle.
+*Scale up review capacity proportionally to the increase in AI output.
+===
+A founder is asked "how much of your company's work does AI do?" The most honest answer framework is:
+"About 60% — we have automated most repetitive tasks."
+"AI does everything except final approvals."
+*AI assists across most functions but humans make all consequential decisions.
+"Very little — we prefer a human-first approach."
+===
+What is the most important quality a founder should look for when hiring for AI-fluent roles?
+Experience with the specific AI tools your company uses.
+*The ability to critically evaluate AI outputs rather than just use tools.
+Formal certification or training in AI from a recognised provider.
+Technical ability to build and configure AI systems.
+===
+Menler is described as India's first Claude-native, operator-led AI upskilling platform. What does this signal to a founder considering Menler for their team?
+Menler provides official Anthropic certification for Claude proficiency.
+Menler trains teams to build Claude-powered products from scratch.
+Menler is the most cost-effective AI training option for Indian startups.
+*The training is built around applied, professional AI use — not general AI awareness.
 `;
 
 // Fisher–Yates shuffle (client-only, so Math.random is fine).
@@ -467,13 +470,16 @@ function shuffle(arr) {
   return a;
 }
 
-// Parse RAW into { q, options:[{t,s}] }; the 2nd option (B) is correct.
+// Parse RAW into { q, options:[{t,s}] }; the option line prefixed with "*" is correct.
 const ITEMS = RAW.split(/^===$/m)
   .map((block) => block.split('\n').map((l) => l.trim()).filter(Boolean))
   .filter((lines) => lines.length >= 5)
   .map((lines) => ({
     q: lines[0],
-    options: lines.slice(1, 5).map((t, i) => ({ t, s: i === 1 ? 1 : 0 })),
+    options: lines.slice(1, 5).map((l) => {
+      const correct = l.startsWith('*');
+      return { t: correct ? l.replace(/^\*\s*/, '') : l, s: correct ? 1 : 0 };
+    }),
   }));
 
 export const FOUNDERS_POOL_SIZE = ITEMS.length;

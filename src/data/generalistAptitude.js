@@ -1,911 +1,910 @@
-// Combined AI Generalist question bank — Entry Diagnostic (75) + Level Up (75) = 150.
-// Each block below is: question line, then the 4 options. The 2nd option (B) is the
-// correct answer in the source PDFs; we shuffle option order at session build so the
-// correct answer isn't always in the same position.
+// AI Generalist question bank — Entry Diagnostic (75) + Level Up (75) = 150.
+// Correct answers VARY (A/B/C/D); the correct option line is prefixed with "*".
+// Option order is shuffled at session build.
 //
-// getGeneralistSession(n) → returns a fresh random n-question session in the
-// aptitude runner's format: { q, options: [{ t, s }] } (s = 1 for the correct option).
+// getGeneralistSession(n) → a fresh random n-question session in the runner's
+// format: { q, options: [{ t, s }] } (s = 1 for the correct option).
 
 const RAW = String.raw`
-What is the core difference between a generative AI model and a traditional software program?
-Generative AI is faster than traditional software.
-Traditional software follows explicit rules written by humans; generative AI learns statistical patterns from data and generates new outputs — text, images, code — that were not pre-programmed.
-Generative AI only works on the internet while traditional software works offline.
-Traditional software is more creative; generative AI is more logical.
-===
-You are preparing to join the AI Generalist Fellowship. Which statement best describes what "AI generalist" means?
-Someone who knows a little about every AI tool but is expert in none.
-Someone who can apply AI fluently across different domains and workflows — not just within one specialised technical area.
-Someone who has completed a computer science degree with an AI specialisation.
-Someone who uses AI for personal tasks but not professional ones.
-===
-Claude is described as "Claude-native" in Menler's programs. What does this mean in practice?
-Claude is the only AI tool covered in Menler programs.
-Menler's curriculum is built around Claude as the primary working environment — prompting, projects, connectors, and workflows are all designed for Claude specifically, not as generic AI tool training.
-Claude is a native Indian AI tool built in Bengaluru.
-Claude-native means you must use Claude on a native mobile app, not a browser.
-===
-What is a "token" in the context of AI language models?
-A payment unit used to purchase AI credits.
-The basic unit of text that AI models process — roughly a word or part of a word — with models having a maximum token limit per conversation called a context window.
-A security code required to log into an AI platform.
-A reward point earned by using AI tools frequently.
-===
-What does it mean when an AI model is described as having a "knowledge cutoff"?
-The AI stops answering questions after a certain number of messages.
-The model's training data has an end date — it has no knowledge of events, publications, or developments after that date unless it has a web search tool.
-The AI refuses to answer questions beyond a certain complexity level.
-The AI's responses become less accurate after being used for many hours.
-===
-A friend says: "You don't need to learn AI — it will learn from you automatically." What is wrong with this view?
-Nothing — AI does learn from your interactions automatically.
-AI models do not learn from individual user conversations in real time. The skill of directing AI effectively — prompting, iteration, workflow design — must be actively developed by the user.
-They are partially right — AI learns your name and preferences but not your skills.
-They are right only for paid AI subscriptions that include personalisation.
-===
-What is the "context window" of an AI model and why does it matter for professional work?
-The physical screen size recommended for using AI tools.
-The maximum amount of text the AI can process in a single conversation — determining how much document, history, or instruction you can include before the AI loses track of earlier content.
-The time period during which the AI is most accurate.
-The number of tabs you can have open simultaneously in Claude.ai.
-===
-Which of the following best describes what "prompting" is as a professional skill?
-Learning to type faster to interact with AI more efficiently.
-The ability to write clear, structured, context-rich instructions that reliably direct AI toward high-quality, specific outputs for professional tasks.
-Memorising a set of magic phrases that unlock AI's best responses.
-The technical process of submitting requests to an AI API.
-===
-What is the difference between Claude's "Projects" feature and a standard conversation?
-Projects are paid; standard conversations are free.
-Projects maintain persistent context — instructions, files, and memory — across multiple conversations, making them suitable for ongoing work rather than one-off queries.
-Projects can only be used for creative writing tasks.
-There is no functional difference — Projects is just a visual organiser.
-===
-What does "hallucination" reveal about how AI models fundamentally work?
-It reveals that AI models are not as advanced as they appear.
-It reveals that AI models generate probable text rather than verified truth — they predict what words should follow, not whether those words are accurate.
-It reveals that AI models are deliberately deceptive.
-It reveals that AI models copy from other sources without attribution.
-===
-Before joining the Generalist Fellowship, which of the following skills is most important to already have?
-The ability to write code in at least one programming language.
-Comfort with written communication — the ability to express what you want clearly in text, since prompting is fundamentally a writing skill.
-A background in mathematics or statistics.
-Experience working in a technology company.
-===
-What is the most accurate description of what the Generalist Fellowship's first 6 weeks focus on?
-Learning to build AI applications using Python.
-Building cross-functional AI fluency — prompting, workflow automation, tool use, and applied AI thinking — before specialising in a domain track.
-Studying the history and theory of artificial intelligence.
-Preparing for the Anthropic Claude certification exam.
-===
-A prospective Fellow says: "I'll just use ChatGPT instead of Claude during the Fellowship since I'm already familiar with it." What is the key consideration they are missing?
-ChatGPT is less capable than Claude for all tasks.
-The Fellowship curriculum is built around Claude-specific features — Projects, Skills, Connectors — that do not exist in ChatGPT. Using a different tool means missing the actual system being taught.
-ChatGPT is more expensive than Claude for professional use.
-Using ChatGPT instead of Claude violates the Fellowship's terms and conditions.
-===
-What does "AI-native workflow" mean?
-A workflow that requires an AI engineer to set up.
-A way of working where AI is integrated from the start as a core collaborator — not added as an afterthought to an existing manual process.
-A workflow that runs entirely on autopilot without human input.
-A workflow that can only be built using paid enterprise AI tools.
-===
-What is the most important mindset to bring into the Generalist Fellowship?
-Confidence that AI will handle everything with minimal input from you.
-Treating every AI interaction as an opportunity to develop skill — prompting deliberately, reviewing outputs critically, and learning from what works and what doesn't.
-Scepticism about AI's usefulness until you see proof it can help your specific work.
-Focus on learning as many AI tools as possible before the Fellowship ends.
-===
-What is the most reliable structure for a professional prompt?
-Start with a greeting and end with a thank you.
-Role or context, then specific task, then format requirements, then constraints or exclusions. This structure ensures the AI has everything it needs before generating output.
-Keep it under 20 words to avoid confusing the AI.
-Use bullet points for every prompt regardless of the task.
-===
-You need Claude to analyse a competitor's product page. What should your prompt include beyond the URL or pasted content?
-Nothing — pasting the content is sufficient.
-What specific aspects to analyse, the framework to use, the output format, and what you will do with the analysis — so Claude produces a structured, actionable result rather than a general summary.
-A request for Claude's personal opinion on the competitor.
-Instructions to search the internet for additional competitor information.
-===
-What is the purpose of including a "negative constraint" in a prompt?
-To make the AI work harder by giving it restrictions.
-To explicitly exclude outputs, formats, or content you don't want — preventing the AI from defaulting to patterns that are common but unsuitable for your specific need.
-Negative constraints always reduce output quality.
-To test whether the AI will follow instructions.
-===
-You ask Claude to write a proposal and the first draft is too formal. Which follow-up is most effective?
-"Make it better."
-"Rewrite this in a warmer, more conversational tone — as if written by a founder talking directly to a potential partner, not a consultant writing a formal document. Keep all the content but change the register throughout."
-"Try again."
-"Make it less formal."
-===
-What is "output anchoring" and when is it useful?
-Setting a maximum word count to prevent long responses.
-Starting the AI's response with a partial completion — for example, beginning with the first line of a table or a JSON bracket — so the AI continues in the exact format you need from the first token.
-Repeating the most important instruction at the end of a prompt.
-Saving a prompt as a template to reuse across projects.
-===
-What is the key difference between a "persona prompt" and a "role prompt"?
-They are identical — persona and role mean the same thing in prompting.
-A persona prompt gives the AI a full character with voice, tone, and perspective. A role prompt assigns a functional position ('act as an editor') that shapes task approach without a full character.
-Persona prompts are for creative tasks; role prompts are for analytical ones.
-Role prompts require more tokens and are therefore less efficient.
-===
-You are using Claude to help draft a client email and want to preserve your personal writing style. What is the most effective approach?
-Describe your writing style in general terms: "write like me."
-Paste two or three examples of your existing writing and instruct Claude to match the voice, sentence length, vocabulary, and tone demonstrated in those examples.
-Ask Claude to write the email and then manually adjust the style afterward.
-Use Claude only for the content and write the email from scratch yourself.
-===
-What does it mean to "ground" a prompt?
-Keeping the prompt simple and basic.
-Including specific source material — a document, data set, or set of facts — and instructing Claude to base its response on that material rather than on its general training knowledge.
-Connecting your prompt to real-world examples to make it more relatable.
-Starting every prompt by stating the current date and context.
-===
-You have a 50-page report to analyse with Claude. What is the most effective approach?
-Paste all 50 pages in a single message and ask for the full analysis.
-Decompose the analysis: identify the key questions first, then extract and paste the most relevant sections for each question, directing Claude to specific pages rather than the full document.
-Ask Claude to summarise the full report first, then analyse the summary.
-Use a different AI tool since Claude cannot handle 50-page documents.
-===
-What is the most effective way to prompt Claude when you are not sure exactly what you want?
-Write the vaguest possible prompt so Claude has maximum freedom to interpret.
-Describe what you are trying to achieve, what you know about it so far, what has not worked, and ask Claude to help you clarify the problem before attempting a solution.
-Ask multiple short questions in rapid succession.
-Use another AI tool to formulate your prompt before bringing it to Claude.
-===
-What is a "prompt template" and why is it valuable in professional workflows?
-A standard greeting used to start every AI conversation.
-A reusable prompt structure with placeholders for variable content — enabling consistent, high-quality AI output for recurring tasks without rewriting the prompt from scratch each time.
-A prompt written by a professional prompt engineer and sold commercially.
-A Claude feature that automatically saves your previous prompts.
-===
-When should you use chain-of-thought prompting in professional tasks?
-For every task, since it always produces better results.
-For complex, multi-step analytical tasks where the reasoning process matters — risk assessments, strategic analysis, complex problem diagnosis — not for simple formatting or drafting tasks where it adds length without value.
-Only for tasks involving mathematics or coding.
-Chain-of-thought is only available in paid AI subscriptions.
-===
-You receive an AI output that is 80% excellent and 20% problematic. What is the most efficient approach?
-Discard the entire output and start again.
-Quote the 20% back to Claude with a specific explanation of what is wrong with it and what you want instead, preserving the 80% that is already working.
-Accept the full output and fix the 20% manually.
-Ask Claude to "fix the bad parts" without specifying which parts or what is wrong.
-===
-What is the most important signal that a prompt needs to be improved?
-The response takes longer than 10 seconds to generate.
-The output requires significant rewriting, misunderstands the task, or misses important constraints — indicating the prompt did not communicate what was actually needed.
-The response is shorter than expected.
-Claude asks a clarifying question before responding.
-===
-What distinguishes a "professional-grade" prompt from a casual one?
-Professional prompts are longer.
-Professional prompts are precise about role, task, format, constraints, and audience — eliminating as much ambiguity as possible so that the first output is genuinely usable or close to it.
-Professional prompts use formal language and avoid contractions.
-Professional prompts always include specific word counts.
-===
-What is the most important principle when designing an AI-assisted workflow for the first time?
-Automate everything immediately to maximise efficiency.
-Start with the highest-friction, most repetitive task in your current workflow — the one where AI assistance would produce the most immediate, tangible time saving.
-Design the most sophisticated workflow possible to future-proof your process.
-Ask AI to design the workflow for you before you attempt it yourself.
-===
-What is a "Claude Project" and how does it change how you work with AI?
-A paid Claude feature for team collaboration on documents.
-A persistent workspace in Claude that retains your instructions, files, and context across multiple conversations — enabling ongoing, project-specific AI assistance without re-explaining context each time.
-A structured Claude conversation with more than 10 messages.
-A project management template that Claude fills out for you.
-===
-You want to use Claude to help manage your weekly work review. What should you store in the Project instructions?
-Nothing — Project instructions are for advanced users only.
-Your role and context, the format you want for the weekly review, the specific questions you always want answered, and any recurring constraints — so each week's review requires minimal setup.
-The weekly data you want to review, updated every week.
-A list of AI tools you plan to use alongside Claude.
-===
-What is a "trigger" in the context of an AI-assisted workflow?
-A button you click to start an AI conversation.
-A specific event or condition that initiates a step in an automated or semi-automated AI workflow — for example, receiving a new email triggers a summarisation step.
-A harmful prompt that causes AI to behave unexpectedly.
-The moment when AI output is reviewed and approved for use.
-===
-You want to use Claude to help draft responses to common customer queries. What workflow design produces the most consistent quality?
-Ask Claude to draft each response from scratch every time.
-Create a Project with instructions that include your brand voice, common query types with response frameworks, and tone guidelines — then provide the specific query for each conversation.
-Give Claude the customer's full contact history for every query.
-Let Claude draft responses without any instructions to avoid constraining its creativity.
-===
-What does it mean to have a "human review checkpoint" in an AI workflow?
-A scheduled break where AI tools are turned off for human rest.
-A deliberate point in the workflow where a human reviews, edits, or approves AI output before it moves to the next step or is used externally.
-A feature in Claude that automatically flags its own uncertain outputs for review.
-A meeting between the human and the AI to discuss workflow performance.
-===
-Which of the following is the best example of a well-designed AI-assisted research workflow?
-Ask Claude to research everything and trust its output completely.
-Define the research questions first, use Claude to gather and structure information, verify key facts from primary sources, use Claude to synthesise into the required format, then human review before use.
-Google the topic first, then paste everything into Claude for a summary.
-Ask Claude the same research question 5 times and take the most common answer.
-===
-You want to use Claude to help process meeting notes into action items every week. What makes this an ideal AI workflow candidate?
-It is complex and requires sophisticated AI reasoning.
-It is repetitive, clearly defined, has a consistent input format (meeting notes) and output format (action items), and the cost of occasional errors is recoverable.
-It is important enough to justify the time investment in automation.
-It requires no human review since meeting notes are always accurate.
-===
-What is the risk of not documenting your AI workflow prompts and instructions?
-There is no risk — AI workflows do not require documentation.
-If the prompts are not saved, the workflow breaks the next time the context window resets, the person using it changes, or you need to improve it — rebuilding from scratch each time.
-Documentation makes workflows slower to run.
-Documented prompts are more likely to be copied by competitors.
-===
-You build an AI workflow that works perfectly with one type of input but breaks when the input format changes slightly. What does this indicate?
-The AI tool has a bug that needs to be reported.
-The workflow was designed too tightly around one specific input pattern and lacks the robustness to handle natural variation. The prompt needs to be redesigned to handle input variability.
-You need a more powerful AI model for this workflow.
-The workflow should only be used with exactly the inputs it was designed for.
-===
-What does "AI-assisted" mean versus "AI-automated" in a workflow context?
-They mean the same thing — both involve using AI for tasks.
-AI-assisted means AI supports human decision-making with drafts or analysis; AI-automated means AI completes the task and sends or acts on outputs with minimal or no human review.
-AI-automated is more expensive than AI-assisted.
-AI-assisted requires more technical setup than AI-automated.
-===
-What is the most valuable output of the first month of using Claude professionally?
-A large number of completed AI tasks.
-A growing library of effective prompts and workflow templates, tested and refined through real use — representing genuine intellectual capital that compounds over time.
-Familiarity with every feature Claude offers.
-A certificate demonstrating Claude proficiency.
-===
-You want to use Claude to help prepare for an important stakeholder meeting. What is the most effective workflow?
-Ask Claude to tell you what will be discussed in the meeting.
-Brief Claude on the meeting context, attendees, objectives, and known concerns, ask Claude to help anticipate questions and prepare responses, review and refine, use Claude to draft talking points, then final human review.
-Ask Claude to join the meeting as an observer.
-Use Claude only after the meeting to process notes — not before for preparation.
-===
-What is the role of "constraints" in making an AI workflow reliable?
-Constraints slow down AI workflows unnecessarily.
-Constraints define the boundaries of acceptable output — what format, length, tone, and content is required — preventing the AI from making interpretive choices that would break the workflow downstream.
-Constraints are only needed for creative tasks where AI has too much freedom.
-Constraints should be avoided to give AI maximum flexibility.
-===
-What is the most sustainable approach to building AI workflows over time?
-Build the most complex workflow possible immediately.
-Start simple, test thoroughly, iterate based on actual use, add complexity only when the simpler version is reliable — treating workflow design as a continuous improvement process.
-Build all workflows at once to save time.
-Delegate workflow design entirely to AI tools.
-===
-What is an "AI connector" in Claude's ecosystem?
-A physical cable that connects your computer to Claude's servers.
-An integration that allows Claude to access data from external tools — like Google Drive, email, or Notion — within a conversation, enabling AI assistance with your actual work data.
-A premium feature that connects multiple Claude users in a group session.
-A browser extension that adds Claude to every website you visit.
-===
-What is the difference between Claude.ai and the Claude API?
-Claude.ai is for personal use; the Claude API is for enterprise use only.
-Claude.ai is a ready-to-use interface for end users; the Claude API is for developers to integrate Claude into their own applications, automations, and products.
-The Claude API provides a more advanced model than Claude.ai.
-Claude.ai requires a monthly subscription while the API is always free.
-===
-Which tool would you use alongside Claude for building a no-code automation that sends a summary email every time a new document is added to a shared Google Drive folder?
-Google Docs.
-n8n or Zapier — workflow automation platforms that connect apps and trigger actions without coding.
-Claude Code.
-Microsoft Excel.
-===
-What is "Claude Skills" in the context of Menler's curriculum?
-A gamified learning system within Claude that awards skill badges.
-Custom instructions or system-level configurations stored in a Project that define how Claude should behave for a specific recurring task — effectively a trained AI assistant for that purpose.
-Anthropic's official training certification for Claude users.
-A feature that teaches Claude new capabilities it did not have during training.
-===
-A generalist AI professional needs to process PDFs, draft emails, analyse spreadsheet data, and schedule meetings — all using AI. What does this require?
-A single AI tool that does everything perfectly.
-An understanding of which AI tools or Claude features handle each task, and how to move data between them efficiently — a 'tool-stacking' capability.
-A dedicated IT team to set up integrations.
-Learning to code so you can build custom integrations.
-===
-What is the primary use case for Claude's document upload feature?
-Storing documents permanently in Claude's memory.
-Providing Claude with specific source material to analyse, summarise, or work with — replacing the need to paste large amounts of text and enabling more focused, document-grounded responses.
-Converting documents into different file formats.
-Sharing documents with other Claude users in the same session.
-===
-What distinguishes a "Claude Routine" from a one-off Claude interaction?
-Routines are more expensive than one-off interactions.
-A Routine is a defined, repeatable AI workflow with consistent inputs and outputs — designed to run regularly (daily, weekly) with minimal setup each time.
-Routines can only be built by Claude developers.
-Routines require multiple AI tools working together.
-===
-You are evaluating whether to use an AI tool for a new workflow. Which consideration is most important?
-Whether the tool has the best user interface.
-Whether the tool's output quality, data handling practices, and integration capabilities meet the specific requirements of the task and the professional standards it must meet.
-Whether the tool was founded by well-known AI researchers.
-Whether the tool is the most popular in the market.
-===
-What is the most effective way to use Claude alongside a spreadsheet tool like Google Sheets?
-Ask Claude to open Google Sheets directly.
-Copy relevant data from Sheets into Claude for analysis and interpretation, use Claude to generate formulas or summaries, then paste results back — using each tool for what it does best.
-Replace Google Sheets with Claude for all data work.
-Claude and spreadsheet tools cannot be used together.
-===
-What is a "system prompt" and how does it relate to Claude Skills in professional use?
-A system prompt is a technical term for the user's first message in a conversation.
-A system prompt is a set of instructions that shape Claude's behaviour before any user message — in professional workflows, well-crafted system prompts are what make Skills, Projects, and Routines reliable and consistent.
-System prompts are only accessible to Claude developers and cannot be set by regular users.
-A system prompt is Claude's automatic introduction message at the start of each conversation.
-===
-Which of the following is the best use of Claude's web search capability?
-Replacing all manual research — Claude's web search is always more accurate than human searching.
-Supplementing Claude's training knowledge with current information for time-sensitive tasks — recent news, current pricing, updated policies — while still verifying important findings independently.
-Web search is only available in Claude's paid API tier.
-Using web search for every query to ensure all information is current.
-===
-What is the advantage of building Claude workflows in a Project rather than in separate conversations?
-Projects have a larger context window than individual conversations.
-Projects maintain consistent instructions, files, and context across every conversation within them — creating a persistent, professional working environment rather than repeatedly starting from zero.
-Projects allow multiple people to work with Claude simultaneously.
-Projects automatically save and export your conversations.
-===
-What is "MCP" (Model Context Protocol) and why does it matter for AI generalists?
-A mandatory certification programme for Claude users.
-An open protocol that enables Claude to connect with external tools and data sources in a standardised way — expanding what Claude can access and do within professional workflows.
-A premium Claude plan that includes more context window capacity.
-A measurement of Claude's response speed and accuracy.
-===
-You are choosing between two AI writing tools. Tool A produces slightly better prose; Tool B integrates directly with your existing CRM and email system. For professional workflow use, which consideration is more important?
-Always choose the tool with the better output quality.
-Integration capability often outweighs marginal quality differences in workflow contexts — a tool that fits into your existing process seamlessly typically delivers more total value than a superior tool that requires manual data transfer.
-Always choose the tool with more users since it will be better supported.
-Choose based on price — workflow efficiency reduces costs.
-===
-What is the most important thing to understand about AI tools before embedding them in professional workflows?
-Their pricing models and upgrade paths.
-Their data handling practices — what data is stored, for how long, who can access it, and whether it is used for model training — especially for workflows involving client, financial, or sensitive organisational data.
-Their founding team's technical background.
-Their user interface ratings on review platforms.
-===
-What is the fundamental reason why AI cannot be a "source of truth" for professional decisions?
-AI tools are not connected to the internet.
-AI generates probable responses based on training patterns — it cannot verify its own accuracy, access real-time authoritative data, or take professional accountability for its outputs.
-AI is too slow to be used for time-sensitive professional decisions.
-AI sources of truth require a paid enterprise subscription.
-===
-What does "temperature" control in an AI model, in simple professional terms?
-The physical operating temperature of the server running the model.
-The degree of randomness in the model's outputs — lower temperature produces more predictable, focused responses; higher temperature produces more varied, creative ones.
-How quickly the model generates responses.
-The maximum length of a response the model will produce.
-===
-Why does an AI sometimes give different answers to the same question across different sessions?
-The AI updates itself between sessions based on new information.
-The combination of response randomness (temperature), slightly different prompt interpretations, and the absence of cross-session memory means identical inputs can produce meaningfully different outputs.
-The AI personalises responses based on your usage history.
-Different answers indicate a bug that should be reported to the AI company.
-===
-What is a "RAG system" in simple terms and why does it matter for professional AI applications?
-A recycling and generation system for reusing old AI outputs.
-Retrieval-Augmented Generation — a system where an AI retrieves relevant documents from a knowledge base before generating a response, dramatically reducing hallucination risk for domain-specific queries.
-A random answer generator used to test AI system reliability.
-A type of AI training that uses real-world data.
-===
-You are evaluating whether AI is suitable for a specific professional task. Which framework is most useful?
-Try it and see — if the first output is good, AI is suitable.
-Assess: Is the task well-defined? Is good output objectively recognisable? Is the cost of error recoverable? If yes to all three, AI is likely suitable. If any is unclear, design human oversight into the workflow.
-AI is suitable for all professional tasks — the question is which AI tool to use.
-AI is only suitable for tasks that are currently done manually by junior staff.
-===
-What is "prompt injection" and why is it a professional concern as AI becomes more autonomous?
-A method of making prompts work faster.
-An attack where malicious instructions hidden in content processed by an AI (documents, emails, web pages) cause the AI to follow the attacker's instructions instead of the user's — a significant risk in agentic AI systems.
-A technique for adding prompts to documents automatically.
-A premium feature for professionals who need faster AI responses.
-===
-What does it mean that AI models have "emergent capabilities"?
-AI models develop new physical abilities as they grow larger.
-As AI models scale in size and training data, they sometimes develop capabilities that were not explicitly trained — abilities that emerge from scale rather than deliberate programming.
-AI models learn new capabilities from each conversation they have.
-Emergent capabilities are bugs that appear in large AI models.
-===
-What is the professional implication of AI models having different "context windows"?
-Larger context windows mean the AI is always more accurate.
-Context window size determines how much text, data, or history can be active in one conversation — a critical constraint for workflows involving long documents, extended conversations, or complex multi-step analysis.
-Context windows only matter for AI coding tasks.
-Context windows are only relevant when using the Claude API, not Claude.ai.
-===
-What is "fine-tuning" and when is it relevant to a generalist's work?
-Editing an AI's response after it is generated.
-Retraining an AI model on specific domain data to specialise its behaviour — relevant when off-the-shelf AI consistently produces outputs that require significant correction for a specific professional domain.
-Fine-tuning is a technique all Claude users should apply to their prompts.
-Fine-tuning is a free feature available to all Claude Pro subscribers.
-===
-Why is "human oversight" not just a safety precaution but a workflow design principle?
-Legal regulations require human review of all AI outputs.
-Human oversight catches errors that AI cannot detect in its own outputs, maintains accountability, adds judgment that AI lacks, and creates the feedback loop that improves AI workflow quality over time.
-Human oversight is needed because AI tools are not yet reliable enough for professional use.
-Human oversight is only necessary for AI outputs shared externally.
-===
-What is the most important thing to know about AI's limitations with numerical reasoning?
-AI models cannot process numbers at all.
-AI language models are trained on text patterns and can make arithmetic errors, especially with multi-step calculations — they should be used to explain and structure numerical reasoning, but calculations should always be verified independently.
-AI is more accurate than calculators for complex maths.
-Numerical limitations only affect free AI tiers.
-===
-What does "alignment" mean in the context of AI safety, in professional terms?
-Making sure AI tools work with your existing software.
-The degree to which an AI system's behaviour matches the intentions and values of the humans it is designed to serve — a core concern as AI systems become more capable and autonomous.
-Formatting AI outputs to align with company brand standards.
-The technical process of integrating AI into existing IT infrastructure.
-===
-Why do AI companies like Anthropic emphasise that AI tools should be used as "a tool, not an authority"?
-To limit their legal liability for incorrect AI outputs.
-Because AI generates probable responses, not verified truth — framing AI as an authority removes the critical human judgment that catches errors, hallucinations, and contextual failures.
-Because AI tools are not advanced enough to be authoritative yet.
-To encourage users to pay for more human expert services.
-===
-What is the most important technical concept for a generalist to understand about how Claude was built — without needing to understand the technical details?
-Claude was programmed with a complete set of facts about the world.
-Claude learned patterns from vast amounts of human text — meaning it reflects the patterns, biases, and gaps in that text, and generates outputs that are statistically likely based on those patterns, not independently verified truth.
-Claude was built by a team of human editors who manually curated all its responses.
-Claude updates its knowledge automatically every 24 hours.
-===
-As an AI Generalist Fellow completing the entry diagnostic, which statement best describes what you are committing to develop?
-The ability to use as many AI tools as possible across your professional life.
-Applied AI fluency — the ability to prompt effectively, design reliable workflows, evaluate AI output critically, and deploy AI thoughtfully across any domain you work in.
-The technical skills needed to build AI models and applications from scratch.
-A specialisation in one AI domain that will define your career going forward.
-===
-You have completed the Generalist Fellowship. Which statement best describes what "prompting mastery" looks like at this stage?
-Knowing a large number of prompt templates to apply to different situations.
-The ability to diagnose why a prompt produced a poor output and redesign it precisely — not just iterate randomly until something works.
-Being able to write the longest and most detailed prompts possible.
-Having memorised the prompting techniques that work best with Claude.
-===
-You need Claude to consistently produce outputs in a specific JSON schema across hundreds of workflow runs. What is the most reliable approach?
-Include "return JSON" in every prompt and spot-check occasionally.
-Provide the exact schema with field names and types, include a complete example of a correctly formatted output, prohibit any additional fields or wrapping text, and implement programmatic validation with retry logic.
-Use a different AI tool that has native JSON output.
-Ask Claude to validate its own JSON before returning it.
-===
-What is "meta-prompting" and when is it most valuable?
-Asking Claude to summarise your prompt before executing it.
-Using Claude to write, evaluate, and optimise prompts for a specific task — turning the AI into a prompt engineer that systematically explores the prompt space for you.
-A technique for making prompts shorter without losing quality.
-Writing prompts that teach Claude new skills it did not have before.
-===
-A prompt that works perfectly for 95% of cases fails on a specific edge case category. What is the correct engineering response?
-Rewrite the entire prompt to address the edge case.
-Characterise the failing edge cases precisely, add the minimum targeted instruction or example that addresses them, and regression-test to confirm the 95% case is unaffected.
-Accept the 5% failure rate as within acceptable limits.
-Switch to a more powerful AI model.
-===
-What is "instruction interference" and how does it degrade prompt quality over time?
-When two users give Claude conflicting instructions simultaneously.
-When new instructions added to a prompt subtly conflict with existing ones — causing the model to satisfy one at the expense of another, degrading overall output quality even when each instruction seems individually correct.
-When instructions are written in a language Claude understands poorly.
-When a prompt is too long for the context window and instructions get cut off.
-===
-What is the most effective technique for getting Claude to produce outputs that match your specific professional voice?
-Describe your voice in adjectives: "professional, warm, direct."
-Provide three to five samples of your best existing writing, have Claude identify the specific patterns (sentence length, vocabulary, punctuation habits, structural preferences), then instruct it to match those patterns explicitly.
-Ask Claude to write like a specific well-known author whose style resembles yours.
-Use the same prompt every time and your voice will emerge naturally over time.
-===
-You are building a prompt for a high-stakes workflow that processes sensitive client information. What additional constraint is most important beyond standard prompt design?
-Make the prompt longer to be more specific.
-Add an explicit data handling instruction: what Claude should not reference, reproduce, or include in outputs — ensuring the prompt architecture itself enforces appropriate information boundaries.
-Use a different AI tool for all sensitive information workflows.
-Ask Claude to confirm it has understood the sensitivity before proceeding.
-===
-What is "prompt brittleness" and what design practice prevents it?
-A prompt that is too short and therefore produces vague outputs.
-A prompt that works on well-formed inputs but fails on natural variation — different phrasing, missing fields, unexpected formats. Prevented by testing with varied, imperfect inputs and adding handling instructions for common variation patterns.
-A prompt that only works with one specific AI model.
-A prompt that produces outputs that become outdated quickly.
-===
-How do you evaluate whether a prompt redesign has actually improved performance versus just changing it?
-Run the new prompt once and compare the output quality subjectively.
-Test both versions against a defined evaluation set covering the full range of expected inputs — including edge cases — and measure improvement using consistent, objective criteria before deploying the new version.
-Ask Claude which version of the prompt it prefers.
-Count the number of output changes between versions — more changes means more improvement.
-===
-What is the most important property to maintain when adding examples to a prompt?
-Examples should always be longer than the expected output.
-Examples must be high-quality and representative of the actual production distribution — including the most important edge cases — because bad examples actively teach wrong patterns.
-Always provide at least 10 examples for every prompt.
-Examples should be from different domains to maximise diversity.
-===
-A Claude workflow produces outputs that are correct in testing but drift in quality over weeks of production use. What is the most likely cause?
-Claude's performance degrades over time with heavy use.
-Production inputs are gradually diverging from the test distribution — users are phrasing queries differently, providing different context, or using the workflow for edge cases it wasn't designed for.
-The prompt is corrupting itself through repeated use.
-Claude automatically updates and changes its behaviour over time.
-===
-What is "constitutional prompting" in practical professional use?
-Writing prompts that comply with your company's legal and compliance requirements.
-Building a set of principles into the prompt that Claude evaluates its own output against before responding — for example, checking that a response meets accuracy, tone, and format standards before delivering it.
-Using Anthropic's Constitutional AI framework to train a custom model.
-A prompting technique exclusive to Anthropic's enterprise customers.
-===
-You are handing off a production prompt to a colleague. What documentation is most important to include?
-The date the prompt was created and the model version it was tested on.
-The prompt's intended function, its known failure modes, the evaluation set used to validate it, and the reasoning behind specific instruction choices — so the colleague can maintain and improve it safely.
-A list of all the iterations you went through before settling on this version.
-The average output quality score across all test cases.
-===
-What is the most important signal that a prompt system is ready for production deployment?
-It has produced good outputs on at least 10 test cases.
-It performs reliably across the full expected input distribution — including edge cases — and has a defined human review process for the cases where it fails or produces uncertain output.
-The prompt author is satisfied with the output quality.
-The prompt has been reviewed by a senior member of the team.
-===
-As a Generalist Fellow, what does your evolved prompting capability enable that was not possible at the entry stage?
-Writing longer, more detailed prompts for every task.
-Designing reliable, production-grade prompt systems — with structured evaluation, documented failure modes, and workflows that maintain quality at scale — not just getting good outputs on individual queries.
-Access to Claude's more advanced models.
-The ability to use Claude without reviewing its outputs.
-===
-What distinguishes an "AI-native workflow" from a workflow with AI added to it?
-AI-native workflows use more AI tools than traditional workflows.
-AI-native workflows are designed from the ground up around AI capabilities — the entire process logic assumes AI participation, rather than inserting AI into steps of an existing manual process.
-AI-native workflows require no human involvement at any step.
-AI-native workflows can only be built by software engineers.
-===
-You have designed a Claude workflow that works well manually. You now want to automate it using n8n. What is the most important consideration before building the automation?
-Whether n8n is free or paid.
-Whether every step of the workflow produces outputs in formats that the next step can reliably process without human interpretation — because automation removes the human judgment that patches workflow gaps.
-Whether the workflow is important enough to justify automation.
-Whether Claude has an official n8n integration.
-===
-What is a "multi-agent workflow" and when does it outperform a single-agent approach?
-A workflow that requires multiple human agents to review AI outputs.
-A workflow where multiple AI instances operate in parallel or in sequence — with each agent specialised for a specific task — outperforming single-agent approaches for complex tasks that benefit from specialisation, parallel processing, or internal review.
-A workflow that uses multiple AI tools from different companies.
-Multi-agent workflows are always more efficient than single-agent ones.
-===
-What is the most important safety design principle for agentic AI workflows that take real-world actions?
-Give the AI agent access to everything it might need.
-Implement minimal necessary permissions — the agent should only have access to the systems and data it specifically needs for its defined task, with irreversible actions requiring explicit human approval.
-Test the agent thoroughly before deployment — no further oversight needed.
-Use the most capable AI model available to reduce error rates.
-===
-You have a recurring research workflow where Claude summarises industry news every morning. After two months, you notice the summary quality has declined. What is the most likely cause and fix?
-Claude's quality degrades with repeated use of the same prompt.
-The news sources and topic landscape have shifted — the prompt was calibrated for the news patterns of two months ago. Update the prompt to reflect current topics, add new sources, and refine the focus based on what has proven most valuable.
-You need to upgrade to a higher Claude subscription tier.
-The workflow has reached its maximum performance ceiling.
-===
-What is the role of "structured outputs" in building reliable AI automation?
-Structured outputs make AI responses look more professional.
-Structured outputs (JSON, defined schemas, consistent field formats) enable downstream automation steps to process AI-generated content programmatically — without human interpretation bridging each step.
-Structured outputs are only needed when building AI APIs.
-Structured outputs reduce the quality of AI responses.
-===
-What is "human-in-the-loop" versus "human-on-the-loop" and when should you use each?
-They mean the same thing — humans review all AI outputs.
-Human-in-the-loop means AI outputs require human approval before each action. Human-on-the-loop means humans monitor and can intervene but AI proceeds autonomously — appropriate only for lower-risk, well-tested tasks.
-Human-in-the-loop is for enterprise use; human-on-the-loop is for personal workflows.
-Human-on-the-loop removes human accountability from AI actions.
-===
-You want to build an AI workflow that automatically drafts responses to inbound sales enquiries and sends them without review. What is wrong with this design?
-Nothing — automated email responses are standard business practice.
-Sales enquiries vary significantly in context, intent, and required response — automating without review risks sending inappropriate, inaccurate, or damaging responses to potential clients at scale.
-The workflow is technically sound but too expensive to operate.
-You need Claude's enterprise plan to send emails automatically.
-===
-What is "workflow observability" and why does it matter as AI workflows become more complex?
-The ability to watch AI generating its responses in real time.
-The ability to monitor, log, and audit what AI workflows are doing at each step — critical for diagnosing failures, maintaining quality, ensuring compliance, and improving workflow performance over time.
-A feature that lets users see which AI model is running their workflow.
-Workflow observability is only relevant for technical teams, not generalist practitioners.
-===
-You build a workflow where Claude analyses customer feedback and routes it to the appropriate team. After deployment, you discover it is misrouting 15% of cases. What is the correct response?
-Accept the 85% accuracy as a good enough result for automation.
-Analyse the misrouted cases to identify the pattern, update the routing criteria in the prompt, add examples of the tricky cases, and re-test before redeployment — treating each failure as a specification gap to fix.
-Replace Claude with a fine-tuned classification model immediately.
-Add more routing categories to handle the edge cases.
-===
-What is the most important metric for evaluating an AI workflow in a professional context?
-The number of API calls the workflow makes per day.
-The quality and reliability of outputs relative to the professional standard they must meet — not speed, cost, or volume, which are secondary metrics.
-The speed at which the workflow completes tasks.
-The cost per task completed relative to manual execution.
-===
-What is "prompt chaining" and how does it differ from a single complex prompt?
-Connecting multiple Claude sessions to share context across devices.
-Breaking a complex task into a sequence of simpler prompts where each output feeds the next — enabling better quality control, error isolation, and intermediate validation than attempting everything in one prompt.
-Asking Claude the same prompt multiple times to improve accuracy.
-A technique for making prompts shorter by splitting them across messages.
-===
-You want to scale an AI workflow from running once per week to running thousands of times per day. What changes most in the design considerations?
-You need a faster internet connection.
-Scale introduces reliability requirements (every edge case now happens regularly), cost management, error rate impact (1% failure rate means thousands of daily errors), and monitoring complexity — all requiring design attention before scaling.
-You simply run the same workflow more frequently.
-You need to upgrade to Claude's enterprise API tier only.
-===
-What is the highest-leverage investment a Generalist Fellow can make after completing the Fellowship?
-Learning to code so they can build more sophisticated AI tools.
-Building a personal library of tested, documented workflow templates — each one refined through real use — that compounds their productivity permanently and can be shared, adapted, and improved over time.
-Keeping up with every new AI tool that launches.
-Getting certified in as many AI platforms as possible.
-===
-What is the single most important capability that separates a Generalist Fellow from a casual AI user in a professional environment?
-Access to paid AI subscriptions with more powerful models.
-The ability to design AI workflows that reliably produce professional-grade outputs at scale — not just getting good results on individual queries when conditions are perfect.
-Speed of prompting — being able to write prompts faster than colleagues.
-Knowledge of more AI tools than other team members.
-===
-A Generalist Fellow is embedded in a finance team that has never used AI. What is the highest-impact starting point?
-Immediately automate the most complex financial models.
-Identify the single most time-consuming, repetitive, clearly defined task — likely report drafting, data interpretation, or meeting prep — and build a reliable AI workflow for that task first to demonstrate value.
-Train the entire finance team on Claude before starting any work.
-Build a comprehensive AI strategy document before touching any actual tasks.
-===
-You are using Claude to support a marketing team's content production. What workflow produces the most consistent brand-aligned output?
-Give Claude the brief and let it write content without constraints.
-Store brand voice guidelines, tone rules, audience personas, and example content in the Project — so every content draft starts from a fully briefed AI that never needs re-orienting on brand.
-Have a human rewrite all AI content from scratch to ensure brand alignment.
-Use Claude only for editing human-written content, not for initial drafts.
-===
-An HR professional uses a Generalist Fellow's AI workflow to help screen job applications. What is the most critical design element?
-Speed — the workflow should process applications as fast as possible.
-A structured output that identifies relevant experience and flags potential concerns, combined with a mandatory human review before any candidate is shortlisted or rejected.
-A scoring system that automatically ranks candidates and sends rejections.
-Integration with all major job portals for automatic application retrieval.
-===
-A founder uses Claude to help with investor communications. What risk requires the most careful prompt design?
-The risk that Claude writes too formally for the founder's voice.
-The risk that Claude generates financial projections, performance claims, or forward-looking statements that are inaccurate, misleading, or potentially in breach of securities regulations.
-The risk that investor communications are too long.
-The risk that Claude uses industry jargon the investors might not understand.
-===
-A product team wants to use Claude to analyse customer interview transcripts. What approach produces the most actionable insights?
-Ask Claude to summarise each transcript individually.
-Define specific analytical questions before processing transcripts — what pain points, what jobs-to-be-done, what objections — then have Claude analyse all transcripts against those specific dimensions and synthesise patterns across them.
-Ask Claude to identify everything important in the transcripts.
-Have Claude create a single paragraph summary of all interviews combined.
-===
-A legal team wants to use Claude to help review contracts. What is the most responsible workflow design?
-Have Claude identify and accept all standard clauses automatically.
-Use Claude to flag non-standard clauses, missing provisions, and unusual terms for lawyer review — Claude surfaces issues faster than manual reading, but all legal conclusions and decisions remain with qualified counsel.
-Use Claude only for contracts below a certain value threshold.
-Have Claude rewrite problematic clauses and send the revised contract to the counterparty.
-===
-What is the most valuable thing a Generalist Fellow brings to a domain team that has been using AI independently?
-More expensive AI tool subscriptions.
-A systematic approach to workflow design — structured prompting, persistent context in Projects, documented templates, and quality evaluation — replacing ad-hoc AI use with reliable, scalable processes.
-Knowledge of more AI tools than the domain team currently uses.
-The ability to build custom AI applications using code.
-===
-You are helping a sales team use AI to research prospects before calls. What makes this workflow genuinely valuable versus just adding AI to the mix?
-Making the research process faster.
-Redesigning how research flows into call preparation — AI researches and structures context in a defined format, which directly populates a call prep template that the salesperson reviews and adds personal context to before the call.
-Replacing manual research entirely with AI-generated profiles.
-Using AI to score prospects and prioritise the call list automatically.
-===
-A Generalist Fellow is asked to help a finance team build an AI workflow for monthly reporting. The team produces 12 different reports for different stakeholders. What is the right starting approach?
-Build all 12 report workflows simultaneously to save time.
-Identify the report that is most time-consuming, most consistent in structure, and least sensitive to errors — build that workflow first, establish quality, then systematically expand to others using the same template logic.
-Build the most complex report workflow first to tackle the hardest challenge.
-Ask AI to design the workflow for all 12 reports at once.
-===
-What is the most common mistake Generalist Fellows make when embedding AI in a domain team's workflow?
-Building workflows that are too simple for the team's needs.
-Designing workflows for ideal conditions without accounting for how the domain team actually works — the real input variability, approval processes, compliance requirements, and edge cases that only domain experts know about.
-Using Claude instead of a domain-specific AI tool.
-Over-documenting the workflow in ways the domain team ignores.
-===
-A Generalist Fellow is supporting a product team that wants to use AI for user research synthesis. What output format produces the most value for product decisions?
-A comprehensive summary document of all research findings.
-A structured synthesis organised around specific product questions — what evidence exists for each, what confidence level is warranted, and what further research is needed — directly mapped to the decisions the team needs to make.
-A list of all quotes from user interviews categorised by theme.
-A ranked list of user complaints from most to least common.
-===
-A Generalist Fellow is asked: "Can AI do X for our team?" What is the most professional and accurate initial response?
-"Yes, AI can do everything — let me show you."
-"It depends on how X is defined, what quality standard is required, and what the cost of errors is. Let me map the task and we can design a test to find out."
-"No, AI is not reliable enough for professional workflows yet."
-"Let me research which AI tools are available for X first."
-===
-What makes a domain-specific AI workflow "sustainable" over time?
-Using the most advanced AI model available.
-Clear documentation, ownership (someone responsible for maintaining it), a review cadence for prompt quality, and a feedback loop from users that flags when output quality degrades.
-Automating as much of the workflow as possible to reduce human dependency.
-Sustainability is determined by the AI tool — not the workflow design.
-===
-A Generalist Fellow has built an effective AI workflow for one domain team. How should they approach expanding it to other teams?
-Copy the exact workflow to all teams immediately.
-Treat each new team as a distinct deployment — adapting the workflow to their specific context, constraints, and quality requirements, while leveraging the template logic and lessons learned from the first deployment.
-Ask the first team to train the other teams directly.
-Build a new workflow from scratch for each team to ensure it fits their needs perfectly.
-===
-What is the most important lesson from the domain application phase of the Generalist Fellowship?
-AI works equally well in every domain with the same approach.
-Domain expertise and AI capability must work together — AI amplifies what domain experts know; it cannot substitute for domain knowledge it doesn't have. The best AI workflows are built by people who understand both the domain and the AI.
-Technical AI skills are more important than domain understanding.
-AI is most valuable in domains where work is most repetitive.
-===
-What is the defining characteristic of an "agentic" AI system versus a standard conversational AI?
-Agentic AI is more intelligent than conversational AI.
-Agentic AI can plan and execute multi-step sequences of actions — using tools, making decisions, and adapting based on intermediate results — rather than just generating a single response to each input.
-Agentic AI requires no human supervision.
-Agentic AI is a paid enterprise feature not available to generalist practitioners.
-===
-You are designing an AI agent that will manage calendar scheduling autonomously. What is the most critical safety design principle?
-Give the agent access to all team calendars for maximum context.
-Scope the agent's permissions to the minimum necessary, require explicit confirmation before creating or modifying events involving external parties, and log all actions for review.
-Test the agent for a week before turning off human oversight.
-Use the most capable AI model to reduce scheduling errors.
-===
-What is the "orchestrator" role in a multi-agent AI architecture?
-The human who oversees the AI agents.
-The top-level AI agent that breaks down a complex goal, delegates subtasks to specialised sub-agents, collects their outputs, and synthesises the final result.
-The AI company's server infrastructure that routes requests.
-The most capable AI model in a multi-agent system.
-===
-What is the most important consideration when evaluating an AI system's output for professional use?
-Whether the output matches the expected format.
-Whether the output meets the professional quality standard required for its intended use — accuracy, completeness, tone, and fitness for purpose — evaluated against the specific context, not generic AI quality standards.
-Whether the output was generated faster than a human would produce it.
-Whether the AI used the most recent information available.
-===
-What is "RAG" and when should a generalist recommend it over standard prompting?
-Rapid Answer Generation — a technique for getting faster AI responses.
-Retrieval-Augmented Generation — when a task requires accurate, specific information from a large, frequently updated knowledge base that cannot fit in a single prompt context window.
-RAG is always superior to standard prompting for professional use.
-RAG is a coding technique only relevant for AI developers.
-===
-What does "evaluation" mean in the context of building AI systems, and why does it matter for generalists?
-Testing whether an AI tool is worth paying for.
-The systematic process of measuring AI system performance against defined criteria — enabling generalists to objectively compare prompts, workflows, and systems rather than relying on subjective impression.
-Evaluation is a technical process only relevant to AI engineers.
-Asking Claude to evaluate its own output quality.
-===
-A company wants to deploy Claude for customer support. What is the most important architectural decision before deployment?
-Which subscription tier of Claude to use.
-Where the human review checkpoints are — which queries AI handles autonomously, which require human escalation, and what triggers escalation — because these decisions determine both quality and risk exposure.
-How many customer support agents to retain after AI deployment.
-Whether to use Claude or a competitor AI model.
-===
-What is "grounding" in an AI system architecture and why is it critical for professional applications?
-Making AI responses sound confident and authoritative.
-Connecting AI outputs to specific, verifiable source documents — so responses can be traced to their basis and the AI is constrained to what those sources actually say rather than generating from general training.
-Grounding is a training technique used by AI companies.
-Ensuring AI responses are appropriate for a professional audience.
-===
-What is the purpose of a "fallback" in an AI workflow architecture?
-A backup AI model that activates when the primary model is unavailable.
-A defined alternative path the workflow takes when AI output fails to meet quality criteria — preventing workflow failure from propagating and ensuring the task still gets completed, possibly via human handling.
-The ability to undo an AI action after it has been taken.
-A feature that stores previous AI outputs for reuse.
-===
-What is the most important thing to monitor after deploying an AI workflow in a professional environment?
-The number of AI requests processed per day.
-Output quality over time — specifically whether the distribution of real production inputs is matching the prompt's design assumptions, and whether quality is stable or drifting.
-The cost of AI API calls per month.
-Whether users are satisfied with the AI interface.
-===
-What distinguishes a well-architected AI system from a collection of individual AI prompts?
-A well-architected system uses more advanced AI models.
-A well-architected system has defined interfaces between components, explicit quality gates, fallback logic, monitoring, and documentation — it behaves predictably and maintains quality even as inputs and context change.
-A well-architected system requires an engineering team to build and maintain.
-Architecture is only relevant for systems processing more than 1,000 requests per day.
-===
-What is the relationship between AI workflow design and organisational change management?
-They are separate concerns — AI design is technical, change management is HR.
-AI workflow deployment almost always changes how people work — requiring stakeholder engagement, adoption support, training, and feedback loops — and the best-designed AI workflow will fail if the change management is neglected.
-Change management is only needed when AI is replacing human roles entirely.
-AI workflows that produce clearly better outputs are adopted automatically without change management.
-===
-You are evaluating an AI vendor's claim that their system achieves "95% accuracy" on a task relevant to your professional use case. What additional information is most important before acting on this claim?
-What AI model powers the vendor's system.
-How accuracy was measured — what the evaluation set contained, whether it represents your specific use case and distribution, and what the 5% failures looked like — since accuracy on a benchmark rarely translates directly to accuracy in production.
-Whether the vendor is profitable and well-funded.
-How long the vendor has been in business.
-===
-What is the most important capability a Generalist Fellow develops that enables them to evaluate and recommend AI systems professionally?
-Knowledge of all available AI tools and their technical specifications.
-The ability to define clear evaluation criteria for any professional AI task — specifying what good output looks like, what failure modes are unacceptable, and how to test systematically — independent of which AI tool is being evaluated.
-Relationships with AI vendors who can provide professional recommendations.
-Deep knowledge of one AI platform that can be applied to all evaluation scenarios.
-===
-As a Generalist Fellow who has completed the Level Up diagnostic, what is your primary responsibility when working with AI in professional settings?
-Maximising the number of tasks completed using AI.
-Maintaining professional accountability for all AI-assisted work — ensuring outputs meet professional standards, errors are caught before they cause harm, and human judgment is applied where AI judgment is insufficient.
-Staying updated on the latest AI tools and models.
-Building the most sophisticated AI workflows possible.
-===
-A senior colleague asks you to design an "AI strategy" for your team. Where do you start?
-Research all available AI tools and present a comparison.
-Diagnose the team's highest-value, highest-friction workflows first — then design an AI adoption sequence that starts with the clearest wins and builds toward more complex automation.
-Propose deploying AI across all workflows simultaneously for maximum impact.
-Start with the most technically sophisticated AI application to demonstrate ambition.
-===
-What is the most important ethical responsibility of an AI-fluent professional in a team that does not yet understand AI's limitations?
-Avoid using AI to prevent misunderstandings.
-Actively correct AI overconfidence — explaining when AI output requires verification, flagging hallucination risks in high-stakes contexts, and ensuring colleagues don't treat AI output as authoritative without appropriate review.
-Keep AI use private to avoid team confusion.
-Let the team discover AI limitations through their own experience.
-===
-How should a Generalist Fellow approach the question: "Will AI replace my job?"
-Reassure everyone that AI will never replace human jobs.
-Acknowledge that AI is transforming roles — automating specific tasks within most jobs — and position yourself as someone who evolves with those changes by continuously developing the judgment, creativity, and relationship capabilities that AI augments rather than replaces.
-Warn colleagues that their jobs are at risk to create urgency for AI adoption.
-Avoid the question as it is too politically sensitive to address directly.
-===
-What is the most important governance consideration when deploying AI in a team that handles sensitive data?
-Getting approval from the CEO before using any AI tool.
-Establishing clear policies for which data can be processed by which AI tools, how AI-generated outputs are reviewed and approved, and who is accountable for AI-assisted decisions — before deployment, not after.
-Only using AI tools that are approved by the government.
-Ensuring all AI use is kept confidential from clients and stakeholders.
-===
-What is the most honest description of the current state of AI capability for complex professional work?
-AI can now handle all professional tasks reliably with minimal oversight.
-AI is extraordinarily capable on well-defined, high-volume, text-processing tasks and a powerful force multiplier for human experts — but it requires structured workflows, clear quality standards, and human judgment for complex, contextual, or high-stakes professional decisions.
-AI is still too unreliable for any professional use without extensive technical setup.
-AI capability is advancing so rapidly that any assessment today will be obsolete in a month.
-===
-A junior colleague approaches you excited about a new AI tool that claims to "eliminate the need for human review." What is your response?
-Encourage them — AI is advancing rapidly and this may be true.
-Engage sceptically but constructively: ask what the tool was evaluated on, what failure modes exist, and what the cost of errors would be in your specific professional context before considering adoption.
-Dismiss the claim immediately as marketing hype.
-Report the tool to IT security as a potential risk.
-===
-What is "responsible scaling" in the context of deploying AI across a professional organisation?
-Using AI only for tasks below a certain financial value threshold.
-Expanding AI deployment sequentially — only scaling to the next use case once the current deployment has demonstrated quality, reliability, and appropriate oversight — rather than deploying AI everywhere simultaneously.
-Responsible scaling means reducing AI use as it becomes more capable to maintain human skills.
-Scaling AI use in proportion to the organisation's revenue growth.
-===
-What is the most important thing a Generalist Fellow can do to ensure AI creates value rather than risk in their professional environment?
-Use the most advanced AI models for all tasks.
-Design every AI workflow with explicit quality standards, appropriate human oversight, clear accountability, and a feedback mechanism — ensuring AI augments professional judgment rather than bypassing it.
-Keep all AI use internal and never share AI-assisted work externally.
-Only use AI for tasks where errors are completely inconsequential.
-===
-How should a Generalist Fellow think about staying current in a field where AI capabilities change rapidly?
-Read every AI news article published daily to stay fully informed.
-Focus on developing durable capabilities — evaluation, workflow design, critical thinking, prompt design — that apply across tools, rather than chasing every new tool release.
-Get certified in every major AI platform annually.
-Follow AI researchers on social media for the most current insights.
-===
-What is the most important thing AI cannot do that a skilled professional must provide?
-Generate large volumes of text quickly.
-Exercise genuine professional judgment — contextual understanding, ethical reasoning, accountability for consequences, and the creativity that emerges from lived experience and domain expertise.
-Access the internet for current information.
-Produce outputs in a specific format reliably.
-===
-A client asks whether you used AI to produce work they commissioned. What is the most professional response?
-Deny AI use to avoid any perception of lower quality.
-Disclose AI involvement accurately and explain the quality assurance process — what AI contributed, how it was reviewed, and why the output meets the professional standard they contracted for.
-AI use is always confidential and should never be disclosed.
-Only disclose if the client specifically asks about each tool used.
-===
-What is the most accurate framing for how AI will change professional skills requirements over the next decade?
-Technical skills will become less important as AI handles more technical work.
-The premium on distinctively human capabilities — judgment, creativity, contextual understanding, relationship management — will increase as AI handles more routine technical and cognitive work.
-All professionals will need to become AI engineers to remain relevant.
-Professionals who specialise deeply in one domain will be most protected from AI impact.
-===
-What does it mean to be "AI-accountable" as a professional?
-Being accountable to your employer for how much you use AI.
-Taking full professional responsibility for all work that AI assists with — including verifying outputs, disclosing AI use appropriately, maintaining quality standards, and standing behind AI-assisted decisions as if you made them yourself.
-Only being accountable for work where you did not use AI.
-AI accountability belongs to the AI companies, not the professionals who use AI tools.
-===
-What is the single most important capability that the Generalist Fellowship develops that no tool, certificate, or course can replace?
-Knowledge of the full range of available AI tools.
-Applied judgment — the ability to evaluate what AI can reliably do in your specific professional context, design systems that leverage those capabilities appropriately, and maintain professional accountability for the results.
-The ability to prompt Claude effectively for any task.
-A network of other AI-fluent professionals.
-===
-A Generalist Fellow completing the Level Up diagnostic represents what stage in their professional AI journey?
-The end point — completion of AI learning.
-A demonstrated foundation — the beginning of a compounding professional journey where AI fluency, domain application, and professional judgment continue to develop through ongoing practice and deliberate learning.
-The point at which they can transition to building AI models.
-The qualification required to teach others about AI.
+You receive an AI output that contains a confidently stated incorrect fact. The correct framing is:
+The AI model version you used is outdated — upgrade it.
+*AI outputs are starting points that require human verification.
+AI is unreliable and should not be used for factual tasks.
+You prompted incorrectly — a better prompt would prevent this.
+===
+A colleague says "I don't trust AI — it makes things up." The most accurate and constructive response is:
+"You're right — AI is unreliable for professional use."
+"AI is reliable as long as you use the right tool for the task."
+"That concern is outdated — modern AI is much more accurate."
+*AI has known failure modes but also genuine strengths worth understanding.
+===
+What distinguishes a generative AI model from a traditional software program?
+*It produces novel outputs from statistical patterns, not explicit rules.
+It can access the internet to retrieve up-to-date information.
+It runs faster than traditional programs on the same hardware.
+It makes decisions without any human input or instruction.
+===
+Which of the following most accurately describes what Claude "knows"?
+A verified encyclopaedia of facts maintained by Anthropic.
+Real-time information retrieved from the internet on demand.
+*Statistical patterns from training data that approximate knowledge.
+Expert knowledge contributed by domain specialists.
+===
+A prompt engineer says "prompt quality determines output quality." How accurate is this?
+Inaccurate — model size matters far more than prompt quality.
+*Largely accurate — prompt quality is the highest-leverage input.
+Partially accurate — only for creative tasks, not factual ones.
+Inaccurate — all prompts to a good model produce good outputs.
+===
+What is the most important practical difference between Claude and a search engine?
+*Claude synthesises and generates; a search engine retrieves and ranks.
+Claude is more accurate for factual queries than a search engine.
+Claude provides citations while a search engine only shows links.
+Claude is faster than a search engine for complex research tasks.
+===
+You are building a workflow that uses Claude to process customer emails. Which risk must you design for first?
+Claude may run too slowly for high-volume email processing.
+Claude may respond in a language the customer did not use.
+Claude may generate responses that are too long for emails.
+*Claude may misclassify or misrespond to some customer emails.
+===
+Why is it important to understand what a model's context window is before building with it?
+It determines which languages the model can respond in.
+It determines the maximum accuracy of the model's outputs.
+*It determines how much input and conversation the model can process.
+It determines which API endpoints are available to developers.
+===
+A manager asks you to "automate this process using AI." The correct first step is:
+*Map the process and identify which steps AI can actually handle.
+Select the AI tool and start building the automation immediately.
+Ask the manager which AI tool they want you to use.
+Estimate the cost savings before designing the solution.
+===
+What does "temperature = 0" mean in practice when using a language model API?
+The model refuses to generate any creative or subjective content.
+The model runs at reduced speed to improve accuracy.
+The model caps response length at a conservative limit.
+*The model produces the most probable, deterministic output.
+===
+You need Claude to output structured JSON. The most reliable approach is:
+Ask Claude to "output JSON" without additional instructions.
+*Specify the exact JSON schema in the prompt and use low temperature.
+Use Claude only if it has a dedicated JSON output mode.
+Generate the output and manually convert it to JSON afterward.
+===
+What is the most common mistake people make when first using Claude for work tasks?
+Over-specifying the task with too much context and detail.
+Using Claude for tasks that require real-time information.
+*Giving vague instructions and expecting Claude to infer the details.
+Relying on Claude before verifying it can handle the task type.
+===
+An AI Generalist's core skill is best described as:
+Being able to code AI models and train them on custom data.
+Mastering every AI tool available in their professional domain.
+Understanding the mathematical foundations of machine learning.
+*Knowing how to direct AI across varied tasks to produce useful outputs.
+===
+You run the same Claude prompt 10 times. 8 of 10 responses are correct and 2 are wrong. For a professional workflow, you should:
+Accept the 80% accuracy rate — it is commercially acceptable.
+*Design the workflow to catch and handle the 2 wrong outputs.
+Switch to a different AI tool with a higher accuracy rate.
+Run the prompt 3 times and take the majority answer.
+===
+Which statement about AI tools is most useful to hold as a working principle?
+*AI is a powerful tool that requires human judgment to use safely.
+AI tools are either reliable or unreliable — know which is which.
+AI is becoming more reliable and will soon require less oversight.
+AI tools are only safe when used for their explicitly intended purpose.
+===
+You ask Claude to help you prepare for a difficult conversation with a colleague. The best prompt includes:
+Only the topic — Claude infers context from professional settings.
+The outcome you want — Claude will determine how to get there.
+*The context, the relationship, the goal, and the constraints.
+The colleague's behaviour — Claude can assess their personality.
+===
+You are using Claude to help plan a complex project. The most valuable use is:
+*Generating a first-pass plan you then stress-test against your knowledge.
+Producing a final project plan the team can immediately follow.
+Replacing the need for a project manager on smaller projects.
+Creating the project timeline automatically from your calendar.
+===
+What is "prompt chaining" and why is it useful?
+Connecting multiple AI tools in sequence to process the same input.
+Saving a series of prompts to reuse across different conversations.
+Running the same prompt simultaneously across multiple models.
+*Breaking complex tasks into sequential prompts where each builds on the last.
+===
+A colleague shares a prompt that works well for them. You try it and get poor results. The most likely reason is:
+The prompt was overfit to one model and does not transfer.
+*Your task or context differs from theirs — prompts are context-specific.
+The prompt was shared incorrectly and has formatting errors.
+You need to run it several times to get a result matching theirs.
+===
+You are reviewing a long Claude output. Which part should you scrutinise most carefully?
+The opening paragraph — AI models front-load errors.
+The conclusion — AI models drift from the brief toward the end.
+*Specific figures, dates, names, and citations — highest hallucination risk.
+Formatting and structure — these are the most common failure points.
+===
+What does it mean to "engineer a prompt" rather than just "write a prompt"?
+Using technical coding skills to pass prompts through an API.
+Writing prompts in a structured format that AI tools can parse.
+Testing a prompt across multiple AI models before using it.
+*Deliberately designing each element of the prompt for a specific outcome.
+===
+You use Claude to draft a report and it produces 80% of what you need. The right next step is:
+*Edit, restructure, and complete the remaining 20% yourself.
+Prompt Claude again to add the missing 20% in one step.
+Accept the 80% — it is production-ready with minor formatting.
+Ask Claude to identify what is missing from its own output.
+===
+Which sign indicates someone is using AI as a tool effectively rather than passively?
+They ask Claude for help on every task before attempting it themselves.
+*They evaluate AI output critically before deciding whether to use it.
+They use the most expensive AI model available for all tasks.
+They check AI outputs for formatting errors before submitting.
+===
+You want to use Claude consistently across your team. The most important first step is:
+Ensure every team member has a Claude account and access.
+Identify which team member will manage Claude interactions.
+Select the Claude model tier that fits your budget.
+*Define what tasks Claude will handle and establish quality standards.
+===
+What is the best mental model for AI in a professional context?
+An expert advisor whose recommendations can be trusted directly.
+A search tool that retrieves answers from a large knowledge base.
+*A capable junior colleague who works fast but needs oversight.
+A creative tool useful only for ideation and brainstorming.
+===
+You discover that a prompt that worked last week produces worse results today. The most likely cause is:
+Your internet connection affects Claude's response quality.
+*The model may have been updated, changing its behaviour.
+The prompt degraded because it was used too many times.
+Claude memorised your previous conversations and changed strategy.
+===
+What is the most appropriate response when Claude says "I'm not sure about this"?
+*Treat the output as lower-confidence and verify the key claims.
+Ask Claude the same question again for a more confident answer.
+Discard the output entirely — uncertainty means the answer is wrong.
+Accept the answer — Claude is unusually honest when uncertain.
+===
+You need Claude to maintain a consistent tone across a long document. The best approach is:
+Generate the document in one prompt to maintain consistency.
+Ask Claude to "maintain consistent tone" throughout.
+*Provide a style guide or tone example at the start of your prompt.
+Generate each section separately and edit tone manually at the end.
+===
+Which approach produces the best AI-assisted research output?
+Use AI to find and summarise sources, then compile its summaries.
+Use AI exclusively since it has processed more research than any human.
+Use AI only to format and structure research you have already done.
+*Use AI to generate hypotheses and structures, verify facts from primary sources.
+===
+A generalist should be able to explain why AI sometimes fails on a task. Which explanation is most accurate?
+The model is not large enough for that task type.
+*The task requires precision or real-time data outside AI's design strengths.
+The task was too complex for any current AI system to handle.
+Insufficient training data exists for that specific task.
+===
+You want Claude to write a client email that sounds like you. The most effective prompt element is:
+*A sample of your previous emails as a tone reference.
+A list of words you prefer and words to avoid.
+An instruction to write in first person and sound natural.
+Your name and job title for personalisation.
+===
+You ask Claude to write a 500-word summary. It produces 750 words. The most effective fix is:
+"Make this shorter."
+"Cut 250 words from this summary."
+*"Rewrite this as exactly 500 words. Do not add new points — compress the existing ones."
+"Summarise this summary in 500 words."
+===
+What is the most reliable way to get Claude to produce a structured output format every time?
+Use the phrase "always follow this format" in the instructions.
+*Provide the exact template or schema you want in the prompt.
+Ask Claude to review its output for format compliance.
+Generate multiple outputs and select the one with the right format.
+===
+You want Claude to generate 10 marketing taglines for your product. You keep getting similar options. The fix is:
+Ask for 10 more taglines and select from the combined 20.
+Switch to a more creative AI tool built for copywriting tasks.
+Run the same prompt 5 times and take the best from each.
+*Add constraints that force variety — different emotions, audiences, or lengths.
+===
+Which prompt technique most improves the accuracy of factual AI outputs?
+*Ask Claude to cite evidence or reasoning for each claim it makes.
+Ask Claude to rate its own confidence on a 1-10 scale.
+Ask Claude to search the internet for supporting evidence.
+Ask Claude to list what it does not know before answering.
+===
+You want to use Claude to prepare an executive summary. The summary should contain no information that is not in the source document. The best instruction is:
+"Write an accurate executive summary of this document."
+*"Summarise only information explicitly present in this document. Do not add external context."
+"Summarise this document without adding opinions."
+"Do not hallucinate when summarising this document."
+===
+What does "few-shot prompting" mean?
+Running the same prompt a few times and selecting the best output.
+Using a short, concise prompt rather than a long detailed one.
+Giving Claude a few tries to produce an acceptable output.
+*Including examples of desired inputs and outputs in the prompt.
+===
+A client asks you to produce a document using AI. You should:
+Disclose that AI produced it and let the client decide whether to use it.
+Only use AI if the client has explicitly approved AI use.
+*Use AI to draft it, then review, verify, and own the final output.
+Not use AI for client deliverables — only for internal work.
+===
+You use Claude to write a proposal and it sounds generically professional but lacks your company's specific value proposition. The cause is:
+Claude cannot write specific business proposals — only general ones.
+*The prompt did not include your company's differentiated positioning.
+The proposal genre is too structured for AI to handle effectively.
+Claude's training data does not include specialised business writing.
+===
+Which of these represents the most advanced prompting behaviour?
+*Iterating on output by providing specific, targeted improvement instructions.
+Writing the longest, most detailed possible initial prompt.
+Using multiple AI tools on the same task and comparing outputs.
+Memorising the best prompts for each task type in your work.
+===
+You need Claude to maintain the same tone and approach across 20 different outputs. The most efficient approach is:
+Copy-paste the best previous output as context for each new prompt.
+Review and manually align tone across all 20 outputs after generation.
+*Create a reusable system prompt that defines tone, role, and constraints.
+Generate all 20 in one prompt with consistent instructions.
+===
+What is the clearest signal that an AI output requires significant human intervention before use?
+It is longer than what you asked for.
+It does not match the exact format you requested.
+It sounds too polished and formal for the context.
+*It contains specific figures or claims that are hard to verify quickly.
+===
+A new team member asks: "What is the most important thing to know about working with Claude?" The best answer is:
+"Use it for creative tasks but avoid it for factual research."
+*"Claude generates plausible text — verify anything that matters."
+"The more detailed your prompt, the better the output."
+"Claude is reliable for most professional tasks if you use it correctly."
+===
+You want Claude to generate ideas that are genuinely different from its first response. The best approach is:
+Increase the temperature setting and regenerate the same prompt.
+Use a different AI tool which may have different training data.
+*Ask for ideas that explicitly avoid the approaches in the first response.
+Ask Claude to evaluate and critique its first response before generating more.
+===
+Which professional task is least suited to AI assistance right now?
+*Making a final legal judgment in a contested regulatory dispute.
+Drafting a first version of a legal argument for attorney review.
+Summarising case precedents from a set of provided documents.
+Generating a list of research questions for a legal brief.
+===
+What is the correct order of operations when using AI to analyse a dataset?
+Upload the data, run AI analysis, and present the outputs directly.
+Clean the data with AI first, then define the question, then analyse.
+Run exploratory AI analysis first to discover what questions to ask.
+*Define the question first, then use AI to analyse, then verify key outputs.
+===
+Which combination of tools is most powerful for a knowledge worker using AI?
+Claude plus a second AI tool to cross-check Claude's outputs.
+*Claude for generation and synthesis, plus a primary source for verification.
+Claude plus a premium plan for guaranteed higher accuracy.
+Claude plus an AI writing checker to validate quality before use.
+===
+You are evaluating whether to use AI for a specific task at work. The most important question is:
+"Which AI tool has the highest accuracy rating for this task type?"
+"Is this task in the list of approved AI use cases at my company?"
+*"What happens when AI gets this wrong and how will I catch it?"
+"How much time will AI save me compared to doing it manually?"
+===
+What does a well-designed AI workflow always include?
+*A human checkpoint to review and validate AI outputs before they matter.
+A fallback to a different AI tool if the primary one fails.
+A manual alternative process in case the AI is unavailable.
+A logging system that records all AI inputs and outputs.
+===
+You are building an AI-assisted customer service workflow. The most important metric to track is:
+The average response time of the AI compared to human agents.
+The percentage of queries handled without human intervention.
+The cost per query with AI versus without AI.
+*The rate of customer complaints or escalations from AI responses.
+===
+Which workflow task is most appropriate to delegate entirely to Claude without human review?
+Drafting a response to a customer complaint about a billing error.
+Summarising a competitor's product features from a specification.
+*Formatting a meeting transcript into a consistent structure.
+Generating a project risk assessment for a client proposal.
+===
+What is the most important reason to document the prompts you use for professional work?
+*So you can reproduce reliable outputs and improve them over time.
+So you can prove to clients that AI was used professionally.
+So you can train your own AI model on effective prompt patterns.
+So you comply with your company's AI usage logging policy.
+===
+You use Claude to generate 5 customer persona profiles. Before using them, you should:
+Ask Claude to check whether the personas are realistic.
+*Validate them against real customer data or research.
+Add your team's subjective preferences to each persona.
+Use the personas directly — AI personas are built from broad patterns.
+===
+What is the key difference between using AI as a "co-pilot" versus using AI as an "autopilot"?
+Co-pilot is for creative tasks; autopilot is for repetitive tasks.
+Autopilot is more reliable than co-pilot for professional output.
+*Co-pilot means you remain in control; autopilot means AI makes decisions.
+Co-pilot requires technical skills; autopilot does not.
+===
+You use AI to generate a client-facing presentation. The most important pre-send check is:
+Ensure the formatting and visual design meet brand standards.
+Confirm the length and structure match the client's preferences.
+Check that the language is appropriately formal for the client.
+*Verify every factual claim, figure, and recommendation for accuracy.
+===
+What is the most effective way to use AI for decision-making support?
+*Use AI to map options and tradeoffs, then apply your own judgment.
+Use AI to recommend the best decision based on your inputs.
+Use AI to validate your instinct before taking action.
+Use AI to identify the option with the highest probability of success.
+===
+You are using Claude in a meeting to take live notes and action items. The most important post-meeting step is:
+Share the notes immediately — AI is faster than human review.
+*Review and correct the notes before sharing with attendees.
+Ask Claude to clean up and finalise the notes before sending.
+Send the raw notes and ask attendees to correct their own action items.
+===
+Which of these represents the highest-maturity level of AI use in a professional context?
+Being faster than colleagues at completing tasks using AI tools.
+Using AI for every task in your daily workflow without exception.
+Knowing which AI tool to use for each category of work task.
+*Designing AI-enabled systems that others in the team can use reliably.
+===
+What should a professional do when AI generates a response that confidently contradicts their domain expertise?
+*Investigate carefully — the AI may be wrong, or they may have a gap.
+Trust their expertise over AI — human domain knowledge is more reliable.
+Trust the AI — it has processed more information on the topic.
+Run the same query through a different AI to resolve the conflict.
+===
+What is "prompt drift" and why does it matter?
+AI models produce lower quality outputs after extended use.
+Prompts become less effective when used by many different people.
+*Output quality degrades over a long conversation as context accumulates.
+AI responses drift toward generic outputs when context is too brief.
+===
+Your manager forwards an impressive AI-generated report. They ask you to build on it. Your first step is:
+*Verify the key claims and figures before treating the report as accurate.
+Use Claude to expand and build on the existing AI-generated content.
+Accept the report as accurate — your manager reviewed it.
+Identify which AI tool generated the report to assess its reliability.
+===
+A colleague builds an AI chatbot for your team's internal use without telling anyone. The key concern is:
+The chatbot may be slower than commercial AI tools the team uses.
+The chatbot will not be as capable as enterprise AI solutions.
+Using an internal chatbot may violate AI tool licensing terms.
+*Sensitive internal data shared with it may not be appropriately secured.
+===
+You receive a task from a client: "Use AI to do X." The client does not know AI limitations. Your responsibility is to:
+Tell the client that AI cannot reliably do this task as described.
+*Complete the task using AI appropriately and deliver verified output.
+Do the task manually since the client doesn't understand AI well.
+Ask the client to specify exactly which AI tool they want you to use.
+===
+You use AI to generate 10 ideas for a strategy session. You share them without disclosure. What is the risk?
+Someone on the team will identify the ideas as AI-generated.
+The ideas will be lower quality than human-generated ones.
+*The team treats the ideas as human-generated strategic thinking.
+The client will ask which team member generated each idea.
+===
+You are working on a time-sensitive task and Claude produces an output with obvious errors. You should:
+*Fix the errors yourself and complete the task — do not resubmit to Claude.
+Ask Claude to fix its own errors before you review the output.
+Start over with a better prompt to avoid getting errors again.
+Submit the task with the errors flagged as "pending verification."
+===
+A startup asks you to evaluate their AI product. Which question reveals the most about real-world reliability?
+"What accuracy rate does it achieve on benchmark tests?"
+"Which underlying AI model does it use?"
+*"What does it do when it gets the answer wrong?"
+"How many customers are currently using it?"
+===
+You use Claude to analyse a competitor's strategy from public information. The output is insightful. Before presenting it:
+Present it directly — public information analysis is low-risk.
+Have Claude revise the analysis for clarity before presenting.
+Identify which data points came from Claude's training versus the document.
+*Verify the key facts about the competitor from primary sources.
+===
+A junior team member says "Claude told me we should use approach X for this project." The correct response is:
+"If Claude recommended it, we should take it seriously."
+*"Walk me through the reasoning — Claude's suggestions need human judgment."
+"We need to ask another AI tool to validate Claude's recommendation."
+"Claude cannot make recommendations on technical project decisions."
+===
+You use Claude to draft communications for a sensitive HR situation. The most important consideration is:
+The communication must be reviewed by the CEO before sending.
+You should disclose to the employee that AI drafted the communication.
+*Legal and procedural accuracy must be verified with HR and legal counsel.
+Claude should not be used for any HR-related communications.
+===
+Which of the following best describes an "AI-first" professional approach?
+*Considering how AI can enhance every task before defaulting to manual work.
+Using AI for every task without exception to maximise efficiency.
+Building AI tools before deciding what problem to solve.
+Replacing all manual processes with AI-powered alternatives.
+===
+You delegate a report to Claude and the deadline arrives. The report has errors. Who is accountable?
+Claude is — it produced the incorrect content.
+*You are — you chose to delegate to AI and are responsible for the output.
+The manager is — they set the deadline without allowing review time.
+No one — AI errors are unforeseeable and cannot be assigned.
+===
+A client insists on a deliverable that AI cannot reliably produce accurately. You should:
+Use AI anyway and review carefully to catch all errors.
+Decline the deliverable — professional standards prohibit unreliable AI use.
+Outsource the deliverable to a specialist who can do it without AI.
+*Explain the limitation and propose a hybrid approach with AI drafting and human verification.
+===
+You are asked to train colleagues on AI best practices. The most important lesson to start with is:
+"Always use the most advanced AI model available for any task."
+"AI tools are most useful for creative and ideation tasks."
+*"AI outputs are starting points — own the final output yourself."
+"AI can be trusted for most tasks once you have the right prompt."
+===
+What is the best indicator that a professional is ready to lead AI adoption in their organisation?
+They have completed an AI certification from a recognised provider.
+*They can explain both AI's value and its limitations with equal accuracy.
+They have built at least one working AI tool using an API.
+They use AI every day across all their professional tasks.
+===
+What does Menler's AI Generalist Entry Diagnostic assess above all else?
+Whether a learner has used AI tools for more than six months.
+Whether a learner can build AI tools using Claude's API.
+Whether a learner has prior work experience using AI professionally.
+*Whether a learner's AI judgment and instincts are ready for fellowship training.
+===
+You want Claude to evaluate a business argument and push back on weak points. The most effective prompt element is:
+A request to list the argument's strengths and weaknesses.
+*An explicit instruction to steelman then critically challenge the argument.
+An instruction to be "honest and critical" in its response.
+A request for Claude to play a devil's advocate role.
+===
+You receive a Claude output that is technically accurate but reads like generic AI text. The most targeted fix is:
+Ask Claude to "make it sound more human and natural."
+Regenerate with higher temperature to reduce generic patterns.
+Use a different AI writing tool better suited to your style.
+*Provide a voice sample and specify tone dimensions to match.
+===
+What is the most reliable indicator that a multi-step prompt chain is designed correctly?
+*Each step's output is fully sufficient as the next step's input.
+The chain produces consistent outputs across 10 test runs.
+Each step uses a different AI tool for its specific capability.
+The total prompt length across all steps is under the context limit.
+===
+You need Claude to produce a high-stakes client analysis. What does "grounding" the prompt mean?
+Testing the prompt on a similar lower-stakes task first.
+Adding explicit accuracy instructions to the prompt.
+*Providing primary source documents for Claude to work from.
+Restricting the output to information Claude is confident about.
+===
+Which prompting behaviour produces the most improvement in Claude output quality over time?
+Using longer, more detailed prompts for every task type.
+*Systematic iteration with specific, targeted feedback on each output.
+Maintaining a library of prompts that worked previously.
+Testing each task on three different AI tools before committing.
+===
+What is "output specification" and why does it matter for professional AI use?
+*Defining exactly what the desired output looks like before prompting.
+Specifying which AI model should produce the output.
+Describing the output quality standard in a system prompt.
+Outlining the steps the AI should follow to produce the output.
+===
+You need Claude to extract specific structured data from unstructured text reliably. The best approach is:
+Ask Claude to extract all relevant information it can find.
+Ask Claude to summarise the text, then extract from the summary.
+Run the extraction 3 times and reconcile differences manually.
+*Provide the exact extraction schema with labeled field examples.
+===
+You ask Claude to write a persuasive essay. It produces a balanced, both-sides analysis instead. The cause is:
+Persuasive essays are outside Claude's trained capability.
+The prompt did not include enough facts to support a one-sided argument.
+*Claude's training leads it to hedge toward balance unless explicitly told otherwise.
+Claude's safety guidelines prevent one-sided persuasive content.
+===
+A prompt that works perfectly in Claude 3 produces mediocre output in Claude 4. The best response is:
+*Adapt the prompt — different model versions respond differently.
+Revert to using Claude 3 for this specific task type.
+Conclude that Claude 4 is inferior to Claude 3 for this task.
+Submit feedback to Anthropic about the regression.
+===
+What is the most important output quality dimension to check when Claude produces a complex analysis?
+Completeness — whether every possible point has been covered.
+Word count — whether the output meets the specified length.
+Formatting — whether headers and structure match the request.
+*Logical consistency — whether conclusions follow from stated premises.
+===
+What does it mean to use "chain of thought" prompting?
+Chaining multiple prompts together in a sequential workflow.
+*Asking the model to show its reasoning step by step before answering.
+Including previous conversation turns as context for the current prompt.
+Asking the model to consider multiple perspectives before concluding.
+===
+You notice Claude consistently makes a specific type of error across several outputs. The most effective response is:
+Switch to a different model since Claude cannot handle this task.
+Add a general instruction to "be careful" about accuracy.
+*Add a targeted negative example of that error to the prompt.
+Run each output through a separate AI tool to catch the error.
+===
+What is the most effective use of the "system prompt" in a Claude workflow?
+Providing the primary user query that Claude should respond to.
+Listing all the topics the AI is allowed to discuss in the session.
+Summarising previous conversation for continuity across sessions.
+*Setting persistent role, tone, constraints, and task context for the session.
+===
+You want Claude to maintain a consistent analytical framework across a 10-part analysis series. The most efficient approach is:
+Copy the framework into each individual prompt as a reminder.
+*Define the framework in the system prompt and reuse it across all parts.
+Produce all 10 parts in a single prompt to maintain consistency.
+Generate part 1, then paste it as context for each subsequent part.
+===
+An output fails a critical quality check. Which response demonstrates the highest professional judgment?
+*Identify the specific failure, fix it manually, and update the prompt to prevent recurrence.
+Regenerate the output with the same prompt and hope for better results.
+Lower the quality standard to match what the AI consistently produces.
+Document the failure and avoid using AI for similar tasks in the future.
+===
+A company is deciding where to apply AI first. The most strategically sound criterion is:
+The most complex tasks to demonstrate AI's maximum capability.
+The tasks that executives are most excited about automating.
+*High-volume, repetitive tasks where errors are catchable and correctable.
+The tasks where AI tools already exist off-the-shelf.
+===
+A startup says "we use AI for everything." What is the most important evaluative follow-up?
+*"What does your human review process look like for AI outputs?"
+"Which AI tools are you using and how much do they cost?"
+"What is your AI accuracy rate across your use cases?"
+"How many staff did you replace with AI automation?"
+===
+What distinguishes a genuine AI strategy from a list of AI tools to use?
+A strategy covers more tools and use cases than a simple list.
+A strategy is approved by senior leadership; a list is not.
+Strategy specifies the technical infrastructure AI will run on.
+*Strategy defines why AI is used, for what, and how success is measured.
+===
+An organisation wants to build internal AI capabilities rather than buy off-the-shelf tools. The most important first question is:
+"Which open-source AI models can we fine-tune for our use case?"
+*"Do we have the data, talent, and processes to do this sustainably?"
+"What is the cost difference between building and buying?"
+"What are our competitors building internally?"
+===
+What does "AI augmentation" mean in a strategic context?
+Adding AI features to an existing product or software platform.
+Increasing the size or capability of an existing AI model.
+*Using AI to enhance human capability rather than replace human roles.
+Using multiple AI models in combination for better outputs.
+===
+Which metric most accurately measures the value AI is adding to a knowledge work team?
+Total number of AI tool interactions per week.
+Reduction in task completion time versus pre-AI baseline.
+Employee satisfaction with AI tools after 90 days of use.
+*Quality-adjusted output per person across AI-assisted tasks.
+===
+A team has been using AI for three months and productivity has not improved. The most likely cause is:
+*AI is being used for the wrong tasks or without proper review workflows.
+Three months is too short to see AI productivity improvements.
+The team is using AI tools that are not suited to their industry.
+AI productivity gains require a minimum team size to be visible.
+===
+What is the correct mental model for an "AI-native" business process?
+The process runs entirely on AI with no human involvement.
+*AI is embedded in how the process works from the start, not added later.
+The process was originally designed by an AI tool.
+The process uses only AI tools built specifically for that industry.
+===
+The most common reason enterprise AI projects fail is:
+AI models not being advanced enough for enterprise requirements.
+Lack of budget for enterprise AI tool licences.
+Resistance from employees who fear job replacement.
+*Poor data quality, unclear objectives, or insufficient human oversight.
+===
+A client asks: "Should we replace our customer service team with AI?" The most responsible first response is:
+"Yes, AI can handle most customer service queries effectively."
+"No, customer service requires human empathy AI cannot provide."
+*"What specific problems in your current customer service are you trying to solve?"
+"It depends on your budget for AI tools versus headcount."
+===
+What is the highest-value AI application for a solo entrepreneur?
+Using AI to replace the need for professional advisors.
+*Automating high-volume, time-consuming tasks to free strategic time.
+Building a personal AI model trained on their specific expertise.
+Using AI to generate social media content at scale.
+===
+What is the best indicator that an organisation's AI adoption is maturing?
+*AI use is governed by defined policies and measured against outcomes.
+The organisation has deployed AI tools across every department.
+AI was mentioned in the annual report and investor presentations.
+The organisation employs dedicated AI specialists in every team.
+===
+A company trains all employees on AI tools in a one-day workshop. What is most likely missing?
+A certificate that validates employee AI proficiency.
+An executive sponsor who mandates AI use after training.
+*Ongoing practice, feedback, and use cases specific to each role.
+A longer training duration — one day is insufficient for any learning.
+===
+Which capability is most scarce and valuable in an AI-enabled workforce?
+Technical ability to build and fine-tune AI models.
+Speed of AI tool adoption across different platforms.
+Ability to write long, detailed prompts for complex tasks.
+*The judgment to direct AI toward the right problems with the right constraints.
+===
+An AI Generalist's ultimate responsibility in an organisation is:
+Training all employees to use AI tools effectively.
+*Ensuring AI is directed toward genuine value and governed responsibly.
+Building the technical AI infrastructure for the organisation.
+Staying updated on the latest AI tools and recommending new ones.
+===
+What makes an "agentic" AI different from a standard AI chatbot?
+*It can take multi-step actions autonomously to complete a goal.
+It has higher intelligence and can handle more complex questions.
+It learns from interactions and improves over time.
+It connects to the internet and retrieves live information.
+===
+What is the most important design principle for an agentic AI workflow?
+Maximising the number of steps the agent can complete without human input.
+Using the most powerful available model as the agent's core.
+*Defining clear boundaries for what actions the agent can take autonomously.
+Ensuring the agent can retry failed steps automatically.
+===
+You build an AI agent that books meetings on your behalf. What safety mechanism is most critical?
+Limiting the agent to reading calendar data, not writing to it.
+*Requiring human confirmation before any booking is finalised.
+Using only open calendar slots to avoid conflicts.
+Setting a maximum of 3 bookings per day to limit errors.
+===
+What is "tool use" in the context of Claude agents?
+The ability to use a wider range of vocabulary and expression styles.
+Access to multiple AI models depending on the task type.
+The ability to display formatted output including tables and code blocks.
+*The ability to call external functions or APIs as part of generating a response.
+===
+You are designing an AI agent to process and categorise incoming documents. The most important reliability feature is:
+*A logging system and human review queue for low-confidence categorisations.
+Using the highest-accuracy AI model for all categorisations.
+A retry mechanism that attempts each categorisation 3 times.
+A testing protocol that evaluates the agent on 100 sample documents.
+===
+What is the key risk of allowing an AI agent to send emails autonomously?
+Email sending API costs may accumulate without visibility.
+*It may send emails the user did not intend or with incorrect content.
+Recipients may respond directly to the AI without knowing it.
+Email deliverability may be affected by AI-generated content.
+===
+What does "human in the loop" mean in an agentic AI system?
+A human writes the initial prompt that the agent acts on.
+A human monitors the agent's performance via a dashboard.
+A human is available to answer the agent's questions.
+*A human reviews and approves agent decisions at defined checkpoints.
+===
+You want to use Claude to automate a multi-step research workflow. Which task should remain human-controlled?
+Compiling search results from multiple sources into a summary.
+Reformatting research notes into a consistent template.
+*Deciding which sources are authoritative and whether to trust the findings.
+Identifying which sources were published in the past 12 months.
+===
+What is the most accurate description of "prompt injection" risk in agentic systems?
+Too many prompts in a session cause the agent to lose context.
+*Malicious content in external sources manipulates the agent's behaviour.
+A long prompt reduces the agent's ability to follow instructions.
+Users inject conflicting instructions that confuse the agent.
+===
+Which human task is hardest to automate with current AI agents?
+*Exercising judgment in ambiguous, high-stakes situations.
+Reading and summarising multiple long documents.
+Scheduling meetings across complex calendar constraints.
+Categorising incoming requests by topic and urgency.
+===
+You build an agent that automates customer onboarding. After deployment, what is the most important ongoing activity?
+Training the agent on new customer data to improve over time.
+Expanding the agent's scope to handle more onboarding steps.
+*Monitoring outputs for errors and updating the agent as processes change.
+Reducing human oversight as the agent's performance proves reliable.
+===
+A well-designed AI workflow for document review should:
+Route all documents to AI first, then humans only if AI rejects them.
+Achieve 100% AI coverage to eliminate the need for human review.
+Randomise 10% of documents to human review as a quality check.
+*Flag uncertain cases for human review rather than making all decisions autonomously.
+===
+What is the most important constraint to define before deploying any autonomous AI agent?
+The maximum number of API calls the agent may make per hour.
+*What irreversible actions the agent is and is not permitted to take.
+Which AI model the agent should use for each decision type.
+The acceptable error rate for the agent's primary function.
+===
+You notice that an AI agent has started taking an action you did not design it to take. The first response is:
+Monitor the unauthorised action to see if it is producing good outcomes.
+Update the agent's instructions to include the new action formally.
+*Stop the agent, investigate the trigger, and restore intended boundaries.
+Report the unexpected behaviour to the AI model provider.
+===
+Which statement best describes the current state of AI agents in professional settings?
+*Powerful for well-defined tasks but requiring careful human oversight.
+Ready to operate autonomously across most professional workflows.
+Still experimental and not yet reliable enough for production use.
+Limited to creative tasks and not yet applicable to operational work.
+===
+You receive an AI output that is well-written and confidently stated. The most important quality check is:
+Whether the output follows the format you requested.
+Whether the writing style matches your target audience.
+Whether the output is within the requested length range.
+*Whether the specific claims are accurate and verifiable.
+===
+What is the most reliable method for evaluating an AI-generated strategy document?
+Run the document through a second AI tool for comparison.
+*Apply your own domain expertise to challenge each key recommendation.
+Ask Claude to critique its own strategy document.
+Share it with peers and use their reactions as quality signal.
+===
+An AI output is factually correct but logically inconsistent. Which statement is true?
+Logical consistency and factual accuracy always align in AI outputs.
+A logically inconsistent output is always also factually incorrect.
+*Individual facts can be accurate while the overall argument is flawed.
+Logical consistency is not relevant for factual AI outputs.
+===
+You are evaluating two AI outputs on the same task. Output A is shorter and direct; Output B is longer and thorough. How do you choose?
+*Evaluate which better achieves the task objective, regardless of length.
+Choose A — shorter outputs reflect more confident and accurate AI.
+Choose B — more thorough coverage indicates higher effort.
+Choose the output with fewer hedging phrases and qualifications.
+===
+What is "hallucination detection" in practical professional terms?
+A software tool that flags AI outputs with low confidence scores.
+An AI feature that marks statements the model is uncertain about.
+The practice of asking Claude to check its own outputs for errors.
+*The process of verifying specific claims against primary sources.
+===
+Which type of AI error is most dangerous in a professional context?
+A vague, hedged answer that provides no actionable information.
+An answer that misunderstands the question and goes off-topic.
+*A confident, specific, wrong fact that is hard to detect without expertise.
+A response that is too long and includes irrelevant information.
+===
+You are building an AI quality scoring rubric for your team. Which dimension should be weighted highest?
+*Factual accuracy of specific, verifiable claims.
+Fluency and grammatical correctness of the output.
+Adherence to the specified format and structure.
+Completeness and coverage of relevant topics.
+===
+An AI output includes a reference to a study with specific findings. Your first action is:
+Add a footnote noting the source is AI-generated.
+*Search for the actual study and verify it exists and says what AI claims.
+Proceed if the findings align with your prior knowledge.
+Ask Claude for the study's DOI or URL for citation.
+===
+What is the most useful signal that an AI output is at risk of being low quality?
+The output is shorter than expected for the task.
+The output uses hedging language like "generally" or "may."
+*The task required precise, specific, or recent information.
+Claude took longer than usual to generate the response.
+===
+A team member argues that if AI output sounds professional, it must be good enough to use. The most precise counter is:
+AI writing quality varies too much to be relied on for professional work.
+Professional-sounding AI output still needs to be reformatted for clients.
+Professional quality is subjective and AI cannot achieve it reliably.
+*Professional writing quality and factual accuracy are independent dimensions.
+===
+You ask Claude to rate the quality of its own output on a 1-10 scale. How useful is this rating?
+*Very limited — AI self-assessment is not reliably calibrated.
+Very useful — it identifies outputs the AI is uncertain about.
+Useful as a baseline — compare ratings across multiple outputs.
+Fully reliable — Claude knows its own capability boundaries well.
+===
+What is the correct response when you spot a factual error in an AI output mid-task?
+Re-run the entire prompt to get a fresh error-free output.
+*Correct the error yourself and continue — do not re-prompt for a full rewrite.
+Ask Claude to find and fix its own factual errors.
+Flag the error and submit the task anyway for time efficiency.
+===
+Which output review habit has the highest return on time invested?
+Reading every word of every AI output before using it.
+Running outputs through grammar and spell-check tools.
+Comparing AI output to what you expected before reading it.
+*Focusing review on specific figures, citations, and time-sensitive claims.
+===
+What does "output calibration" mean in professional AI use?
+*Developing an accurate sense of where AI is reliable versus where it fails.
+Adjusting the AI model's settings to improve output quality.
+Testing AI outputs against a calibration dataset for accuracy.
+Calibrating response length to match the task requirements.
+===
+A manager receives two reports on the same topic: one from a human analyst and one from AI. The manager cannot distinguish them. What does this prove?
+It proves AI has reached human-level analytical capability.
+It proves the human analyst should be reviewed for underperformance.
+*It proves only that AI can produce human-quality prose, not that the content is accurate.
+It proves AI is suitable to replace analysts on this type of task.
+===
+A team member says "I feel stupid using AI — it does things faster than I can." The most effective response from a team leader is:
+*"AI handles speed; your judgment determines if the output is actually right."
+"You should use AI more so you feel more comfortable with it."
+"AI is a tool, not a measure of intelligence — do not compare yourself."
+"Everyone feels this way initially — the feeling passes with more use."
+===
+What is the most important organisational condition for successful AI adoption?
+Executive mandate requiring all employees to use AI tools daily.
+A large budget for premium AI tool access across the team.
+Dedicated AI specialists who manage tools on behalf of others.
+*Psychological safety to experiment, fail, and share learning openly.
+===
+You want to build an AI-fluent culture in your organisation. The most effective first action is:
+Train everyone on AI fundamentals before allowing any tool use.
+*Create visible quick wins by using AI on real tasks with the team.
+Hire a Chief AI Officer to lead the cultural transformation.
+Survey employees on their current AI tool usage and attitudes.
+===
+A team member uses AI extensively and produces more output than their colleagues. What is the most important performance question to ask?
+"Are they using AI tools that are approved by the organisation?"
+"Are they documenting their AI prompts for the team to learn from?"
+*"Is the quality and accuracy of their AI-assisted output meeting the standard?"
+"Are they becoming less capable at the underlying skills themselves?"
+===
+An AI-sceptical colleague says: "AI will make everyone's thinking lazy and shallow." The most nuanced response is:
+*"That's a genuine risk that depends on how AI is used — passive use atrophies skills; active use can sharpen thinking."
+"That concern is valid — AI is best kept out of professional workflows."
+"That concern is outdated — research shows AI improves critical thinking."
+"AI only makes thinking lazy for people who already have that tendency."
+===
+What is the most effective way to transfer AI knowledge within a team?
+Sending team members to an external AI certification programme.
+Holding a monthly AI tool demo and exploration session.
+*Sharing specific prompts, examples, and workflows that produced good results.
+Requiring team members to document every AI interaction.
+===
+You are leading an AI adoption initiative. What does failure look like most commonly?
+Employees adopt AI faster than the infrastructure can support.
+AI produces outputs that require too much human review.
+Senior leadership does not approve the AI tools selected.
+*AI is used superficially without changing underlying workflows.
+===
+A team member asks: "Should I tell clients I used AI to do this work?" The most accurate guidance is:
+"Always disclose — transparency with clients is non-negotiable."
+*"Follow your profession's disclosure norms and your client's stated preferences."
+"Never disclose — clients don't need to know your production tools."
+"Disclose only if the client specifically asks about your process."
+===
+What is the most meaningful way to measure a team's AI maturity?
+How many AI tools they use across different task categories.
+How quickly they adopted new AI tools after they became available.
+*Whether they can identify and correct AI failures in their own workflows.
+Whether they have formal AI policies documented in writing.
+===
+A colleague presents a highly compelling AI-generated analysis in a strategy meeting. No one questions it. What is the risk?
+*The group may act on hallucinated or unverified data.
+The colleague may be over-relying on AI for strategy work.
+The group will expect AI-generated analysis in all future meetings.
+The AI tool used may not be appropriate for strategic analysis.
+===
+What does it mean to "govern AI use" in an organisational context?
+Controlling who in the organisation has access to AI tools.
+*Defining which tasks AI is used for, how outputs are reviewed, and what standards apply.
+Monitoring AI tool usage volumes and costs across teams.
+Ensuring all AI use is approved by senior leadership in advance.
+===
+How should an AI Generalist respond when asked to evaluate whether a task is appropriate for AI?
+Check whether the task type is on the company's approved AI use list.
+Ask which AI tool the requester has in mind for the task.
+Estimate the time saved versus manually completing the task.
+*Assess what can go wrong, how it will be caught, and whether the stakes justify the risk.
+===
+Which statement about AI and professional expertise is most accurate?
+AI reduces the need for expertise by providing expert-level outputs.
+AI and expertise are interchangeable for most professional tasks.
+*AI amplifies expertise — experts get more from AI than novices do.
+AI makes expertise less valuable because it democratises information.
+===
+What is the most honest advice to give a student entering the workforce in an AI-transformed environment?
+"Learn to code AI systems — technical skills are the only durable advantage."
+*"Develop strong judgment skills — AI handles speed; you add direction and quality control."
+"Use AI constantly to maximise productivity in your early career."
+"Focus on skills AI cannot do rather than on working alongside it."
+===
+Menler's AI Generalist Level Up bank tests you at the mid-fellowship stage. What does "level up" indicate?
+You have mastered every AI tool used in the Generalist Fellowship.
+You are ready to teach AI fundamentals to students below your level.
+You have completed the technical AI engineering prerequisites.
+*You are applying AI judgment to complex, ambiguous professional situations.
 `;
 
 // Fisher–Yates shuffle (client-only, so Math.random is fine).
@@ -918,22 +917,22 @@ function shuffle(arr) {
   return a;
 }
 
-// Parse RAW into [{ q, opts:[A,B,C,D] }] where opts[1] (B) is the correct answer.
+// Parse RAW into { q, options:[{t,s}] }; the option line prefixed with "*" is correct.
 const ITEMS = RAW.split(/^===$/m)
   .map((block) => block.split('\n').map((l) => l.trim()).filter(Boolean))
   .filter((lines) => lines.length >= 5)
-  .map((lines) => ({ q: lines[0], opts: lines.slice(1, 5) }));
-
-// One item → the aptitude runner's question format, with options shuffled
-// (correct option carries s:1; the rest s:0).
-function toQuestion(item) {
-  const options = item.opts.map((t, i) => ({ t, s: i === 1 ? 1 : 0 }));
-  return { q: item.q, options: shuffle(options) };
-}
+  .map((lines) => ({
+    q: lines[0],
+    options: lines.slice(1, 5).map((l) => {
+      const correct = l.startsWith('*');
+      return { t: correct ? l.replace(/^\*\s*/, '') : l, s: correct ? 1 : 0 };
+    }),
+  }));
 
 export const GENERALIST_POOL_SIZE = ITEMS.length;
 
-// A fresh random session: `count` questions drawn from the full 150-question pool.
+// A fresh random session: `count` questions from the full 150-question pool,
+// each with its options shuffled.
 export function getGeneralistSession(count = 15) {
-  return shuffle(ITEMS).slice(0, count).map(toQuestion);
+  return shuffle(ITEMS).slice(0, count).map((it) => ({ q: it.q, options: shuffle(it.options) }));
 }
