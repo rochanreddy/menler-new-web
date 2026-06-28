@@ -19,6 +19,7 @@ export default function AmplifeedOtpForm({ channels = 'email', fields = 'name,em
   const ready = AF.sourceKey && AF.secret && AF.widgetId && AF.tokenAuth;
   const leadRef = useRef({});
   const firedRef = useRef(false);
+  const autoSubmittedRef = useRef(false);
 
   useEffect(() => {
     if (!ready) return;
@@ -56,12 +57,32 @@ export default function AmplifeedOtpForm({ channels = 'email', fields = 'name,em
     };
     root.addEventListener('input', capture, true);
 
+    // Pick the widget's primary action button (avoid resend/edit/back links).
+    const pickSubmit = () => {
+      const btns = [...root.querySelectorAll('button')].filter((b) => !b.disabled && b.offsetParent !== null);
+      const isSecondary = (b) => /resend|edit|change|back|cancel/i.test(b.textContent || '');
+      return btns.find((b) => /submit|continue|register|proceed|done/i.test(b.textContent || '') && !isSecondary(b))
+        || btns.reverse().find((b) => !isSecondary(b))
+        || null;
+    };
+
     const obs = new MutationObserver(() => {
       if (firedRef.current) return;
+      // Reached the CRM success state → hand back to the caller (route to checkout).
       if (/received your details/i.test(root.textContent || '')) {
         firedRef.current = true;
         obs.disconnect();
         onSuccess({ ...leadRef.current });
+        return;
+      }
+      // OTP just verified → auto-click submit so the user doesn't have to, which
+      // then produces the success state handled above.
+      if (!autoSubmittedRef.current && /verified/i.test(root.textContent || '')) {
+        const btn = pickSubmit();
+        if (btn) {
+          autoSubmittedRef.current = true;
+          setTimeout(() => btn.click(), 200);
+        }
       }
     });
     obs.observe(root, { childList: true, subtree: true, characterData: true });
