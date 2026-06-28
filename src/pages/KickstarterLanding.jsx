@@ -175,14 +175,15 @@ export default function KickstarterLanding() {
     try {
       await loadOtpProvider();
       const phone = `${form.countryCode} ${form.phone}`;
-      const phoneE164 = `${form.countryCode}${form.phone}`; // e.g. +919876543210 (no spaces)
-      const token = await sendOtp(phoneE164); // SMS OTP (requires SMS enabled on the widget)
+      // Widget is email-only (confirmed: it pops "Email Verification" even when sent
+      // a phone). Verify email until Amplifeed enables SMS on the widget.
+      const token = await sendOtp(form.email.trim());
       setOtpBusy(false);
       setBusy(true);
       await submitLead({
         name: form.name, email: form.email, phone,
         city: form.city, background: form.background,
-        otp_token: token, otp_channel: 'sms', otp_identifier: phoneE164,
+        otp_token: token, otp_channel: 'email', otp_identifier: form.email.trim(),
         source: 'campaign-workshop', campaign: activeSlug, workshop: heading,
         cta_label: `Register: ${heading}`, section: `Campaign · ${activeSlug}`,
       });
