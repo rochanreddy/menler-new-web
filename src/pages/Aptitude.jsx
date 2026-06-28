@@ -5,6 +5,7 @@ import Seo from '../components/common/Seo';
 import MenlerCommunitySection from '../components/common/MenlerCommunitySection';
 import FaqList from '../components/common/FaqList';
 import { submitLead, requestResource, createReport } from '../services/leadService';
+import { verifyEmailOtp } from '../lib/amplifeedOtp';
 import { getRecommendation, maxScoreForQuestions } from '../data/aptitudeQuestions';
 import { CLUSTERS, buildRoadmap, getSetQuestions } from '../data/aptitudeClusters';
 import { getGeneralistSession, getGeneralistSet, GENERALIST_SETS } from '../data/generalistAptitude';
@@ -248,8 +249,23 @@ export default function Aptitude() {
     }
   };
 
-  // Answer sheet opens directly on click (no form gate).
+  // Answer sheet is gated behind verification. Email OTP for now (using the
+  // email already captured at the score gate); switch to phone verification
+  // (verifyPhoneOtp on gateForm.phone) once SMS verification is confirmed.
   const [sheetUnlocked, setSheetUnlocked] = useState(false);
+  const [sheetBusy, setSheetBusy] = useState(false);
+  const [sheetErr, setSheetErr] = useState('');
+  const unlockSheet = async () => {
+    setSheetErr(''); setSheetBusy(true);
+    try {
+      await verifyEmailOtp(gateForm.email.trim());
+      setSheetUnlocked(true);
+    } catch (err) {
+      setSheetErr(err?.message || 'Verification failed — please try again.');
+    } finally {
+      setSheetBusy(false);
+    }
+  };
 
   // Question-bank topic selector + per-topic PDF download (gated behind a form).
   const [qbFilter, setQbFilter] = useState('All');
@@ -266,7 +282,9 @@ export default function Aptitude() {
     e.preventDefault();
     setQbErr(false); setQbBusy(true);
     try {
-      await requestResource({ ...qbForm, resource: `${qbBank.label} Question Bank`, pdf: qbBank.pdf, topic: qbBank.name, source: 'aptitude-question-bank', cta_label: `Question Bank: ${qbBank.label}`, section: `Question Bank · ${qbBank.label}` });
+      // Verify the email via OTP before delivering the question bank.
+      const otp = await verifyEmailOtp(qbForm.email.trim());
+      await requestResource({ ...qbForm, ...otp, resource: `${qbBank.label} Question Bank`, pdf: qbBank.pdf, topic: qbBank.name, source: 'aptitude-question-bank', cta_label: `Question Bank: ${qbBank.label}`, section: `Question Bank · ${qbBank.label}` });
       setQbFormOpen(false);
       setQbSent(true);
     } catch {
@@ -407,10 +425,13 @@ export default function Aptitude() {
               ))}
             </div>
 
-            {/* Answer sheet — opens directly, no form */}
+            {/* Answer sheet — gated behind OTP verification */}
             <div className="apt-answers">
               {!sheetUnlocked && (
-                <button type="button" className="apt-answers-toggle" onClick={() => setSheetUnlocked(true)}>View answer sheet</button>
+                <>
+                  <button type="button" className="apt-answers-toggle" disabled={sheetBusy} onClick={unlockSheet}>{sheetBusy ? 'Verifying…' : 'Verify & view answer sheet'}</button>
+                  {sheetErr && <p className="apt-gate-err" style={{ marginTop: 8 }}>{sheetErr}</p>}
+                </>
               )}
               {sheetUnlocked && (
               <div className="apt-answers-body">
