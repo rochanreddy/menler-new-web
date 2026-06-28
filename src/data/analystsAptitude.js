@@ -1,460 +1,464 @@
-// AI for Analysts question bank — 75 questions (5 sets × 15).
-// In the source PDF the correct answer is always the 2nd option (B); we shuffle
-// option order at session build so the correct answer isn't always in one spot.
+// AI for Analysts — AI Aptitude question bank: 75 questions (5 sets × 15).
+// Sets: Data Thinking with AI · AI-Assisted Analysis · Verification & Critical
+// Evaluation · Analytical Communication · Judgment Scenarios.
+//
+// Correct answers VARY (A/B/C/D), so the correct option line in each block is
+// prefixed with "*". Option order is shuffled at session build, so position is
+// not predictable.
 //
 // getAnalystsSession(n) → a fresh random n-question session in the runner's
 // format: { q, options: [{ t, s }] } (s = 1 for the correct option).
 
 const RAW = String.raw`
-You receive a dataset and your manager asks you to "find insights." What is the most important first step before involving AI?
-Run the dataset through an AI tool immediately to surface patterns.
-Define the specific business questions you are trying to answer — because AI-generated insights from an undefined question produce interesting but unactionable output.
-Clean the data first before defining any questions.
-Check which AI tools are best suited for the size of the dataset.
-===
-An AI tool surfaces a strong correlation between two variables in your dataset. What is the most important analytical caution?
-Correlation always implies causation when found by AI.
-Correlation is not causation — the AI has identified a statistical relationship, not an explanation. The cause requires domain expertise, additional data, or experimental design to establish.
-AI-identified correlations are always more reliable than human-identified ones.
-Strong correlations should always be included in your report regardless of their interpretation.
-===
-You use Claude to help interpret a complex dataset. Claude gives you a very confident explanation. What should you do before including it in a report?
-Trust the explanation — Claude has analysed vast amounts of data in training.
-Verify the interpretation against your domain knowledge, the data itself, and any subject matter experts — because Claude generates plausible interpretations, not verified ones.
-Ask Claude the same question again to confirm the explanation is consistent.
-Include the explanation with a footnote stating it was AI-generated.
-===
-What is the most common way AI adds genuine value to the early stages of data analysis?
-Replacing the need for a skilled analyst entirely.
-Accelerating data exploration — quickly summarising distributions, flagging anomalies, generating initial hypotheses, and suggesting analytical approaches — so the analyst can focus on interpretation and decision-making.
-Providing definitive answers to business questions from raw data.
-Automatically cleaning and transforming data without human review.
-===
-A business stakeholder sees your AI-assisted analysis and asks: "Did the AI do this or did you?" What is the most professional response?
-"The AI did most of the heavy lifting."
-"I used AI to accelerate the analysis — it helped me explore and structure the data faster. The interpretation, validation, and conclusions are mine, and I take full responsibility for the output."
-"I did everything manually — I just used AI to format the presentation."
-"The AI and I collaborated equally on this analysis."
-===
-What does "data quality" mean and why does it matter more in AI-assisted analysis than in manual analysis?
-Data quality only matters for large datasets.
-Data quality — accuracy, completeness, consistency, and timeliness of data — matters more with AI because AI processes data at scale and amplifies errors: a systematic data quality problem produces systematically wrong AI-generated insights across the entire analysis.
-AI tools automatically detect and fix data quality issues.
-Data quality is a technical concern for data engineers, not analysts.
-===
-Which analytical task is most appropriate for AI assistance without significant risk of misleading output?
-Determining the cause of a business metric decline.
-Summarising the key statistics and distribution characteristics of a clean, well-understood dataset.
-Predicting next quarter's revenue from current trends.
-Identifying which customer segments to prioritise for retention.
-===
-You are asked to analyse customer churn data. Which framing produces the most useful AI-assisted analysis?
-"Tell me everything about the churn data."
-"Analyse this churn data to identify the top three factors most associated with customers who churned within 90 days of signup. Format findings as a table with the factor, associated churn rate, and sample size."
-"What is the churn rate in this data?"
-"Find patterns in this data that might explain churn."
-===
-What is the most important question to ask about any data before using AI to analyse it?
-"Is this dataset large enough for AI analysis?"
-"Do I understand how this data was collected, what it actually measures, and what biases or limitations might exist in it?"
-"Is this data stored in a format the AI tool can process?"
-"Has this data been used in AI analysis before?"
-===
-A colleague says: "We don't need analysts anymore — AI can just analyse the data directly." What is the most accurate response?
-They are right — AI makes human analysts redundant.
-AI dramatically accelerates the mechanical parts of analysis, but the analytical judgment required to frame the right questions, interpret results correctly, connect findings to business context, and make defensible recommendations requires human expertise that AI does not replace.
-They are partially right — AI replaces junior analysts but not senior ones.
-They are wrong — AI cannot analyse data at all without human direction.
-===
-What is "survivorship bias" and why is it a risk in AI-assisted business data analysis?
-When AI only analyses data from the most recent time period.
-When analysis is based only on data from entities that survived to be observed — for example, analysing only successful businesses — producing conclusions that don't account for the failures that no longer exist in the dataset.
-When AI focuses too heavily on the most statistically significant findings.
-When a dataset is too small for AI analysis to produce reliable results.
-===
-You have summarised a complex analysis using AI and the summary reads perfectly but misses a critical nuance. What does this reveal?
-The AI tool made an error and should be replaced.
-AI summarisation optimises for readability and completeness of obvious content — it does not know which nuances are critical for your specific audience and decision context without being explicitly told.
-Your prompt was incorrect and needs to be rewritten.
-Critical nuances cannot be captured in any summary, AI or human.
-===
-What is the most appropriate role for AI in helping an analyst communicate findings to a non-technical business audience?
-Have AI rewrite the entire analysis in non-technical language without analyst review.
-Use AI to draft plain-language explanations of technical findings, then review and refine to ensure accuracy is preserved, context is correct, and the level of simplification is appropriate for the specific audience.
-Ask AI to decide which findings to share and which to omit for a non-technical audience.
-AI communication assistance is not appropriate for business analysis.
-===
-What is "anchoring bias" in the context of AI-assisted analysis and how does it affect analytical quality?
-When AI anchors its analysis to the first data point in a dataset.
-When an analyst over-weights the first AI-generated insight and evaluates subsequent findings relative to it — even when the first insight was directionally wrong or incomplete.
-When AI tools are anchored to specific analytical frameworks from their training.
-When analysts anchor their reports to AI-generated conclusions without verification.
-===
-What distinguishes an analyst who uses AI effectively from one who uses AI but produces unreliable work?
-The effective analyst uses more AI tools.
-The effective analyst maintains analytical judgment throughout — questioning AI outputs, verifying key findings, connecting results to domain knowledge, and taking accountability for conclusions — rather than treating AI output as the analysis itself.
-The effective analyst uses AI only for the most complex tasks.
-The effective analyst has more technical training in AI tools.
-===
-You paste a messy dataset into Claude and ask it to identify data quality issues. What is the most appropriate use of Claude's response?
-Accept Claude's list of issues as complete and fix them all.
-Use Claude's response as a starting checklist — it surfaces common patterns like missing values, duplicates, and formatting inconsistencies — then verify each issue against the actual data before acting.
-Only address the issues Claude rates as "high severity."
-Claude cannot identify data quality issues in pasted data.
-===
-You want Claude to help write a formula for a complex Excel calculation. What information should you include in the prompt?
-Just describe the calculation in plain language.
-Describe the calculation, specify the Excel version, name the actual columns or cell references involved, give an example of the expected input and output, and note any edge cases like blank cells or negative values.
-Ask Claude to write the formula and then test it yourself.
-Paste the entire spreadsheet and ask Claude to identify what formula is needed.
-===
-You use Claude to generate Python code for cleaning a dataset. Before running the code, what is the most important step?
-Run it immediately since Claude's code is generally reliable.
-Read through the code to understand what it does, test it on a small sample of data first, and verify the output matches expectations before applying it to the full dataset.
-Ask Claude to verify its own code before you run it.
-Only run Claude-generated code if you are a trained programmer.
-===
-What is the most effective prompt for getting Claude to help restructure a wide-format dataset into a long-format one?
-"Restructure my data."
-"Convert this dataset from wide format to long format. Currently each row is a customer with columns for Month1_Sales, Month2_Sales, Month3_Sales. I need each row to represent one customer-month combination with columns: CustomerID, Month, Sales. Here is a sample of the current structure: [paste sample]."
-"Transform the data to the correct format for analysis."
-"Make the data longer."
-===
-You ask Claude to help you clean customer names in a dataset — standardising capitalisation, removing special characters, and trimming whitespace. Claude provides a Python script. What additional instruction ensures the script is safe to run?
-"Make the script faster."
-"Add a step that creates a backup copy of the original data before making any changes, and print the first 10 rows before and after transformation for manual verification."
-"Add error handling for all possible exceptions."
-"Make the script work for any type of data, not just names."
-===
-A dataset has 15% missing values in a key column. You ask Claude how to handle them. Claude suggests three methods. How should you select between them?
-Choose the method Claude ranks as most accurate.
-Select based on the business context — what missing data means in this domain, whether the missingness is random or systematic, and what the downstream analysis requires — not on generic statistical merit alone.
-Always choose the simplest method Claude suggests.
-Use all three methods and average the results.
-===
-What is the safest way to use Claude for processing data that contains personally identifiable information (PII)?
-Paste the data with PII directly — Claude's responses are private.
-Anonymise or pseudonymise the PII before sharing with Claude, work with a representative sample that excludes real individuals, or use a Claude deployment that meets your organisation's data privacy requirements.
-Only share data with Claude if the individuals have given consent.
-PII data should never be processed with any AI tool.
-===
-You want Claude to help you create a data validation framework for incoming monthly sales reports. What makes this a good AI-assisted workflow?
-Data validation is too sensitive for AI involvement.
-The task is well-defined (consistent monthly reports), the validation rules can be explicitly specified, outputs are verifiable, and once built the framework runs reliably — making it an ideal candidate for AI-assisted development.
-You would need a data engineer to implement any AI-assisted validation.
-AI can only validate data formats, not business logic rules.
-===
-You ask Claude to help merge two datasets on a common key. After the merge, the row count is unexpected. What should you investigate first?
-The AI made an error — request the merge again.
-Understand the join type used (inner, left, right, full outer) and whether it matches your analytical intent, check for duplicate keys in either dataset that would inflate the row count, and verify the key column formats match exactly.
-Reduce the dataset size and try again.
-Switch to a different AI tool for data merging tasks.
-===
-What is the most productive way to use Claude when you are stuck on a complex data transformation you cannot figure out?
-Ask Claude to solve the entire transformation without explaining the logic.
-Describe the exact starting structure and desired output structure with small examples, explain what you have already tried and why it did not work, and ask Claude to explain its approach — not just provide code.
-Share the full dataset and ask Claude to figure out the transformation.
-Try a different approach entirely rather than using AI for stuck points.
-===
-You need to combine data from three different systems, each with slightly different naming conventions for the same fields. What is the most effective AI-assisted approach?
-Ask Claude to automatically detect and match fields across all three systems.
-Build a field mapping table manually (which field in system A corresponds to which in B and C), then use Claude to help generate the transformation logic based on that explicit mapping.
-Trust Claude to infer the correct field mappings from the data content.
-Standardise the fields manually in each system before using any AI assistance.
-===
-What is the most important quality check after using AI to help generate a data cleaning script?
-Check that the code is well-commented.
-Run the script on a sample with known characteristics and verify that every transformation produced exactly the expected result — checking both that correct values were transformed correctly and that edge cases were handled as intended.
-Have another AI tool review the code for errors.
-Check that the script runs without producing error messages.
-===
-A stakeholder asks you to add a new data source to an existing AI-assisted analysis pipeline. What is the most important first step?
-Add the new data source and re-run the pipeline immediately.
-Understand the new data source's structure, quality, update frequency, and how it relates to existing data — then assess whether the existing pipeline logic handles the new source correctly or requires modification.
-Ask AI to assess whether the new data source is compatible.
-Check whether the AI tool can process the new data format.
-===
-What is the most effective use of Claude for automating repetitive monthly data reporting tasks?
-Have Claude generate the full report automatically every month without any human review.
-Use Claude to generate the standardised sections of the report from structured data inputs, with a human review checkpoint for contextual commentary, anomaly flagging, and executive-facing conclusions.
-Use Claude only to format the data tables — write all commentary manually.
-Monthly reporting is too sensitive for AI involvement at any stage.
-===
-You use Claude to help generate a data dictionary for a new dataset. What makes this an ideal AI-assisted task?
-Because AI can access the data source systems directly to generate accurate definitions.
-Because the task is structured (consistent format for each field), time-consuming to do manually for large datasets, and the AI draft provides a useful starting point that a domain expert can review and refine — rather than starting from scratch.
-Because AI-generated data dictionaries are always more accurate than human ones.
-Because data dictionaries do not require domain knowledge to produce accurately.
-===
-Your stakeholder says: "I want a dashboard that shows everything." What is the most effective analyst response?
-Build the most comprehensive dashboard possible.
-Work with the stakeholder to identify the three to five decisions they need to make regularly, and build the dashboard around the metrics that most directly inform those decisions — 'everything' produces dashboards that nobody uses.
-Ask AI to determine the most important metrics for the stakeholder's role.
-Build a prototype of everything and let the stakeholder choose what to keep.
-===
-You use Claude to help write the narrative commentary for a monthly BI report. What is the most important constraint to include in your prompt?
-"Write clearly and professionally."
-"Base the commentary only on the data metrics I provide. Do not add context, benchmarks, or comparisons that are not in the data I share. Flag any metric that looks anomalous for human review rather than explaining it away."
-"Write a comprehensive analysis of all trends in the data."
-"Make the commentary suitable for a general business audience."
-===
-A key metric in your dashboard shows a 15% decline month-on-month. You ask Claude to explain it. What is the most appropriate role for Claude's response?
-Report Claude's explanation directly to stakeholders as the confirmed reason.
-Use Claude's response as a hypothesis list — possible explanations to investigate with additional data — not as a confirmed diagnosis that can be reported without further investigation.
-Trust Claude's explanation if it cites specific data patterns.
-Ask Claude the same question three times and take the most common explanation.
-===
-What is the most effective AI-assisted approach to building a new metric framework for a business function that has not been measured systematically before?
-Ask Claude to recommend the standard metrics for that business function.
-Work with function stakeholders to identify their goals and decisions, use Claude to research relevant metric frameworks and translate them to your context, then validate the proposed metrics with domain experts before building any dashboards.
-Build dashboards first and identify metrics based on what data is available.
-Adopt whatever metrics Claude recommends as they are based on industry best practices.
-===
-You are asked to build a self-service analytics capability for a non-technical business team. What is the most important design consideration?
-Ensure the tool has the most features possible.
-Design for the decisions the team needs to make, not for the analyst's capability — using language, filters, and visualisations that match how the business team thinks about their work, not how the data is structured.
-Use the most advanced BI tool available.
-Build the capability so non-technical users can also write SQL queries.
-===
-What is "metric inflation" and how does AI assistance increase its risk?
-When a dashboard displays too many metrics on a single screen.
-When metrics are selected or framed to make performance look better than it is — a risk with AI assistance because AI can generate plausible metric definitions and interpretations that serve the desired narrative without explicitly questioning whether they are honest.
-When AI-generated metrics use overly precise decimal places.
-When dashboards include too many AI-generated visualisations.
-===
-A stakeholder requests a forecast of next year's revenue based on this year's data. You use Claude to help build the forecast model. What is the most important caveat to include in your output?
-That the forecast was AI-generated.
-That the forecast is based on specified assumptions about market conditions, growth patterns, and external factors — and that changes in those assumptions (which are uncertain) will materially change the forecast output.
-That the forecast may not be 100% accurate.
-That you used AI assistance in building the model.
-===
-What is the most appropriate use of AI in designing data visualisations?
-Ask AI to select the best chart type for any dataset automatically.
-Use AI to draft visualisation options and write the narrative around them — then apply human judgment about which visualisation most clearly communicates the specific insight to the specific audience.
-AI cannot contribute to data visualisation design.
-Trust AI visualisation recommendations completely since they are based on data visualisation best practices.
-===
-You need to explain a complex statistical concept to a non-technical business audience. What is the most effective AI-assisted approach?
-Have Claude write a full statistical explanation and share it directly.
-Ask Claude to generate several plain-language explanations at different simplicity levels — then select and refine the one most appropriate for your specific audience, adding business-relevant examples they will recognise.
-Avoid explaining statistical concepts to non-technical audiences.
-Ask Claude to create a technical diagram that explains the concept visually.
-===
-What is the difference between a "vanity metric" and an "actionable metric" and how does this distinction affect AI-assisted BI work?
-Vanity metrics are visual and actionable metrics are numerical.
-A vanity metric looks impressive but does not connect to decisions or outcomes (e.g. total website visits); an actionable metric directly informs a decision (e.g. conversion rate by traffic source). AI will build dashboards around whatever metrics you specify — ensuring you specify actionable ones is the analyst's responsibility.
-AI tools automatically filter out vanity metrics from dashboards.
-Vanity metrics are fine for external reporting; actionable metrics are for internal use.
-===
-You are presenting AI-generated analysis to a senior executive who is sceptical of AI. What is the most effective approach?
-Lead with the fact that AI was used to demonstrate innovation.
-Lead with the insight and the evidence — data, validation, and business implication. Mention AI assistance as part of the methodology if relevant, but the credibility comes from the rigour of verification and the clarity of the recommendation.
-Do not mention AI involvement to avoid scepticism.
-Have the AI generate a second version of the analysis as a cross-check.
-===
-What is the most common reason BI dashboards fail to drive business decisions despite being technically correct?
-The dashboards use the wrong data visualisation tools.
-The dashboards were designed around data availability rather than decision needs — they show what exists in the database rather than what the decision-maker needs to see at the point of making a decision.
-Business users are not technically sophisticated enough to use dashboards.
-Dashboards require too much maintenance to remain accurate.
-===
-How should an analyst handle a situation where AI-generated analysis conflicts with the business team's intuition about performance?
-Always trust the data over business intuition.
-Investigate the conflict — it may reveal a data quality issue, a definition mismatch, an analytical error, or a genuine performance surprise. Both the data and the intuition contain information; the conflict is a signal worth understanding.
-Always trust business intuition over AI-generated analysis.
-Present both perspectives to senior leadership and let them decide.
-===
-What is the most effective way to use Claude to prepare for a data review meeting with sceptical stakeholders?
-Ask Claude to predict what questions the stakeholders will ask.
-Share the analysis with Claude and ask it to steelman the critique — identify the weakest assumptions, the most likely objections, the data quality concerns a sceptic would raise — then prepare responses to each.
-Ask Claude to confirm that the analysis is correct before the meeting.
-Use Claude to simplify the analysis to avoid sceptical questions.
-===
-What is the ultimate test of whether an AI-assisted BI investment has succeeded?
-Whether the dashboards are visually impressive and stakeholders comment positively on them.
-Whether the analysis and dashboards are actually used to inform decisions — and whether those decisions are better informed and more consistent than before AI assistance was introduced.
-Whether the analyst spends less time on reporting tasks.
-Whether the AI tools used are the most advanced available.
-===
-You need to write a SQL query to find the top 10 customers by revenue in the last 90 days. Which prompt gets the most useful result from Claude?
-"Write a SQL query for top customers."
-"Write a SQL query to return the top 10 customers by total revenue for the 90 days ending today. Table: orders. Relevant columns: customer_id, order_date, revenue. Sort descending by revenue. Use standard SQL compatible with PostgreSQL."
-"Help me with SQL."
-"Find top customers in my database."
-===
-Claude generates a Python script for data analysis. You run it and get an error message. What is the most effective next step?
-Ask Claude to "fix the error."
-Paste the full error message into Claude along with the relevant section of code and your data structure, and ask Claude to diagnose the specific error — the error message contains the information needed to fix the problem.
-Try running the script again in case it was a temporary error.
-Rewrite the entire script from scratch.
-===
-What is the most appropriate way to use Claude for Excel formula work?
-Ask Claude to access your Excel file directly.
-Describe the calculation you need in plain language with the actual column names and a small example, get the formula from Claude, test it on sample data manually, and verify the result matches expectations before applying it broadly.
-Ask Claude to write a macro that does everything automatically.
-Trust Claude's Excel formulas completely since they are based on Excel documentation.
-===
-You want to use Claude to help build a Python script that automates your weekly data export and formatting process. What is the most efficient approach?
-Ask Claude to write the complete script in one prompt.
-Describe the full process step by step, build and test each step separately before combining them, and have Claude explain each section — enabling you to maintain and modify the script without having to rebuild it from scratch if something changes.
-Ask Claude for a script template and fill in the details yourself.
-This type of automation always requires a dedicated software developer.
-===
-What is the most valuable way to use AI assistance when working with an unfamiliar BI tool like Tableau, Power BI, or Looker?
-Ask AI to use the BI tool directly on your behalf.
-Use Claude to understand the concepts and find the specific menu paths, feature names, and approach to implement what you need — then apply that guidance yourself in the tool.
-Switch to a different BI tool that you already know well.
-AI cannot help with tool-specific BI questions.
-===
-You need to merge two Excel tables on a common key and identify records that exist in one but not the other. You have basic Excel skills. Which approach is most appropriate?
-Ask Claude to perform the merge directly in your Excel file.
-Describe the tables, their structure, and what you need to achieve — ask Claude to provide step-by-step instructions using VLOOKUP or XLOOKUP, or an alternative approach like Power Query, with explanations of each step.
-This task requires Python and cannot be done in Excel.
-Ask Claude to write a macro that does the merge automatically.
-===
-What is the most important consideration when using AI-generated SQL in a production database environment?
-Whether the SQL runs without error messages.
-Whether the SQL has been reviewed by someone with authority to run queries on that database, tested in a development environment first, and checked for potential performance impacts on other systems sharing the database.
-Whether Claude has confirmed the SQL is correct.
-Whether the SQL uses the latest SQL syntax.
-===
-You want to use Claude to help you understand a complex Python script someone else wrote. What is the most effective prompt?
-"Explain this code."
-"Explain this Python script section by section. For each section, describe: what it does, why it might be structured this way, what inputs it expects, and what outputs it produces. Flag any parts that look unusual or potentially problematic."
-"Rewrite this code in simpler terms."
-"Tell me if this code has any bugs."
-===
-Which of the following is the best use of Claude for a Tableau dashboard project?
-Asking Claude to connect to your Tableau Server and build the dashboard.
-Using Claude to help design the dashboard structure and metric hierarchy before building — what views to include, what filters are needed, how to organise the layout — then building in Tableau yourself.
-Asking Claude to write Tableau-specific code to automate the entire dashboard.
-Claude cannot assist with Tableau projects.
-===
-You use Claude to help write a DAX formula for a Power BI calculation. The formula produces unexpected results. What should you investigate first?
-Assume Claude's formula is correct and look for a data error.
-Check whether the formula uses the correct evaluation context for your specific data model — row context versus filter context is the most common source of unexpected DAX results — and provide this context information to Claude when asking for help.
-Ask Claude to rewrite the formula in a simpler way.
-Switch the calculation to SQL instead of DAX.
-===
-What is the most effective workflow for using Claude to help build a repeatable Python-based data pipeline?
-Ask Claude to write the complete pipeline and deploy it immediately.
-Design the pipeline stages conceptually first, use Claude to build and test each stage separately, document the logic as you go, and build error handling at each stage before integrating into the full pipeline.
-Have Claude write the pipeline and test it on a subset of real production data.
-Repeatable Python pipelines always require a dedicated engineer.
-===
-An analyst without Python experience wants to use Claude to automate a repetitive data task. What is the most important consideration?
-They should learn Python before using Claude for any coding tasks.
-They should understand what the code does at a conceptual level — even without writing it themselves — so they can verify it is doing the right thing, debug obvious errors, and maintain it as requirements change.
-Claude-generated Python requires no understanding to use safely.
-They should use a no-code tool instead of Claude for Python tasks.
-===
-What is the most valuable analytical skill in an AI-assisted tool environment?
-Knowing how to use the most AI tools.
-The ability to specify what you need precisely and evaluate whether the AI's output meets that specification — because AI tool assistance is only as good as the clarity of the requirement and the rigour of the review.
-Learning to code Python fluently to supplement AI-generated code.
-Speed — being able to use AI tools faster than colleagues.
-===
-What is the most appropriate attitude toward AI coding assistance for analysts who are not professional programmers?
-Avoid AI coding assistance entirely until you have learnt to code properly.
-Use AI coding assistance as an accelerator for clearly defined, testable tasks — understanding that you remain responsible for verifying outputs and that the skill gap should be managed through conceptual understanding and rigorous testing.
-Trust AI-generated code completely since it is written by a more capable programmer than you.
-Only use AI coding assistance for tasks you could also do manually.
-===
-A new AI-powered analytics tool claims to make analysts redundant by "automatically generating insights from raw data." What is the most professionally accurate assessment?
-This is correct — the best analytics tools do eliminate the need for analysts.
-The tool can accelerate data processing and surface statistical patterns efficiently, but the analytical judgment required to frame the right questions, interpret results in business context, ensure data quality, and translate findings into decisions remains a human responsibility.
-This claim should be dismissed as pure marketing with no technical substance.
-This is correct for structured data but not for unstructured data.
-===
-What is "p-hacking" and why does AI assistance increase the risk of it?
-A method of optimising Python code for better performance.
-Running multiple statistical tests until one produces a significant result — presenting that test as if it were the pre-planned analysis. AI tools that quickly run many tests make it faster to do this, increasing the risk if not managed deliberately.
-Using AI to hack into a protected database.
-A type of data manipulation that only affects small datasets.
-===
-An analyst presents an AI-generated analysis with a conclusion that supports the sponsor's preferred outcome. The analysis was not independently verified. What is the professional concern?
-The concern is only relevant if the analysis turns out to be wrong.
-The analysis may reflect confirmation bias — selecting or framing AI outputs that support the desired conclusion without rigorous verification of alternatives. Professional analytical standards require independence from outcome preferences.
-Sponsoring stakeholders are always the most reliable validators of analysis.
-The concern is only relevant if the analysis is used externally.
-===
-What is the most important professional obligation when sharing AI-assisted analysis with external clients or regulators?
-Disclosing the AI tool used in every report.
-Ensuring that all claims, statistics, and conclusions have been verified for accuracy by the analyst — and that the analyst takes full professional accountability for the content regardless of whether AI assisted in producing it.
-Obtaining written consent from clients to use AI tools.
-External audiences do not need to know about AI assistance in analysis.
-===
-What does "analytical reproducibility" mean and how does AI assistance affect it?
-The ability to reproduce any analysis using the same AI tool.
-The ability to reproduce the same result from the same data using the same method — a professional standard that requires documenting AI prompts, tool versions, and methodology alongside the analysis output.
-Reproducibility is only relevant for scientific research, not business analysis.
-AI assistance automatically improves reproducibility by standardising the analysis process.
-===
-A team member uses AI to generate a forecast and presents it with false precision — "revenue will be exactly £2,347,891 next quarter." What is the analytical concern?
-The concern is the specific revenue figure, which may be wrong.
-False precision misleads stakeholders into treating a probabilistic estimate as a certainty — the presentation should communicate the uncertainty range and key assumptions that drive the forecast, not a single point estimate that implies false accuracy.
-Forecasts should always be rounded to avoid this problem.
-False precision is only a concern in regulated financial reporting contexts.
-===
-What is "model overfitting" in simple analytical terms and why does it matter for AI-assisted analysis?
-When an AI model generates too many outputs for the analyst to review.
-When an analytical model is tuned so precisely to historical data that it fails to generalise to new data — producing excellent past performance metrics but poor predictive accuracy. AI tools that optimise aggressively can produce overfitted models that look impressive but perform poorly.
-When AI tools take too long to process large datasets.
-When a dashboard model includes too many metrics.
-===
-You discover that a widely-used AI-assisted analysis at your company contains a systematic error that has influenced several business decisions. What is the professional response?
-Quietly correct the error in the next report without flagging the past issue.
-Disclose the error to relevant stakeholders immediately, document the scope of the impact, correct the analysis, and implement a process improvement to prevent similar errors — even if it is professionally uncomfortable.
-Wait to see if the decisions influenced by the error produce bad outcomes before raising the concern.
-The AI tool manufacturer is responsible for the error and should be notified first.
-===
-What is the most important analytical standard for using AI to support a decision with significant financial or operational consequences?
-Using the most capable AI model available.
-Independently verifying all key inputs, assumptions, and conclusions — treating AI output as a draft that requires the same rigorous review as if it were produced by a junior analyst on their first month.
-Having the AI tool generate a confidence score for its analysis.
-Ensuring the analysis was reviewed by the AI tool's developer.
-===
-A dataset shows clear demographic differences in an outcome metric. You use AI to help interpret these differences for a business report. What is the most important professional consideration?
-Report the differences as the AI has described them.
-Ensure the interpretation distinguishes between observed statistical differences and causal claims — and that the framing does not inadvertently reinforce stereotypes, suggest discrimination, or draw conclusions about groups that the data does not support.
-Omit demographic analysis from business reports to avoid controversy.
-Demographic data should always be handled by HR, not analytical teams.
-===
-What is the professional responsibility of an analyst who suspects that an AI-generated insight is directionally correct but based on flawed reasoning?
-Use the insight if the direction is correct — the reasoning details do not matter.
-Investigate the reasoning, identify the flaw, and either correct it or discard the insight — directionally correct conclusions built on flawed reasoning can lead to wrong decisions when applied in different contexts.
-Present both the insight and the reasoning concern to stakeholders and let them decide.
-Flag the concern in a footnote and proceed with the analysis.
-===
-What distinguishes an analyst with AI fluency from one who simply uses AI tools?
-The AI-fluent analyst uses more advanced AI tools.
-The AI-fluent analyst maintains analytical judgment throughout — using AI to accelerate mechanical work while applying critical thinking, domain knowledge, and professional standards at every step where judgment is required.
-The AI-fluent analyst produces analysis faster than non-AI users.
-The AI-fluent analyst can explain how the AI tools work technically.
-===
-What is the most important ethical obligation when using AI to analyse data about real people?
-Ensuring the AI tool has been approved for data processing by the IT team.
-Ensuring the analysis is used only for its stated purpose, that individuals' privacy is protected at every stage, and that findings are not used to disadvantage individuals in ways they have not consented to.
-Only using anonymised data for any AI analysis.
-Informing each individual whose data is being analysed.
-===
-What is "analytical humility" and why is it especially important in AI-assisted analysis?
-Admitting when you do not know how to use an AI tool.
-The professional practice of acknowledging the limitations, assumptions, and uncertainty in your analysis — especially important with AI assistance because AI produces confident-sounding outputs even when underlying uncertainty is high.
-Being modest about your analytical achievements to avoid seeming arrogant.
-Acknowledging that AI tools are smarter than human analysts.
-===
-A stakeholder asks you to use AI to find data that proves their hypothesis. What is the professionally correct response?
-Use AI to find the supporting data as requested — stakeholder satisfaction is important.
-Explain that the analytical objective is to test the hypothesis rigorously, not to confirm it — and offer to use AI to run a proper analysis that examines both supporting and contradicting evidence.
-Decline to use AI for any hypothesis testing — this should be done manually.
-Use AI to find the supporting data, but also find contradicting data to present alongside it.
-===
-What is the most important professional standard that remains constant regardless of how AI tools evolve?
-Staying current with the latest AI tools and techniques.
-Maintaining full accountability for analytical outputs — ensuring findings are accurate, interpretations are honest, limitations are disclosed, and conclusions are defensible — regardless of how much AI assistance was used to produce them.
-Using AI assistance only for lower-risk, non-critical analytical tasks.
-Documenting AI tool usage in every analytical report.
+A manager gives you a dataset and says "find insights." Before running any AI analysis, your first step is:
+Clean and format the data so AI can process it correctly.
+*Define a specific business question the analysis should answer.
+Run exploratory AI analysis to surface questions to investigate.
+Identify which AI tool is most appropriate for this data type.
+===
+You are designing an AI-assisted analysis of customer churn. Which variable is most important to define first?
+The AI model that performs best on classification tasks.
+The size of the dataset needed for statistical significance.
+The visualisation format for presenting findings to stakeholders.
+*The definition of "churn" for this specific business context.
+===
+AI is asked to identify "trends" in your sales data. What is the most important instruction to include?
+*Specify the time period, metric, and what constitutes a meaningful trend.
+Ask AI to identify all trends and patterns it can find in the data.
+Specify the visualisation format for displaying the trends.
+Ask AI to compare this dataset to industry benchmark data.
+===
+Which of these analyst tasks benefits most from AI assistance?
+Making the final judgment on which hypothesis is correct.
+Collecting primary research data from the market.
+*Generating multiple hypotheses quickly to structure the analysis.
+Deciding which business decisions follow from the findings.
+===
+Before asking AI to analyse your dataset, the most important data quality check is:
+Whether the dataset is large enough to produce statistically significant results.
+*Whether the data definitions and categories are consistent throughout.
+Whether the AI tool you are using can handle the file format.
+Whether the dataset is recent enough to be relevant to your question.
+===
+You have two datasets on the same customer cohort from different internal systems. They disagree on customer count by 8%. Your first action is:
+*Investigate the source and definition differences between the two systems.
+Average the two counts as a reasonable estimate.
+Use the larger count — it is more likely to be complete.
+Use the smaller count — it is more likely to exclude duplicates.
+===
+An analyst wants to use AI to build a segmentation of customers. The most important input to define first is:
+The number of segments that will be most manageable for the business.
+The AI clustering algorithm best suited to customer data.
+The data fields available for the AI to use in clustering.
+*The purpose of the segmentation — what decisions it will inform.
+===
+You feed raw survey data into Claude and ask it to find the key themes. The most important limitation to be aware of is:
+Claude cannot process survey data with more than 100 respondents.
+Claude will only identify themes present in its training data.
+*Claude may interpret open-text responses through its own pattern biases.
+Claude requires structured data format to analyse survey responses.
+===
+What is the most reliable approach when using AI to size a market?
+*Define your bottom-up assumptions, use AI to stress-test them, verify inputs from primary sources.
+Ask AI for the market size and use it as your baseline figure.
+Use AI to aggregate publicly available market research reports.
+Ask AI to identify the methodology used in industry reports.
+===
+A stakeholder asks for "the key drivers of revenue growth." Before building the AI analysis, you should:
+Ask AI to identify all statistically significant revenue variables.
+Run the analysis first and define "drivers" from the findings.
+Collect more data to ensure the analysis is comprehensive enough.
+*Clarify whether they want correlation analysis or causal attribution.
+===
+Which analytical question is least appropriate for AI to answer independently?
+Which date range in this dataset shows the highest variance.
+*Whether this data pattern represents a real business problem worth solving.
+Which columns in this dataset have the most missing values.
+What the average order value is across these 10,000 transactions.
+===
+You are about to brief senior leadership using AI-assisted analysis. What is non-negotiable before the brief?
+The presentation design must meet the company's brand standards.
+The AI must have been used only for approved analysis tasks.
+*Every specific figure cited must be verified from a primary source.
+A written summary of AI's limitations must be disclosed to leadership.
+===
+What does "framing the analysis" mean for an AI Analyst?
+Selecting the chart types and layout for presenting findings.
+Writing the narrative around AI-generated charts and tables.
+Deciding which insights from the AI analysis to include in the report.
+*Defining the question, hypothesis, scope, and success criteria before starting.
+===
+An AI analysis identifies a correlation between two variables. The most responsible conclusion to draw is:
+One variable is causing the other; this is an actionable finding.
+*These variables move together; causation requires further investigation.
+The correlation is meaningful only if it exceeds 0.7 coefficient.
+Correlation in AI analysis confirms causation for practical purposes.
+===
+What is an analyst's primary responsibility when using AI for data analysis?
+*Owning the quality and validity of the conclusions, regardless of AI's role.
+Ensuring the AI tool used is approved for data analysis tasks.
+Documenting which parts of the analysis were AI-assisted.
+Ensuring the AI can access all the data it needs to analyse.
+===
+You use Claude to summarise 50 customer feedback responses. Before using the summary, you should:
+Have a second AI tool verify the summary for completeness.
+Check whether the summary matches the original response count.
+*Read a sample of raw responses to validate the summary's accuracy.
+Ensure Claude has not excluded responses in negative sentiment.
+===
+Which step in a data analysis workflow does AI most reliably accelerate?
+*Structuring and reformatting raw data into a consistent schema.
+Making the final decision on which findings are strategically important.
+Designing the sampling methodology for the research study.
+Interpreting what findings mean for the organisation's specific context.
+===
+What is the most effective way to use AI to explore a dataset you have never seen before?
+Ask AI to run a comprehensive analysis and present its top 10 findings.
+Ask AI to clean and normalise the data before any exploration.
+Ask AI to compare this dataset to similar industry datasets it knows.
+*Ask AI to describe the data structure, field names, and samples to orient yourself.
+===
+You use AI to segment customers into 5 clusters. The most important next step before presenting the segments is:
+Run the same clustering with 4 and 6 clusters to compare the results.
+*Interpret each cluster using your business knowledge to validate they make sense.
+Ask AI to label each cluster with a descriptive name for presentation.
+Calculate the statistical significance of the cluster separation.
+===
+You use Claude to generate the initial Python code for a data analysis pipeline. The most important next step is:
+Run the code on the full dataset to check if it produces expected outputs.
+Ask Claude to review and debug the code before you run any tests.
+*Review and test the code on a small data sample before running it on the full dataset.
+Add your name to the code as author before sharing with the team.
+===
+Which AI use case in analytics carries the highest verification burden?
+AI-generated first drafts of analyst commentary for internal review.
+AI-assisted reformatting of raw data into a structured table.
+AI-generated chart labels and titles for a presentation.
+*AI-generated statistics used in a board-level report.
+===
+An AI tool tells you that a metric "increased significantly." What is your first analytical response?
+*Ask: significant compared to what baseline, over which period, by what magnitude?
+Accept the finding and include it in your report as a positive trend.
+Ask the AI to confirm this finding with a second statistical test.
+Investigate whether the underlying data collection method changed.
+===
+You run the same analysis prompt twice on the same dataset and get slightly different numerical outputs. What does this indicate?
+The dataset has inconsistent data that produces variable results.
+*Temperature variation is producing non-deterministic outputs — use temperature = 0.
+The AI is selecting different analysis methods in each session.
+One run had a context window overflow that truncated the analysis.
+===
+A stakeholder says "the AI found this pattern — it must be true." The correct challenge is:
+"AI findings are accurate by default for pattern detection tasks."
+"This finding is preliminary — we should run it through a second AI tool."
+"AI pattern detection is reliable for well-structured datasets."
+*"AI identified this correlation — we still need to validate it with additional analysis."
+===
+What is the most important difference between AI "analysing" data and a human analyst doing so?
+The human is slower but more accurate in numerical computation.
+The AI processes larger datasets than a human could review manually.
+*The human applies contextual business judgment to interpret what patterns mean.
+The human can access primary sources that AI cannot reach.
+===
+You need to present AI-assisted analysis to a client who is unfamiliar with AI. The most important thing to communicate is:
+Which AI tool was used and its technical accuracy rating.
+*Which parts of the analysis were AI-generated and how they were validated.
+That AI was not used for any subjective or interpretive conclusions.
+That the findings would be the same whether AI was used or not.
+===
+You want to use AI to build an analyst's daily reporting workflow. The first workflow step must be:
+*Data validation — confirming the incoming data is complete and consistent.
+AI analysis — generating the daily metrics and trend commentary.
+Visualisation — converting AI outputs into charts for the report.
+Distribution — sending the report to the relevant stakeholders.
+===
+What is the most important skill an analyst develops by working with AI on data tasks?
+The ability to write Python and SQL to extract data for AI processing.
+The speed to process and present more analysis than without AI.
+*The judgment to direct AI toward the right question and evaluate its outputs.
+The ability to use the widest range of AI analytics tools available.
+===
+An AI analysis of your customer data produces a finding you strongly disagree with. What is the right response?
+Accept the AI finding — your intuition may be biased.
+Reject it and redo the analysis until it matches your expectation.
+Present both the AI finding and your intuition and let the stakeholder decide.
+*Investigate the data and methodology before either accepting or rejecting it.
+===
+What does "analytical integrity" mean when AI is involved in the analysis?
+Using only AI-verified data and AI-validated methods.
+*Being transparent about AI's role and accountable for the conclusions.
+Ensuring AI was used only for approved analytical task types.
+Documenting every AI interaction in the analysis audit trail.
+===
+An AI tool presents a chart showing revenue increasing 40% year-on-year. Before presenting it, you should:
+*Verify the underlying data and confirm the calculation methodology.
+Check whether the chart design meets your presentation standards.
+Ask the AI to confirm the finding is statistically significant.
+Compare the 40% figure to the company's own growth targets.
+===
+You use AI to draft a competitive analysis. The section you must verify most carefully is:
+The analytical framework used to structure the comparison.
+The section headings and narrative flow of the document.
+*Specific claims about competitors' products, pricing, or performance.
+The summary recommendations at the end of the analysis.
+===
+What is the most effective prompt technique for reducing hallucination in AI-generated data analysis?
+Ask AI to cite its confidence level for each analytical finding.
+*Instruct AI to work only from the provided dataset and flag when it cannot.
+Run the analysis 3 times and compare outputs for consistency.
+Use the most advanced model available for all analytical tasks.
+===
+An AI analysis identifies an anomaly in your data. What is the first question to ask?
+"Is this anomaly large enough to report to stakeholders?"
+"Which AI model detected this anomaly and how reliable is it?"
+"What is the recommended action for this type of anomaly?"
+*"Is this a data quality issue or a real business phenomenon?"
+===
+You receive an AI summary of 100 customer reviews that says "customers are generally satisfied." You want to probe this further. The most effective next step is:
+*Read a random sample of negative reviews to test the summary's accuracy.
+Ask AI to re-summarise with a focus on negative sentiment only.
+Filter the raw reviews to those with the lowest star ratings.
+Ask AI to list specific complaints mentioned more than five times.
+===
+Which of these is the strongest evidence that an AI-generated analysis is reliable?
+The analysis was generated by the highest-rated AI analytics tool.
+*Every specific claim traces to a verifiable primary source.
+The output was consistent across 5 separate generation runs.
+The analysis structure matches what a senior analyst would produce.
+===
+A colleague presents AI-generated market research numbers without citing sources. Your response is:
+"These numbers look reasonable, so let's include them in the analysis."
+"AI market research is generally accurate enough for strategic planning."
+"We should re-run this with a different AI tool to cross-check."
+*"We need to verify these before using them — can you show me the source data?"
+===
+You use AI to run sentiment analysis on employee survey data. The finding shows 72% positive sentiment. What is the most important verification step?
+Compare the 72% figure to industry benchmarks for employee sentiment.
+Run the same data through a second sentiment analysis tool.
+*Review how AI defined "positive" and check a sample of categorised responses.
+Ask HR whether 72% aligns with their own qualitative observations.
+===
+What is the most common error analysts make when evaluating AI-generated statistical claims?
+Not verifying whether the calculation method was disclosed.
+*Accepting the number without checking what population it describes.
+Not running a second statistical test to confirm the result.
+Presenting the number without rounding it appropriately.
+===
+Before using an AI-generated cohort analysis in a strategy document, what must you confirm?
+*The cohort definition and whether it is consistent across all time periods.
+Whether the AI tool is approved for strategic analysis tasks.
+Whether the cohort size is large enough for statistical significance.
+Whether the analysis was generated by the latest model version.
+===
+You are producing a quarterly business review and some figures were AI-generated. What is the minimum standard before the document is distributed?
+The document notes which figures were AI-generated for disclosure.
+An AI proofreading tool has checked the document for consistency.
+*Every AI-generated figure is verified against the source data by a human.
+The AI-generated figures are flagged with a lower confidence interval.
+===
+A stakeholder challenges a finding from your AI-assisted analysis. What is the strongest response?
+"I used the most advanced AI model available for this analysis."
+"The AI is highly accurate on this type of data task."
+"I can re-run the analysis to confirm it produces the same result."
+*Walk through the source data and methodology step by step.
+===
+You discover an error in data you already used for an AI analysis in last quarter's report. What do you do?
+Assess whether the error would change the conclusion before disclosing.
+*Correct the data, re-run the analysis, and disclose the correction to stakeholders.
+Correct it for future reports but do not revise the distributed document.
+Check whether anyone has used the previous report's figures before acting.
+===
+What distinguishes a high-quality AI-assisted analyst from a low-quality one?
+The high-quality analyst uses more AI tools in their analysis workflow.
+The high-quality analyst relies on AI for a higher proportion of their work.
+*The high-quality analyst treats AI outputs as hypotheses requiring validation.
+The high-quality analyst discloses AI use in all analytical outputs.
+===
+An AI flags a finding as "statistically significant." What analytical caution should you apply?
+*Statistical significance depends on sample size and does not guarantee practical importance.
+Statistical significance from AI is more reliable than from manual testing.
+Statistical significance means the finding is correct and ready to present.
+Statistical significance requires confirmation from a domain expert.
+===
+You need to present a complex AI-assisted analysis to a non-technical executive. The most important principle is:
+Explain the AI methodology so the executive understands the basis.
+Show the data first so the executive can draw their own conclusions.
+Include confidence intervals so the executive understands uncertainty.
+*Lead with the business implication, not the analytical method.
+===
+A colleague drafts an AI-assisted report that presents every finding at the same level of confidence. The problem is:
+Presenting all findings at equal confidence makes the report too long.
+*Different findings have different evidence quality and should be differentiated.
+Executive readers will not know which findings are from AI.
+A uniform confidence level violates analytical communication standards.
+===
+You use Claude to write an executive summary of your analysis. The summary sounds compelling but omits two findings that contradict the main narrative. What must you do?
+Ask Claude to rewrite the summary with a more balanced narrative.
+Present the summary as written and include contradicting findings in an appendix.
+*Revise the summary to include the contradicting findings honestly.
+Note in the summary that AI generated it, so the reader can judge independently.
+===
+What is the most effective structure for communicating an AI-assisted data finding?
+*Finding — Evidence — Implication — Confidence level
+Method — Data — Finding — Recommendation
+Context — Analysis — Charts — Conclusion
+Background — AI tool used — Output — Next steps
+===
+An AI-generated visualisation shows a trend that looks dramatic but the Y-axis starts at 94% rather than 0%. What should you do?
+Keep the chart as-is — it correctly shows the relevant range of variation.
+Add a footnote explaining that the Y-axis does not start at zero.
+Ask AI to regenerate the chart with a different visualisation type.
+*Reconstruct the chart with a Y-axis starting at 0 to show true scale.
+===
+You present AI-generated analysis and a stakeholder asks a question you cannot answer. The correct response is:
+"The AI produced this analysis — you would need to ask it directly."
+"The AI is confident in this finding, so the question may not apply."
+*"I will investigate and get back to you with a verified answer."
+"Let me re-prompt Claude right now to see if it can answer."
+===
+What is the correct way to handle uncertainty in an AI-assisted analytical report?
+*State clearly which conclusions are high-confidence and which are directional.
+Remove all findings with uncertainty from the final report.
+Present all findings with confidence intervals calculated by the AI.
+Disclose that AI was used and ask the reader to judge uncertainty.
+===
+Which element of an AI-assisted analysis is most important to attribute clearly in a report?
+The name and version of the AI tool used for the analysis.
+*Which specific claims were generated by AI versus verified from primary data.
+The total number of AI interactions in the analysis process.
+Which team member was responsible for the AI prompting work.
+===
+A stakeholder says your AI-assisted analysis is "just opinion." The strongest professional response is:
+"This analysis used the most advanced AI tool currently available."
+"The AI model processes far more data than human analysis could."
+*"Here are the verified primary sources each key finding is based on."
+"I have extensive experience in this domain so the interpretation is sound."
+===
+You want to use AI to write the narrative sections of your analysis report. The most important instruction to include in the prompt is:
+"Write in a formal, professional tone suitable for executive readers."
+"Ensure the narrative highlights the most positive findings first."
+"Generate narrative of approximately 300 words per section."
+*"Do not state or imply anything that is not explicitly supported by the findings below."
+===
+An AI-generated analysis uses precise-sounding figures from its training data rather than from your dataset. The most likely cause is:
+*The prompt did not sufficiently specify that AI should use only the provided data.
+The AI model cannot distinguish between its training data and provided datasets.
+The dataset was too small for the AI to use as a primary source.
+The AI tool being used requires explicit API configuration to limit data sources.
+===
+What is the most professional way to communicate that AI was used in your analysis?
+Add a general disclaimer noting "AI tools were used in this analysis."
+*State specifically which tasks AI assisted with and how outputs were verified.
+Only disclose if the client or audience directly asks about your process.
+AI disclosure is unnecessary when outputs have been fully verified.
+===
+You are presenting analysis to a board that is unfamiliar with AI. Which statement best introduces your methodology?
+"AI replaced the manual analysis process, producing faster and more accurate outputs."
+"We ran this analysis using the latest AI model to ensure accuracy."
+"AI was used throughout, but human judgment was applied at every decision point."
+*"We used AI to structure and accelerate the analysis, with all key findings verified from primary data."
+===
+A junior analyst on your team presents AI outputs directly as analysis findings without review. What is the correct response?
+*Explain why AI outputs are starting points and establish a review process.
+Accept the findings since the analyst will learn from any errors over time.
+Re-run the analysis yourself to check whether the outputs are accurate.
+Flag the concern to your manager before addressing it with the analyst.
+===
+What makes analytical communication AI-native rather than AI-assisted?
+The analysis was produced entirely by AI without human editing.
+AI tools are used for both analysis and the final presentation design.
+*AI is used to accelerate production of the full analysis and verification is built into the workflow.
+The analysis workflow was designed by an AI tool for efficiency.
+===
+You are under time pressure and must use AI to complete an analysis quickly. The most important principle to maintain is:
+*Verify the key figures even if you must abbreviate the written commentary.
+Complete the full analysis and skip verification to meet the deadline.
+Use AI for the full analysis and disclose it was produced under time pressure.
+Deliver partial verified analysis rather than complete unverified analysis.
+===
+Your AI analysis contradicts a widely held view in your organisation. What is the correct response?
+Soften the finding to reduce organisational friction.
+Align the analysis with the prevailing view to ensure adoption.
+Bury the finding in an appendix to avoid unnecessary conflict.
+*Validate the analysis rigorously before presenting it — then present it clearly.
+===
+A client asks you to use AI to predict their churn rate for next quarter. What is the most honest response?
+"AI can accurately predict churn using your historical data."
+*"AI can model patterns from past behaviour, but predicting the future requires assumptions we should define together."
+"AI prediction is not reliable enough for forward-looking business metrics."
+"I can produce an AI prediction, but it should be treated as directional only."
+===
+You discover mid-project that the data you have been using for AI analysis was mislabelled. What do you do?
+Continue the analysis and note the mislabelling as a limitation.
+Re-run only the analyses that will be presented to the client.
+*Stop the analysis, correct the data labels, and re-run all affected analyses.
+Assess the magnitude of the impact before deciding whether to re-run.
+===
+You use AI to build a model that predicts customer lifetime value. The model shows 85% accuracy on test data. Before deploying it, the most important check is:
+*Whether the test data represents the full diversity of real production scenarios.
+Whether 85% accuracy is above the industry benchmark for this model type.
+Whether the model was tested on data the AI had not seen during training.
+Whether the accuracy has been confirmed by a second AI model.
+===
+A senior stakeholder asks you to "just get AI to do the analysis" without specifying what question to answer. What do you do?
+Run exploratory AI analysis and present whatever findings emerge.
+Use AI to identify what questions are worth answering first.
+*Clarify the question before proceeding — purposeless analysis wastes time.
+Build a comprehensive dashboard covering all available metrics.
+===
+An AI analysis produces three findings that clearly support a strategic decision and one finding that complicates it. What do you do?
+Present only the supporting findings since they are more numerous.
+Aggregate all findings into a single summary recommendation.
+Present the complicating finding as a "risk" in a separate section.
+*Present all four findings and let the decision-maker weigh the full evidence.
+===
+You use Claude to assist with a sensitive analysis involving confidential company data. Before doing so, you must confirm:
+That Claude is the correct AI tool for confidential data analysis.
+*That your organisation's data policies permit use of this data with external AI tools.
+That the data is anonymised before being shared with Claude.
+That Claude's outputs will be kept internal and not published.
+===
+What is the right mental model for an analyst who uses AI every day?
+AI is an expert colleague whose analysis I can rely on directly.
+AI is a junior analyst who learns and improves with each task.
+*AI is a high-speed research and production assistant — I direct and verify.
+AI is a database that retrieves the correct analysis for any question.
+===
+Your team produces an AI-assisted forecast that turns out to be significantly wrong. What is the most productive response?
+*Analyse what assumptions failed and improve the model and validation process.
+Stop using AI for forecasting — the technology is not ready.
+Disclose the failure to stakeholders and offer a refund for the work.
+Accept that forecasting is inherently uncertain and move on.
+===
+A client says: "I trust your AI-assisted analysis more than your previous manual analysis because AI is objective." The correct response is:
+"That's a reasonable view — AI removes human bias from the process."
+*"AI analysis has different failure modes than manual analysis — objectivity depends on data quality and question framing."
+"AI-assisted analysis is indeed more reliable for pattern detection tasks."
+"I appreciate the confidence — AI does improve consistency in our process."
+===
+You are asked to scale up an AI-assisted analysis workflow from 10 reports per month to 200. The most important thing to address first is:
+Which AI model tier can handle 200 reports within the API rate limits.
+How much the AI tool licensing costs at the higher volume.
+Whether the prompt templates can be reused across all 200 reports.
+*How quality review will scale alongside the increase in volume.
+===
+What is the most important analyst skill that AI cannot replicate?
+Reading large datasets quickly to identify patterns and anomalies.
+Producing consistent analysis across large volumes of reports.
+*Understanding the organisational context that makes a finding matter.
+Applying statistical methods accurately to structured data.
+===
+An analyst says "I used AI to check my work and it confirmed everything." What is the problem?
+AI confirmation tools are only reliable for grammar and formatting.
+*Using AI to confirm AI-assisted work does not provide independent verification.
+The analyst should have used a different AI tool for checking.
+Confirmation of completed work is not a useful analytical practice.
+===
+What distinguishes a Menler AI Analyst from someone who just uses AI tools for data work?
+The Menler Analyst uses more advanced AI analytics tools than the average analyst.
+The Menler Analyst has completed a certified AI analytics training programme.
+The Menler Analyst works faster on analysis tasks using AI than without.
+*The Menler Analyst designs reliable analytical workflows and owns the quality of conclusions.
 `;
 
 // Fisher–Yates shuffle (client-only, so Math.random is fine).
@@ -467,13 +471,16 @@ function shuffle(arr) {
   return a;
 }
 
-// Parse RAW into { q, options:[{t,s}] }; the 2nd option (B) is correct.
+// Parse RAW into { q, options:[{t,s}] }; the option line prefixed with "*" is correct.
 const ITEMS = RAW.split(/^===$/m)
   .map((block) => block.split('\n').map((l) => l.trim()).filter(Boolean))
   .filter((lines) => lines.length >= 5)
   .map((lines) => ({
     q: lines[0],
-    options: lines.slice(1, 5).map((t, i) => ({ t, s: i === 1 ? 1 : 0 })),
+    options: lines.slice(1, 5).map((l) => {
+      const correct = l.startsWith('*');
+      return { t: correct ? l.replace(/^\*\s*/, '') : l, s: correct ? 1 : 0 };
+    }),
   }));
 
 export const ANALYSTS_POOL_SIZE = ITEMS.length;
