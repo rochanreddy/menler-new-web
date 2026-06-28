@@ -7,15 +7,15 @@ import FaqList from '../components/common/FaqList';
 import { submitLead, requestResource, createReport } from '../services/leadService';
 import { getRecommendation, maxScoreForQuestions } from '../data/aptitudeQuestions';
 import { CLUSTERS, buildRoadmap, getSetQuestions } from '../data/aptitudeClusters';
-import { getGeneralistSet, GENERALIST_SETS } from '../data/generalistAptitude';
-import { getStudentSet, STUDENT_SETS } from '../data/studentAptitude';
-import { getProductSet, PRODUCT_SETS } from '../data/productAptitude';
-import { getMarketingSet, MARKETING_SETS } from '../data/marketingAptitude';
-import { getHrSet, HR_SETS } from '../data/hrAptitude';
-import { getFoundersSet, FOUNDERS_SETS } from '../data/foundersAptitude';
-import { getFinanceSet, FINANCE_SETS } from '../data/financeAptitude';
-import { getAnalystsSet, ANALYSTS_SETS } from '../data/analystsAptitude';
-import { getEngineeringSet, ENGINEERING_SETS } from '../data/engineeringAptitude';
+import { getGeneralistSession, getGeneralistSet, GENERALIST_SETS } from '../data/generalistAptitude';
+import { getStudentSession, getStudentSet, STUDENT_SETS } from '../data/studentAptitude';
+import { getProductSession, getProductSet, PRODUCT_SETS } from '../data/productAptitude';
+import { getMarketingSession, getMarketingSet, MARKETING_SETS } from '../data/marketingAptitude';
+import { getHrSession, getHrSet, HR_SETS } from '../data/hrAptitude';
+import { getFoundersSession, getFoundersSet, FOUNDERS_SETS } from '../data/foundersAptitude';
+import { getFinanceSession, getFinanceSet, FINANCE_SETS } from '../data/financeAptitude';
+import { getAnalystsSession, getAnalystsSet, ANALYSTS_SETS } from '../data/analystsAptitude';
+import { getEngineeringSession, getEngineeringSet, ENGINEERING_SETS } from '../data/engineeringAptitude';
 import { APTITUDE_FAQS } from '../data/faqData';
 
 const TRUST_CARDS = [
@@ -66,15 +66,15 @@ const INIT = { view: 'landing', cluster: null, setIdx: 0, idx: 0, questions: [],
 // Domains shown in the "Choose your domain" pop-up (after Start the test).
 // Per-domain question PDFs are wired in as they're provided.
 const EXAM_DOMAINS = [
-  { name: 'Student', setLabels: STUDENT_SETS, getSet: getStudentSet },
-  { name: 'Generalist', setLabels: GENERALIST_SETS, getSet: getGeneralistSet },
-  { name: 'Engineer', setLabels: ENGINEERING_SETS, getSet: getEngineeringSet },
-  { name: 'Analysts', setLabels: ANALYSTS_SETS, getSet: getAnalystsSet },
-  { name: 'Finance', setLabels: FINANCE_SETS, getSet: getFinanceSet },
-  { name: "Founder's Office", setLabels: FOUNDERS_SETS, getSet: getFoundersSet },
-  { name: 'Human Resource', setLabels: HR_SETS, getSet: getHrSet },
-  { name: 'Marketing & Sales', setLabels: MARKETING_SETS, getSet: getMarketingSet },
-  { name: 'Product Management', setLabels: PRODUCT_SETS, getSet: getProductSet },
+  { name: 'Student', setLabels: STUDENT_SETS, getSet: getStudentSet, getRandom: getStudentSession },
+  { name: 'Generalist', setLabels: GENERALIST_SETS, getSet: getGeneralistSet, getRandom: getGeneralistSession },
+  { name: 'Engineer', setLabels: ENGINEERING_SETS, getSet: getEngineeringSet, getRandom: getEngineeringSession },
+  { name: 'Analysts', setLabels: ANALYSTS_SETS, getSet: getAnalystsSet, getRandom: getAnalystsSession },
+  { name: 'Finance', setLabels: FINANCE_SETS, getSet: getFinanceSet, getRandom: getFinanceSession },
+  { name: "Founder's Office", setLabels: FOUNDERS_SETS, getSet: getFoundersSet, getRandom: getFoundersSession },
+  { name: 'Human Resource', setLabels: HR_SETS, getSet: getHrSet, getRandom: getHrSession },
+  { name: 'Marketing & Sales', setLabels: MARKETING_SETS, getSet: getMarketingSet, getRandom: getMarketingSession },
+  { name: 'Product Management', setLabels: PRODUCT_SETS, getSet: getProductSet, getRandom: getProductSession },
 ];
 
 function reducer(state, action) {
@@ -160,12 +160,19 @@ export default function Aptitude() {
   const [domainOpen, setDomainOpen] = useState(false);
   const [exitConfirm, setExitConfirm] = useState(false);
   // Clicking a domain starts the test immediately (no separate Start button).
-  // Picking a domain opens its set picker ("Pick a set to begin"), which lists
-  // all the bank's named sets. Selecting a set drops into the runner.
+  // Hero "Start the test" → "Choose your domain" pop-up: picking a domain here
+  // drops straight into a random session drawn from that domain's full pool.
   const startDomain = (d) => {
     if (!d) return;
-    dispatch({ type: 'PICK_CLUSTER', cluster: d.name });
+    dispatch({ type: 'START_TEST', cluster: d.name, questions: d.getRandom(15) });
     setDomainOpen(false);
+  };
+
+  // Cluster section: picking a domain opens its set picker ("Pick a set to
+  // begin"), which lists all the bank's named sets.
+  const openDomainSets = (d) => {
+    if (!d) return;
+    dispatch({ type: 'PICK_CLUSTER', cluster: d.name });
   };
 
   // Jump to the top of the page whenever the view changes (landing → sets → runner → report).
@@ -639,7 +646,7 @@ export default function Aptitude() {
               <span className="cluster-num">{String(i + 1).padStart(2, '0')}</span>
               <p className="cluster-name">{d.name}</p>
               <p className="cluster-sets">15 questions · ~15 min</p>
-              <button className="cluster-btn" onClick={() => startDomain(d)}>Take test</button>
+              <button className="cluster-btn" onClick={() => openDomainSets(d)}>Take test</button>
             </div>
           ))}
         </div>
