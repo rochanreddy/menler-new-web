@@ -1927,10 +1927,12 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 }
 .menler-community--page .mini-lead-inner {
   justify-content: flex-start;
-  gap: 44px;
+  gap: 24px;
 }
-/* Keep the copy from stretching so the WhatsApp button sits a fixed gap from the text. */
+/* Copy keeps its natural width; the button is pushed toward the right (margin-left:auto)
+   but held a nominal gap off the right edge — not flush against it. */
 .menler-community--page .mini-lead-copy { flex: 0 0 auto; }
+.menler-community--page .lp2-wa-join { margin-left: auto; margin-right: clamp(20px, 5vw, 64px); }
 
 /* Checkout thank-you — bordered narrow rectangle */
 .menler-community--confirm {
