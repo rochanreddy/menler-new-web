@@ -485,3 +485,20 @@ export const PRODUCT_POOL_SIZE = ITEMS.length;
 export function getProductSession(count = 15) {
   return shuffle(ITEMS).slice(0, count).map((it) => ({ q: it.q, options: shuffle(it.options) }));
 }
+
+// The bank's named sets, in source order.
+export const PRODUCT_SETS = [
+  'AI for Product Discovery & Strategy',
+  'AI in the Product Development Lifecycle',
+  'Data-Driven Product Decisions with AI',
+  'AI Product Features & Design',
+  'Product Judgment Scenarios',
+];
+
+// A fresh session for one set: `count` questions from that set's block, options shuffled.
+export function getProductSet(setIdx, count = 15) {
+  const per = Math.floor(ITEMS.length / PRODUCT_SETS.length);
+  const start = setIdx * per;
+  return shuffle(ITEMS.slice(start, start + per)).slice(0, count)
+    .map((it) => ({ q: it.q, options: shuffle(it.options) }));
+}

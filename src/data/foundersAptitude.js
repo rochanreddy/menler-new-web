@@ -488,3 +488,20 @@ export const FOUNDERS_POOL_SIZE = ITEMS.length;
 export function getFoundersSession(count = 15) {
   return shuffle(ITEMS).slice(0, count).map((it) => ({ q: it.q, options: shuffle(it.options) }));
 }
+
+// The bank's named sets, in source order.
+export const FOUNDERS_SETS = [
+  'Strategic Thinking',
+  'Founder Operating with AI',
+  'Product and AI',
+  'Founder Judgment Scenarios',
+  "Founder's AI OS",
+];
+
+// A fresh session for one set: `count` questions from that set's block, options shuffled.
+export function getFoundersSet(setIdx, count = 15) {
+  const per = Math.floor(ITEMS.length / FOUNDERS_SETS.length);
+  const start = setIdx * per;
+  return shuffle(ITEMS.slice(start, start + per)).slice(0, count)
+    .map((it) => ({ q: it.q, options: shuffle(it.options) }));
+}

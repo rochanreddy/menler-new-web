@@ -4089,3 +4089,24 @@ export const ENGINEERING_POOL_SIZE = ITEMS.length;
 export function getEngineeringSession(count = 15) {
   return shuffle(ITEMS).slice(0, count).map((it) => ({ q: it.q, options: shuffle(it.options) }));
 }
+
+// The bank's named sets (9 domains, in source order), 75 questions each.
+export const ENGINEERING_SETS = [
+  'AI Agents & Workflows',
+  'AI Engineering Thinking',
+  'AI Judgment',
+  'AI Networks & Infrastructure',
+  'AI Tools Ecosystem',
+  'LLM Fundamentals',
+  'Prompt Engineering',
+  'RAG & Knowledge Systems',
+  'Agentic AI',
+];
+
+// A fresh session for one set: `count` questions drawn from that domain's block, options shuffled.
+export function getEngineeringSet(setIdx, count = 15) {
+  const per = Math.floor(ITEMS.length / ENGINEERING_SETS.length);
+  const start = setIdx * per;
+  return shuffle(ITEMS.slice(start, start + per)).slice(0, count)
+    .map((it) => ({ q: it.q, options: shuffle(it.options) }));
+}

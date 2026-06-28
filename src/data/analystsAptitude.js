@@ -489,3 +489,20 @@ export const ANALYSTS_POOL_SIZE = ITEMS.length;
 export function getAnalystsSession(count = 15) {
   return shuffle(ITEMS).slice(0, count).map((it) => ({ q: it.q, options: shuffle(it.options) }));
 }
+
+// The bank's named sets, in source order.
+export const ANALYSTS_SETS = [
+  'Data Thinking with AI',
+  'AI-Assisted Analysis',
+  'Verification & Critical Evaluation',
+  'Analytical Communication',
+  'Judgment Scenarios',
+];
+
+// A fresh session for one set: `count` questions from that set's block, options shuffled.
+export function getAnalystsSet(setIdx, count = 15) {
+  const per = Math.floor(ITEMS.length / ANALYSTS_SETS.length);
+  const start = setIdx * per;
+  return shuffle(ITEMS.slice(start, start + per)).slice(0, count)
+    .map((it) => ({ q: it.q, options: shuffle(it.options) }));
+}

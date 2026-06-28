@@ -936,3 +936,25 @@ export const GENERALIST_POOL_SIZE = ITEMS.length;
 export function getGeneralistSession(count = 15) {
   return shuffle(ITEMS).slice(0, count).map((it) => ({ q: it.q, options: shuffle(it.options) }));
 }
+
+// The bank's named sets, in source order (Entry 1–5, then Level Up 1–5).
+export const GENERALIST_SETS = [
+  'AI Fundamentals You Must Know',
+  'Working With AI — Practical Judgment',
+  'Prompting for Professional Output',
+  'AI Tools & Workflows',
+  'AI Judgment — Applied Scenarios',
+  'Advanced Prompting & Output Quality',
+  'AI Strategy — Where AI Adds Value',
+  'Agentic AI & Workflow Automation',
+  'Evaluating AI Output Quality',
+  'AI Leadership & Cultural Change',
+];
+
+// A fresh session for one set: `count` questions from that set's block, options shuffled.
+export function getGeneralistSet(setIdx, count = 15) {
+  const per = Math.floor(ITEMS.length / GENERALIST_SETS.length);
+  const start = setIdx * per;
+  return shuffle(ITEMS.slice(start, start + per)).slice(0, count)
+    .map((it) => ({ q: it.q, options: shuffle(it.options) }));
+}

@@ -938,3 +938,25 @@ export const STUDENT_POOL_SIZE = ITEMS.length;
 export function getStudentSession(count = 15) {
   return shuffle(ITEMS).slice(0, count).map((it) => ({ q: it.q, options: shuffle(it.options) }));
 }
+
+// The bank's named sets, in source order (Beginner 1–5, then Aware 1–5).
+export const STUDENT_SETS = [
+  'What Is AI — Core Awareness',
+  'AI Tools — What They Can & Cannot Do',
+  'Talking to AI — Prompting Basics',
+  'AI Judgment & Critical Thinking',
+  'AI in School — Using It Responsibly',
+  'How AI Models Actually Work',
+  'AI Capabilities & Their Real Limits',
+  'Thinking Critically About AI',
+  'AI Tools in Practice',
+  'AI Ethics & Society',
+];
+
+// A fresh session for one set: `count` questions from that set's block, options shuffled.
+export function getStudentSet(setIdx, count = 15) {
+  const per = Math.floor(ITEMS.length / STUDENT_SETS.length);
+  const start = setIdx * per;
+  return shuffle(ITEMS.slice(start, start + per)).slice(0, count)
+    .map((it) => ({ q: it.q, options: shuffle(it.options) }));
+}

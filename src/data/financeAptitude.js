@@ -488,3 +488,20 @@ export const FINANCE_POOL_SIZE = ITEMS.length;
 export function getFinanceSession(count = 15) {
   return shuffle(ITEMS).slice(0, count).map((it) => ({ q: it.q, options: shuffle(it.options) }));
 }
+
+// The bank's named sets, in source order.
+export const FINANCE_SETS = [
+  'Financial Data Thinking',
+  'AI-Assisted Analysis & Modelling',
+  'Risk, Compliance & Verification',
+  'Financial Communication & Reporting',
+  'Judgment Scenarios',
+];
+
+// A fresh session for one set: `count` questions from that set's block, options shuffled.
+export function getFinanceSet(setIdx, count = 15) {
+  const per = Math.floor(ITEMS.length / FINANCE_SETS.length);
+  const start = setIdx * per;
+  return shuffle(ITEMS.slice(start, start + per)).slice(0, count)
+    .map((it) => ({ q: it.q, options: shuffle(it.options) }));
+}

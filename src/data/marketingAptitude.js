@@ -485,3 +485,20 @@ export const MARKETING_POOL_SIZE = ITEMS.length;
 export function getMarketingSession(count = 15) {
   return shuffle(ITEMS).slice(0, count).map((it) => ({ q: it.q, options: shuffle(it.options) }));
 }
+
+// The bank's named sets, in source order.
+export const MARKETING_SETS = [
+  'AI for Marketing Strategy & Content',
+  'AI-Assisted Sales Workflows',
+  'Customer Intelligence with AI',
+  'Campaign & Performance Analytics',
+  'Marketing & Sales Judgment Scenarios',
+];
+
+// A fresh session for one set: `count` questions from that set's block, options shuffled.
+export function getMarketingSet(setIdx, count = 15) {
+  const per = Math.floor(ITEMS.length / MARKETING_SETS.length);
+  const start = setIdx * per;
+  return shuffle(ITEMS.slice(start, start + per)).slice(0, count)
+    .map((it) => ({ q: it.q, options: shuffle(it.options) }));
+}

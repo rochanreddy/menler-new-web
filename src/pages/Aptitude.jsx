@@ -6,16 +6,16 @@ import MenlerCommunitySection from '../components/common/MenlerCommunitySection'
 import FaqList from '../components/common/FaqList';
 import { submitLead, requestResource, createReport } from '../services/leadService';
 import { getRecommendation, maxScoreForQuestions } from '../data/aptitudeQuestions';
-import { CLUSTERS, buildRoadmap, getSetQuestions, getAllAboutAIQuestions } from '../data/aptitudeClusters';
-import { getGeneralistSession } from '../data/generalistAptitude';
-import { getStudentSession } from '../data/studentAptitude';
-import { getProductSession } from '../data/productAptitude';
-import { getMarketingSession } from '../data/marketingAptitude';
-import { getHrSession } from '../data/hrAptitude';
-import { getFoundersSession } from '../data/foundersAptitude';
-import { getFinanceSession } from '../data/financeAptitude';
-import { getAnalystsSession } from '../data/analystsAptitude';
-import { getEngineeringSession } from '../data/engineeringAptitude';
+import { CLUSTERS, buildRoadmap, getSetQuestions } from '../data/aptitudeClusters';
+import { getGeneralistSet, GENERALIST_SETS } from '../data/generalistAptitude';
+import { getStudentSet, STUDENT_SETS } from '../data/studentAptitude';
+import { getProductSet, PRODUCT_SETS } from '../data/productAptitude';
+import { getMarketingSet, MARKETING_SETS } from '../data/marketingAptitude';
+import { getHrSet, HR_SETS } from '../data/hrAptitude';
+import { getFoundersSet, FOUNDERS_SETS } from '../data/foundersAptitude';
+import { getFinanceSet, FINANCE_SETS } from '../data/financeAptitude';
+import { getAnalystsSet, ANALYSTS_SETS } from '../data/analystsAptitude';
+import { getEngineeringSet, ENGINEERING_SETS } from '../data/engineeringAptitude';
 import { APTITUDE_FAQS } from '../data/faqData';
 
 const TRUST_CARDS = [
@@ -66,15 +66,15 @@ const INIT = { view: 'landing', cluster: null, setIdx: 0, idx: 0, questions: [],
 // Domains shown in the "Choose your domain" pop-up (after Start the test).
 // Per-domain question PDFs are wired in as they're provided.
 const EXAM_DOMAINS = [
-  { name: 'Student', getQuestions: () => getStudentSession(15) },
-  { name: 'Generalist', getQuestions: () => getGeneralistSession(15) },
-  { name: 'Engineer', getQuestions: () => getEngineeringSession(15) },
-  { name: 'Analysts', getQuestions: () => getAnalystsSession(15) },
-  { name: 'Finance', getQuestions: () => getFinanceSession(15) },
-  { name: "Founder's Office", getQuestions: () => getFoundersSession(15) },
-  { name: 'Human Resource', getQuestions: () => getHrSession(15) },
-  { name: 'Marketing & Sales', getQuestions: () => getMarketingSession(15) },
-  { name: 'Product Management', getQuestions: () => getProductSession(15) },
+  { name: 'Student', setLabels: STUDENT_SETS, getSet: getStudentSet },
+  { name: 'Generalist', setLabels: GENERALIST_SETS, getSet: getGeneralistSet },
+  { name: 'Engineer', setLabels: ENGINEERING_SETS, getSet: getEngineeringSet },
+  { name: 'Analysts', setLabels: ANALYSTS_SETS, getSet: getAnalystsSet },
+  { name: 'Finance', setLabels: FINANCE_SETS, getSet: getFinanceSet },
+  { name: "Founder's Office", setLabels: FOUNDERS_SETS, getSet: getFoundersSet },
+  { name: 'Human Resource', setLabels: HR_SETS, getSet: getHrSet },
+  { name: 'Marketing & Sales', setLabels: MARKETING_SETS, getSet: getMarketingSet },
+  { name: 'Product Management', setLabels: PRODUCT_SETS, getSet: getProductSet },
 ];
 
 function reducer(state, action) {
@@ -160,11 +160,11 @@ export default function Aptitude() {
   const [domainOpen, setDomainOpen] = useState(false);
   const [exitConfirm, setExitConfirm] = useState(false);
   // Clicking a domain starts the test immediately (no separate Start button).
+  // Picking a domain opens its set picker ("Pick a set to begin"), which lists
+  // all the bank's named sets. Selecting a set drops into the runner.
   const startDomain = (d) => {
     if (!d) return;
-    if (d.getQuestions) dispatch({ type: 'START_TEST', cluster: d.name, questions: d.getQuestions() });
-    else if (d.mixed) dispatch({ type: 'START_TEST', cluster: 'All About AI', questions: getAllAboutAIQuestions(15) });
-    else dispatch({ type: 'START_TEST', cluster: d.name });
+    dispatch({ type: 'PICK_CLUSTER', cluster: d.name });
     setDomainOpen(false);
   };
 
@@ -505,22 +505,34 @@ export default function Aptitude() {
 
   // ── SET PICKER ──
   if (state.view === 'sets') {
-    const cluster = CLUSTERS.find(c => c.name === state.cluster) ?? CLUSTERS[0];
+    // Domain banks (Student, Finance, …) carry their own named sets; the older
+    // topic clusters fall back to the CLUSTERS structure.
+    const domain = EXAM_DOMAINS.find(d => d.name === state.cluster);
+    const trackName = domain ? domain.name : (CLUSTERS.find(c => c.name === state.cluster) ?? CLUSTERS[0]).name;
+    const sets = domain
+      ? domain.setLabels.map((label, i) => ({
+          label,
+          start: () => dispatch({ type: 'START_TEST', cluster: domain.name, setIdx: i, questions: domain.getSet(i) }),
+        }))
+      : (CLUSTERS.find(c => c.name === state.cluster) ?? CLUSTERS[0]).sets.map((s, i) => ({
+          label: s.label,
+          start: () => dispatch({ type: 'PICK_SET', setIdx: i }),
+        }));
     return (
       <>
         <section className="section" style={{ background: 'var(--parchment)', minHeight: '60vh', paddingTop: 48, textAlign: 'center' }}>
           <div style={{ textAlign: 'left' }}>
             <button className="runner-btn-ghost" style={{ marginBottom: 22 }} onClick={() => dispatch({ type: 'TO_CLUSTERS' })}>← Back to tracks</button>
           </div>
-          <p className="apt-track-badge">{cluster.name}</p>
+          <p className="apt-track-badge">{trackName}</p>
           <h2 className="section-h2">Pick a set<br /><em>to begin.</em></h2>
-          <p className="section-sub" style={{ margin: '0 auto' }}>Five sets, 15 questions each. Choose any — your report and 14-day roadmap come at the end.</p>
+          <p className="section-sub" style={{ margin: '0 auto' }}>{sets.length} sets, 15 questions each. Choose any — your report and 14-day roadmap come at the end.</p>
           <div className="cluster-grid cluster-grid--sets">
-            {cluster.sets.map((s, i) => (
+            {sets.map((s, i) => (
               <div key={i} className="cluster-card">
-                <p className="cluster-name">{s.label} · {cluster.name}</p>
-                <p className="cluster-sets">{s.questions.length} questions · ~15 min</p>
-                <button className="cluster-btn" onClick={() => dispatch({ type: 'PICK_SET', setIdx: i })}>Start test</button>
+                <p className="cluster-name">Set {i + 1} · {s.label}</p>
+                <p className="cluster-sets">15 questions · ~15 min</p>
+                <button className="cluster-btn" onClick={s.start}>Start test</button>
               </div>
             ))}
           </div>

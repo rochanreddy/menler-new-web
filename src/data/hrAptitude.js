@@ -488,3 +488,20 @@ export const HR_POOL_SIZE = ITEMS.length;
 export function getHrSession(count = 15) {
   return shuffle(ITEMS).slice(0, count).map((it) => ({ q: it.q, options: shuffle(it.options) }));
 }
+
+// The bank's named sets, in source order.
+export const HR_SETS = [
+  'Talent Acquisition',
+  'Learning & Development',
+  'People Analytics & Workforce Planning',
+  'HR Compliance & Ethics',
+  'HR Judgment Scenarios',
+];
+
+// A fresh session for one set: `count` questions from that set's block, options shuffled.
+export function getHrSet(setIdx, count = 15) {
+  const per = Math.floor(ITEMS.length / HR_SETS.length);
+  const start = setIdx * per;
+  return shuffle(ITEMS.slice(start, start + per)).slice(0, count)
+    .map((it) => ({ q: it.q, options: shuffle(it.options) }));
+}
