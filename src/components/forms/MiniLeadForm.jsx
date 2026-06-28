@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { submitLead } from '../../services/leadService';
+import { verifyEmailOtp } from '../../lib/amplifeedOtp';
 import { useToast } from '../common/Toast';
 
 export default function MiniLeadForm({ defaultProgram = '' }) {
@@ -13,7 +14,8 @@ export default function MiniLeadForm({ defaultProgram = '' }) {
     e.preventDefault();
     setLoading(true);
     try {
-      await submitLead({ email, program, cta_label: 'Mini lead form', section: program || 'Mini lead' });
+      const otp = await verifyEmailOtp(email.trim());
+      await submitLead({ email, program, ...otp, cta_label: 'Mini lead form', section: program || 'Mini lead' });
       setDone(true);
       toast.success("You're on the list — we'll reach out soon.");
     } catch {

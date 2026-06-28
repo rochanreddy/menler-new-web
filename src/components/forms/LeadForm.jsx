@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { submitLead } from '../../services/leadService';
+import { verifyEmailOtp } from '../../lib/amplifeedOtp';
 import { suggestEmail } from '../../lib/emailHints';
 import { useToast } from '../common/Toast';
 
@@ -21,7 +22,9 @@ export default function LeadForm({ defaultProgram = '' }) {
     e.preventDefault();
     setLoading(true);
     try {
-      await submitLead({ ...form, source: 'lead-form', hp_field: hp, cta_label: 'Express interest', section: form.program || 'Express interest' });
+      // Verify the email via OTP before capturing the lead.
+      const otp = await verifyEmailOtp(form.email.trim());
+      await submitLead({ ...form, ...otp, source: 'lead-form', hp_field: hp, cta_label: 'Express interest', section: form.program || 'Express interest' });
       setSubmitted(true);
       toast.success("Application received — we'll be in touch within 48 hours.");
     } catch (err) {
