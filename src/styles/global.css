@@ -1928,11 +1928,12 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .menler-community--page .mini-lead-inner {
   justify-content: flex-start;
   gap: 24px;
+  padding-left: clamp(8px, 2vw, 28px);
 }
 /* Copy keeps its natural width; the button is pushed toward the right (margin-left:auto)
    but held a nominal gap off the right edge — not flush against it. */
 .menler-community--page .mini-lead-copy { flex: 0 0 auto; }
-.menler-community--page .lp2-wa-join { margin-left: auto; margin-right: clamp(20px, 5vw, 64px); }
+.menler-community--page .lp2-wa-join { margin-left: auto; margin-right: clamp(8px, 3vw, 36px); }
 
 /* Checkout thank-you — bordered narrow rectangle */
 .menler-community--confirm {
