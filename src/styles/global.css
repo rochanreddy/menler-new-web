@@ -1834,6 +1834,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-cert-seal-star { font-size: 18px; line-height: 1; }
 .lp2-cert-seal-txt { font-size: 7px; font-weight: 800; letter-spacing: .08em; line-height: 1.15; margin-top: 3px; }
 .lp2-cert-sign { display: inline-flex; flex-direction: column; align-items: flex-end; text-align: right; }
+.lp2-cert-sign--left { align-items: flex-start; text-align: left; }
 .lp2-cert-sign-name { font-family: 'DM Serif Display', serif; font-size: 17px; color: var(--ink); border-bottom: 1px solid rgba(38,33,92,0.3); padding: 0 6px 4px; }
 .lp2-cert-sign-role { font-size: 11px; color: var(--text-muted); margin-top: 5px; }
 .lp2-cert-note { font-size: 12.5px; color: var(--text-muted); }

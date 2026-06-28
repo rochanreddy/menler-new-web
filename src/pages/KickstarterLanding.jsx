@@ -85,6 +85,8 @@ const FALLBACK = {
   mentorPhoto: WORKSHOP.mentor.img,
   mentorBio: WORKSHOP.mentor.bio,
   mentorCreds: WORKSHOP.mentor.creds,
+  founderName: 'Sachin Roy',
+  founderRole: 'Founder, Menler',
   learn: LEARN.map((l) => ({ title: l.t, detail: l.d })),
   forYou: FORYOU,
   get: GET.map((g) => ({ title: g.t, detail: g.d })),
@@ -103,6 +105,7 @@ const CAMPAIGN_QUERY = `*[_type == "campaignPage" && slug.current == $slug][0]{
   date, time, format, price, origPrice, seatsNote,
   themeAccent, themeAccentDark, bannerFrom, bannerTo, highlightBg, highlightText,
   mentorName, mentorRole, "mentorPhoto": mentorPhoto.asset->url, mentorBio, mentorCreds,
+  founderName, founderRole,
   learn[]{title, detail}, forYou, get[]{title, detail},
   "certificateImage": certificateImage.asset->url, certificateNote, whatsappUrl, discordUrl, facebookUrl, whatsappText, communityText
 }`;
@@ -287,7 +290,10 @@ export default function KickstarterLanding() {
                 <div className="lp2-cert-mock">
                   <div className="lp2-cert-mock-top">
                     <MenlerWordmark size={24} theme="light" />
-                    <span className="lp2-cert-mock-issued">Issued by Menler</span>
+                    <span className="lp2-cert-seal">
+                      <span className="lp2-cert-seal-star">★</span>
+                      <span className="lp2-cert-seal-txt">MENLER<br />VERIFIED</span>
+                    </span>
                   </div>
                   <p className="lp2-cert-mock-kicker">Certificate of Participation</p>
                   <p className="lp2-cert-mock-to">This is proudly presented to</p>
@@ -295,14 +301,16 @@ export default function KickstarterLanding() {
                   <span className="lp2-cert-rule" />
                   <p className="lp2-cert-mock-for">for successfully completing<br /><b>{heading}</b></p>
                   <div className="lp2-cert-foot">
-                    <span className="lp2-cert-seal">
-                      <span className="lp2-cert-seal-star">★</span>
-                      <span className="lp2-cert-seal-txt">MENLER<br />VERIFIED</span>
-                    </span>
-                    <span className="lp2-cert-sign">
+                    <span className="lp2-cert-sign lp2-cert-sign--left">
                       <span className="lp2-cert-sign-name">{d.mentorName}</span>
                       <span className="lp2-cert-sign-role">{d.mentorRole}</span>
                     </span>
+                    {has(d.founderName) && (
+                      <span className="lp2-cert-sign">
+                        <span className="lp2-cert-sign-name">{d.founderName}</span>
+                        <span className="lp2-cert-sign-role">{d.founderRole}</span>
+                      </span>
+                    )}
                   </div>
                 </div>
               )}

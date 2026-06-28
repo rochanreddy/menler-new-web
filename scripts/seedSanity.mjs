@@ -132,6 +132,8 @@ const CAMPAIGN = {
   highlightBg: '#C7F24D', highlightText: '#1C2400',
   mentorName: 'Sachin Roy',
   mentorRole: 'Founder, Menler',
+  founderName: 'Sachin Roy',
+  founderRole: 'Founder, Menler',
   mentorImg: '/mentors/Sachin.png',
   mentorBio: 'Sachin has spent the last decade building AI products and training professionals to work alongside AI. He has led teams shipping real Claude-powered systems and has mentored hundreds of learners into AI-native roles.',
   mentorCreds: [
@@ -262,6 +264,8 @@ async function run() {
     mentorPhoto: campaignPhoto,
     mentorBio: CAMPAIGN.mentorBio,
     mentorCreds: CAMPAIGN.mentorCreds,
+    founderName: CAMPAIGN.founderName,
+    founderRole: CAMPAIGN.founderRole,
     learn: keyed(CAMPAIGN.learn),
     forYou: CAMPAIGN.forYou,
     get: keyed(CAMPAIGN.get),

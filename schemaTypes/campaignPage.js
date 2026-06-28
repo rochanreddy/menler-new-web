@@ -14,6 +14,7 @@ export default defineType({
     { name: 'schedule', title: 'Schedule & Price' },
     { name: 'mentor', title: 'Mentor' },
     { name: 'sections', title: 'Sections' },
+    { name: 'certificate', title: 'Certificate' },
   ],
   fields: [
     // ── Setup: internal title + the page URL ──
@@ -82,9 +83,15 @@ export default defineType({
       }],
     }),
 
-    // ── Sample certificate + WhatsApp community ──
-    defineField({ name: 'certificateImage', title: 'Sample certificate image', type: 'image', options: { hotspot: true }, group: 'sections', description: 'Upload a sample certificate. If empty, a default certificate mock-up is shown.' }),
-    defineField({ name: 'certificateNote', title: 'Certificate caption', type: 'string', group: 'sections' }),
+    // ── Sample certificate ──
+    // The default mock-up shows two signatures: the mentor (left) and the
+    // founder (right). These names also drive the mock-up below.
+    defineField({ name: 'certificateImage', title: 'Sample certificate image', type: 'image', options: { hotspot: true }, group: 'certificate', description: 'Upload a sample certificate. If empty, a default certificate mock-up is shown.' }),
+    defineField({ name: 'founderName', title: 'Founder name (signature — bottom right)', type: 'string', group: 'certificate', description: 'Shown on the default mock-up. Leave blank to hide the founder signature.' }),
+    defineField({ name: 'founderRole', title: 'Founder role / title', type: 'string', group: 'certificate', description: 'e.g. Founder, Menler' }),
+    defineField({ name: 'certificateNote', title: 'Certificate caption', type: 'string', group: 'certificate' }),
+
+    // ── WhatsApp community ──
     defineField({ name: 'whatsappUrl', title: 'WhatsApp community invite link', type: 'url', group: 'sections', description: 'The WhatsApp group/community join link.' }),
     defineField({ name: 'whatsappText', title: 'WhatsApp bar text', type: 'string', group: 'sections' }),
   ],
