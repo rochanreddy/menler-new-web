@@ -4,8 +4,9 @@ import Footer from '../components/layout/Footer';
 import Seo from '../components/common/Seo';
 import MenlerCommunitySection from '../components/common/MenlerCommunitySection';
 import FaqList from '../components/common/FaqList';
-import { submitLead, requestResource, createReport } from '../services/leadService';
+import { submitLead, createReport } from '../services/leadService';
 import { verifyEmailOtp } from '../lib/amplifeedOtp';
+import { downloadFile } from '../lib/download';
 import { getRecommendation, maxScoreForQuestions } from '../data/aptitudeQuestions';
 import { CLUSTERS, buildRoadmap, getSetQuestions } from '../data/aptitudeClusters';
 import { getGeneralistSession, getGeneralistSet, GENERALIST_SETS } from '../data/generalistAptitude';
@@ -276,15 +277,16 @@ export default function Aptitude() {
   const [qbErr, setQbErr] = useState(false);
   const [qbSent, setQbSent] = useState(false);
   const setQ = (k, v) => setQbForm(f => ({ ...f, [k]: v }));
-  // Email a secure download link (double opt-in) — the PDF is delivered only
-  // after the user clicks it, so we capture verified, quality leads.
+  // Verify the email via OTP, then hand the PDF over as a direct on-site download.
+  // The lead is recorded in the background (non-blocking) so the download always
+  // happens once verification succeeds.
   const submitQB = async (e) => {
     e.preventDefault();
     setQbErr(false); setQbBusy(true);
     try {
-      // Verify the email via OTP before delivering the question bank.
       const otp = await verifyEmailOtp(qbForm.email.trim());
-      await requestResource({ ...qbForm, ...otp, resource: `${qbBank.label} Question Bank`, pdf: qbBank.pdf, topic: qbBank.name, source: 'aptitude-question-bank', cta_label: `Question Bank: ${qbBank.label}`, section: `Question Bank · ${qbBank.label}` });
+      downloadFile(qbBank.pdf, `${qbBank.label} Question Bank.pdf`);
+      submitLead({ ...qbForm, ...otp, resource: `${qbBank.label} Question Bank`, pdf: qbBank.pdf, topic: qbBank.name, source: 'aptitude-question-bank', cta_label: `Question Bank: ${qbBank.label}`, section: `Question Bank · ${qbBank.label}` }).catch(() => {});
       setQbFormOpen(false);
       setQbSent(true);
     } catch {
@@ -693,8 +695,10 @@ export default function Aptitude() {
         <div style={{ textAlign: 'center', marginTop: 32 }}>
           {qbSent ? (
             <div className="apt-lead" style={{ maxWidth: 540, margin: '0 auto' }}>
-              <p className="apt-lead-label" style={{ textAlign: 'center' }}>✓ Check your inbox</p>
-              <p className="qb-sub" style={{ marginTop: 6 }}>We’ve emailed the <b>{qbBank.label}</b> question bank as a PDF attachment to <b>{qbForm.email}</b>. Check your inbox (and spam folder).</p>
+              <p className="apt-lead-label" style={{ textAlign: 'center' }}>✓ Your download has started</p>
+              <p className="qb-sub" style={{ marginTop: 6 }}>The <b>{qbBank.label}</b> question bank is downloading. Didn’t start?{' '}
+                <button type="button" onClick={() => downloadFile(qbBank.pdf, `${qbBank.label} Question Bank.pdf`)} style={{ background: 'none', border: 'none', padding: 0, color: 'var(--specialist, #5a3fd6)', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>Download again</button>.
+              </p>
             </div>
           ) : !qbFormOpen ? (
             <button className="btn-primary" onClick={() => qbBank.pdf && setQbFormOpen(true)} disabled={!qbBank.pdf}>
@@ -702,14 +706,14 @@ export default function Aptitude() {
             </button>
           ) : (
             <form className="apt-lead" style={{ maxWidth: 540, margin: '0 auto', textAlign: 'left' }} onSubmit={submitQB}>
-              <p className="apt-lead-label">Enter your details and we’ll email your {qbBank.name} question bank</p>
+              <p className="apt-lead-label">Enter your details to download the {qbBank.name} question bank</p>
               <div className="apt-lead-row apt-lead-row--col">
                 <input type="text" required placeholder="Your name" value={qbForm.name} onChange={e => setQ('name', e.target.value)} />
                 <input type="email" required placeholder="you@email.com" value={qbForm.email} onChange={e => setQ('email', e.target.value)} />
                 <input type="tel" required placeholder="Phone number" value={qbForm.phone} onChange={e => setQ('phone', e.target.value)} />
-                <button type="submit" disabled={qbBusy}>{qbBusy ? 'Sending…' : 'Email me the PDF'}</button>
+                <button type="submit" disabled={qbBusy}>{qbBusy ? 'Verifying…' : 'Verify & download'}</button>
               </div>
-              {qbErr && <p className="apt-gate-err">Couldn't submit — please check your connection and try again.</p>}
+              {qbErr && <p className="apt-gate-err">Couldn't verify — please check your connection and try again.</p>}
             </form>
           )}
         </div>
