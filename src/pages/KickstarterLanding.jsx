@@ -174,14 +174,15 @@ export default function KickstarterLanding() {
     setOtpBusy(true);
     try {
       await loadOtpProvider();
-      const token = await sendOtp(form.email.trim()); // email OTP
+      const phone = `${form.countryCode} ${form.phone}`;
+      const phoneE164 = `${form.countryCode}${form.phone}`; // e.g. +919876543210 (no spaces)
+      const token = await sendOtp(phoneE164); // SMS OTP to the phone
       setOtpBusy(false);
       setBusy(true);
-      const phone = `${form.countryCode} ${form.phone}`;
       await submitLead({
         name: form.name, email: form.email, phone,
         city: form.city, background: form.background,
-        otp_token: token, otp_channel: 'email', otp_identifier: form.email.trim(),
+        otp_token: token, otp_channel: 'sms', otp_identifier: phoneE164,
         source: 'campaign-workshop', campaign: activeSlug, workshop: heading,
         cta_label: `Register: ${heading}`, section: `Campaign · ${activeSlug}`,
       });
