@@ -4,15 +4,15 @@ import { useEffect } from 'react';
 // emails an OTP, verifies, and pushes a verified lead straight to the Amplifeed
 // CRM — no backend on our side).
 //
-// Amplifeed embed keys. These are baked in so the form always works (no env
-// setup needed); env vars override them if set. Heads-up: this is a CLIENT-SIDE
-// embed, so these keys are visible in the browser source by design — they are
-// Amplifeed's public embed keys for this widget.
+// Config comes from env vars (set in Vercel + local .env, NOT committed) so the
+// keys aren't hardcoded in the repo. Heads-up: this is a CLIENT-SIDE embed, so
+// whatever keys are used are still visible in the browser bundle — env only
+// keeps them out of source control, not out of the browser.
 const AF = {
-  sourceKey: import.meta.env.VITE_AMPLIFEED_SOURCE_KEY || 'S0-1VbVfoh_ydsCFUsu1MXld',
-  secret: import.meta.env.VITE_AMPLIFEED_SECRET || 'AYnA2j75Izjd7arD_AiKIDy2',
-  widgetId: import.meta.env.VITE_AMPLIFEED_WIDGET_ID || '3666786e5151323537333631',
-  tokenAuth: import.meta.env.VITE_AMPLIFEED_TOKEN_AUTH || '517767Ts6KDsui6a3bef4eP1',
+  sourceKey: import.meta.env.VITE_AMPLIFEED_SOURCE_KEY,
+  secret: import.meta.env.VITE_AMPLIFEED_SECRET,
+  widgetId: import.meta.env.VITE_AMPLIFEED_WIDGET_ID,
+  tokenAuth: import.meta.env.VITE_AMPLIFEED_TOKEN_AUTH,
 };
 
 export default function AmplifeedOtpForm({ channels = 'email', fields = 'name,email,phone,company,message' }) {
