@@ -15,7 +15,7 @@ const AF = {
   tokenAuth: import.meta.env.VITE_AMPLIFEED_TOKEN_AUTH || '517767Ts6KDsui6a3bef4eP1',
 };
 
-export default function AmplifeedOtpForm({ channels = 'email', fields = 'name,email,phone,company,message', onSuccess }) {
+export default function AmplifeedOtpForm({ channels = 'email', fields = 'name,email,phone,company,message', onSuccess, verifyLabel }) {
   const ready = AF.sourceKey && AF.secret && AF.widgetId && AF.tokenAuth;
   const leadRef = useRef({});
   const firedRef = useRef(false);
@@ -35,12 +35,11 @@ export default function AmplifeedOtpForm({ channels = 'email', fields = 'name,em
     document.body.appendChild(s);
   }, [ready]);
 
-  // The widget has no redirect/success callback, so when onSuccess is provided we
-  // (1) capture the entered fields as the user types, and (2) watch the widget for
-  // its "Thank you! We received your details." success state, then hand the data
-  // back to the caller (e.g. to route to checkout).
+  // The widget has no redirect/callback or label options, so we drive it from the
+  // DOM: optionally relabel the primary CTA, capture the entered fields, auto-click
+  // the final "Submit" once the OTP is verified, and route onward on success.
   useEffect(() => {
-    if (!ready || typeof onSuccess !== 'function') return;
+    if (!ready || (typeof onSuccess !== 'function' && !verifyLabel)) return;
     const root = document.getElementById('amplifeed-form');
     if (!root) return;
 
@@ -57,38 +56,40 @@ export default function AmplifeedOtpForm({ channels = 'email', fields = 'name,em
     };
     root.addEventListener('input', capture, true);
 
-    // Pick the widget's primary action button (avoid resend/edit/back links).
-    const pickSubmit = () => {
-      const btns = [...root.querySelectorAll('button')].filter((b) => !b.disabled && b.offsetParent !== null);
-      const isSecondary = (b) => /resend|edit|change|back|cancel/i.test(b.textContent || '');
-      return btns.find((b) => /submit|continue|register|proceed|done/i.test(b.textContent || '') && !isSecondary(b))
-        || btns.reverse().find((b) => !isSecondary(b))
-        || null;
-    };
-
-    const obs = new MutationObserver(() => {
-      if (firedRef.current) return;
-      // Reached the CRM success state → hand back to the caller (route to checkout).
+    let obs;
+    const apply = () => {
+      // (1) Relabel the primary verify CTA, e.g. "Verify email" → "Verify to register".
+      if (verifyLabel) {
+        const cta = [...root.querySelectorAll('button')]
+          .find((b) => /^\s*verify\s+(email|mobile|phone)\b/i.test(b.textContent || ''));
+        if (cta && cta.textContent.trim() !== verifyLabel) cta.textContent = verifyLabel;
+      }
+      if (typeof onSuccess !== 'function' || firedRef.current) return;
+      // (2) Success state reached → route onward (e.g. to checkout).
       if (/received your details/i.test(root.textContent || '')) {
         firedRef.current = true;
-        obs.disconnect();
+        if (obs) obs.disconnect();
         onSuccess({ ...leadRef.current });
         return;
       }
-      // OTP just verified → auto-click submit so the user doesn't have to, which
-      // then produces the success state handled above.
-      if (!autoSubmittedRef.current && /verified/i.test(root.textContent || '')) {
-        const btn = pickSubmit();
-        if (btn) {
+      // (3) The final "Submit" button only appears once the OTP is verified, so its
+      // presence (enabled) is the safe signal to auto-click — no manual click needed.
+      if (!autoSubmittedRef.current) {
+        const submit = [...root.querySelectorAll('button')]
+          .find((b) => /^\s*submit\s*$/i.test(b.textContent || '') && !b.disabled && b.offsetParent !== null);
+        if (submit) {
           autoSubmittedRef.current = true;
-          setTimeout(() => btn.click(), 200);
+          setTimeout(() => submit.click(), 500);
         }
       }
-    });
+    };
+
+    obs = new MutationObserver(apply);
     obs.observe(root, { childList: true, subtree: true, characterData: true });
+    apply();
 
     return () => { root.removeEventListener('input', capture, true); obs.disconnect(); };
-  }, [ready, onSuccess]);
+  }, [ready, onSuccess, verifyLabel]);
 
   if (!ready) {
     return import.meta.env.DEV

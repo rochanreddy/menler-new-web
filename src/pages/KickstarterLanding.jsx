@@ -372,6 +372,7 @@ export default function KickstarterLanding() {
                     CRM, then routes to checkout once Amplifeed confirms the submission. */}
                 <AmplifeedOtpForm
                   fields="name,email,phone,city"
+                  verifyLabel="Verify to register"
                   onSuccess={(lead) => navigate('/checkout', {
                     state: { workshop: heading, price: d.price, name: lead.name, email: lead.email, phone: lead.phone },
                   })}
