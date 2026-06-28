@@ -1900,7 +1900,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 
 /* Campaign variant: heading outside the card, horizontal layout */
 .lp2-community-wrap,
-.menler-community.lp2-community-wrap { margin: 36px auto 0; width: 100%; max-width: 1100px; text-align: center; padding: 0 clamp(16px, 4vw, 24px); }
+.menler-community.lp2-community-wrap { margin: 36px auto 0; width: 100%; max-width: 1100px; text-align: left; padding: 0 clamp(16px, 4vw, 24px); }
 .menler-community.lp2-community-wrap .menler-community-card { padding: 24px clamp(20px, 4vw, 32px); }
 
 /* Shared Menler community block (campaign, home, about, aptitude, checkout) */
@@ -1927,8 +1927,10 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 }
 .menler-community--page .mini-lead-inner {
   justify-content: flex-start;
-  gap: 4px;
+  gap: 16px;
 }
+/* Keep the copy from stretching so the WhatsApp button sits right next to the text. */
+.menler-community--page .mini-lead-copy { flex: 0 0 auto; }
 
 /* Checkout thank-you — bordered narrow rectangle */
 .menler-community--confirm {
