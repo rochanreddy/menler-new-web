@@ -76,7 +76,15 @@ export function sendOtp(identifier) {
       tokenAuth: TOKEN_AUTH,
       identifier,
       success: (token) => resolve(token),
-      failure: (err) => reject(err instanceof Error ? err : new Error('OTP verification failed.')),
+      failure: (err) => {
+        // Surface MSG91's real reason instead of a generic message.
+        // eslint-disable-next-line no-console
+        console.error('OTP failure:', err);
+        const msg =
+          (err && (err.message || err.msg || err.error || err.type ||
+            (typeof err === 'string' ? err : ''))) || 'OTP verification failed.';
+        reject(new Error(typeof msg === 'string' ? msg : 'OTP verification failed.'));
+      },
     });
   });
 }
