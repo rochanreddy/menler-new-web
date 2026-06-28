@@ -11,24 +11,37 @@
 const WIDGET_ID = import.meta.env.VITE_AMPLIFEED_WIDGET_ID || '3666786e5151323537333631';
 const TOKEN_AUTH = import.meta.env.VITE_AMPLIFEED_TOKEN_AUTH || '517767Ts6KDsui6a3bef4eP1';
 
+// The OTP provider is MSG91 (Amplifeed's documented verify.amplifeed.tech host
+// 404s, so we load MSG91 directly — same script the Amplifeed embed widget uses).
+const OTP_HOSTS = [
+  'https://verify.msg91.com/otp-provider.js',
+  'https://verify.phone91.com/otp-provider.js',
+];
+
+const getInit = () =>
+  (typeof window !== 'undefined' && (window.initSendOTP || window.initSendOtp)) || null;
+
 let loadPromise;
 
-// Load otp-provider.js once, with the documented fallback host.
+// Load otp-provider.js once, trying each host in turn.
 export function loadOtpProvider() {
-  if (typeof window !== 'undefined' && window.initSendOTP) return Promise.resolve();
+  if (getInit()) return Promise.resolve();
   if (loadPromise) return loadPromise;
   loadPromise = new Promise((resolve, reject) => {
-    const inject = (src, onFail) => {
+    let i = 0;
+    const tryNext = () => {
+      if (i >= OTP_HOSTS.length) {
+        reject(new Error('Could not load the verification service.'));
+        return;
+      }
       const s = document.createElement('script');
-      s.src = src;
+      s.src = OTP_HOSTS[i++];
       s.async = true;
       s.onload = () => resolve();
-      s.onerror = onFail;
+      s.onerror = tryNext;
       document.body.appendChild(s);
     };
-    inject('https://verify.amplifeed.tech/otp-provider.js', () =>
-      inject('https://verify2.amplifeed.tech/otp-provider.js', () =>
-        reject(new Error('Could not load the verification service.'))));
+    tryNext();
   });
   return loadPromise;
 }
@@ -38,11 +51,12 @@ export function loadOtpProvider() {
 // user enters the correct code in the provider's UI; rejects on failure/cancel.
 export function sendOtp(identifier) {
   return new Promise((resolve, reject) => {
-    if (typeof window === 'undefined' || !window.initSendOTP) {
+    const init = getInit();
+    if (!init) {
       reject(new Error('Verification service is not ready. Please try again.'));
       return;
     }
-    window.initSendOTP({
+    init({
       widgetId: WIDGET_ID,
       tokenAuth: TOKEN_AUTH,
       identifier,
