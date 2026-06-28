@@ -6,6 +6,7 @@ import MenlerCommunitySection from '../components/common/MenlerCommunitySection'
 import { MENLER_WHATSAPP_URL } from '../data/communityLinks';
 import { submitLead } from '../services/leadService';
 import { useContent } from '../lib/useContent';
+import AmplifeedOtpForm from '../components/common/AmplifeedOtpForm';
 
 // ── Single-mentor workshop registration landing page (/ai-kickstarter) ──
 // Left column scrolls (mentor + workshop details); right column is a STATIC
@@ -367,80 +368,8 @@ export default function KickstarterLanding() {
                   {d.origPrice && <span className="lp2-price-orig">₹{d.origPrice}</span>}
                 </div>
 
-                {/* ── Step 1: details form ── */}
-                <form onSubmit={otpSent ? register : sendOtp}>
-                  <input className="lp2-input" type="text" required placeholder="Full name" value={form.name} onChange={(e) => set('name', e.target.value)} disabled={otpSent} />
-                  <input className="lp2-input" type="email" required placeholder="Email address" value={form.email} onChange={(e) => set('email', e.target.value)} disabled={otpSent} />
-                  <div className="lp2-phone-row">
-                    <select
-                      className="lp2-input lp2-country-code"
-                      value={form.countryCode}
-                      onChange={(e) => setForm((f) => ({ ...f, countryCode: e.target.value, phone: '' }))}
-                      disabled={otpSent}
-                      aria-label="Country code"
-                    >
-                      {COUNTRY_CODES.map(({ code, label }) => (
-                        <option key={code} value={code}>{label}</option>
-                      ))}
-                    </select>
-                    <input
-                      className="lp2-input lp2-phone-input"
-                      type="tel"
-                      required
-                      placeholder="Phone number"
-                      inputMode="numeric"
-                      value={form.phone}
-                      onChange={(e) => handlePhoneChange(e.target.value)}
-                      disabled={otpSent}
-                    />
-                  </div>
-                  <input className="lp2-input" type="text" required placeholder="City" value={form.city} onChange={(e) => set('city', e.target.value)} disabled={otpSent} />
-                  <select
-                    className="lp2-input"
-                    required
-                    style={{ color: form.background ? 'var(--ink)' : 'rgba(38,33,92,0.45)', background: otpSent ? '#f5f5f5' : 'white', cursor: otpSent ? 'default' : 'pointer' }}
-                    value={form.background}
-                    onChange={(e) => set('background', e.target.value)}
-                    disabled={otpSent}
-                  >
-                    <option value="" disabled hidden>Select background...</option>
-                    <option value="student">Student</option>
-                    <option value="working professional">Working Professional</option>
-                    <option value="graduate">Graduate</option>
-                    <option value="business owner">Business Owner</option>
-                  </select>
-
-                  {/* ── Step 2: OTP box — slides in after Verify Now ── */}
-                  {otpSent && (
-                    <div className="lp2-otp-wrap">
-                      <p className="lp2-otp-hint">OTP sent to <b>{form.countryCode} {form.phone}</b></p>
-                      <input
-                        className="lp2-input lp2-otp-input"
-                        type="text"
-                        inputMode="numeric"
-                        maxLength={6}
-                        placeholder="Enter OTP"
-                        value={form.otp}
-                        onChange={(e) => set('otp', e.target.value.replace(/\D/g, '').slice(0, 6))}
-                        autoFocus
-                      />
-                      <button type="button" className="lp2-otp-resend" onClick={() => { setOtpSent(false); setForm(f => ({ ...f, otp: '' })); setErr(null); }}>
-                        Edit details
-                      </button>
-                    </div>
-                  )}
-
-                  {!otpSent ? (
-                    <button className="lp2-submit" type="submit" disabled={otpBusy}>
-                      {otpBusy ? 'Sending OTP…' : 'Verify to register'}
-                    </button>
-                  ) : (
-                    <button className="lp2-submit" type="submit" disabled={busy}>
-                      {busy ? 'Registering…' : 'Complete Registration'}
-                    </button>
-                  )}
-                  {err && <p className="lp2-err">{typeof err === 'string' ? err : "Couldn't register — please check your connection and try again."}</p>}
-                </form>
+                {/* Real Amplifeed OTP form — verifies the email and captures the lead in the CRM. */}
+                <AmplifeedOtpForm fields="name,email,phone,city" />
               </>
             )}
           </div>
