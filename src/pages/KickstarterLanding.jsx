@@ -368,8 +368,14 @@ export default function KickstarterLanding() {
                   {d.origPrice && <span className="lp2-price-orig">₹{d.origPrice}</span>}
                 </div>
 
-                {/* Real Amplifeed OTP form — verifies the email and captures the lead in the CRM. */}
-                <AmplifeedOtpForm fields="name,email,phone,city" />
+                {/* Real Amplifeed OTP form — verifies the email and captures the lead in the
+                    CRM, then routes to checkout once Amplifeed confirms the submission. */}
+                <AmplifeedOtpForm
+                  fields="name,email,phone,city"
+                  onSuccess={(lead) => navigate('/checkout', {
+                    state: { workshop: heading, price: d.price, name: lead.name, email: lead.email, phone: lead.phone },
+                  })}
+                />
               </>
             )}
           </div>

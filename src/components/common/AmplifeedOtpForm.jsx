@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 // Amplifeed OTP lead form — embeds Amplifeed's hosted widget (collects details,
 // emails an OTP, verifies, and pushes a verified lead straight to the Amplifeed
@@ -15,8 +15,10 @@ const AF = {
   tokenAuth: import.meta.env.VITE_AMPLIFEED_TOKEN_AUTH || '517767Ts6KDsui6a3bef4eP1',
 };
 
-export default function AmplifeedOtpForm({ channels = 'email', fields = 'name,email,phone,company,message' }) {
+export default function AmplifeedOtpForm({ channels = 'email', fields = 'name,email,phone,company,message', onSuccess }) {
   const ready = AF.sourceKey && AF.secret && AF.widgetId && AF.tokenAuth;
+  const leadRef = useRef({});
+  const firedRef = useRef(false);
 
   useEffect(() => {
     if (!ready) return;
@@ -31,6 +33,41 @@ export default function AmplifeedOtpForm({ channels = 'email', fields = 'name,em
     s.setAttribute('data-base', 'https://www.amplifeed.tech');
     document.body.appendChild(s);
   }, [ready]);
+
+  // The widget has no redirect/success callback, so when onSuccess is provided we
+  // (1) capture the entered fields as the user types, and (2) watch the widget for
+  // its "Thank you! We received your details." success state, then hand the data
+  // back to the caller (e.g. to route to checkout).
+  useEffect(() => {
+    if (!ready || typeof onSuccess !== 'function') return;
+    const root = document.getElementById('amplifeed-form');
+    if (!root) return;
+
+    const byPlaceholder = (re) =>
+      [...root.querySelectorAll('input')].find((i) => re.test(i.placeholder || ''))?.value?.trim() || '';
+    const byType = (t) => root.querySelector(`input[type="${t}"]`)?.value?.trim() || '';
+    const texts = () => [...root.querySelectorAll('input[type="text"]')];
+    const capture = () => {
+      leadRef.current = {
+        name: byPlaceholder(/name/i) || texts()[0]?.value?.trim() || '',
+        email: byType('email') || byPlaceholder(/email/i),
+        phone: byType('tel') || byPlaceholder(/phone|mobile/i),
+      };
+    };
+    root.addEventListener('input', capture, true);
+
+    const obs = new MutationObserver(() => {
+      if (firedRef.current) return;
+      if (/received your details/i.test(root.textContent || '')) {
+        firedRef.current = true;
+        obs.disconnect();
+        onSuccess({ ...leadRef.current });
+      }
+    });
+    obs.observe(root, { childList: true, subtree: true, characterData: true });
+
+    return () => { root.removeEventListener('input', capture, true); obs.disconnect(); };
+  }, [ready, onSuccess]);
 
   if (!ready) {
     return import.meta.env.DEV
