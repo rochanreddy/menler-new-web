@@ -42,19 +42,26 @@ const ENGINEER_QB = [
   { label: 'RAG & Knowledge Systems', pdf: '/question_banks/Menler_RAG_Knowledge_Systems_Question_Bank.pdf' },
   { label: 'Agentic AI', pdf: '/question_banks/Menler_Agentic_AI_Question_Bank.pdf' },
 ];
-// Student & Generalist subdomains use the same set names as the cluster set
-// picker. Each domain has two level banks (sets 1–5 vs 6–10): Student →
-// Beginner/Aware, Generalist → Entry Diagnostic/Level Up. Every set downloads
-// the level bank that contains it.
-const STUDENT_QB_PDF = (i) => (i < 5
-  ? '/pdfs/Menler_AIforStudents_Beginner_QuestionBank.pdf'
-  : '/pdfs/Menler_AIforStudents_Aware_QuestionBank.pdf');
-const GENERALIST_QB_PDF = (i) => (i < 5
-  ? '/pdfs/Menler_AIGeneralist_Entry_QuestionBank.pdf'
-  : '/pdfs/Menler_AIGeneralist_LevelUp_QuestionBank.pdf');
+// Question-bank subdomains per domain → the level-bank PDF each downloads.
+// Student has two banks (Beginner/Aware), Generalist two (Entry/Level Up).
+const QB_STUDENT_BEGINNER = '/pdfs/Menler_AIforStudents_Beginner_QuestionBank.pdf';
+const QB_STUDENT_AWARE = '/pdfs/Menler_AIforStudents_Aware_QuestionBank.pdf';
+const QB_GEN_ENTRY = '/pdfs/Menler_AIGeneralist_Entry_QuestionBank.pdf';
+const QB_GEN_LEVELUP = '/pdfs/Menler_AIGeneralist_LevelUp_QuestionBank.pdf';
 const QB_SECTIONS = [
-  { domain: 'Student', subs: STUDENT_SETS.map((label, i) => ({ label, pdf: STUDENT_QB_PDF(i) })) },
-  { domain: 'Generalist', subs: GENERALIST_SETS.map((label, i) => ({ label, pdf: GENERALIST_QB_PDF(i) })) },
+  { domain: 'Student', subs: [
+    { label: 'AI Foundations', pdf: QB_STUDENT_BEGINNER },
+    { label: 'AI Tools & Prompting', pdf: QB_STUDENT_BEGINNER },
+    { label: 'AI Critical Thinking', pdf: QB_STUDENT_AWARE },
+    { label: 'Responsible AI', pdf: QB_STUDENT_AWARE },
+  ] },
+  { domain: 'Generalist', subs: [
+    { label: 'AI Fundamentals', pdf: QB_GEN_ENTRY },
+    { label: 'AI Prompting', pdf: QB_GEN_ENTRY },
+    { label: 'AI Tools & Workflows', pdf: QB_GEN_ENTRY },
+    { label: 'AI Judgment & Strategy', pdf: QB_GEN_LEVELUP },
+    { label: 'Agentic AI & Automation', pdf: QB_GEN_LEVELUP },
+  ] },
   { domain: 'Engineer', subs: ENGINEER_QB },
 ];
 
