@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { requestBrochure } from '../../services/leadService';
+import { verifyAndDownloadBrochure } from '../../lib/brochure';
 import { useToast } from '../common/Toast';
 
 export default function ProgramLeadForm({ program, programColor = 'var(--specialist)', buttonBg = 'var(--specialist)' }) {
@@ -14,7 +14,7 @@ export default function ProgramLeadForm({ program, programColor = 'var(--special
     e.preventDefault();
     setLoading(true);
     try {
-      await requestBrochure({
+      await verifyAndDownloadBrochure({
         ...form,
         program: program || 'generalist',
         resource: `${program || 'Menler'} Brochure`,
@@ -23,9 +23,9 @@ export default function ProgramLeadForm({ program, programColor = 'var(--special
         section: program || 'Program lead',
       });
       setDone(true);
-      toast.success("Brochure on its way — check your inbox shortly.");
+      toast.success("Verified — your brochure is downloading.");
     } catch {
-      toast.error("Couldn't send that just now. Please try again.");
+      toast.error("Couldn't verify that just now. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -34,7 +34,7 @@ export default function ProgramLeadForm({ program, programColor = 'var(--special
   if (done) {
     return (
       <div className="lead-ok">
-        ✓ Got it! Your brochure is on its way — check your inbox for the PDF attachment.
+        ✓ Verified! Your brochure is downloading. Check your downloads folder.
       </div>
     );
   }

@@ -12,7 +12,7 @@ import MenlerCommunitySection from '../components/common/MenlerCommunitySection'
 import { useToast } from '../components/common/Toast';
 const Hero3D = lazy(() => import('../components/common/Hero3D'));
 import { HOME_FAQS } from '../data/faqData';
-import { submitLead, requestBrochure } from '../services/leadService';
+import { verifyAndDownloadBrochure } from '../lib/brochure';
 import { PROJECTS, PROJECTS_QUERY, tagClassFor } from '../data/projectsData';
 import { useContent } from '../lib/useContent';
 import ErrorBoundary from '../components/common/ErrorBoundary';
@@ -182,7 +182,7 @@ export default function Home() {
   const handleMiniLead = async (e) => {
     e.preventDefault();
     try {
-      await requestBrochure({
+      await verifyAndDownloadBrochure({
         email: miniEmail,
         program: miniProgram || 'generalist',
         resource: `${miniProgram || 'Menler'} Brochure`,
@@ -191,9 +191,9 @@ export default function Home() {
         section: miniProgram || 'Home',
       });
       setMiniDone(true);
-      toast.success('Brochure on its way — check your inbox.');
+      toast.success('Verified — your brochure is downloading.');
     } catch {
-      toast.error("Couldn't send the brochure just now. Please try again.");
+      toast.error("Couldn't verify just now. Please try again.");
     }
   };
 
@@ -372,10 +372,10 @@ export default function Home() {
         <div className="mini-lead-inner">
           <div className="mini-lead-copy">
             <h3>Get the Menler fellowship <em>brochure.</em></h3>
-            <p>Syllabus, schedule, fees & scholarships straight to your inbox.</p>
+            <p>Syllabus, schedule, fees & scholarships — verify your email and download it instantly.</p>
           </div>
           {miniDone ? (
-            <div className="mini-lead-success">✓ Brochure on its way.</div>
+            <div className="mini-lead-success">✓ Brochure downloading.</div>
           ) : (
             <form className="mini-lead-form" onSubmit={handleMiniLead}>
               <input type="email" required aria-label="Email address" placeholder="you@domain.com" value={miniEmail} onChange={e => setMiniEmail(e.target.value)} autoComplete="email" />
@@ -385,7 +385,7 @@ export default function Home() {
                 <option>Engineering</option>
                 <option>Not sure</option>
               </select>
-              <button type="submit">Send brochure</button>
+              <button type="submit">Verify & download</button>
             </form>
           )}
         </div>

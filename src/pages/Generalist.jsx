@@ -12,7 +12,7 @@ import PricingCard from '../components/common/PricingCard';
 import { useContent } from '../lib/useContent';
 import { downloadFile } from '../lib/download';
 import { GENERALIST_FAQS } from '../data/faqData';
-import { requestBrochure } from '../services/leadService';
+import { verifyAndDownloadBrochure } from '../lib/brochure';
 
 // ── Pricing card content ──
 const GEN_PRICE_FEATS = [
@@ -263,8 +263,10 @@ export default function Generalist() {
   const handleBrochure = async (e) => {
     e.preventDefault();
     try {
-      await requestBrochure({
+      await verifyAndDownloadBrochure({
+        name: form.name,
         email: form.email,
+        phone: form.phone,
         program: 'generalist',
         track: form.track,
         resource: 'Generalist Fellowship Brochure',
@@ -473,10 +475,10 @@ export default function Generalist() {
         <div className="mini-lead-inner">
           <div className="mini-lead-copy">
             <h3>Get the Generalist <em>brochure & syllabus</em>.</h3>
-            <p>Syllabus, schedule, fees & scholarships straight to your inbox.</p>
+            <p>Syllabus, schedule, fees & scholarships — verify your email and download it instantly.</p>
           </div>
           {done ? (
-            <div className="mini-lead-success">✓ Brochure on its way.</div>
+            <div className="mini-lead-success">✓ Brochure downloading.</div>
           ) : (
             <form className="mini-lead-form" onSubmit={handleBrochure}>
               <input type="email" required aria-label="Email address" placeholder="you@domain.com" value={form.email} onChange={e => set('email', e.target.value)} autoComplete="email" />
@@ -491,7 +493,7 @@ export default function Generalist() {
                 <option>Business owner — custom</option>
                 <option>Not sure yet</option>
               </select>
-              <button type="submit">Send brochure</button>
+              <button type="submit">Verify & download</button>
             </form>
           )}
         </div>

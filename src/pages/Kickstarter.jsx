@@ -12,7 +12,7 @@ import PricingCard from '../components/common/PricingCard';
 import { useContent } from '../lib/useContent';
 import { downloadFile } from '../lib/download';
 import { KICKSTARTER_FAQS } from '../data/faqData';
-import { requestBrochure } from '../services/leadService';
+import { verifyAndDownloadBrochure } from '../lib/brochure';
 
 const DAYS = [
   { num: '01', topic: 'The AI Landscape', tool: 'Claude, ChatGPT, Gemini', cap: false },
@@ -174,8 +174,10 @@ export default function Kickstarter() {
   const handleBrochure = async (e) => {
     e.preventDefault();
     try {
-      await requestBrochure({
+      await verifyAndDownloadBrochure({
+        name: form.name,
         email: form.email,
+        phone: form.phone,
         program: 'kickstarter',
         track: form.role,
         resource: 'Gen AI Kickstarter Brochure',
@@ -355,10 +357,10 @@ export default function Kickstarter() {
         <div className="mini-lead-inner">
           <div className="mini-lead-copy">
             <h3>Get the Kickstarter <em>brochure.</em></h3>
-            <p>Syllabus, schedule, fees & scholarships straight to your inbox.</p>
+            <p>Syllabus, schedule, fees & scholarships — verify your email and download it instantly.</p>
           </div>
           {done ? (
-            <div className="mini-lead-success">✓ Brochure on its way.</div>
+            <div className="mini-lead-success">✓ Brochure downloading.</div>
           ) : (
             <form className="mini-lead-form" onSubmit={handleBrochure}>
               <input type="email" required aria-label="Email address" placeholder="you@domain.com" value={form.email} onChange={e => set('email', e.target.value)} autoComplete="email" />
@@ -370,7 +372,7 @@ export default function Kickstarter() {
                 <option>Founder / first AI hire</option>
                 <option>Parent or educator</option>
               </select>
-              <button type="submit">Send brochure</button>
+              <button type="submit">Verify & download</button>
             </form>
           )}
         </div>

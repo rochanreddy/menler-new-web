@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
-import { requestResource } from '../../services/leadService';
+import { submitLead } from '../../services/leadService';
+import { verifyEmailOtp } from '../../lib/amplifeedOtp';
+import { downloadFile } from '../../lib/download';
 import PdfView from './PdfView';
 
 /**
@@ -52,12 +54,16 @@ export default function PlaybookModal({ item, onClose }) {
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
+  // Verify the email via OTP, then download the PDF on-site. The lead is
+  // recorded in the background so the download always happens once verified.
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErr(false);
     setSubmitting(true);
     try {
-      await requestResource({ ...form, resource: item.title, pdf: item.pdf, source: 'playbook-download', cta_label: `Download: ${item.title}`, section: item.badge || item.cat || 'Playbook' });
+      const otp = await verifyEmailOtp(form.email.trim());
+      downloadFile(item.pdf, `${item.title}.pdf`);
+      submitLead({ ...form, ...otp, resource: item.title, pdf: item.pdf, source: 'playbook-download', cta_label: `Download: ${item.title}`, section: item.badge || item.cat || 'Playbook' }).catch(() => {});
       setDone(true);
     } catch {
       setErr(true);
@@ -89,8 +95,10 @@ export default function PlaybookModal({ item, onClose }) {
           {done ? (
             <div className="pb-modal-done">
               <div className="pb-done-icon">✓</div>
-              <h3 className="pb-modal-title">Check your inbox</h3>
-              <p className="pb-modal-sub">We’ve emailed <b>{item.title}</b> as a PDF attachment to <b>{form.email}</b>. Check your inbox (and spam folder).</p>
+              <h3 className="pb-modal-title">Your download has started</h3>
+              <p className="pb-modal-sub"><b>{item.title}</b> is downloading. Didn’t start?{' '}
+                <button type="button" onClick={() => downloadFile(item.pdf, `${item.title}.pdf`)} style={{ background: 'none', border: 'none', padding: 0, color: 'var(--specialist, #5a3fd6)', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>Download again</button>.
+              </p>
             </div>
           ) : (
             <>
@@ -115,9 +123,9 @@ export default function PlaybookModal({ item, onClose }) {
                   <label>Phone</label>
                   <input type="tel" required value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+91 98765 43210" autoComplete="tel" />
                 </div>
-                <button className="pb-modal-btn" type="submit" disabled={submitting || !item.pdf}>{submitting ? 'Sending…' : item.pdf ? 'Email me the PDF' : 'Coming soon'}</button>
-                {err && <p className="lf-fineprint" style={{ color: '#c0392b' }}>Couldn’t send — please check your connection and try again.</p>}
-                <p className="lf-fineprint">We’ll email the PDF to you directly and occasional Menler updates. Unsubscribe anytime.</p>
+                <button className="pb-modal-btn" type="submit" disabled={submitting || !item.pdf}>{submitting ? 'Verifying…' : item.pdf ? 'Verify & download' : 'Coming soon'}</button>
+                {err && <p className="lf-fineprint" style={{ color: '#c0392b' }}>Couldn’t verify — please check your connection and try again.</p>}
+                <p className="lf-fineprint">Verify your email and the PDF downloads here. We may send occasional Menler updates — unsubscribe anytime.</p>
               </form>
             </>
           )}
