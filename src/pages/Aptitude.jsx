@@ -238,8 +238,10 @@ export default function Aptitude() {
         return { label: d.label, pct: slice.length ? Math.round((got / slice.length) * 100) : 0 };
       });
       // Create the shareable report first so its URL can ride along to the CRM.
+      // Build the share link on our canonical domain (the API may run on a
+      // different host, so don't use the URL it returns verbatim).
       let url = '';
-      try { const r = await createReport({ name: gateForm.name, cluster: state.cluster, setIdx: state.setIdx, score, maxScore, dims }); url = r.url; } catch { /* non-blocking */ }
+      try { const r = await createReport({ name: gateForm.name, cluster: state.cluster, setIdx: state.setIdx, score, maxScore, dims }); url = r.id ? `https://menler.in/report/${r.id}` : (r.url || ''); } catch { /* non-blocking */ }
       setReportUrl(url);
       await submitLead({ ...gateForm, cluster: state.cluster, set: state.setIdx + 1, score, source: 'aptitude-report', cta_label: `Aptitude report: ${state.cluster}`, section: `Aptitude · ${state.cluster}`, report_url: url });
       setReportUnlocked(true);
