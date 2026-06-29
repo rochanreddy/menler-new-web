@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import LeadForm from '../forms/LeadForm';
+import MenlerWordmark from './MenlerWordmark';
 
 // Apply-to-the-Fellowship popup: left image + right lead form.
 // Same look as the Home hero popup, reusable across pages.
@@ -17,7 +18,9 @@ export default function ApplyModal({ open, onClose, formProps }) {
     <div className="apply-modal-overlay" onClick={onClose}>
       <div className="apply-modal" role="dialog" aria-modal="true" aria-label="Apply to the Fellowship" onClick={(e) => e.stopPropagation()}>
         <button className="apply-modal-close" onClick={onClose} aria-label="Close">×</button>
-        <div className="apply-modal-media" aria-hidden="true" />
+        <div className="apply-modal-media apply-modal-media--logo">
+          <MenlerWordmark size={46} theme="dark" tagline />
+        </div>
         <div className="apply-modal-form">
           <LeadForm {...formProps} />
         </div>
