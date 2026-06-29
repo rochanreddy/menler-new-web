@@ -726,8 +726,8 @@ export default function Aptitude() {
           <div style={{ textAlign: 'center', marginTop: 28 }}>
             {qbSent ? (
               <div className="apt-lead" style={{ maxWidth: 540, margin: '0 auto' }}>
-                <p className="apt-lead-label" style={{ textAlign: 'center' }}>✓ Your download has started</p>
-                <p className="qb-sub" style={{ marginTop: 6 }}>The <b>{qbPick.label}</b> question bank is downloading. Didn’t start?{' '}
+                <p className="apt-lead-label" style={{ textAlign: 'center' }}>✓ Download completed</p>
+                <p className="qb-sub" style={{ marginTop: 6 }}>The <b>{qbPick.label}</b> question bank has downloaded. Didn’t get it?{' '}
                   <button type="button" onClick={() => downloadFile(qbPick.pdf, `${qbPick.label} Question Bank.pdf`)} style={{ background: 'none', border: 'none', padding: 0, color: 'var(--specialist, #5a3fd6)', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>Download again</button>.
                 </p>
               </div>
