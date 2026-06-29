@@ -43,10 +43,18 @@ const ENGINEER_QB = [
   { label: 'Agentic AI', pdf: '/question_banks/Menler_Agentic_AI_Question_Bank.pdf' },
 ];
 // Student & Generalist subdomains use the same set names as the cluster set
-// picker (STUDENT_SETS / GENERALIST_SETS). PDFs aren't uploaded yet → "Soon".
+// picker. Each domain has two level banks (sets 1–5 vs 6–10): Student →
+// Beginner/Aware, Generalist → Entry Diagnostic/Level Up. Every set downloads
+// the level bank that contains it.
+const STUDENT_QB_PDF = (i) => (i < 5
+  ? '/pdfs/Menler_AIforStudents_Beginner_QuestionBank.pdf'
+  : '/pdfs/Menler_AIforStudents_Aware_QuestionBank.pdf');
+const GENERALIST_QB_PDF = (i) => (i < 5
+  ? '/pdfs/Menler_AIGeneralist_Entry_QuestionBank.pdf'
+  : '/pdfs/Menler_AIGeneralist_LevelUp_QuestionBank.pdf');
 const QB_SECTIONS = [
-  { domain: 'Student', subs: STUDENT_SETS.map((label) => ({ label, pdf: null })) },
-  { domain: 'Generalist', subs: GENERALIST_SETS.map((label) => ({ label, pdf: null })) },
+  { domain: 'Student', subs: STUDENT_SETS.map((label, i) => ({ label, pdf: STUDENT_QB_PDF(i) })) },
+  { domain: 'Generalist', subs: GENERALIST_SETS.map((label, i) => ({ label, pdf: GENERALIST_QB_PDF(i) })) },
   { domain: 'Engineer', subs: ENGINEER_QB },
 ];
 
