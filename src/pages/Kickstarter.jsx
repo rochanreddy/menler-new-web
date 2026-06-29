@@ -12,6 +12,10 @@ import PricingCard from '../components/common/PricingCard';
 import { useContent } from '../lib/useContent';
 import { KICKSTARTER_FAQS } from '../data/faqData';
 import { submitLead } from '../services/leadService';
+import { downloadFile } from '../lib/download';
+
+// Curriculum PDF served by the "Download curriculum" button (no verification).
+const KS_CURRICULUM_PDF = '/pdfs/Menler_AI_Kickstarter_Curriculum.pdf';
 
 const DAYS = [
   { num: '01', topic: 'The AI Landscape', tool: 'Claude, ChatGPT, Gemini', cap: false },
@@ -151,6 +155,11 @@ export default function Kickstarter() {
   const [activeModule, setActiveModule] = useState(0);
   const moduleDetailRef = useRef(null);
   const openApply = useApply();
+  // Kickstarter enrolment form: only name/email/phone/background, no Program.
+  const openKickstarterLead = () => openApply({
+    showProgram: false,
+    backgroundOptions: ['School student', 'College student', 'Graduate', 'Fresher'],
+  });
   const ksPricing = useContent(KS_PRICING_QUERY, KS_PRICING);
   const days = useContent(KS_DAYS_QUERY, DAYS);
   const modules = useContent(KS_MODULES_QUERY, MODULES);
@@ -293,7 +302,7 @@ export default function Kickstarter() {
           })}
         </div>
         <div style={{ textAlign: 'center', marginTop: 28 }}>
-          <button className="btn-primary" style={{ background: '#BA7517', minWidth: 200 }} onClick={openApply}>Download curriculum</button>
+          <button className="btn-primary" style={{ background: '#BA7517', minWidth: 200 }} onClick={() => downloadFile(KS_CURRICULUM_PDF, 'Menler AI Kickstarter Curriculum.pdf')}>Download curriculum</button>
         </div>
       </section>
 
@@ -381,10 +390,10 @@ export default function Kickstarter() {
           {...ksPricing}
           ctaLabel="Enroll now"
           description={<>Build your AI foundation in just two weekends.<span className="kp-desc-line2">Learn AI fundamentals, build real workflows, and ship your first projects.</span></>}
-          onCta={openApply}
+          onCta={openKickstarterLead}
         />
         <div style={{ textAlign: 'center', marginTop: 56 }}>
-          <button className="btn-primary" style={{ background: '#BA7517', minWidth: 200 }} onClick={openApply}>Book a call</button>
+          <button className="btn-primary" style={{ background: '#BA7517', minWidth: 200 }} onClick={openKickstarterLead}>Book a call</button>
         </div>
       </section>
 
