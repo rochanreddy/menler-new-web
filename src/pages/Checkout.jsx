@@ -85,7 +85,7 @@ export default function Checkout() {
 
           {/* Explore more programs (moved here from the campaign page) */}
           <section className="cox-explore">
-            <h2 className="lp2-h2">Explore More <em>Programs</em></h2>
+            <h2 className="lp2-h2">Explore <em>More</em></h2>
             <div className="lp2-explore">
               <div className="cluster-card cluster-card--kick">
                 <p className="cluster-num">For beginners</p>
