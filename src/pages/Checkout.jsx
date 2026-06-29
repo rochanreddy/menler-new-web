@@ -15,6 +15,7 @@ export default function Checkout() {
   const workshopTitle = reg.workshop || 'Menler Workshop';
 
   const catalog = CHECKOUT_CATALOG;
+  const goTo = (p) => { navigate(p); window.scrollTo(0, 0); };
 
   const [cart, setCart] = useState(() => new Set());
   const [placing, setPlacing] = useState(false);
@@ -81,6 +82,33 @@ export default function Checkout() {
             whatsappUrl={reg.whatsappUrl || MENLER_WHATSAPP_URL}
             communityText={reg.whatsappText || reg.communityText}
           />
+
+          {/* Explore more programs (moved here from the campaign page) */}
+          <section className="cox-explore">
+            <h2 className="lp2-h2">Explore More <em>Programs</em></h2>
+            <div className="lp2-explore">
+              <div className="cluster-card cluster-card--kick">
+                <p className="cluster-num">For beginners</p>
+                <p className="cluster-name">Menler Gen AI Kickstarter</p>
+                <p className="cluster-sets">AI fundamentals + your first portfolio in 14 days.</p>
+                <button className="cluster-btn" onClick={() => goTo('/kickstarter')}>Explore Kickstarter</button>
+              </div>
+              <div className="cluster-card cluster-card--gen">
+                <p className="cluster-num">Students &amp; professionals</p>
+                <p className="cluster-name">Menler Claude AI Generalist Fellowship</p>
+                <p className="cluster-sets">Apply AI across business — 10-week fellowship.</p>
+                <button className="cluster-btn" onClick={() => goTo('/generalist')}>Explore Fellowship</button>
+              </div>
+            </div>
+          </section>
+
+          {/* AI Aptitude Test promo (moved here from the campaign page) */}
+          <div className="lp2-apt-card cox-apt-card">
+            <p className="lp2-apt-eyebrow">Not sure where to start?</p>
+            <p className="lp2-apt-title">Check out our AI Aptitude Test</p>
+            <p className="lp2-apt-desc">Find your AI fluency in 15 minutes for free.<br />15 questions, One AI pathway and no sign-up</p>
+            <button className="lp2-apt-btn" onClick={() => goTo('/aptitude')}>Take the Aptitude Test →</button>
+          </div>
 
           <button type="button" className="cox-confirm-back" onClick={() => navigate('/')}>Back to home</button>
         </div>

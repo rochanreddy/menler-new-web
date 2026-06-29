@@ -2205,6 +2205,10 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   flex-direction: column;
   align-items: center;
 }
+/* Explore-more + aptitude blocks moved here from the campaign page */
+.cox-explore { width: 100%; margin-top: 36px; text-align: left; }
+.cox-explore .lp2-h2 { text-align: center; margin-bottom: 16px; }
+.cox-apt-card { width: 100%; margin-top: 18px; text-align: left; }
 
 /* Animated tick badge */
 .cox-confirm-badge {
