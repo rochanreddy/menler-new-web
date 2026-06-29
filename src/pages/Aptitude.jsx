@@ -42,9 +42,17 @@ const ENGINEER_QB = [
   { label: 'RAG & Knowledge Systems', pdf: '/question_banks/Menler_RAG_Knowledge_Systems_Question_Bank.pdf' },
   { label: 'Agentic AI', pdf: '/question_banks/Menler_Agentic_AI_Question_Bank.pdf' },
 ];
+// Student & Generalist banks are grouped by level (each level = its 5 sets
+// combined into one downloadable). PDFs aren't uploaded yet → shown as "Soon".
 const QB_SECTIONS = [
-  { domain: 'Student', subs: STUDENT_SETS.map((label) => ({ label, pdf: null })) },
-  { domain: 'Generalist', subs: GENERALIST_SETS.map((label) => ({ label, pdf: null })) },
+  { domain: 'Student', subs: [
+    { label: 'Beginner', pdf: null },
+    { label: 'Aware', pdf: null },
+  ] },
+  { domain: 'Generalist', subs: [
+    { label: 'Entry Diagnostic', pdf: null },
+    { label: 'Level Up', pdf: null },
+  ] },
   { domain: 'Engineer', subs: ENGINEER_QB },
 ];
 
