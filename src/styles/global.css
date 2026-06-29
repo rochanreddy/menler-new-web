@@ -2366,6 +2366,23 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 }
 .qb-filter-pill:hover { background: var(--cloud); border-color: var(--specialist); }
 .qb-filter-pill.active { background: var(--specialist); border-color: var(--specialist); color: #fff; }
+
+/* Question bank grouped by domain → subdomain (Student / Generalist / Engineer) */
+.qb-domains { display: flex; flex-direction: column; gap: 16px; max-width: 1080px; margin: 28px auto 0; }
+.qb-dom { display: flex; align-items: flex-start; gap: 22px; background: #fff; border: 1px solid rgba(38,33,92,0.1); border-radius: 16px; padding: 18px 22px; box-shadow: 0 6px 18px rgba(38,33,92,0.05); }
+.qb-dom-name { flex: 0 0 132px; font-family: 'DM Serif Display', serif; font-size: 21px; color: var(--ink); padding-top: 4px; }
+.qb-dom-subs { flex: 1 1 auto; display: flex; flex-wrap: wrap; gap: 8px; }
+.qb-dom-sub { display: inline-flex; align-items: center; gap: 10px; background: var(--cloud); border: 1px solid rgba(83,74,183,0.18); border-radius: 999px; padding: 8px 14px; font-family: inherit; font-size: 12.5px; color: var(--ink); cursor: pointer; transition: background .15s, border-color .15s, transform .12s; }
+.qb-dom-sub:hover:not(:disabled) { background: #fff; border-color: var(--specialist); transform: translateY(-1px); }
+.qb-dom-sub.active { background: var(--specialist); border-color: var(--specialist); color: #fff; }
+.qb-dom-sub:disabled { opacity: .55; cursor: default; }
+.qb-dom-sub-act { font-size: 10px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--specialist); }
+.qb-dom-sub.active .qb-dom-sub-act { color: #fff; }
+.qb-dom-sub:disabled .qb-dom-sub-act { color: var(--text-muted); }
+@media (max-width: 640px) {
+  .qb-dom { flex-direction: column; gap: 10px; padding: 16px 16px; }
+  .qb-dom-name { flex-basis: auto; padding-top: 0; }
+}
 .qb-empty { grid-column: 1 / -1; text-align: center; color: var(--text-muted); font-size: 14px; padding: 24px 0; }
 .qb-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; max-width: 1080px; margin: 28px auto 0; }
 .qb-card { padding: 22px 24px; background: white; border: 0.5px solid rgba(83,74,183,0.15); border-radius: 12px; }

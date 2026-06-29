@@ -27,20 +27,25 @@ const TRUST_CARDS = [
   { title: 'Why it matters', desc: 'Most people dont know where they stand with AI. This assessment gives you a clear baseline before you invest resources.' },
 ];
 
-// Question-bank topics → downloadable PDF (in /public/question_banks).
-// `label` = pill display name; `name` = short name shown on the download button.
-// `pdf: null` = not uploaded yet; the pill shows but download is disabled.
-const QB_BANKS = [
-  { label: 'All about AI', name: 'All', pdf: '/question_banks/Menler_All_About_AI_Question_Bank.pdf' },
-  { label: 'Agentic AI', name: 'Agentic AI', pdf: '/question_banks/Menler_Agentic_AI_Question_Bank.pdf' },
-  { label: 'AI Agent Workflows', name: 'AI Agents', pdf: '/question_banks/Menler_AI_Agents_Workflows_Question_Bank.pdf' },
-  { label: 'AI Engineering Thinking', name: 'Engineering', pdf: '/question_banks/Menler_AI_Engineering_Thinking_Question_Bank.pdf' },
-  { label: 'AI Judgement', name: 'Evals', pdf: '/question_banks/Menler_AI_Judgment_Question_Bank.pdf' },
-  { label: 'AI Network Infrastructure', name: 'MCPs & Connectors', pdf: '/question_banks/Menler_AI_Networks_Infrastructure_Question_Bank.pdf' },
-  { label: 'AI Tools Ecosystem', name: 'AI Tools', pdf: '/question_banks/Menler_AI_Tools_Ecosystem_Question_Bank.pdf' },
-  { label: 'LLM Fundamentals', name: 'LLMs', pdf: '/question_banks/Menler_LLM_Fundamentals_Question_Bank.pdf' },
-  { label: 'Prompt Engineering', name: 'Prompts', pdf: '/question_banks/Menler_Prompt_Engineering_Question_Bank.pdf' },
-  { label: 'RAG Knowledge Systems', name: 'RAG', pdf: '/question_banks/Menler_RAG_Knowledge_Systems_Question_Bank.pdf' },
+// Question bank, grouped by domain → subdomain. Each subdomain downloads its
+// PDF (in /public/question_banks). `pdf: null` = not uploaded yet (shown as
+// "Soon", download disabled). The Engineer subdomains map to the existing
+// interview-prep PDFs; Student & Generalist subdomains await their PDFs.
+const ENGINEER_QB = [
+  { label: 'AI Agents & Workflows', pdf: '/question_banks/Menler_AI_Agents_Workflows_Question_Bank.pdf' },
+  { label: 'AI Engineering Thinking', pdf: '/question_banks/Menler_AI_Engineering_Thinking_Question_Bank.pdf' },
+  { label: 'AI Judgment', pdf: '/question_banks/Menler_AI_Judgment_Question_Bank.pdf' },
+  { label: 'AI Networks & Infrastructure', pdf: '/question_banks/Menler_AI_Networks_Infrastructure_Question_Bank.pdf' },
+  { label: 'AI Tools Ecosystem', pdf: '/question_banks/Menler_AI_Tools_Ecosystem_Question_Bank.pdf' },
+  { label: 'LLM Fundamentals', pdf: '/question_banks/Menler_LLM_Fundamentals_Question_Bank.pdf' },
+  { label: 'Prompt Engineering', pdf: '/question_banks/Menler_Prompt_Engineering_Question_Bank.pdf' },
+  { label: 'RAG & Knowledge Systems', pdf: '/question_banks/Menler_RAG_Knowledge_Systems_Question_Bank.pdf' },
+  { label: 'Agentic AI', pdf: '/question_banks/Menler_Agentic_AI_Question_Bank.pdf' },
+];
+const QB_SECTIONS = [
+  { domain: 'Student', subs: STUDENT_SETS.map((label) => ({ label, pdf: null })) },
+  { domain: 'Generalist', subs: GENERALIST_SETS.map((label) => ({ label, pdf: null })) },
+  { domain: 'Engineer', subs: ENGINEER_QB },
 ];
 
 const QB_QUESTIONS = [
@@ -70,8 +75,8 @@ const INIT = { view: 'landing', cluster: null, setIdx: 0, idx: 0, questions: [],
 const EXAM_DOMAINS = [
   { name: 'Student', setLabels: STUDENT_SETS, getSet: getStudentSet, getRandom: getStudentSession },
   { name: 'Generalist', setLabels: GENERALIST_SETS, getSet: getGeneralistSet, getRandom: getGeneralistSession },
-  { name: 'Engineer', setLabels: ENGINEERING_SETS, getSet: getEngineeringSet, getRandom: getEngineeringSession },
-  { name: 'Analysts', setLabels: ANALYSTS_SETS, getSet: getAnalystsSet, getRandom: getAnalystsSession },
+  { name: 'Engineering', setLabels: ENGINEERING_SETS, getSet: getEngineeringSet, getRandom: getEngineeringSession },
+  { name: 'Analyst', setLabels: ANALYSTS_SETS, getSet: getAnalystsSet, getRandom: getAnalystsSession },
   { name: 'Finance', setLabels: FINANCE_SETS, getSet: getFinanceSet, getRandom: getFinanceSession },
   { name: "Founder's Office", setLabels: FOUNDERS_SETS, getSet: getFoundersSet, getRandom: getFoundersSession },
   { name: 'Human Resource', setLabels: HR_SETS, getSet: getHrSet, getRandom: getHrSession },
@@ -270,26 +275,29 @@ export default function Aptitude() {
     }
   };
 
-  // Question-bank topic selector + per-topic PDF download (gated behind a form).
-  const [qbFilter, setQbFilter] = useState('All');
-  const qbBank = QB_BANKS.find(b => b.name === qbFilter) || QB_BANKS[0];
-  const [qbFormOpen, setQbFormOpen] = useState(false);
+  // Question bank: pick a subdomain (with a PDF), verify email, download on-site.
+  const [qbPick, setQbPick] = useState(null); // { domain, label, pdf }
   const [qbForm, setQbForm] = useState({ name: '', email: '', phone: '' });
   const [qbBusy, setQbBusy] = useState(false);
   const [qbErr, setQbErr] = useState(false);
   const [qbSent, setQbSent] = useState(false);
   const setQ = (k, v) => setQbForm(f => ({ ...f, [k]: v }));
+  const openQbPick = (domain, sub) => {
+    if (!sub.pdf) return;
+    setQbPick({ domain, ...sub });
+    setQbSent(false); setQbErr(false);
+  };
   // Verify the email via OTP, then hand the PDF over as a direct on-site download.
   // The lead is recorded in the background (non-blocking) so the download always
   // happens once verification succeeds.
   const submitQB = async (e) => {
     e.preventDefault();
+    if (!qbPick?.pdf) return;
     setQbErr(false); setQbBusy(true);
     try {
       const otp = await verifyEmailOtp(qbForm.email.trim());
-      downloadFile(qbBank.pdf, `${qbBank.label} Question Bank.pdf`);
-      submitLead({ ...qbForm, ...otp, resource: `${qbBank.label} Question Bank`, pdf: qbBank.pdf, topic: qbBank.name, source: 'aptitude-question-bank', cta_label: `Question Bank: ${qbBank.label}`, section: `Question Bank · ${qbBank.label}` }).catch(() => {});
-      setQbFormOpen(false);
+      downloadFile(qbPick.pdf, `${qbPick.label} Question Bank.pdf`);
+      submitLead({ ...qbForm, ...otp, resource: `${qbPick.label} Question Bank`, pdf: qbPick.pdf, topic: qbPick.label, source: 'aptitude-question-bank', cta_label: `Question Bank: ${qbPick.label}`, section: `Question Bank · ${qbPick.domain}` }).catch(() => {});
       setQbSent(true);
     } catch {
       setQbErr(true);
@@ -681,44 +689,52 @@ export default function Aptitude() {
       <section className="section" style={{ background: 'white', paddingBottom: 32 }}>
         <p className="section-label">Question bank</p>
         <h2 className="section-h2">AI Interview QB.<br /><em>Questions from real loops.</em></h2>
-        <p className="section-sub qb-sub">Asked at top Indian and global companies.<br />Select a topic and get a PDF of the Q&amp;A asked in real interview rounds.</p>
-        <div className="qb-filters">
-          {QB_BANKS.map(b => (
-            <button
-              key={b.name}
-              className={`qb-filter-pill${qbFilter === b.name ? ' active' : ''}`}
-              onClick={() => { setQbFilter(b.name); setQbFormOpen(false); setQbSent(false); setQbErr(false); }}
-              aria-pressed={qbFilter === b.name}
-            >
-              {b.name}
-            </button>
+        <p className="section-sub qb-sub">Asked at top Indian and global companies.<br />Pick a track, then a topic — verify your email and the PDF downloads here.</p>
+        <div className="qb-domains">
+          {QB_SECTIONS.map((sec) => (
+            <div className="qb-dom" key={sec.domain}>
+              <div className="qb-dom-name">{sec.domain}</div>
+              <div className="qb-dom-subs">
+                {sec.subs.map((s) => (
+                  <button
+                    key={s.label}
+                    type="button"
+                    className={`qb-dom-sub${qbPick && qbPick.label === s.label && qbPick.domain === sec.domain ? ' active' : ''}`}
+                    disabled={!s.pdf}
+                    onClick={() => openQbPick(sec.domain, s)}
+                    aria-pressed={!!(qbPick && qbPick.label === s.label && qbPick.domain === sec.domain)}
+                  >
+                    <span className="qb-dom-sub-label">{s.label}</span>
+                    <span className="qb-dom-sub-act">{s.pdf ? 'Download' : 'Soon'}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
-        <div style={{ textAlign: 'center', marginTop: 32 }}>
-          {qbSent ? (
-            <div className="apt-lead" style={{ maxWidth: 540, margin: '0 auto' }}>
-              <p className="apt-lead-label" style={{ textAlign: 'center' }}>✓ Your download has started</p>
-              <p className="qb-sub" style={{ marginTop: 6 }}>The <b>{qbBank.label}</b> question bank is downloading. Didn’t start?{' '}
-                <button type="button" onClick={() => downloadFile(qbBank.pdf, `${qbBank.label} Question Bank.pdf`)} style={{ background: 'none', border: 'none', padding: 0, color: 'var(--specialist, #5a3fd6)', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>Download again</button>.
-              </p>
-            </div>
-          ) : !qbFormOpen ? (
-            <button className="btn-primary" onClick={() => qbBank.pdf && setQbFormOpen(true)} disabled={!qbBank.pdf}>
-              {qbBank.pdf ? `Get Question Bank — ${qbBank.name}` : `${qbBank.name} — coming soon`}
-            </button>
-          ) : (
-            <form className="apt-lead" style={{ maxWidth: 540, margin: '0 auto', textAlign: 'left' }} onSubmit={submitQB}>
-              <p className="apt-lead-label">Enter your details to download the {qbBank.name} question bank</p>
-              <div className="apt-lead-row apt-lead-row--col">
-                <input type="text" required placeholder="Your name" value={qbForm.name} onChange={e => setQ('name', e.target.value)} />
-                <input type="email" required placeholder="you@email.com" value={qbForm.email} onChange={e => setQ('email', e.target.value)} />
-                <input type="tel" required placeholder="Phone number" value={qbForm.phone} onChange={e => setQ('phone', e.target.value)} />
-                <button type="submit" disabled={qbBusy}>{qbBusy ? 'Verifying…' : 'Verify & download'}</button>
+        {qbPick && (
+          <div style={{ textAlign: 'center', marginTop: 28 }}>
+            {qbSent ? (
+              <div className="apt-lead" style={{ maxWidth: 540, margin: '0 auto' }}>
+                <p className="apt-lead-label" style={{ textAlign: 'center' }}>✓ Your download has started</p>
+                <p className="qb-sub" style={{ marginTop: 6 }}>The <b>{qbPick.label}</b> question bank is downloading. Didn’t start?{' '}
+                  <button type="button" onClick={() => downloadFile(qbPick.pdf, `${qbPick.label} Question Bank.pdf`)} style={{ background: 'none', border: 'none', padding: 0, color: 'var(--specialist, #5a3fd6)', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>Download again</button>.
+                </p>
               </div>
-              {qbErr && <p className="apt-gate-err">Couldn't verify — please check your connection and try again.</p>}
-            </form>
-          )}
-        </div>
+            ) : (
+              <form className="apt-lead" style={{ maxWidth: 540, margin: '0 auto', textAlign: 'left' }} onSubmit={submitQB}>
+                <p className="apt-lead-label">Enter your details to download the <b>{qbPick.label}</b> question bank</p>
+                <div className="apt-lead-row apt-lead-row--col">
+                  <input type="text" required placeholder="Your name" value={qbForm.name} onChange={e => setQ('name', e.target.value)} />
+                  <input type="email" required placeholder="you@email.com" value={qbForm.email} onChange={e => setQ('email', e.target.value)} />
+                  <input type="tel" required placeholder="Phone number" value={qbForm.phone} onChange={e => setQ('phone', e.target.value)} />
+                  <button type="submit" disabled={qbBusy}>{qbBusy ? 'Verifying…' : 'Verify & download'}</button>
+                </div>
+                {qbErr && <p className="apt-gate-err">Couldn't verify — please check your connection and try again.</p>}
+              </form>
+            )}
+          </div>
+        )}
       </section>
 
       <MenlerCommunitySection className="menler-community--page" />
