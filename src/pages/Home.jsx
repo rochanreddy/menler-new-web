@@ -4,6 +4,7 @@ import AccredSection from '../components/common/AccredSection';
 import FaqList from '../components/common/FaqList';
 import CtaBanner from '../components/common/CtaBanner';
 import LeadForm from '../components/forms/LeadForm';
+import MenlerWordmark from '../components/common/MenlerWordmark';
 import Footer from '../components/layout/Footer';
 import Seo from '../components/common/Seo';
 import Reveal from '../components/common/Reveal';
@@ -549,7 +550,9 @@ export default function Home() {
         <div className="apply-modal-overlay" onClick={() => setShowApply(false)}>
           <div className="apply-modal" role="dialog" aria-modal="true" aria-label="Express interest" onClick={(e) => e.stopPropagation()}>
             <button className="apply-modal-close" onClick={() => setShowApply(false)} aria-label="Close">×</button>
-            <div className="apply-modal-media" aria-hidden="true" />
+            <div className="apply-modal-media apply-modal-media--logo">
+              <MenlerWordmark size={46} theme="dark" tagline />
+            </div>
             <div className="apply-modal-form">
               <LeadForm />
             </div>

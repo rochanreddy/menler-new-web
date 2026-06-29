@@ -761,6 +761,13 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
     url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80');
   background-size: cover; background-position: center;
 }
+/* Home apply popup — branded panel with the Menler logo instead of a photo */
+.apply-modal-media--logo {
+  background-image: none;
+  background: linear-gradient(160deg, #2b2566 0%, #1c1840 58%, #16331f 100%);
+  display: flex; align-items: center; justify-content: center;
+  padding: 32px 24px; text-align: center;
+}
 .apply-modal-form { flex: 1 1 60%; min-width: 0; overflow-y: auto; }
 .apply-modal .lead-form { border-radius: 0; box-shadow: none; height: 100%; }
 @media (max-width: 640px) {
