@@ -3,7 +3,7 @@ import LeadForm from '../forms/LeadForm';
 
 // Apply-to-the-Fellowship popup: left image + right lead form.
 // Same look as the Home hero popup, reusable across pages.
-export default function ApplyModal({ open, onClose }) {
+export default function ApplyModal({ open, onClose, formProps }) {
   useEffect(() => {
     if (!open) return;
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
@@ -19,7 +19,7 @@ export default function ApplyModal({ open, onClose }) {
         <button className="apply-modal-close" onClick={onClose} aria-label="Close">×</button>
         <div className="apply-modal-media" aria-hidden="true" />
         <div className="apply-modal-form">
-          <LeadForm />
+          <LeadForm {...formProps} />
         </div>
       </div>
     </div>

@@ -10,9 +10,8 @@ import { useApply } from '../components/common/ApplyContext';
 import HiringJobs from '../components/common/HiringJobs';
 import PricingCard from '../components/common/PricingCard';
 import { useContent } from '../lib/useContent';
-import { downloadFile } from '../lib/download';
 import { KICKSTARTER_FAQS } from '../data/faqData';
-import { verifyAndDownloadBrochure } from '../lib/brochure';
+import { submitLead } from '../services/leadService';
 
 const DAYS = [
   { num: '01', topic: 'The AI Landscape', tool: 'Claude, ChatGPT, Gemini', cap: false },
@@ -171,22 +170,10 @@ export default function Kickstarter() {
     }
   };
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
-  const handleBrochure = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await verifyAndDownloadBrochure({
-        name: form.name,
-        email: form.email,
-        phone: form.phone,
-        program: 'kickstarter',
-        track: form.role,
-        resource: 'Gen AI Kickstarter Brochure',
-        source: 'kickstarter-page',
-        cta_label: 'Brochure: Kickstarter',
-        section: 'Gen AI Kickstarter',
-      });
-      setDone(true);
-    } catch { /* keep form open for retry */ }
+    try { await submitLead({ ...form, program: 'kickstarter', source: 'kickstarter-page', cta_label: 'Apply: Kickstarter', section: 'Gen AI Kickstarter' }); } catch {}
+    setDone(true);
   };
 
   return (
@@ -306,7 +293,7 @@ export default function Kickstarter() {
           })}
         </div>
         <div style={{ textAlign: 'center', marginTop: 28 }}>
-          <button className="btn-primary" style={{ background: '#BA7517', minWidth: 200 }} onClick={() => downloadFile('/pdfs/1_updated_Menler AI Kickstarter Brochure_2026.pdf', 'Menler-Kickstarter-Curriculum.pdf')}>Download curriculum</button>
+          <button className="btn-primary" style={{ background: '#BA7517', minWidth: 200 }} onClick={openApply}>Download curriculum</button>
         </div>
       </section>
 
@@ -357,12 +344,12 @@ export default function Kickstarter() {
         <div className="mini-lead-inner">
           <div className="mini-lead-copy">
             <h3>Get the Kickstarter <em>brochure.</em></h3>
-            <p>Syllabus, schedule, fees & scholarships — verify your email and download it instantly.</p>
+            <p>Syllabus, schedule, fees & scholarships straight to your inbox.</p>
           </div>
           {done ? (
-            <div className="mini-lead-success">✓ Brochure downloading.</div>
+            <div className="mini-lead-success">✓ Brochure on its way.</div>
           ) : (
-            <form className="mini-lead-form" onSubmit={handleBrochure}>
+            <form className="mini-lead-form" onSubmit={handleSubmit}>
               <input type="email" required aria-label="Email address" placeholder="you@domain.com" value={form.email} onChange={e => set('email', e.target.value)} autoComplete="email" />
               <select required aria-label="You are" value={form.role} onChange={e => set('role', e.target.value)}>
                 <option value="">You are…</option>
@@ -372,7 +359,7 @@ export default function Kickstarter() {
                 <option>Founder / first AI hire</option>
                 <option>Parent or educator</option>
               </select>
-              <button type="submit">Verify & download</button>
+              <button type="submit">Send brochure</button>
             </form>
           )}
         </div>

@@ -4,7 +4,16 @@ import { verifyEmailOtp } from '../../lib/amplifeedOtp';
 import { suggestEmail } from '../../lib/emailHints';
 import { useToast } from '../common/Toast';
 
-export default function LeadForm({ defaultProgram = '' }) {
+// Default background options (full role list). Callers can pass their own via
+// the `backgroundOptions` prop, and hide the Program field with showProgram={false}.
+const DEFAULT_BACKGROUNDS = [
+  'Student', 'Founder', 'Business Owner', 'Analyst', 'Engineering', 'Finance',
+  "Founder's Office", 'Human Resources (HR)', 'Operations', 'Marketing & Sales',
+  'Product Management', 'Program Management', 'Strategy & Consulting', 'Other',
+];
+
+export default function LeadForm({ defaultProgram = '', showProgram = true, backgroundOptions }) {
+  const bgOptions = backgroundOptions && backgroundOptions.length ? backgroundOptions : DEFAULT_BACKGROUNDS;
   const toast = useToast();
   const [form, setForm] = useState({
     name: '', email: '', phone: '',
@@ -100,35 +109,24 @@ export default function LeadForm({ defaultProgram = '' }) {
         <label>Background</label>
         <select value={form.background} onChange={e => set('background', e.target.value)}>
           <option value="">Select…</option>
-          <option>Student</option>
-          <option>Founder</option>
-          <option>Business Owner</option>
-          <option>Analyst</option>
-          <option>Engineering</option>
-          <option>Finance</option>
-          <option>Founder's Office</option>
-          <option>Human Resources (HR)</option>
-          <option>Operations</option>
-          <option>Marketing &amp; Sales</option>
-          <option>Product Management</option>
-          <option>Program Management</option>
-          <option>Strategy &amp; Consulting</option>
-          <option>Other</option>
+          {bgOptions.map(opt => <option key={opt}>{opt}</option>)}
         </select>
         {form.background === 'Other' && (
           <input style={{ marginTop: 8 }} placeholder="Tell us your background" value={form.backgroundOther} onChange={e => set('backgroundOther', e.target.value)} />
         )}
       </div>
 
-      <div className="lf-field">
-        <label>Program</label>
-        <select value={form.program} onChange={e => set('program', e.target.value)}>
-          <option value="">Select…</option>
-          <option>Claude AI Generalist</option>
-          <option>Claude AI Engineering</option>
-          <option>Not sure yet — help me decide</option>
-        </select>
-      </div>
+      {showProgram && (
+        <div className="lf-field">
+          <label>Program</label>
+          <select value={form.program} onChange={e => set('program', e.target.value)}>
+            <option value="">Select…</option>
+            <option>Claude AI Generalist</option>
+            <option>Claude AI Engineering</option>
+            <option>Not sure yet — help me decide</option>
+          </select>
+        </div>
+      )}
 
       <label className="lf-consent">
         <input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} />
