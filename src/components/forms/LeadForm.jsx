@@ -46,8 +46,8 @@ export default function LeadForm({ defaultProgram = '', showProgram = true, back
   if (submitted) {
     return (
       <div className="lf-success">
-        <p style={{ fontFamily: "'DM Serif Display', serif", fontSize: 22, color: 'var(--ink)', marginBottom: 8 }}>Thank you.</p>
-        <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>Your interest is in. The Menler admissions team will reach out within 48 hours with your personalised next step.</p>
+        <p style={{ fontFamily: "'DM Serif Display', serif", fontSize: 22, color: 'var(--ink)', marginBottom: 8 }}>Application Received</p>
+        <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>You're one step closer to becoming AI-native. Expect a call from our admission team within 48 hours to discuss your aspirations and the next steps.</p>
       </div>
     );
   }
