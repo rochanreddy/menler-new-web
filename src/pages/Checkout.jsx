@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import MenlerWordmark from '../components/common/MenlerWordmark';
 import Seo from '../components/common/Seo';
@@ -21,6 +21,14 @@ export default function Checkout() {
   const [placing, setPlacing] = useState(false);
   const [placed, setPlaced] = useState(false);
   const [err, setErr] = useState(false);
+
+  // Guard: /checkout is only valid after registering on a campaign, which passes
+  // the verified registrant in router state. A direct URL visit has no state, so
+  // send them home instead of exposing an empty checkout that skips OTP.
+  useEffect(() => {
+    if (!reg.email) navigate('/', { replace: true });
+  }, [reg.email, navigate]);
+  if (!reg.email) return null;
 
   const toggle = (id) => setCart((prev) => {
     const n = new Set(prev);
