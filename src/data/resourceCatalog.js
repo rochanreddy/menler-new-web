@@ -17,9 +17,6 @@ export function brochurePdfForProgram(program) {
 
 export const CHECKOUT_CATALOG = [
   { id: 'prompt-library', title: 'Prompt Library', desc: '100+ tested prompts across business, engineering, and beginner tracks.', price: 499, pdf: '/pdfs/Menler_100_Prompts_Playbook.pdf' },
-  { id: 'ai-stack-map', title: 'AI stack map', desc: 'Visual guide to the best AI tools by category.', price: 399, pdf: '/pdfs/Menler_AI_Stack_Map.pdf' },
-  { id: 'connector-projects', title: 'Project connectors docs', desc: '10 hands-on project walkthroughs led by the program instructors.', price: 799, pdf: '/pdfs/Menler_Connector_Projects.pdf' },
-  { id: 'ai-glossary', title: 'AI glossary', desc: '100+ AI terms explained in simple, beginner-friendly language.', price: 299, pdf: '/pdfs/Menler_AI_Glossary_AtoZ.pdf' },
   { id: 'claude-code', title: 'Claude Code Playbook', desc: 'Build, refactor, and ship real code with Claude in your terminal and editor.', price: 499, pdf: '/pdfs/Menler_Claude_Code_Playbook.pdf' },
   { id: 'claude-chat', title: 'Claude Chat Playbook', desc: 'Everyday prompting — research, writing, analysis, and fast answers.', price: 499, pdf: '/pdfs/Menler_Claude_Chat_Playbook.pdf' },
   { id: 'claude-cowork', title: 'Claude Cowork Playbook', desc: 'Multi-document, multi-step work that turns raw inputs into finished deliverables.', price: 499, pdf: '/pdfs/Menler_Claude_Cowork_Playbook.pdf' },
