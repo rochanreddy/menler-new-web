@@ -397,7 +397,8 @@ export default function KickstarterLanding() {
                   >
                     <option value="" disabled hidden>Select background...</option>
                     <option value="student">Student</option>
-                    <option value="working professional">Working Professional</option>
+                    <option value="working professional (tech)">Working Professional (Tech)</option>
+                    <option value="working professional (non-tech)">Working Professional (Non-Tech)</option>
                     <option value="graduate">Graduate</option>
                     <option value="business owner">Business Owner</option>
                   </select>
