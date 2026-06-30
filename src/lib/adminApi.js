@@ -44,6 +44,11 @@ export const adminApi = {
   getLeads: (params) => api(`/admin/leads${qs(params)}`),
   getUsers: (params) => api(`/admin/users${qs(params)}`),
 
+  // Per-campaign Zoom links (admin-only; never shown on the public site).
+  getCampaigns: () => api('/admin/campaigns'),
+  saveCampaign: (slug, body) =>
+    api(`/admin/campaigns/${encodeURIComponent(slug)}`, { method: 'PUT', body }),
+
   /** Fetches a CSV with credentials and triggers a browser download. */
   async downloadCsv(kind, params = {}) {
     const path = kind === 'users' ? '/admin/users/export.csv' : '/admin/leads/export.csv';

@@ -4,6 +4,7 @@ import crypto from 'crypto';
 import { Lead } from '../models/Lead.js';
 import { User } from '../models/User.js';
 import { Profile } from '../models/Profile.js';
+import { CampaignSetting } from '../models/CampaignSetting.js';
 import { requireAdmin } from '../middleware/adminAuth.js';
 import {
   ADMIN_COOKIE_NAME,
@@ -304,6 +305,78 @@ router.get('/users/export.csv', requireAdmin, async (req, res) => {
   } catch (err) {
     console.error('admin users export error', err);
     res.status(500).json({ error: 'Could not export users.' });
+  }
+});
+
+/* ── Campaigns (per-campaign Zoom link — admin only) ─────────────────────── */
+
+// List every campaign the CRM might need a link for: those that have produced
+// leads (derived from extra.campaign) plus any saved settings. Zoom links live
+// only here and are never exposed to the public site.
+router.get('/campaigns', requireAdmin, async (_req, res) => {
+  try {
+    const [fromLeads, saved] = await Promise.all([
+      Lead.aggregate([
+        { $match: { 'extra.campaign': { $type: 'string', $ne: '' } } },
+        {
+          $group: {
+            _id: '$extra.campaign',
+            leads: { $sum: 1 },
+            title: { $last: '$extra.workshop' },
+            lastLeadAt: { $max: '$createdAt' },
+          },
+        },
+      ]),
+      CampaignSetting.find({}).lean(),
+    ]);
+
+    const map = new Map();
+    for (const c of fromLeads) {
+      map.set(c._id, { slug: c._id, title: c.title || '', zoomLink: '', leads: c.leads, lastLeadAt: c.lastLeadAt || null });
+    }
+    for (const s of saved) {
+      const prev = map.get(s.slug) || { slug: s.slug, title: '', zoomLink: '', leads: 0, lastLeadAt: null };
+      map.set(s.slug, { ...prev, title: s.title || prev.title, zoomLink: s.zoomLink || '' });
+    }
+
+    const rows = [...map.values()].sort((a, b) => {
+      const ta = a.lastLeadAt ? +new Date(a.lastLeadAt) : 0;
+      const tb = b.lastLeadAt ? +new Date(b.lastLeadAt) : 0;
+      return tb - ta || a.slug.localeCompare(b.slug);
+    });
+    res.json({ rows });
+  } catch (err) {
+    console.error('admin campaigns error', err);
+    res.status(500).json({ error: 'Could not load campaigns.' });
+  }
+});
+
+// Upsert a campaign's Zoom link (and optional title). Creates the setting row
+// even if the campaign has no leads yet, so the CRM can pre-set the link.
+router.put('/campaigns/:slug', requireAdmin, async (req, res) => {
+  try {
+    const slug = String(req.params.slug || '').trim();
+    if (!slug) return res.status(400).json({ error: 'A campaign slug is required.' });
+
+    const { zoomLink = '', title } = req.body || {};
+    const link = String(zoomLink).trim();
+    if (link && !/^https?:\/\//i.test(link)) {
+      return res.status(400).json({ error: 'Zoom link must start with http:// or https://' });
+    }
+
+    const update = { zoomLink: link };
+    if (typeof title === 'string') update.title = title.trim();
+
+    const doc = await CampaignSetting.findOneAndUpdate(
+      { slug },
+      { $set: update, $setOnInsert: { slug } },
+      { new: true, upsert: true },
+    ).lean();
+
+    res.json({ ok: true, campaign: { slug: doc.slug, title: doc.title || '', zoomLink: doc.zoomLink || '' } });
+  } catch (err) {
+    console.error('admin campaign save error', err);
+    res.status(500).json({ error: 'Could not save the campaign.' });
   }
 });
 

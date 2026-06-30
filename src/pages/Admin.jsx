@@ -472,12 +472,140 @@ function UsersTab() {
   );
 }
 
+/* ── Campaigns tab (per-campaign Zoom link — admin only) ─────────────────── */
+
+function CampaignsTab() {
+  const [rows, setRows] = useState([]);
+  const [drafts, setDrafts] = useState({}); // slug -> zoom link being edited
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [savingSlug, setSavingSlug] = useState('');
+  const [savedSlug, setSavedSlug] = useState('');
+  const [newSlug, setNewSlug] = useState('');
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const d = await adminApi.getCampaigns();
+      const list = d.rows || [];
+      setRows(list);
+      setDrafts(Object.fromEntries(list.map((r) => [r.slug, r.zoomLink || ''])));
+    } catch (e) {
+      setError(e.message || 'Could not load campaigns.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const save = async (slug) => {
+    setSavingSlug(slug);
+    setSavedSlug('');
+    setError('');
+    try {
+      await adminApi.saveCampaign(slug, { zoomLink: drafts[slug] || '' });
+      setRows((rs) => rs.map((r) => (r.slug === slug ? { ...r, zoomLink: drafts[slug] || '' } : r)));
+      setSavedSlug(slug);
+      setTimeout(() => setSavedSlug((s) => (s === slug ? '' : s)), 2000);
+    } catch (e) {
+      setError(e.message || 'Could not save the link.');
+    } finally {
+      setSavingSlug('');
+    }
+  };
+
+  const addCampaign = async (e) => {
+    e.preventDefault();
+    const slug = newSlug.trim();
+    if (!slug) return;
+    setError('');
+    setSavingSlug(slug);
+    try {
+      // Persist immediately so the campaign survives navigation / reload.
+      await adminApi.saveCampaign(slug, { zoomLink: drafts[slug] || '' });
+      setNewSlug('');
+      await load();
+    } catch (e2) {
+      setError(e2.message || 'Could not add the campaign — is the admin API running?');
+    } finally {
+      setSavingSlug('');
+    }
+  };
+
+  return (
+    <div>
+      <div className="admin-panel-card" style={{ marginBottom: 16 }}>
+        <p className="admin-card-title">Campaign Zoom links</p>
+        <p className="admin-empty" style={{ textAlign: 'left', margin: '0 0 12px' }}>
+          Set the Zoom / meeting link for each campaign. These are <b>internal only</b> — the link is never shown on the website. It is keyed by the campaign URL slug ({'menler.in/campaign/<slug>'}). Campaigns that have received registrations appear automatically; use the box below to add one before any leads arrive.
+        </p>
+        <form className="admin-toolbar" onSubmit={addCampaign}>
+          <input
+            className="admin-search"
+            placeholder="Add a campaign slug (e.g. claude-mastery-for-ai-native-careers)"
+            value={newSlug}
+            onChange={(e) => setNewSlug(e.target.value)}
+          />
+          <button className="admin-btn admin-btn--primary" type="submit">+ Add campaign</button>
+        </form>
+      </div>
+
+      {error && <p className="admin-empty">{error}</p>}
+
+      <div className="admin-table-wrap">
+        <table className="admin-table">
+          <thead>
+            <tr><th>Campaign (slug)</th><th>Leads</th><th>Zoom link</th><th /></tr>
+          </thead>
+          <tbody>
+            {loading && <tr><td colSpan={4} className="admin-empty">Loading…</td></tr>}
+            {!loading && rows.length === 0 && (
+              <tr><td colSpan={4} className="admin-empty">No campaigns yet.</td></tr>
+            )}
+            {!loading && rows.map((r) => (
+              <tr key={r.slug}>
+                <td>
+                  <strong>{r.slug}</strong>
+                  {r.title && <div className="admin-muted">{r.title}</div>}
+                </td>
+                <td className="admin-muted">{r.leads || 0}</td>
+                <td>
+                  <input
+                    className="admin-search"
+                    style={{ minWidth: 280, width: '100%' }}
+                    type="url"
+                    placeholder="https://zoom.us/j/…"
+                    value={drafts[r.slug] ?? ''}
+                    onChange={(e) => setDrafts((d) => ({ ...d, [r.slug]: e.target.value }))}
+                  />
+                </td>
+                <td>
+                  <button
+                    className="admin-btn admin-btn--primary"
+                    disabled={savingSlug === r.slug}
+                    onClick={() => save(r.slug)}
+                  >
+                    {savingSlug === r.slug ? 'Saving…' : savedSlug === r.slug ? 'Saved ✓' : 'Save'}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 /* ── Shell ───────────────────────────────────────────────────────────────── */
 
 const TABS = [
   { key: 'overview', label: 'Overview' },
   { key: 'leads', label: 'Leads' },
   { key: 'users', label: 'Users' },
+  { key: 'campaigns', label: 'Campaigns' },
 ];
 
 function AdminPanel({ onLogout }) {
@@ -508,6 +636,7 @@ function AdminPanel({ onLogout }) {
         {tab === 'overview' && <Overview />}
         {tab === 'leads' && <LeadsTab />}
         {tab === 'users' && <UsersTab />}
+        {tab === 'campaigns' && <CampaignsTab />}
       </main>
     </div>
   );
