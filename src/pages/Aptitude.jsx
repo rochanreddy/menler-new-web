@@ -253,7 +253,7 @@ export default function Aptitude() {
               <p className="apt-modal-sub">Your progress won't be saved — you'll have to start this test again.</p>
               <div className="apt-confirm-actions">
                 <button className="apt-confirm-cancel" onClick={() => setExitConfirm(false)}>Cancel</button>
-                <button className="apt-confirm-exit" onClick={() => { setExitConfirm(false); dispatch({ type: 'TO_CLUSTERS' }); }}>Exit test</button>
+                <button className="apt-confirm-exit" onClick={() => { setExitConfirm(false); dispatch({ type: 'TO_CLUSTERS' }); }}>Exit Test</button>
               </div>
             </div>
           </div>
@@ -281,7 +281,7 @@ export default function Aptitude() {
             </div>
             <div className="runner-actions">
               {state.idx === total - 1
-                ? <button className="runner-btn runner-btn-next" onClick={() => dispatch({ type: 'SUBMIT' })}>Submit test</button>
+                ? <button className="runner-btn runner-btn-next" onClick={() => dispatch({ type: 'SUBMIT' })}>Submit Test</button>
                 : <button className="runner-btn runner-btn-next" onClick={() => dispatch({ type: 'NEXT' })}>Next →</button>}
               <p className="runner-hint">Tip: press <kbd>1</kbd>–<kbd>{q.options.length}</kbd> to choose · <kbd>Enter</kbd> for next</p>
               <div className="runner-actions-row">
@@ -312,7 +312,7 @@ export default function Aptitude() {
               <span><i className="lg mark" /> Marked · {markedCount}</span>
               <span><i className="lg todo" /> Left · {total - answeredCount}</span>
             </div>
-            <button className="runner-submit" onClick={() => dispatch({ type: 'SUBMIT' })}>Submit test</button>
+            <button className="runner-submit" onClick={() => dispatch({ type: 'SUBMIT' })}>Submit Test</button>
             <p className="runner-nav-note">Answers save as you go. Mark any question to revisit it before you submit.</p>
           </aside>
         </div>
@@ -344,7 +344,7 @@ export default function Aptitude() {
                 <input type="text" required placeholder="Your name" value={gateForm.name} onChange={e => setG('name', e.target.value)} />
                 <input type="email" required placeholder="you@email.com" value={gateForm.email} onChange={e => setG('email', e.target.value)} />
                 <input type="tel" placeholder="Phone number (optional)" value={gateForm.phone} onChange={e => setG('phone', e.target.value)} />
-                <button type="submit" disabled={gateBusy}>{gateBusy ? 'Verifying…' : 'Verify & see my score'}</button>
+                <button type="submit" disabled={gateBusy}>{gateBusy ? 'Verifying…' : 'Verify & See My Score'}</button>
               </div>
               {gateErr && <p className="apt-gate-err">{gateErr}</p>}
             </form>
@@ -366,7 +366,7 @@ export default function Aptitude() {
             {/* Answer sheet — simple reveal (email already verified at the gate) */}
             <div className="apt-answers">
               {!sheetUnlocked && (
-                <button type="button" className="apt-answers-toggle" onClick={() => setSheetUnlocked(true)}>View answer sheet</button>
+                <button type="button" className="apt-answers-toggle" onClick={() => setSheetUnlocked(true)}>View Answer Sheet</button>
               )}
               {sheetUnlocked && (
               <div className="apt-answers-body">
@@ -454,8 +454,8 @@ export default function Aptitude() {
             </div>
 
             <div className="apt-report-actions">
-              <button className="runner-btn" onClick={() => dispatch({ type: 'RETAKE' })}>Retake this set</button>
-              <button className="runner-btn" onClick={() => dispatch({ type: 'TO_CLUSTERS' })}>Choose another cluster</button>
+              <button className="runner-btn" onClick={() => dispatch({ type: 'RETAKE' })}>Retake This Set</button>
+              <button className="runner-btn" onClick={() => dispatch({ type: 'TO_CLUSTERS' })}>Choose Another Cluster</button>
             </div>
             </>
             )}
@@ -495,7 +495,7 @@ export default function Aptitude() {
               <div key={i} className="cluster-card">
                 <p className="cluster-name">Set {i + 1} · {s.label}</p>
                 <p className="cluster-sets">15 questions · ~15 min</p>
-                <button className="cluster-btn" onClick={s.start}>Start test</button>
+                <button className="cluster-btn" onClick={s.start}>Start Test</button>
               </div>
             ))}
           </div>
@@ -548,7 +548,7 @@ export default function Aptitude() {
           <p className="apt-eyebrow">Free · No signup to start</p>
           <h1 className="apt-h1">Where do you stand<br /><em>on the AI Curve?</em></h1>
           <p className="apt-sub">A 15 question AI Aptitude Test designed to assess your AI readiness<br />and recommend the most relevant learning pathway for your goals.</p>
-          <button className="apt-cta-big" onClick={() => setDomainOpen(true)}>Start the test</button>
+          <button className="apt-cta-big" onClick={() => setDomainOpen(true)}>Start the Test</button>
         </div>
       </section>
 
@@ -602,7 +602,7 @@ export default function Aptitude() {
               <span className="cluster-num">{String(i + 1).padStart(2, '0')}</span>
               <p className="cluster-name">{d.name}</p>
               <p className="cluster-sets">15 questions · ~15 min</p>
-              <button className="cluster-btn" onClick={() => openDomainSets(d)}>Take test</button>
+              <button className="cluster-btn" onClick={() => openDomainSets(d)}>Take Test</button>
             </div>
           ))}
         </div>

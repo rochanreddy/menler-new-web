@@ -148,7 +148,7 @@ export default function SignUp() {
 
         <div className="auth-footer">
           Already have an account?{' '}
-          <button className="auth-link" onClick={() => navigate('/login')}>Log in</button>
+          <button className="auth-link" onClick={() => navigate('/login')}>Log In</button>
         </div>
       </div>
     </div>

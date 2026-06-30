@@ -47,23 +47,17 @@ export function loadOtpProvider() {
 }
 
 // Convenience: verify an EMAIL via OTP and return the CRM fields to spread onto
-// the lead payload. Used by the general site forms (the webinar uses phone/SMS).
+// the lead payload. The site uses email verification only — there is no SMS /
+// mobile OTP path.
 export async function verifyEmailOtp(email) {
   await loadOtpProvider();
   const token = await sendOtp(email);
   return { otp_token: token, otp_channel: 'email', otp_identifier: email };
 }
 
-// Convenience: verify a PHONE (E.164, e.g. +919876543210) via SMS OTP.
-export async function verifyPhoneOtp(phoneE164) {
-  await loadOtpProvider();
-  const token = await sendOtp(phoneE164);
-  return { otp_token: token, otp_channel: 'sms', otp_identifier: phoneE164 };
-}
-
-// Send an OTP to `identifier` (an email address for email OTP, or a full phone
-// number with country code for SMS). Resolves with the verified token once the
-// user enters the correct code in the provider's UI; rejects on failure/cancel.
+// Send an OTP to `identifier` (an email address). Resolves with the verified
+// token once the user enters the correct code in the provider's UI; rejects on
+// failure/cancel.
 export function sendOtp(identifier) {
   return new Promise((resolve, reject) => {
     const init = getInit();

@@ -49,7 +49,7 @@ export default function ForgotPassword() {
               <span className="otp-email-highlight">{email}</span>.{' '}
               Check your spam folder if you don't see it within a few minutes.
             </p>
-            <button className="auth-btn" onClick={() => navigate('/login')}>Back to log in</button>
+            <button className="auth-btn" onClick={() => navigate('/login')}>Back to Log In</button>
           </div>
         ) : (
           <>
@@ -84,7 +84,7 @@ export default function ForgotPassword() {
             </form>
 
             <div className="auth-footer">
-              <button className="auth-link" onClick={() => navigate('/login')}>Back to log in</button>
+              <button className="auth-link" onClick={() => navigate('/login')}>Back to Log In</button>
             </div>
           </>
         )}

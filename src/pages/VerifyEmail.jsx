@@ -92,12 +92,12 @@ export default function VerifyEmail() {
           {resendTimer > 0 ? (
             <>Resend code in <strong>{resendTimer}s</strong></>
           ) : (
-            <button className="auth-link" onClick={handleResend}>Resend code</button>
+            <button className="auth-link" onClick={handleResend}>Resend Code</button>
           )}
         </div>
 
         <div className="auth-footer">
-          <button className="auth-link" onClick={() => navigate('/signup')}>Back to sign up</button>
+          <button className="auth-link" onClick={() => navigate('/signup')}>Back to Sign Up</button>
         </div>
       </div>
     </div>

@@ -124,7 +124,7 @@ export default function Login() {
 
         <div className="auth-footer">
           Don't have an account?{' '}
-          <button className="auth-link" onClick={() => navigate('/signup')}>Sign up</button>
+          <button className="auth-link" onClick={() => navigate('/signup')}>Sign Up</button>
         </div>
       </div>
     </div>

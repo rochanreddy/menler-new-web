@@ -6,11 +6,11 @@ import Footer from '../components/layout/Footer';
 import Seo from '../components/common/Seo';
 import MentorsRail from '../components/common/MentorsRail';
 import ProjectModal from '../components/common/ProjectModal';
+import PlaybookModal from '../components/common/PlaybookModal';
 import { useApply } from '../components/common/ApplyContext';
 import HiringJobs from '../components/common/HiringJobs';
 import PricingCard from '../components/common/PricingCard';
 import { useContent } from '../lib/useContent';
-import { downloadFile } from '../lib/download';
 import { GENERALIST_FAQS } from '../data/faqData';
 import { verifyAndDownloadBrochure } from '../lib/brochure';
 
@@ -237,6 +237,8 @@ export default function Generalist() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', track: '' });
   const [done, setDone] = useState(false);
   const [activeProject, setActiveProject] = useState(null);
+  // Download Curriculum → gated lead form (email OTP) that downloads the PDF.
+  const [curricItem, setCurricItem] = useState(null);
   const [activePhase, setActivePhase] = useState(0);
   const [activeDomain, setActiveDomain] = useState(0);
   const [domainWeek, setDomainWeek] = useState(0);
@@ -451,7 +453,7 @@ export default function Generalist() {
           })}
         </div>
         <div style={{ textAlign: 'center', marginTop: 28 }}>
-          <button className="btn-primary" onClick={() => downloadFile('/pdfs/Menler_Claude_Gen_brochure.pdf', 'Menler-Generalist-Curriculum.pdf')}>Download Curriculum</button>
+          <button className="btn-primary" onClick={() => setCurricItem({ title: 'AI Generalist Curriculum', pdf: '/pdfs/Menler_Claude_Gen_brochure.pdf', badge: 'Curriculum', desc: 'Full 10-week syllabus, phases, domains, projects and outcomes for the Generalist Fellowship.', source: 'curriculum-download', section: 'Generalist Curriculum' })}>Download Curriculum</button>
         </div>
       </section>
 
@@ -493,7 +495,7 @@ export default function Generalist() {
                 <option>Business owner — custom</option>
                 <option>Not sure yet</option>
               </select>
-              <button type="submit">Verify & download</button>
+              <button type="submit">Verify & Download</button>
             </form>
           )}
         </div>
@@ -517,7 +519,7 @@ export default function Generalist() {
           onCta={openApply}
         />
         <div style={{ textAlign: 'center', marginTop: 56 }}>
-          <button className="btn-primary" style={{ minWidth: 220 }} onClick={openApply}>Book a call</button>
+          <button className="btn-primary" style={{ minWidth: 220 }} onClick={openApply}>Book a Call</button>
         </div>
       </section>
 
@@ -539,6 +541,7 @@ export default function Generalist() {
       <Footer />
 
       <ProjectModal project={activeProject} onClose={() => setActiveProject(null)} />
+      <PlaybookModal item={curricItem} onClose={() => setCurricItem(null)} />
     </>
   );
 }

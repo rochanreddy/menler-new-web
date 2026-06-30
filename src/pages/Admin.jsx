@@ -501,7 +501,7 @@ function AdminPanel({ onLogout }) {
             </button>
           ))}
         </nav>
-        <button className="admin-btn admin-logout" onClick={onLogout}>Log out</button>
+        <button className="admin-btn admin-logout" onClick={onLogout}>Log Out</button>
       </header>
 
       <main className="admin-main">

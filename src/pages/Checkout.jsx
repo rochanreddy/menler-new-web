@@ -12,7 +12,7 @@ export default function Checkout() {
   const navigate = useNavigate();
   const { state } = useLocation();
   const reg = state || {};
-  const workshopTitle = reg.workshop || 'Menler Workshop';
+  const workshopTitle = reg.workshop || 'Menler Masterclass';
 
   const catalog = CHECKOUT_CATALOG;
   const goTo = (p) => { navigate(p); window.scrollTo(0, 0); };
@@ -110,7 +110,7 @@ export default function Checkout() {
             <button className="lp2-apt-btn" onClick={() => goTo('/aptitude')}>Take the Aptitude Test →</button>
           </div>
 
-          <button type="button" className="cox-confirm-back" onClick={() => navigate('/')}>Back to home</button>
+          <button type="button" className="cox-confirm-back" onClick={() => navigate('/')}>Back to Home</button>
         </div>
       </div>
     );
@@ -177,7 +177,7 @@ export default function Checkout() {
 
           <div className="cox-items">
             <div className="cox-row">
-              <div><p className="cox-row-t">{workshopTitle}</p><p className="cox-row-d">Live workshop seat</p></div>
+              <div><p className="cox-row-t">{workshopTitle}</p><p className="cox-row-d">Live masterclass seat</p></div>
               <span className="cox-row-amt">Free</span>
             </div>
             {addedItems.map((i) => (
@@ -193,7 +193,7 @@ export default function Checkout() {
           <div className="cox-total"><span>Total</span><span>₹{total}</span></div>
 
           <button className="cox-complete" onClick={pay} disabled={placing}>
-            {placing ? 'Processing…' : 'Complete registration'}
+            {placing ? 'Processing…' : 'Complete Registration'}
           </button>
           {err && <p className="cox-err">Something went wrong — please try again.</p>}
         </div>

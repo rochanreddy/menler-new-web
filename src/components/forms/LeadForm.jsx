@@ -134,7 +134,7 @@ export default function LeadForm({ defaultProgram = '', showProgram = true, back
       </label>
 
       <button className="lf-submit" type="submit" disabled={loading || !consent}>
-        {loading ? 'Submitting…' : 'Express interest'}
+        {loading ? 'Submitting…' : 'Express Interest'}
       </button>
     </form>
   );

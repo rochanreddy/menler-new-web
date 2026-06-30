@@ -311,7 +311,7 @@ export default function Home() {
           </div>
         </div>
         <div style={{ textAlign: 'center', marginTop: 16 }}>
-          <button className="prog-card-cta" style={{ background: 'var(--ink)', color: '#fff', minWidth: 200, '--beam': '#26215C', '--beam-hot': '#AFA9EC' }} onClick={() => setShowApply(true)}>Book a call</button>
+          <button className="prog-card-cta" style={{ background: 'var(--ink)', color: '#fff', minWidth: 200, '--beam': '#26215C', '--beam-hot': '#AFA9EC' }} onClick={() => setShowApply(true)}>Book a Call</button>
         </div>
       </section>
 
@@ -386,7 +386,7 @@ export default function Home() {
                 <option>Engineering</option>
                 <option>Not sure</option>
               </select>
-              <button type="submit">Verify & download</button>
+              <button type="submit">Verify & Download</button>
             </form>
           )}
         </div>
@@ -440,7 +440,7 @@ export default function Home() {
           <HiringRail companies={HIRING_COMPANIES} rows={2} />
         </div>
         <div style={{ textAlign: 'center', marginTop: 32 }}>
-          <button className="prog-card-cta" style={{ background: 'var(--ink)', color: '#fff', minWidth: 200, '--beam': '#26215C', '--beam-hot': '#AFA9EC' }} onClick={() => setShowApply(true)}>Book a call</button>
+          <button className="prog-card-cta" style={{ background: 'var(--ink)', color: '#fff', minWidth: 200, '--beam': '#26215C', '--beam-hot': '#AFA9EC' }} onClick={() => setShowApply(true)}>Book a Call</button>
         </div>
       </section>
 

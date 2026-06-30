@@ -23,7 +23,7 @@ const WORKSHOP = {
     line2: 'AI Agent',
     tagline: 'Go from zero to a working agent — live in 2 hours.',
   },
-  subtitle: 'A hands-on workshop where you go from zero to a working AI agent — no coding, no jargon. Walk away with something real you built yourself.',
+  subtitle: 'A hands-on masterclass where you go from zero to a working AI agent — no coding, no jargon. Walk away with something real you built yourself.',
   date: 'Saturday, 12 July 2026',
   time: '5:00 – 7:00 PM IST',
   format: 'Live online · Recording provided',
@@ -59,7 +59,7 @@ const FORYOU = [
 
 const GET = [
   { t: 'A real AI agent you built', d: 'Not a demo — a working build that’s yours to keep.' },
-  { t: 'Workshop recording', d: 'Rewatch anytime, follow at your own pace.' },
+  { t: 'Masterclass recording', d: 'Rewatch anytime, follow at your own pace.' },
   { t: 'Prompt & tool starter pack', d: 'Templates and resources to keep building after.' },
   { t: 'Certificate of participation', d: 'LinkedIn-shareable proof of hands-on AI work.' },
   { t: 'Live Q&A with the mentor', d: 'Ask anything and get unstuck in real time.' },
@@ -213,7 +213,7 @@ export default function KickstarterLanding() {
 
   return (
     <div className="lp2" style={themeStyle}>
-      <Seo title={`${heading} | Menler Workshop`} description={d.subtitle} noindex />
+      <Seo title={`${heading} | Menler Masterclass`} description={d.subtitle} noindex />
 
       {/* Minimal top bar */}
       <header className="lp2-top">
@@ -402,7 +402,7 @@ export default function KickstarterLanding() {
                     <option value="business owner">Business Owner</option>
                   </select>
                   <button className="lp2-submit" type="submit" disabled={busy || otpBusy}>
-                    {otpBusy ? 'Sending OTP…' : busy ? 'Registering…' : 'Verify to register'}
+                    {otpBusy ? 'Sending OTP…' : busy ? 'Registering…' : 'Verify to Register'}
                   </button>
                   {err && <p className="lp2-err">{typeof err === 'string' ? err : "Couldn't register — please try again."}</p>}
                 </form>

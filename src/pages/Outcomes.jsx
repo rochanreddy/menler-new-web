@@ -175,7 +175,7 @@ export default function Outcomes() {
         badge="Cohort 01 enrolling"
         title="Your story belongs on this page."
         subtitle="One application stands between you and a different next year."
-        buttonText="Sign up"
+        buttonText="Sign Up"
         onButtonClick={openApply}
       />
 

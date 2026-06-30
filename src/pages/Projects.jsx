@@ -49,7 +49,7 @@ export default function Projects() {
           <h2 className="section-h2">Project not found</h2>
           <p className="section-sub">That project doesn’t exist or has moved.</p>
           <div style={{ marginTop: 24 }}>
-            <button className="btn-primary" onClick={() => go('/')}>Back to home</button>
+            <button className="btn-primary" onClick={() => go('/')}>Back to Home</button>
           </div>
         </section>
         <Footer />
@@ -174,7 +174,7 @@ export default function Projects() {
         badge="Applications open · Limited seats per program"
         title="Want to build this?"
         subtitle="Menler fellows ship systems like this in 12 weeks."
-        buttonText="Explore the programs"
+        buttonText="Explore the Programs"
         onButtonClick={() => go('/#programs')}
       />
 

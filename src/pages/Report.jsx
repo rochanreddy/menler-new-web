@@ -95,7 +95,7 @@ export default function Report() {
           </div>
 
           <div className="apt-report-actions">
-            <button className="runner-btn" onClick={() => go('/aptitude')}>Take the test yourself</button>
+            <button className="runner-btn" onClick={() => go('/aptitude')}>Take the Test Yourself</button>
           </div>
         </div>
       </section>

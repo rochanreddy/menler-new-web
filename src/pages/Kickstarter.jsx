@@ -6,13 +6,13 @@ import Footer from '../components/layout/Footer';
 import Seo from '../components/common/Seo';
 import MentorsRail from '../components/common/MentorsRail';
 import ProjectModal from '../components/common/ProjectModal';
+import PlaybookModal from '../components/common/PlaybookModal';
 import { useApply } from '../components/common/ApplyContext';
 import HiringJobs from '../components/common/HiringJobs';
 import PricingCard from '../components/common/PricingCard';
 import { useContent } from '../lib/useContent';
 import { KICKSTARTER_FAQS } from '../data/faqData';
 import { submitLead } from '../services/leadService';
-import { downloadFile } from '../lib/download';
 
 // Curriculum PDF served by the "Download curriculum" button (no verification).
 const KS_CURRICULUM_PDF = '/pdfs/Menler_AI_Kickstarter_Curriculum.pdf';
@@ -153,6 +153,8 @@ export default function Kickstarter() {
   const [done, setDone] = useState(false);
   const [activeProject, setActiveProject] = useState(null);
   const [activeModule, setActiveModule] = useState(0);
+  // Download Curriculum → gated lead form (email OTP) that downloads the PDF.
+  const [curricItem, setCurricItem] = useState(null);
   const moduleDetailRef = useRef(null);
   const openApply = useApply();
   // Kickstarter enrolment form: only name/email/phone/background, no Program.
@@ -302,7 +304,7 @@ export default function Kickstarter() {
           })}
         </div>
         <div style={{ textAlign: 'center', marginTop: 28 }}>
-          <button className="btn-primary" style={{ background: '#BA7517', minWidth: 200 }} onClick={() => downloadFile(KS_CURRICULUM_PDF, 'Menler AI Kickstarter Curriculum.pdf')}>Download curriculum</button>
+          <button className="btn-primary" style={{ background: '#BA7517', minWidth: 200 }} onClick={() => setCurricItem({ title: 'AI Kickstarter Curriculum', pdf: KS_CURRICULUM_PDF, badge: 'Curriculum', desc: 'Syllabus, schedule, projects, tools and outcomes for the 14-day Kickstarter.', source: 'curriculum-download', section: 'Kickstarter Curriculum' })}>Download Curriculum</button>
         </div>
       </section>
 
@@ -368,7 +370,7 @@ export default function Kickstarter() {
                 <option>Founder / first AI hire</option>
                 <option>Parent or educator</option>
               </select>
-              <button type="submit">Send brochure</button>
+              <button type="submit">Send Brochure</button>
             </form>
           )}
         </div>
@@ -388,12 +390,12 @@ export default function Kickstarter() {
 
         <PricingCard
           {...ksPricing}
-          ctaLabel="Enroll now"
+          ctaLabel="Enroll Now"
           description={<>Build your AI foundation in just two weekends.<span className="kp-desc-line2">Learn AI fundamentals, build real workflows, and ship your first projects.</span></>}
           onCta={openKickstarterLead}
         />
         <div style={{ textAlign: 'center', marginTop: 56 }}>
-          <button className="btn-primary" style={{ background: '#BA7517', minWidth: 200 }} onClick={openKickstarterLead}>Book a call</button>
+          <button className="btn-primary" style={{ background: '#BA7517', minWidth: 200 }} onClick={openKickstarterLead}>Book a Call</button>
         </div>
       </section>
 
@@ -435,6 +437,7 @@ export default function Kickstarter() {
       <Footer />
 
       <ProjectModal project={activeProject} onClose={() => setActiveProject(null)} />
+      <PlaybookModal item={curricItem} onClose={() => setCurricItem(null)} />
     </>
   );
 }

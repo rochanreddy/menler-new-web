@@ -15,7 +15,9 @@ const AF = {
   tokenAuth: import.meta.env.VITE_AMPLIFEED_TOKEN_AUTH || '517767Ts6KDsui6a3bef4eP1',
 };
 
-export default function AmplifeedOtpForm({ channels = 'email', fields = 'name,email,phone,company,message', onSuccess, verifyLabel }) {
+// Email verification only — the widget is always loaded with the email channel.
+export default function AmplifeedOtpForm({ fields = 'name,email,phone,company,message', onSuccess, verifyLabel }) {
+  const channels = 'email';
   const ready = AF.sourceKey && AF.secret && AF.widgetId && AF.tokenAuth;
   const leadRef = useRef({});
   const firedRef = useRef(false);

@@ -135,7 +135,7 @@ export default function Dashboard() {
               </h1>
               <p className="dash-welcome-sub">Keep your details up to date.</p>
             </div>
-            <button className="dash-logout" onClick={handleLogout}>Log out</button>
+            <button className="dash-logout" onClick={handleLogout}>Log Out</button>
           </div>
 
           {/* ── PROFILE CARD ── */}

@@ -228,7 +228,7 @@ export default function Resources() {
           ) : (
             <form className="mini-lead-form" onSubmit={handleNewsletter}>
               <input type="email" required placeholder="you@domain.com" value={email} onChange={e => setEmail(e.target.value)} autoComplete="email" />
-              <button type="submit">Subscribe to the weekly drop</button>
+              <button type="submit">Subscribe to the Weekly Drop</button>
             </form>
           )}
         </div>

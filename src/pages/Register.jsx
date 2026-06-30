@@ -108,7 +108,7 @@ function SignUpForm({ onSwitch }) {
 
       <div className="auth-footer">
         Already have an account?{' '}
-        <button className="auth-link" onClick={onSwitch}>Log in</button>
+        <button className="auth-link" onClick={onSwitch}>Log In</button>
       </div>
     </>
   );
@@ -157,7 +157,7 @@ function LoginForm({ onSwitch }) {
           </div>
         </div>
         <div className="auth-forgot">
-          <button type="button" className="auth-link" onClick={() => navigate('/forgot-password')}>Forgot password?</button>
+          <button type="button" className="auth-link" onClick={() => navigate('/forgot-password')}>Forgot Password?</button>
         </div>
         <button type="submit" className="auth-btn" disabled={loading}>
           {loading ? 'Logging in…' : 'Log in'}
@@ -169,7 +169,7 @@ function LoginForm({ onSwitch }) {
 
       <div className="auth-footer">
         Don't have an account?{' '}
-        <button className="auth-link" onClick={onSwitch}>Create one</button>
+        <button className="auth-link" onClick={onSwitch}>Create One</button>
       </div>
     </>
   );

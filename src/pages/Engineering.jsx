@@ -123,7 +123,7 @@ export default function Engineering() {
           <div className="curric-detail curric-soon">
             <p className="curric-soon-title">Coming Soon</p>
             <p className="curric-soon-sub" style={{ maxWidth: 'none' }}>The full phase-by-phase curriculum breakdown drops soon.<br />Join the waitlist to get it first.</p>
-            <button className="btn-primary" style={{ background: '#1D9E75' }} onClick={openApply}>Join the waitlist</button>
+            <button className="btn-primary" style={{ background: '#1D9E75' }} onClick={openApply}>Join the Waitlist</button>
           </div>
         </div>
       </section>
@@ -156,7 +156,7 @@ export default function Engineering() {
                 <option>Deep tech / systems engineer</option>
                 <option>Final-year CS / engineering student</option>
               </select>
-              <button type="submit">Verify & download</button>
+              <button type="submit">Verify & Download</button>
             </form>
           )}
         </div>
