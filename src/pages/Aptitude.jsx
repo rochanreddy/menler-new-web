@@ -204,6 +204,8 @@ export default function Aptitude() {
     e.preventDefault();
     setGateErr(''); setGateBusy(true);
     try {
+      // Verify the email via OTP before revealing the score & report.
+      await verifyEmailOtp(gateForm.email.trim());
       const score = calcScore(state.answers, state.questions);
       const maxScore = maxScoreForQuestions(state.questions);
       const dims = buildDimensions(state.questions.length).map(d => {
@@ -226,23 +228,9 @@ export default function Aptitude() {
     }
   };
 
-  // Answer sheet is gated behind verification. Email OTP for now (using the
-  // email already captured at the score gate); switch to phone verification
-  // (verifyPhoneOtp on gateForm.phone) once SMS verification is confirmed.
+  // Answer sheet — revealed with a simple toggle. No verification here: the
+  // email was already verified at the score gate above.
   const [sheetUnlocked, setSheetUnlocked] = useState(false);
-  const [sheetBusy, setSheetBusy] = useState(false);
-  const [sheetErr, setSheetErr] = useState('');
-  const unlockSheet = async () => {
-    setSheetErr(''); setSheetBusy(true);
-    try {
-      await verifyEmailOtp(gateForm.email.trim());
-      setSheetUnlocked(true);
-    } catch (err) {
-      setSheetErr(err?.message || 'Verification failed — please try again.');
-    } finally {
-      setSheetBusy(false);
-    }
-  };
 
   // ── QUIZ RUNNER ──
   if (state.view === 'runner') {
@@ -351,12 +339,12 @@ export default function Aptitude() {
           <div className="runner-shell apt-report">
             {!reportUnlocked ? (
             <form className="apt-lead" onSubmit={submitGate}>
-              <p className="apt-lead-label">Enter your details to see your score &amp; full report</p>
+              <p className="apt-lead-label">Verify your email to see your score &amp; full report</p>
               <div className="apt-lead-row apt-lead-row--col">
                 <input type="text" required placeholder="Your name" value={gateForm.name} onChange={e => setG('name', e.target.value)} />
                 <input type="email" required placeholder="you@email.com" value={gateForm.email} onChange={e => setG('email', e.target.value)} />
                 <input type="tel" required placeholder="Phone number" value={gateForm.phone} onChange={e => setG('phone', e.target.value)} />
-                <button type="submit" disabled={gateBusy}>{gateBusy ? 'Submitting…' : 'See my score'}</button>
+                <button type="submit" disabled={gateBusy}>{gateBusy ? 'Verifying…' : 'Verify & see my score'}</button>
               </div>
               {gateErr && <p className="apt-gate-err">{gateErr}</p>}
             </form>
@@ -375,13 +363,10 @@ export default function Aptitude() {
               ))}
             </div>
 
-            {/* Answer sheet — gated behind OTP verification */}
+            {/* Answer sheet — simple reveal (email already verified at the gate) */}
             <div className="apt-answers">
               {!sheetUnlocked && (
-                <>
-                  <button type="button" className="apt-answers-toggle" disabled={sheetBusy} onClick={unlockSheet}>{sheetBusy ? 'Verifying…' : 'Verify & view answer sheet'}</button>
-                  {sheetErr && <p className="apt-gate-err" style={{ marginTop: 8 }}>{sheetErr}</p>}
-                </>
+                <button type="button" className="apt-answers-toggle" onClick={() => setSheetUnlocked(true)}>View answer sheet</button>
               )}
               {sheetUnlocked && (
               <div className="apt-answers-body">
