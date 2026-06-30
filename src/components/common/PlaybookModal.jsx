@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { submitLead } from '../../services/leadService';
 import { verifyEmailOtp } from '../../lib/amplifeedOtp';
+import { getVerifiedLead, saveVerifiedLead } from '../../lib/verifiedSession';
 import { downloadFile } from '../../lib/download';
 import PdfView from './PdfView';
 
@@ -54,6 +55,14 @@ export default function PlaybookModal({ item, onClose }) {
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
+  // Already verified earlier this session → skip the form + OTP entirely.
+  const verified = getVerifiedLead();
+
+  const recordAndDownload = (lead) => {
+    downloadFile(item.pdf, `${item.title}.pdf`);
+    submitLead({ ...lead, resource: item.title, pdf: item.pdf, source: item.source || 'playbook-download', cta_label: `Download: ${item.title}`, section: item.section || item.badge || item.cat || 'Playbook' }).catch(() => {});
+  };
+
   // Verify the email via OTP, then download the PDF on-site. The lead is
   // recorded in the background so the download always happens once verified.
   const handleSubmit = async (e) => {
@@ -62,14 +71,30 @@ export default function PlaybookModal({ item, onClose }) {
     setSubmitting(true);
     try {
       const otp = await verifyEmailOtp(form.email.trim());
-      downloadFile(item.pdf, `${item.title}.pdf`);
-      submitLead({ ...form, ...otp, resource: item.title, pdf: item.pdf, source: item.source || 'playbook-download', cta_label: `Download: ${item.title}`, section: item.section || item.badge || item.cat || 'Playbook' }).catch(() => {});
+      // Remember the verified visitor so later PDFs skip verification.
+      saveVerifiedLead({ name: form.name, email: form.email.trim(), phone: form.phone });
+      recordAndDownload({ ...form, ...otp });
       setDone(true);
     } catch {
       setErr(true);
     } finally {
       setSubmitting(false);
     }
+  };
+
+  // One-click download for an already-verified visitor (no form, no OTP).
+  const directDownload = () => {
+    setSubmitting(true);
+    recordAndDownload({
+      name: verified?.name || '',
+      email: verified?.email || '',
+      phone: verified?.phone || '',
+      otp_token: verified?.otp_token,
+      otp_channel: verified?.otp_channel || 'email',
+      otp_identifier: verified?.otp_identifier || verified?.email || '',
+    });
+    setSubmitting(false);
+    setDone(true);
   };
 
   return (
@@ -100,6 +125,16 @@ export default function PlaybookModal({ item, onClose }) {
                 <button type="button" onClick={() => downloadFile(item.pdf, `${item.title}.pdf`)} style={{ background: 'none', border: 'none', padding: 0, color: 'var(--specialist, #5a3fd6)', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>Download Again</button>.
               </p>
             </div>
+          ) : verified ? (
+            <>
+              <span className="pb-modal-badge">{item.badge}</span>
+              <h3 className="pb-modal-title">{item.title}</h3>
+              <p className="pb-modal-sub">{item.desc}</p>
+              <button type="button" className="pb-modal-btn" onClick={directDownload} disabled={submitting || !item.pdf}>
+                {submitting ? 'Downloading…' : item.pdf ? 'Download' : 'Coming soon'}
+              </button>
+              <p className="lf-fineprint">You're already verified — your download starts instantly.</p>
+            </>
           ) : (
             <>
               <span className="pb-modal-badge">{item.badge}</span>

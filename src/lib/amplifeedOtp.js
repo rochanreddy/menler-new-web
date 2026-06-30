@@ -8,6 +8,8 @@
 // widgetId + tokenAuth are client-side OTP widget keys (safe to expose, required
 // in the browser). The webhook SECRET is NOT here — it stays on the server.
 
+import { getVerifiedLead, saveVerifiedLead } from './verifiedSession';
+
 const WIDGET_ID = import.meta.env.VITE_AMPLIFEED_WIDGET_ID || '3666786e5151323537333631';
 const TOKEN_AUTH = import.meta.env.VITE_AMPLIFEED_TOKEN_AUTH || '517767Ts6KDsui6a3bef4eP1';
 
@@ -49,9 +51,19 @@ export function loadOtpProvider() {
 // Convenience: verify an EMAIL via OTP and return the CRM fields to spread onto
 // the lead payload. The site uses email verification only — there is no SMS /
 // mobile OTP path.
+//
+// "Verify once" — if this email was already verified earlier in the session,
+// reuse the stored token instead of prompting for a code again (so downloading
+// more PDFs / submitting other forms doesn't re-ask for verification).
 export async function verifyEmailOtp(email) {
+  const clean = String(email || '').trim();
+  const prev = getVerifiedLead();
+  if (prev && prev.otp_token && String(prev.email || '').toLowerCase() === clean.toLowerCase()) {
+    return { otp_token: prev.otp_token, otp_channel: prev.otp_channel || 'email', otp_identifier: prev.otp_identifier || clean };
+  }
   await loadOtpProvider();
   const token = await sendOtp(email);
+  saveVerifiedLead({ email: clean, otp_token: token, otp_channel: 'email', otp_identifier: clean });
   return { otp_token: token, otp_channel: 'email', otp_identifier: email };
 }
 
