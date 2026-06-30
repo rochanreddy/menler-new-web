@@ -6,7 +6,6 @@ import MenlerCommunitySection from '../components/common/MenlerCommunitySection'
 import FaqList from '../components/common/FaqList';
 import { submitLead, createReport } from '../services/leadService';
 import { verifyEmailOtp } from '../lib/amplifeedOtp';
-import { downloadFile } from '../lib/download';
 import { getRecommendation, maxScoreForQuestions } from '../data/aptitudeQuestions';
 import { CLUSTERS, buildRoadmap, getSetQuestions } from '../data/aptitudeClusters';
 import { getGeneralistSession, getGeneralistSet, GENERALIST_SETS } from '../data/generalistAptitude';
@@ -25,53 +24,6 @@ const TRUST_CARDS = [
   { title: 'How it\'s scored', desc: '0–15 readiness score, broken into sub-scores and benchmarked against real-world performance indicators.' },
   { title: 'What you\'ll receive', desc: 'A personalised readiness report, learning roadmap, and placement-readiness insights.' },
   { title: 'Why it matters', desc: 'Most people dont know where they stand with AI. This assessment gives you a clear baseline before you invest resources.' },
-];
-
-// Question bank, grouped by domain → subdomain. Each subdomain downloads its
-// PDF (in /public/question_banks). `pdf: null` = not uploaded yet (shown as
-// "Soon", download disabled). The Engineer subdomains map to the existing
-// interview-prep PDFs; Student & Generalist subdomains await their PDFs.
-const ENGINEER_QB = [
-  { label: 'AI Agents & Workflows', pdf: '/question_banks/Menler_AI_Agents_Workflows_Question_Bank.pdf' },
-  { label: 'AI Engineering Thinking', pdf: '/question_banks/Menler_AI_Engineering_Thinking_Question_Bank.pdf' },
-  { label: 'AI Judgment', pdf: '/question_banks/Menler_AI_Judgment_Question_Bank.pdf' },
-  { label: 'AI Networks & Infrastructure', pdf: '/question_banks/Menler_AI_Networks_Infrastructure_Question_Bank.pdf' },
-  { label: 'AI Tools Ecosystem', pdf: '/question_banks/Menler_AI_Tools_Ecosystem_Question_Bank.pdf' },
-  { label: 'LLM Fundamentals', pdf: '/question_banks/Menler_LLM_Fundamentals_Question_Bank.pdf' },
-  { label: 'Prompt Engineering', pdf: '/question_banks/Menler_Prompt_Engineering_Question_Bank.pdf' },
-  { label: 'RAG & Knowledge Systems', pdf: '/question_banks/Menler_RAG_Knowledge_Systems_Question_Bank.pdf' },
-  { label: 'Agentic AI', pdf: '/question_banks/Menler_Agentic_AI_Question_Bank.pdf' },
-];
-// Question-bank subdomains per domain → the level-bank PDF each downloads.
-// Student has two banks (Beginner/Aware), Generalist two (Entry/Level Up).
-const QB_STUDENT_BEGINNER = '/pdfs/Menler_AIforStudents_Beginner_QuestionBank.pdf';
-const QB_STUDENT_AWARE = '/pdfs/Menler_AIforStudents_Aware_QuestionBank.pdf';
-const QB_GEN_ENTRY = '/pdfs/Menler_AIGeneralist_Entry_QuestionBank.pdf';
-const QB_GEN_LEVELUP = '/pdfs/Menler_AIGeneralist_LevelUp_QuestionBank.pdf';
-const QB_SECTIONS = [
-  { domain: 'Student', subs: [
-    { label: 'AI Foundations', pdf: QB_STUDENT_BEGINNER },
-    { label: 'AI Tools & Prompting', pdf: QB_STUDENT_BEGINNER },
-    { label: 'AI Critical Thinking', pdf: QB_STUDENT_AWARE },
-    { label: 'Responsible AI', pdf: QB_STUDENT_AWARE },
-  ] },
-  { domain: 'Generalist', subs: [
-    { label: 'AI Fundamentals', pdf: QB_GEN_ENTRY },
-    { label: 'AI Prompting', pdf: QB_GEN_ENTRY },
-    { label: 'AI Tools & Workflows', pdf: QB_GEN_ENTRY },
-    { label: 'AI Judgment & Strategy', pdf: QB_GEN_LEVELUP },
-    { label: 'Agentic AI & Automation', pdf: QB_GEN_LEVELUP },
-  ] },
-  { domain: 'Engineer', subs: ENGINEER_QB },
-];
-
-const QB_QUESTIONS = [
-  { company: 'Razorpay', level: 'Senior', topic: 'RAG', q: 'You are building a RAG system for Razorpay\'s internal policy docs. The system gives confident wrong answers. What is the most likely root cause and how do you fix it?', a: 'Likely cause: chunk size too large or lack of re-ranking, causing irrelevant passages to dominate context. Fix: smaller, overlapping chunks + cross-encoder re-ranking + source-grounding evaluation (RAGAS).' },
-  { company: 'Sarvam AI', level: 'Foundations', topic: 'Evals', q: 'You have a Claude pipeline that translates English to Hindi. You want to know if it\'s getting better or worse between deployments. How do you set up a basic eval?', a: 'Build a fixed eval set of 50–100 English → gold Hindi pairs. For each deployment, run Claude on all pairs, score with BLEU or LLM-as-judge, track the mean. Regression if score drops >2%.' },
-  { company: 'Cred', level: 'Senior', topic: 'Tool use', q: 'You\'re building a Claude agent for CRED\'s member services. The agent needs to look up account balances (read-only) and also flag disputes (write). How do you design the tool schema and what safety guardrails do you implement?', a: 'Separate tools by risk: `get_account_balance` (no confirm) vs `flag_dispute` (confirm step + audit log). Implement tool-use prompts with explicit permission scopes. Never allow irreversible actions without human-in-the-loop.' },
-  { company: 'Anthropic', level: 'Senior', topic: 'MCP', q: 'Explain Model Context Protocol. In what situation would you choose to build an MCP server rather than use tool use in the API directly?', a: 'MCP is an open protocol for exposing resources, tools, and prompts to Claude clients (Desktop, Cowork). Use MCP when you need persistent, reusable tools across sessions/users — e.g. an internal Slack MCP that all employees connect. Use API tool use for session-specific, single-app tool calls.' },
-  { company: 'Postman', level: 'Foundations', topic: 'Prompts', q: 'Postman wants Claude to generate API documentation from a JSON schema. Write a system prompt for this use case that consistently produces clean, developer-friendly output.', a: 'System: "You are an API documentation writer. Given a JSON schema, produce Markdown docs with: (1) endpoint summary, (2) parameter table, (3) example request, (4) example response, (5) common error codes. Be concise."' },
-  { company: 'Browserbase', level: 'Senior', topic: 'Agents', q: 'You\'re building a multi-step web agent using Claude + Browserbase. The agent must log in, navigate a dashboard, and extract structured data. How do you handle state management and what failure modes do you architect for?', a: 'Use a session context object persisted across turns. Plan for: login CAPTCHA (human handoff), navigation state loss (resumable checkpoints), extraction failure (regex + LLM fallback), rate limiting (exponential backoff).' },
 ];
 
 // Three readiness dimensions, mapped to question ranges.
@@ -289,37 +241,6 @@ export default function Aptitude() {
       setSheetErr(err?.message || 'Verification failed — please try again.');
     } finally {
       setSheetBusy(false);
-    }
-  };
-
-  // Question bank: pick a subdomain (with a PDF), verify email, download on-site.
-  const [qbPick, setQbPick] = useState(null); // { domain, label, pdf }
-  const [qbForm, setQbForm] = useState({ name: '', email: '', phone: '' });
-  const [qbBusy, setQbBusy] = useState(false);
-  const [qbErr, setQbErr] = useState(false);
-  const [qbSent, setQbSent] = useState(false);
-  const setQ = (k, v) => setQbForm(f => ({ ...f, [k]: v }));
-  const openQbPick = (domain, sub) => {
-    if (!sub.pdf) return;
-    setQbPick({ domain, ...sub });
-    setQbSent(false); setQbErr(false);
-  };
-  // Verify the email via OTP, then hand the PDF over as a direct on-site download.
-  // The lead is recorded in the background (non-blocking) so the download always
-  // happens once verification succeeds.
-  const submitQB = async (e) => {
-    e.preventDefault();
-    if (!qbPick?.pdf) return;
-    setQbErr(false); setQbBusy(true);
-    try {
-      const otp = await verifyEmailOtp(qbForm.email.trim());
-      downloadFile(qbPick.pdf, `${qbPick.label} Question Bank.pdf`);
-      submitLead({ ...qbForm, ...otp, resource: `${qbPick.label} Question Bank`, pdf: qbPick.pdf, topic: qbPick.label, source: 'aptitude-question-bank', cta_label: `Question Bank: ${qbPick.label}`, section: `Question Bank · ${qbPick.domain}` }).catch(() => {});
-      setQbSent(true);
-    } catch {
-      setQbErr(true);
-    } finally {
-      setQbBusy(false);
     }
   };
 
@@ -631,7 +552,7 @@ export default function Aptitude() {
     <>
       <Seo
         title="AI Aptitude Test — Free AI Readiness Assessment | Menler"
-        description="Take the free AI Aptitude Test — a 15-question AI readiness assessment. Get a personalised score, learning roadmap and a downloadable question bank. No signup to start."
+        description="Take the free AI Aptitude Test — a 15-question AI readiness assessment. Get a personalised score and learning roadmap. No signup to start."
         keywords="AI aptitude test, AI readiness test, AI test, AI assessment, free AI test, AI generalist mock test, AI engineering mock test, AI workflow aptitude test, AI beginner assessment test, Claude API engineering test, agentic AI engineering test, AI skills assessment, AI career test"
         path="/aptitude"
         jsonLd={{ '@context': 'https://schema.org', '@type': 'Quiz', name: 'AI Aptitude Test', about: 'AI readiness assessment', educationalLevel: 'Beginner to Advanced', provider: { '@type': 'Organization', name: 'Menler', sameAs: 'https://menler.in' } }}
@@ -700,58 +621,6 @@ export default function Aptitude() {
             </div>
           ))}
         </div>
-      </section>
-
-      {/* ── QUESTION BANK ── */}
-      <section className="section" style={{ background: 'white', paddingBottom: 32 }}>
-        <p className="section-label">Question bank</p>
-        <h2 className="section-h2">AI Interview QB.<br /><em>Questions from real loops.</em></h2>
-        <p className="section-sub qb-sub">Asked at top Indian and global companies.<br />Pick a track, then a topic — verify your email and the PDF downloads here.</p>
-        <div className="qb-domains">
-          {QB_SECTIONS.map((sec) => (
-            <div className="qb-dom" key={sec.domain}>
-              <div className="qb-dom-name">{sec.domain}</div>
-              <div className="qb-dom-subs">
-                {sec.subs.map((s) => (
-                  <button
-                    key={s.label}
-                    type="button"
-                    className={`qb-dom-sub${qbPick && qbPick.label === s.label && qbPick.domain === sec.domain ? ' active' : ''}`}
-                    disabled={!s.pdf}
-                    onClick={() => openQbPick(sec.domain, s)}
-                    aria-pressed={!!(qbPick && qbPick.label === s.label && qbPick.domain === sec.domain)}
-                  >
-                    <span className="qb-dom-sub-label">{s.label}</span>
-                    <span className="qb-dom-sub-act">{s.pdf ? 'Download' : 'Soon'}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-        {qbPick && (
-          <div style={{ textAlign: 'center', marginTop: 28 }}>
-            {qbSent ? (
-              <div className="apt-lead" style={{ maxWidth: 540, margin: '0 auto' }}>
-                <p className="apt-lead-label" style={{ textAlign: 'center' }}>✓ Download completed</p>
-                <p className="qb-sub" style={{ marginTop: 6 }}>The <b>{qbPick.label}</b> question bank has downloaded. Didn’t get it?{' '}
-                  <button type="button" onClick={() => downloadFile(qbPick.pdf, `${qbPick.label} Question Bank.pdf`)} style={{ background: 'none', border: 'none', padding: 0, color: 'var(--specialist, #5a3fd6)', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>Download again</button>.
-                </p>
-              </div>
-            ) : (
-              <form className="apt-lead" style={{ maxWidth: 540, margin: '0 auto', textAlign: 'left' }} onSubmit={submitQB}>
-                <p className="apt-lead-label">Enter your details to download the <b>{qbPick.label}</b> question bank</p>
-                <div className="apt-lead-row apt-lead-row--col">
-                  <input type="text" required placeholder="Your name" value={qbForm.name} onChange={e => setQ('name', e.target.value)} />
-                  <input type="email" required placeholder="you@email.com" value={qbForm.email} onChange={e => setQ('email', e.target.value)} />
-                  <input type="tel" required placeholder="Phone number" value={qbForm.phone} onChange={e => setQ('phone', e.target.value)} />
-                  <button type="submit" disabled={qbBusy}>{qbBusy ? 'Verifying…' : 'Verify & download'}</button>
-                </div>
-                {qbErr && <p className="apt-gate-err">Couldn't verify — please check your connection and try again.</p>}
-              </form>
-            )}
-          </div>
-        )}
       </section>
 
       <MenlerCommunitySection className="menler-community--page" />

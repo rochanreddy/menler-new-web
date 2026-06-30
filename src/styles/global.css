@@ -1728,6 +1728,16 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-top-tag { display: inline-flex; align-items: center; gap: 7px; font-size: 10.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--a-dark); background: var(--cream); padding: 5px 11px; border-radius: 999px; }
 .lp2-top-tag-dot { width: 7px; height: 7px; border-radius: 50%; background: #1D9E75; flex-shrink: 0; box-shadow: 0 0 0 2px rgba(29,158,117,0.25); }
 
+/* Campaign trust bar (Claude Mastery only) — navy strip with the three
+   wordmarks, divided into equal cells, mirroring the supplied design. */
+.lp2-trustbar { margin-top: 16px; display: flex; align-items: center; background: #0d1430; border: 1px solid rgba(255,255,255,0.14); border-radius: 18px; padding: 22px 8px; }
+.lp2-tb-cell { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: #fff; line-height: 1.12; padding: 0 6px; min-width: 0; }
+.lp2-tb-cell + .lp2-tb-cell { border-left: 1px solid rgba(255,255,255,0.16); }
+.lp2-tb-mck { font-family: Georgia, 'Times New Roman', serif; font-size: 15px; font-weight: 500; letter-spacing: .01em; }
+.lp2-tb-cell img { display: block; width: auto; max-width: 100%; height: auto; }
+.lp2-tb-mit img { height: 30px; }
+.lp2-tb-tex img { height: 40px; }
+
 .lp2-grid { max-width: 1280px; margin: 0 auto; padding: clamp(28px, 5vw, 56px) clamp(16px, 5vw, 48px) 64px; }
 @media (min-width: 901px) {
   .lp2-grid { display: grid; grid-template-columns: 1fr 440px; gap: 40px; align-items: start; }
@@ -1950,7 +1960,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   padding: 0;
 }
 .menler-community--confirm .menler-community-card {
-  padding: 16px 20px;
+  padding: 13px 20px;
   border-radius: 14px;
   text-align: left;
   background: #fff;
@@ -1961,14 +1971,14 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   gap: 12px;
   align-items: center;
 }
-.menler-community--confirm .mini-lead-copy h3 { font-size: 18px; margin-bottom: 2px; }
-.menler-community--confirm .mini-lead-copy p { font-size: 11.5px; line-height: 1.45; }
+.menler-community--confirm .mini-lead-copy h3 { font-size: 22px; margin-bottom: 4px; }
+.menler-community--confirm .mini-lead-copy p { font-size: 13.5px; line-height: 1.5; }
 .menler-community--confirm .lp2-wa-join {
-  font-size: 12.5px;
-  padding: 10px 16px;
+  font-size: 14px;
+  padding: 12px 20px;
   white-space: nowrap;
 }
-.menler-community--confirm .lp2-wa-join svg { width: 16px; height: 16px; }
+.menler-community--confirm .lp2-wa-join svg { width: 18px; height: 18px; }
 @media (max-width: 520px) {
   .menler-community--confirm .mini-lead-inner { flex-direction: column; align-items: stretch; }
   .menler-community--confirm .lp2-wa-join { justify-content: center; }
@@ -2185,7 +2195,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 }
 .cox-confirm-back {
   align-self: center;
-  margin: 20px 0 0;
+  margin: 10px 0 0;
   background: var(--specialist);
   border: none;
   color: #fff;
@@ -2207,7 +2217,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   max-width: 920px;
   margin: 0 auto;
   text-align: center;
-  padding: clamp(24px, 4vw, 40px) 24px clamp(28px, 4vw, 48px);
+  padding: clamp(16px, 2.4vw, 28px) 24px clamp(18px, 2.4vw, 30px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2215,13 +2225,28 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 /* Keep the headline/intro narrow even though the card is now wide */
 .cox-confirm-h, .cox-confirm-p { max-width: 560px; }
 /* Explore-more + aptitude blocks moved here from the campaign page */
-.cox-explore { width: 100%; margin-top: 24px; text-align: left; }
-.cox-explore .lp2-h2 { text-align: center; margin-bottom: 14px; }
-.cox-apt-card { width: 100%; max-width: 720px; margin: 14px auto 0; text-align: left; }
+.cox-explore { width: 100%; margin-top: 10px; text-align: left; }
+.cox-explore .lp2-h2 { text-align: center; font-size: clamp(19px, 2.8vw, 22px); margin-bottom: 8px; }
+.cox-apt-card { width: 100%; max-width: 720px; margin: 8px auto 0; text-align: left; }
+
+/* ── Confirmation page: compact the lower stack so it fits one viewport ── */
+/* Explore-more cards — smaller, in one row */
+.cox-explore .lp2-explore { gap: 12px; }
+.cox-explore .cluster-card { padding: 12px 15px 11px; }
+.cox-explore .cluster-card .cluster-num { font-size: 9.5px; padding: 3px 9px; margin-bottom: 7px; }
+.cox-explore .cluster-card .cluster-name { font-size: 14.5px; margin-bottom: 4px; line-height: 1.16; }
+.cox-explore .cluster-card .cluster-sets { font-size: 11.5px; line-height: 1.4; margin-bottom: 9px; padding-bottom: 9px; }
+.cox-explore .cluster-card .cluster-btn { font-size: 12.5px; padding: 8px 12px; }
+/* Aptitude promo — tighter */
+.cox-apt-card { padding: 13px 16px; }
+.cox-apt-card .lp2-apt-eyebrow { margin-bottom: 4px; }
+.cox-apt-card .lp2-apt-title { font-size: 16px; margin-bottom: 4px; }
+.cox-apt-card .lp2-apt-desc { font-size: 12px; line-height: 1.4; margin-bottom: 9px; }
+.cox-apt-card .lp2-apt-btn { padding: 9px 16px; }
 
 /* Animated tick badge */
 .cox-confirm-badge {
-  margin-bottom: 24px;
+  margin-bottom: 12px;
   animation: confirm-pop .5s cubic-bezier(.34,1.56,.64,1) both;
 }
 @keyframes confirm-pop {
@@ -2229,29 +2254,29 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   to   { transform: scale(1);   opacity: 1; }
 }
 .cox-confirm-tick {
-  width: 72px; height: 72px;
+  width: 66px; height: 66px;
   display: flex; align-items: center; justify-content: center;
   background: linear-gradient(135deg, #1D9E75 0%, #0d7a55 100%);
   color: #fff;
   border-radius: 50%;
-  font-size: 34px; font-weight: 700;
+  font-size: 32px; font-weight: 700;
   box-shadow: 0 12px 32px rgba(29,158,117,0.35);
 }
 
 .cox-confirm-h {
   font-family: 'DM Serif Display', serif;
   font-weight: 400;
-  font-size: clamp(28px, 5vw, 40px);
+  font-size: clamp(30px, 5vw, 40px);
   color: var(--ink);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   text-wrap: balance;
 }
 .cox-confirm-p {
-  font-size: 15px;
-  line-height: 1.75;
+  font-size: 16px;
+  line-height: 1.65;
   color: var(--text-muted);
-  margin-bottom: 32px;
-  max-width: 420px;
+  margin-bottom: 22px;
+  max-width: 480px;
 }
 
 /* WhatsApp community card — fully centered */

@@ -18,8 +18,21 @@ export default function Navbar() {
     setMobileOpen(false);
   };
 
-  // Apply Now → open the popup (and close any open menus first).
-  const apply = () => { setOpenDropdown(null); setMobileOpen(false); openApply(); };
+  // Apply Now → open the popup (and close any open menus first). On the
+  // Kickstarter page, open the same simplified form as its "Book a call" CTA
+  // (no Program field, Kickstarter-specific background options).
+  const apply = () => {
+    setOpenDropdown(null);
+    setMobileOpen(false);
+    if (location.pathname === '/kickstarter') {
+      openApply({
+        showProgram: false,
+        backgroundOptions: ['School student', 'College student', 'Graduate', 'Fresher'],
+      });
+    } else {
+      openApply();
+    }
+  };
 
   const toggleDropdown = (name) => {
     setOpenDropdown(prev => (prev === name ? null : name));

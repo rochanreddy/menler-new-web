@@ -218,7 +218,7 @@ export default function KickstarterLanding() {
       {/* Minimal top bar */}
       <header className="lp2-top">
         <MenlerWordmark size={26} theme="light" />
-        <span className="lp2-top-tag">Live Workshop<span className="lp2-top-tag-dot" aria-hidden="true" /></span>
+        <span className="lp2-top-tag"><span className="lp2-top-tag-dot" aria-hidden="true" />Live Masterclass</span>
       </header>
 
       <div className="lp2-grid">
@@ -409,6 +409,18 @@ export default function KickstarterLanding() {
               </>
             )}
           </div>
+
+          {/* Trust bar — only on the Claude Mastery campaign. Navy strip with
+              the three wordmarks (McKinsey · MIT · UT Austin), reconstructed in
+              markup so it needs no image asset. Swap in real logo files later
+              by replacing each cell's content with an <img>. */}
+          {activeSlug === 'claude-mastery-for-ai-native-careers' && (
+            <div className="lp2-trustbar" aria-label="Trusted by teams from McKinsey & Company, MIT, and The University of Texas at Austin">
+              <span className="lp2-tb-cell lp2-tb-mck">McKinsey<br />&amp; Company</span>
+              <span className="lp2-tb-cell lp2-tb-mit"><img src="/logos/mit-white.svg" alt="MIT" /></span>
+              <span className="lp2-tb-cell lp2-tb-tex"><img src="/logos/ut-austin-white.svg" alt="The University of Texas at Austin" /></span>
+            </div>
+          )}
         </aside>
       </div>
 
