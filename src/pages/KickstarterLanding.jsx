@@ -5,7 +5,7 @@ import Seo from '../components/common/Seo';
 import MenlerCommunitySection from '../components/common/MenlerCommunitySection';
 import { MENLER_WHATSAPP_URL } from '../data/communityLinks';
 import { submitLead } from '../services/leadService';
-import { useContent } from '../lib/useContent';
+import { useContentState } from '../lib/useContent';
 import { loadOtpProvider, sendOtp } from '../lib/amplifeedOtp';
 
 // ── Single-mentor workshop registration landing page (/ai-kickstarter) ──
@@ -144,7 +144,7 @@ export default function KickstarterLanding() {
   // Sanity-editable content for this slug, merged per-field over the fallback.
   const { slug } = useParams();
   const activeSlug = slug || 'ai-kickstarter';
-  const c = useContent(CAMPAIGN_QUERY, FALLBACK, { slug: activeSlug });
+  const { data: c, loading: contentLoading } = useContentState(CAMPAIGN_QUERY, FALLBACK, { slug: activeSlug });
   const d = {};
   for (const k of Object.keys(FALLBACK)) d[k] = has(c?.[k]) ? c[k] : FALLBACK[k];
   const heading = `${d.bannerLine1} ${d.bannerLine2}`.trim();
@@ -244,16 +244,26 @@ export default function KickstarterLanding() {
               </h1>
               <p className="lp2-banner-tag">{d.bannerTagline}</p>
               <div className="lp2-banner-brand">
-                <span className="lp2-banner-credit">By <b>{d.mentorName}</b> — {d.mentorRole}</span>
+                {!contentLoading && <span className="lp2-banner-credit">By <b>{d.mentorName}</b> — {d.mentorRole}</span>}
               </div>
             </div>
-            <div className="lp2-banner-photo"><img src={d.mentorPhoto} alt={d.mentorName} /></div>
+            <div className="lp2-banner-photo">
+              {contentLoading
+                ? <div className="lp2-skel lp2-banner-photo-skel" aria-hidden="true" />
+                : <img src={d.mentorPhoto} alt={d.mentorName} />}
+            </div>
             <div className="lp2-banner-strip">
               <span><b>{d.date}</b></span>
               <span className="lp2-strip-dot" />
               <span>{d.time}</span>
             </div>
           </section>
+
+          {/* Mobile-only: registration CTA directly under the banner thumbnail. */}
+          <a className="lp2-mobile-cta" href="#register">
+            Reserve your seat
+            <span className="lp2-mobile-cta-price">₹{d.price}{d.origPrice ? <s> ₹{d.origPrice}</s> : null}</span>
+          </a>
 
           <p className="lp2-subtitle" style={{ marginTop: 26 }}>{d.subtitle}</p>
 
@@ -328,7 +338,9 @@ export default function KickstarterLanding() {
           <section className="lp2-block">
             <h2 className="lp2-h2">About your <em>mentor</em></h2>
             <div className="lp2-mentor">
-              <img className="lp2-mentor-img" src={d.mentorPhoto} alt={d.mentorName} />
+              {contentLoading
+                ? <div className="lp2-skel lp2-mentor-img lp2-mentor-img-skel" aria-hidden="true" />
+                : <img className="lp2-mentor-img" src={d.mentorPhoto} alt={d.mentorName} />}
               <div className="lp2-mentor-info">
                 <p className="lp2-mentor-name">{d.mentorName}</p>
                 <p className="lp2-mentor-role">{d.mentorRole}</p>

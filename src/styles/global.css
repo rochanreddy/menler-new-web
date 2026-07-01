@@ -1762,17 +1762,45 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-banner-free { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--a-dark); border: 1px solid var(--a); border-radius: 5px; padding: 2px 7px; margin-right: 8px; }
 .lp2-banner-photo { position: absolute; right: 0; bottom: 0; top: 0; width: 42%; z-index: 1; }
 .lp2-banner-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 22%); mask-image: linear-gradient(90deg, transparent 0%, #000 22%); }
+/* Loading skeleton — shown while the CMS content loads so the fallback mentor
+   never flashes before the real one. */
+@keyframes lp2-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.lp2-skel { background: linear-gradient(90deg, rgba(38,33,92,0.05) 25%, rgba(38,33,92,0.11) 37%, rgba(38,33,92,0.05) 63%); background-size: 200% 100%; animation: lp2-shimmer 1.4s ease-in-out infinite; }
+.lp2-banner-photo-skel { width: 100%; height: 100%; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 22%); mask-image: linear-gradient(90deg, transparent 0%, #000 22%); }
+@media (prefers-reduced-motion: reduce) { .lp2-skel { animation: none; } }
 .lp2-banner-strip { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; display: flex; align-items: center; gap: 14px; padding: 13px 28px; background: linear-gradient(90deg, var(--ink), #3a3470); color: #fff; font-size: 13px; letter-spacing: .015em; }
 .lp2-banner-strip b { font-weight: 700; }
 .lp2-banner-strip span:first-child::before { content: '📅'; margin-right: 8px; }
 .lp2-strip-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--lavender); }
 @media (max-width: 560px) {
-  /* Stack vertically: text → photo → full-width date strip (no side bar). */
-  .lp2-banner { display: block; }
-  .lp2-banner-body { max-width: 100%; padding: 22px 22px 14px; }
-  .lp2-banner-photo { position: static; width: 100%; height: 230px; }
-  .lp2-banner-photo img { object-position: center 18%; -webkit-mask-image: none; mask-image: none; }
-  .lp2-banner-strip { position: static; justify-content: center; }
+  /* Keep the same side-by-side "thumbnail" card as the desktop view — text on
+     the left, blended mentor photo on the right, date strip along the bottom —
+     just scaled down so it fits a phone. */
+  .lp2-banner { min-height: 0; }
+  .lp2-banner-body { max-width: 60%; padding: 12px 12px 40px; }
+  .lp2-banner-logo { transform: scale(0.82); transform-origin: left center; margin-bottom: 8px !important; }
+  .lp2-banner-badge { font-size: 8.5px; padding: 4px 8px; gap: 4px; }
+  .lp2-banner-title { font-size: clamp(17px, 5.6vw, 24px); margin-top: 8px; gap: 3px; }
+  .lp2-banner-title mark { padding: 1px 6px; border-radius: 4px; }
+  .lp2-banner-tag { font-size: 10.5px; margin-top: 7px; }
+  .lp2-banner-brand { margin-top: 8px; }
+  .lp2-banner-credit { font-size: 9px; line-height: 1.35; }
+  .lp2-banner-photo { width: 44%; }
+  .lp2-banner-strip { padding: 7px 12px; font-size: 9.5px; gap: 7px; }
+  .lp2-banner-strip span:first-child::before { margin-right: 5px; }
+}
+
+/* Mobile-only "Reserve your seat" CTA that sits directly under the banner. */
+.lp2-mobile-cta { display: none; }
+@media (max-width: 900px) {
+  .lp2-mobile-cta {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    margin-top: 16px; padding: 15px 20px; border-radius: 14px;
+    background: var(--a); color: #fff; font-weight: 700; font-size: 15.5px;
+    text-decoration: none; box-shadow: 0 8px 22px rgba(38,33,92,0.2);
+  }
+  .lp2-mobile-cta-price { font-weight: 700; opacity: .95; }
+  .lp2-mobile-cta-price s { opacity: .7; font-weight: 500; margin-left: 4px; }
 }
 
 /* Left column */
@@ -1787,8 +1815,15 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 /* Image fills the card height (no dead space) and is a touch bigger. */
 .lp2-mentor-img { width: 150px; align-self: stretch; height: auto; min-height: 150px; flex-shrink: 0; object-fit: cover; object-position: center top; border-radius: 14px; background: #ddd; }
 @media (max-width: 560px) {
-  .lp2-mentor { align-items: flex-start; }
-  .lp2-mentor-img { width: 110px; height: 110px; min-height: 0; align-self: flex-start; }
+  /* Stack the mentor card: a landscape photo on top, then all the details
+     full-width below — so the bio reads across the card instead of a narrow
+     column beside the photo. */
+  .lp2-mentor { flex-direction: column; gap: 14px; padding: 16px; margin-top: 26px; }
+  .lp2-mentor-img { width: 100%; height: 200px; min-height: 0; align-self: stretch; object-position: center 18%; border-radius: 12px; }
+  .lp2-mentor-name { font-size: 20px; }
+  .lp2-mentor-role { font-size: 12.5px; margin-bottom: 6px; }
+  .lp2-mentor-bio { font-size: 13px; line-height: 1.55; }
+  .lp2-mentor-creds { margin-top: 10px; }
 }
 .lp2-mentor-label { font-size: 10.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--a-dark); margin-bottom: 4px; }
 .lp2-mentor-name { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--ink); line-height: 1.1; }
@@ -1807,6 +1842,12 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-learn-n { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--a); flex-shrink: 0; }
 .lp2-learn-t { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
 .lp2-learn-d { font-size: 13px; line-height: 1.55; color: var(--text-muted); }
+@media (max-width: 560px) {
+  .lp2-learn-item { gap: 12px; padding: 14px 16px; }
+  .lp2-learn-n { font-size: 18px; }
+  .lp2-learn-t { font-size: 13.5px; }
+  .lp2-learn-d { font-size: 12px; line-height: 1.5; }
+}
 
 .lp2-for { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
 .lp2-for li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--ink); line-height: 1.5; }
@@ -1859,10 +1900,26 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-cert-sign-name { font-family: 'DM Serif Display', serif; font-size: 17px; color: var(--ink); border-bottom: 1px solid rgba(38,33,92,0.3); padding: 0 6px 4px; }
 .lp2-cert-sign-role { font-size: 11px; color: var(--text-muted); margin-top: 5px; }
 .lp2-cert-note { font-size: 12.5px; color: var(--text-muted); }
-@media (max-width: 480px) {
-  .lp2-cert-mock { padding: 30px 22px 26px; }
-  .lp2-cert-foot { flex-direction: column-reverse; gap: 18px; align-items: center; }
-  .lp2-cert-sign { align-items: center; text-align: center; }
+@media (max-width: 560px) {
+  /* Compact the certificate into a shorter, wider (landscape) card on mobile —
+     signatures stay side by side; every element is scaled down. */
+  .lp2-cert-mock { padding: 16px 16px 14px; }
+  .lp2-cert-mock::before { inset: 7px; }
+  .lp2-cert-mock::after { inset: 10px; }
+  .lp2-cert-seal { width: 44px; height: 44px; border-width: 1.5px; }
+  .lp2-cert-seal-star { font-size: 13px; }
+  .lp2-cert-seal-txt { font-size: 5px; margin-top: 2px; }
+  .lp2-cert-mock-kicker { margin-top: 12px; font-size: 9px; letter-spacing: .1em; }
+  .lp2-cert-mock-kicker::before, .lp2-cert-mock-kicker::after { width: 12px; margin: 0 6px; }
+  .lp2-cert-mock-to { margin-top: 8px; font-size: 10px; }
+  .lp2-cert-mock-name { font-size: clamp(19px, 6vw, 26px); }
+  .lp2-cert-rule { width: 130px; margin-top: 8px; }
+  .lp2-cert-mock-for { margin-top: 9px; font-size: 11px; line-height: 1.45; }
+  .lp2-cert-foot { flex-direction: row; align-items: flex-end; justify-content: space-between; gap: 10px; margin-top: 14px; }
+  .lp2-cert-sign { align-items: flex-end; text-align: right; }
+  .lp2-cert-sign--left { align-items: flex-start; text-align: left; }
+  .lp2-cert-sign-name { font-size: 12px; padding: 0 4px 3px; }
+  .lp2-cert-sign-role { font-size: 8.5px; margin-top: 3px; }
 }
 
 /* Join WhatsApp community — narrow bar */
@@ -2117,7 +2174,10 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 
 /* ── Checkout page (/checkout) — split: blue contact (left), white order summary (right) ── */
 .cox { display: flex; min-height: 100vh; align-items: stretch; }
-@media (max-width: 860px) { .cox { flex-direction: column; } }
+.cox-mtop, .cox-back-mobile, .cox-order-contact { display: none; }
+/* Contact/resources wrappers are transparent on desktop — layout unchanged.
+   The mobile redesign lives in the @media block at the end of the checkout CSS. */
+.cox-contact, .cox-resources { display: contents; }
 
 /* LEFT — blue panel: contact + add-ons. Content hugs the centre divider. */
 .cox-form { flex: 1; background: var(--ink); color: #fff; display: flex; justify-content: flex-end; padding: clamp(36px, 6vw, 72px) clamp(24px, 5vw, 60px); }
@@ -2190,6 +2250,75 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .cox-note { margin-top: 12px; font-size: 12px; line-height: 1.5; color: var(--text-muted); text-align: center; }
 .cox-err { margin-top: 10px; font-size: 12.5px; color: #A32D2D; }
 
+/* ── Checkout, MOBILE ONLY: single blue column of cards. Desktop keeps the
+   original two-column view above; this block comes last so it wins on mobile. ── */
+@media (max-width: 860px) {
+  .cox { flex-direction: column; background: var(--ink); padding: 0 clamp(14px, 4vw, 20px) 40px; }
+  .cox-mtop { display: flex; align-items: center; justify-content: space-between; order: -3; padding: 16px 2px 10px; }
+  .cox-back-mobile { display: inline-block; background: none; border: none; color: rgba(238,237,254,0.85); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0; }
+  .cox-back-btn--top { display: none; }
+  .cox-brand { display: none; }
+  /* Flatten the form so contact + resources become orderable card siblings. */
+  .cox-form, .cox-form-inner { display: contents; }
+  .cox-order, .cox-resources {
+    display: block;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 14px;
+    color: #fff;
+  }
+  .cox-order { order: -2; }
+  .cox-resources { order: 0; }
+  .cox-contact { display: none; } /* moved into the order card header */
+  .cox-order-inner { max-width: none; }
+
+  /* Header: title on top, then a clean full-width contact block below it. */
+  .cox-order-head { display: block; margin-bottom: 16px; }
+  .cox-order-head-main { min-width: 0; }
+  .cox-eyebrow { font-size: 10.5px; }
+  .cox-name { font-size: 15px; }
+  .cox-price { font-size: 27px; margin: 4px 0 0; }
+  .cox-order-contact { display: block; margin-top: 14px; }
+  .cox-oc-label { font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(238,237,254,0.5); margin: 0 0 6px; }
+  .cox-order-contact .cox-info { border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; background: rgba(255,255,255,0.03); }
+  .cox-order-contact .cox-info-row { display: flex; flex-direction: row; align-items: baseline; justify-content: space-between; gap: 12px; padding: 8px 12px; border-bottom-color: rgba(255,255,255,0.08); }
+  .cox-order-contact .cox-info-row span { font-size: 10px; color: rgba(238,237,254,0.55); flex-shrink: 0; }
+  .cox-order-contact .cox-info-row b { text-align: right; font-size: 11px; font-weight: 600; word-break: break-word; min-width: 0; }
+  /* Order-summary text flipped for the blue card. */
+  .cox-name, .cox-price, .cox-row-t, .cox-sub-line, .cox-total { color: #fff; }
+  .cox-eyebrow, .cox-price span, .cox-row-d, .cox-sub-line--muted, .cox-note { color: rgba(238,237,254,0.7); }
+  .cox-row-amt { color: #6FE0BC; }
+  .cox-row-amt s { color: rgba(238,237,254,0.5); }
+  .cox-items, .cox-total { border-top-color: rgba(255,255,255,0.16); }
+  .cox-row { border-bottom-color: rgba(255,255,255,0.1); }
+  .cox-contact > .cox-h3, .cox-resources .cox-addons-head { margin-top: 0; }
+
+  /* ── Compact sizing (mobile) ── */
+  .cox-order, .cox-resources { padding: 16px; }
+  .cox-order-head { margin-bottom: 14px; }
+  .cox-eyebrow { font-size: 10px; margin-bottom: 4px; }
+  .cox-name { font-size: 14px; }
+  .cox-price { font-size: 26px; }
+  .cox-price span { font-size: 12px; }
+  .cox-row { padding: 11px 0; }
+  .cox-row-t { font-size: 12.5px; }
+  .cox-row-d { font-size: 10.5px; }
+  .cox-row-amt { font-size: 12px; }
+  .cox-sub-line { font-size: 12px; }
+  .cox-total { font-size: 14px; margin-top: 10px; padding-top: 10px; }
+  .cox-complete { font-size: 14px; padding: 13px; margin-top: 16px; }
+  .cox-h3 { font-size: 12px; }
+  .cox-addons-sub { font-size: 11px; }
+  .cox-addon { padding: 11px 12px; }
+  .cox-addon-t { font-size: 12.5px; }
+  .cox-addon-d { font-size: 11px; }
+  .cox-addon-price { font-size: 11px; }
+  .cox-cart { width: 38px; height: 38px; }
+  .cox-cart svg { width: 17px; height: 17px; }
+}
+
 /* ── Confirmation page ── */
 .cox--confirm {
   background: linear-gradient(145deg, #f0eeff 0%, #e8f5f0 50%, #eee8fd 100%);
@@ -2245,6 +2374,13 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .atc-menu { position: absolute; top: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: #fff; border: 1px solid rgba(83,74,183,0.16); border-radius: 12px; box-shadow: 0 12px 30px rgba(38,33,92,0.16); padding: 6px; min-width: 180px; z-index: 20; display: flex; flex-direction: column; }
 .atc-menu-item { display: block; width: 100%; text-align: left; background: none; border: none; font-family: inherit; font-size: 13.5px; color: var(--ink); padding: 10px 12px; border-radius: 8px; cursor: pointer; text-decoration: none; }
 .atc-menu-item:hover { background: var(--cloud); }
+/* Mobile: stack the calendar buttons full-width & centered so they line up. */
+@media (max-width: 520px) {
+  .cox-confirm-cal { width: 100%; }
+  .cox-confirm-cal .atc { width: 100%; flex-direction: column; align-items: stretch; gap: 10px; }
+  .cox-confirm-cal .atc-more { width: 100%; }
+  .cox-confirm-cal .atc-btn { width: 100%; justify-content: center; }
+}
 
 /* ── Confirmation page: compact the lower stack so it fits one viewport ── */
 /* Explore-more cards — smaller, in one row */
@@ -2271,6 +2407,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   to   { transform: scale(1);   opacity: 1; }
 }
 .cox-confirm-tick {
+  position: relative;
   width: 66px; height: 66px;
   display: flex; align-items: center; justify-content: center;
   background: linear-gradient(135deg, #1D9E75 0%, #0d7a55 100%);
@@ -2278,6 +2415,32 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   border-radius: 50%;
   font-size: 32px; font-weight: 700;
   box-shadow: 0 12px 32px rgba(29,158,117,0.35);
+}
+/* Two rings radiate out from the badge once it lands. */
+.cox-confirm-tick::before,
+.cox-confirm-tick::after {
+  content: ''; position: absolute; inset: 0;
+  border-radius: 50%; border: 2px solid #1D9E75;
+  animation: confirm-ring 1.2s ease-out both;
+}
+.cox-confirm-tick::before { animation-delay: .35s; }
+.cox-confirm-tick::after  { animation-delay: .55s; }
+@keyframes confirm-ring {
+  0%   { transform: scale(1);    opacity: .55; }
+  100% { transform: scale(1.9);  opacity: 0; }
+}
+/* The checkmark pops in with a little overshoot after the circle lands. */
+.cox-confirm-check {
+  display: inline-block;
+  animation: confirm-check .5s cubic-bezier(.34,1.56,.64,1) .28s both;
+}
+@keyframes confirm-check {
+  0%   { transform: scale(0) rotate(-30deg); opacity: 0; }
+  60%  { transform: scale(1.25) rotate(0);   opacity: 1; }
+  100% { transform: scale(1) rotate(0);      opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cox-confirm-tick::before, .cox-confirm-tick::after, .cox-confirm-check { animation: none; }
 }
 
 .cox-confirm-h {

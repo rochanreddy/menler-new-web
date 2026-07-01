@@ -11,13 +11,17 @@ import { sanityClient, isSanityConfigured } from './sanity';
  *
  * Usage: const mentors = useContent(MENTORS_QUERY, MENTORS);
  */
-export function useContent(query, fallback, params = {}) {
+export function useContentState(query, fallback, params = {}) {
   const [data, setData] = useState(fallback);
+  // `loading` is true only while a Sanity fetch is in flight — lets callers show
+  // a skeleton instead of the (possibly mismatched) fallback on first paint.
+  const [loading, setLoading] = useState(Boolean(isSanityConfigured && query));
 
   const paramsKey = JSON.stringify(params);
   useEffect(() => {
-    if (!isSanityConfigured || !query) return undefined;
+    if (!isSanityConfigured || !query) { setLoading(false); return undefined; }
     let cancelled = false;
+    setLoading(true);
     sanityClient
       .fetch(query, params)
       .then((res) => {
@@ -26,10 +30,16 @@ export function useContent(query, fallback, params = {}) {
           || (typeof res === 'object' && !Array.isArray(res) && Object.keys(res).length === 0);
         if (!empty) setData(res);
       })
-      .catch(() => { /* keep fallback */ });
+      .catch(() => { /* keep fallback */ })
+      .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, paramsKey]);
 
-  return data;
+  return { data, loading };
+}
+
+// Back-compatible: returns just the data.
+export function useContent(query, fallback, params = {}) {
+  return useContentState(query, fallback, params).data;
 }

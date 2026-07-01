@@ -17,7 +17,6 @@ export default function Checkout() {
   const workshopTitle = reg.workshop || 'Menler Masterclass';
 
   const catalog = CHECKOUT_CATALOG;
-  const goTo = (p) => { navigate(p); window.scrollTo(0, 0); };
 
   const [cart, setCart] = useState(() => new Set());
   const [placing, setPlacing] = useState(false);
@@ -87,7 +86,7 @@ export default function Checkout() {
       <div className="cox cox--confirm">
         <div className="cox-confirm">
           <div className="cox-confirm-badge">
-            <div className="cox-confirm-tick">✓</div>
+            <div className="cox-confirm-tick"><span className="cox-confirm-check">✓</span></div>
           </div>
 
           <h1 className="cox-confirm-h">You're registered!</h1>
@@ -125,33 +124,6 @@ export default function Checkout() {
             communityText={reg.whatsappText || reg.communityText}
           />
 
-          {/* Explore more programs (moved here from the campaign page) */}
-          <section className="cox-explore">
-            <h2 className="lp2-h2">Explore <em>More</em></h2>
-            <div className="lp2-explore">
-              <div className="cluster-card cluster-card--kick">
-                <p className="cluster-num">For beginners</p>
-                <p className="cluster-name">Menler Gen AI Kickstarter</p>
-                <p className="cluster-sets">AI fundamentals + your first portfolio in 14 days.</p>
-                <button className="cluster-btn" onClick={() => goTo('/kickstarter')}>Explore Kickstarter</button>
-              </div>
-              <div className="cluster-card cluster-card--gen">
-                <p className="cluster-num">Students &amp; professionals</p>
-                <p className="cluster-name">Menler Claude AI Generalist Fellowship</p>
-                <p className="cluster-sets">Apply AI across business — 10-week fellowship.</p>
-                <button className="cluster-btn" onClick={() => goTo('/generalist')}>Explore Fellowship</button>
-              </div>
-            </div>
-          </section>
-
-          {/* AI Aptitude Test promo (moved here from the campaign page) */}
-          <div className="lp2-apt-card cox-apt-card">
-            <p className="lp2-apt-eyebrow">Not sure where to start?</p>
-            <p className="lp2-apt-title">Check out our AI Aptitude Test</p>
-            <p className="lp2-apt-desc">Find your AI fluency in 15 minutes for free.<br />15 questions, One AI pathway and no sign-up</p>
-            <button className="lp2-apt-btn" onClick={() => goTo('/aptitude')}>Take the Aptitude Test →</button>
-          </div>
-
           <button type="button" className="cox-confirm-back" onClick={() => navigate('/')}>Back to Home</button>
         </div>
       </div>
@@ -162,18 +134,27 @@ export default function Checkout() {
     <div className="cox">
       <Seo title="Checkout | Menler" noindex />
 
+      {/* Mobile-only topbar: back button + wordmark, pinned to the top. */}
+      <div className="cox-mtop">
+        <button className="cox-back-mobile" onClick={() => navigate(-1)}>← Back</button>
+        <MenlerWordmark size={22} theme="dark" />
+      </div>
+
       {/* ── LEFT: blue — contact (read-only) + add-ons ── */}
       <div className="cox-form">
         <div className="cox-form-inner">
           <button className="cox-back-btn cox-back-btn--top" onClick={() => navigate(-1)}>Back</button>
 
+          <div className="cox-contact">
           <h3 className="cox-h3" style={{ marginTop: 0 }}>Contact information</h3>
           <div className="cox-info">
             <div className="cox-info-row"><span>Name</span><b>{reg.name || '—'}</b></div>
             <div className="cox-info-row"><span>Email</span><b>{reg.email || '—'}</b></div>
             <div className="cox-info-row"><span>Phone</span><b>{reg.phone || '—'}</b></div>
           </div>
+          </div>
 
+          <div className="cox-resources">
           <div className="cox-addons-head">
             <div className="cox-addons-head-text">
               <h3 className="cox-h3">Add resources</h3>
@@ -206,6 +187,7 @@ export default function Checkout() {
               );
             })}
           </div>
+          </div>
         </div>
       </div>
 
@@ -213,9 +195,22 @@ export default function Checkout() {
       <div className="cox-order">
         <div className="cox-order-inner">
           <div className="cox-brand"><MenlerWordmark size={26} theme="light" /></div>
-          <p className="cox-eyebrow">Register for</p>
-          <p className="cox-name">{workshopTitle}</p>
-          <p className="cox-price">₹{total}<span> · free seat</span></p>
+          <div className="cox-order-head">
+            <div className="cox-order-head-main">
+              <p className="cox-eyebrow">Register for</p>
+              <p className="cox-name">{workshopTitle}</p>
+              <p className="cox-price">₹{total}<span> · free seat</span></p>
+            </div>
+            {/* Mobile-only: contact details tucked into the header (top-right). */}
+            <div className="cox-order-contact">
+              <p className="cox-oc-label">Contact</p>
+              <div className="cox-info">
+                <div className="cox-info-row"><span>Name</span><b>{reg.name || '—'}</b></div>
+                <div className="cox-info-row"><span>Email</span><b>{reg.email || '—'}</b></div>
+                <div className="cox-info-row"><span>Phone</span><b>{reg.phone || '—'}</b></div>
+              </div>
+            </div>
+          </div>
 
           <div className="cox-items">
             <div className="cox-row">
