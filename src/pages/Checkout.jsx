@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import MenlerWordmark from '../components/common/MenlerWordmark';
 import Seo from '../components/common/Seo';
 import MenlerCommunitySection from '../components/common/MenlerCommunitySection';
+import AddToCalendar from '../components/common/AddToCalendar';
+import { parseEventDateTime } from '../lib/calendar';
 import { submitLead, deliverResources, completeCheckout } from '../services/leadService';
 import { CHECKOUT_CATALOG } from '../data/resourceCatalog';
 
@@ -94,6 +96,28 @@ export default function Checkout() {
             {reg.email ? <> to <b>{reg.email}</b></> : null}
             {addedItems.length ? <>, along with your {addedItems.length} resource{addedItems.length > 1 ? 's' : ''} attached to your email.</> : '.'}
           </p>
+
+          {(() => {
+            // Prefer the explicit Sanity Event start/end; otherwise derive it
+            // from the same date/time shown on the campaign page, so the calendar
+            // always matches the banner.
+            const ev = reg.eventStart
+              ? { start: reg.eventStart, end: reg.eventEnd }
+              : parseEventDateTime(reg.eventDate, reg.eventTime);
+            if (!ev || !ev.start) return null;
+            return (
+              <AddToCalendar
+                className="cox-confirm-cal"
+                event={{
+                  title: workshopTitle,
+                  start: ev.start,
+                  end: ev.end,
+                  details: `You're registered for ${workshopTitle}. Joining details were sent to your email${reg.eventDate ? `.\n\nWhen: ${reg.eventDate}${reg.eventTime ? ` · ${reg.eventTime}` : ''}` : '.'}`,
+                  location: 'Live online',
+                }}
+              />
+            );
+          })()}
 
           <MenlerCommunitySection
             className="menler-community--confirm"

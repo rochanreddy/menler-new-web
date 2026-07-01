@@ -2233,6 +2233,19 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .cox-explore .lp2-h2 { text-align: center; font-size: clamp(19px, 2.8vw, 22px); margin-bottom: 8px; }
 .cox-apt-card { width: 100%; max-width: 720px; margin: 8px auto 0; text-align: left; }
 
+/* ── Add-to-calendar (confirmation page) ── */
+.cox-confirm-cal { margin: 0 0 20px; }
+.atc { display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.atc-btn { display: inline-flex; align-items: center; gap: 8px; font-family: inherit; font-size: 13.5px; font-weight: 600; padding: 11px 18px; border-radius: 999px; cursor: pointer; border: none; text-decoration: none; transition: transform .15s ease, box-shadow .15s ease, background .15s ease; }
+.atc-btn--google { background: var(--specialist); color: #fff; box-shadow: 0 6px 16px rgba(83,74,183,0.3); }
+.atc-btn--google:hover { transform: translateY(-1px); box-shadow: 0 10px 22px rgba(83,74,183,0.4); }
+.atc-btn--ghost { background: #fff; color: var(--ink); border: 1px solid rgba(83,74,183,0.22); }
+.atc-btn--ghost:hover { background: var(--cloud); }
+.atc-more { position: relative; }
+.atc-menu { position: absolute; top: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: #fff; border: 1px solid rgba(83,74,183,0.16); border-radius: 12px; box-shadow: 0 12px 30px rgba(38,33,92,0.16); padding: 6px; min-width: 180px; z-index: 20; display: flex; flex-direction: column; }
+.atc-menu-item { display: block; width: 100%; text-align: left; background: none; border: none; font-family: inherit; font-size: 13.5px; color: var(--ink); padding: 10px 12px; border-radius: 8px; cursor: pointer; text-decoration: none; }
+.atc-menu-item:hover { background: var(--cloud); }
+
 /* ── Confirmation page: compact the lower stack so it fits one viewport ── */
 /* Explore-more cards — smaller, in one row */
 .cox-explore .lp2-explore { gap: 12px; }

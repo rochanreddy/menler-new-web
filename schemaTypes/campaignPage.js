@@ -44,6 +44,8 @@ export default defineType({
     // ── Schedule & price ──
     defineField({ name: 'date', title: 'Date', type: 'string', group: 'schedule' }),
     defineField({ name: 'time', title: 'Time', type: 'string', group: 'schedule' }),
+    defineField({ name: 'eventStart', title: 'Event start (for "Add to calendar")', type: 'datetime', group: 'schedule', description: 'Actual start date & time. Powers the Add-to-Calendar button on the confirmation page.' }),
+    defineField({ name: 'eventEnd', title: 'Event end (for "Add to calendar")', type: 'datetime', group: 'schedule', description: 'Actual end date & time. Defaults to 1 hour after start if blank.' }),
     defineField({ name: 'format', title: 'Format', type: 'string', group: 'schedule' }),
     defineField({ name: 'price', title: 'Price (₹) — shown big', type: 'string', group: 'schedule' }),
     defineField({ name: 'origPrice', title: 'Original price (₹) — struck through', type: 'string', group: 'schedule' }),

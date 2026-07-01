@@ -75,6 +75,8 @@ const FALLBACK = {
   subtitle: WORKSHOP.subtitle,
   date: WORKSHOP.date,
   time: WORKSHOP.time,
+  eventStart: '', // set per-campaign in Sanity; otherwise derived from date/time
+  eventEnd: '',
   format: WORKSHOP.format,
   price: WORKSHOP.price,
   origPrice: WORKSHOP.origPrice,
@@ -102,7 +104,7 @@ const FALLBACK = {
 // Load the campaign matching the URL slug (defaults to 'ai-kickstarter').
 const CAMPAIGN_QUERY = `*[_type == "campaignPage" && slug.current == $slug][0]{
   bannerBadge, bannerLine1, bannerLine2, bannerTagline, subtitle,
-  date, time, format, price, origPrice, seatsNote,
+  date, time, eventStart, eventEnd, format, price, origPrice, seatsNote,
   themeAccent, themeAccentDark, bannerFrom, bannerTo, highlightBg, highlightText,
   mentorName, mentorRole, "mentorPhoto": mentorPhoto.asset->url, mentorBio, mentorCreds,
   founderName, founderRole,
@@ -193,6 +195,10 @@ export default function KickstarterLanding() {
         state: {
           leadId: created?.id,
           workshop: heading,
+          eventStart: d.eventStart,
+          eventEnd: d.eventEnd,
+          eventDate: d.date,
+          eventTime: d.time,
           price: d.price,
           name: form.name,
           email: form.email,
