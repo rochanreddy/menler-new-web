@@ -50,6 +50,7 @@ export default function Outcomes() {
         description="Placement outcomes from the Menler AI fellowship — salary bands, hiring partners, fellow portfolios and AI jobs after the program."
         keywords="AI placement programs, AI jobs after AI course, AI career outcomes India, AI fellowship placement, AI salaries India"
         path="/outcomes"
+        noindex
       />
       {/* ── HERO ── */}
       <section className="hero hero-centered" style={{ background: '#1A1647', padding: '64px clamp(22px, 6vw, 40px) 40px' }}>

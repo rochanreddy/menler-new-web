@@ -119,7 +119,7 @@ const STATIC_ROUTES = [
     jsonLd: [crumbs([{ name: 'Home', path: '/' }, { name: 'Community', path: '/community' }])],
   },
   {
-    path: '/outcomes', file: 'outcomes.html', nav: 'Outcomes',
+    path: '/outcomes', file: 'outcomes.html', nav: 'Outcomes', noindex: true,
     title: 'AI Placement & Outcomes — AI Jobs After the Fellowship | Menler',
     description: 'Placement outcomes from the Menler AI fellowship — salary bands, hiring partners, fellow portfolios and AI jobs after the program.',
     keywords: 'AI placement programs, AI jobs after AI course, AI career outcomes India, AI fellowship placement, AI salaries India',
@@ -225,6 +225,9 @@ function render(template, route) {
   const canonical = SITE + route.path;
 
   html = swap(html, /(<title>)[\s\S]*?(<\/title>)/i, escText(route.title));
+  // Keep hidden pages out of search: bake noindex into the static HTML so
+  // crawlers see it before React runs (also excluded from the sitemap).
+  if (route.noindex) html = setMeta(html, 'name', 'robots', 'noindex, nofollow');
   html = setMeta(html, 'name', 'description', route.description);
   if (route.keywords) html = setMeta(html, 'name', 'keywords', route.keywords);
   html = swap(html, /(<link rel="canonical" href=")[^"]*(")/i, escAttr(canonical),
