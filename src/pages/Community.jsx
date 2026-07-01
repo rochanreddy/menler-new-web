@@ -25,10 +25,14 @@ export default function Community() {
       <section className="section" style={{ paddingTop: 56, paddingBottom: 40 }}>
         <p className="section-label" style={{ textAlign: 'center' }}>Community</p>
         <h2 className="section-h2" style={{ textAlign: 'center' }}>Join the <em>Menler community.</em></h2>
-        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto 32px' }}>
+        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto 28px' }}>
           A space for learners, professionals and builders growing their AI skills together —
           updates, resources and support across all our channels.
         </p>
+
+        <div style={{ marginBottom: 40 }}>
+          <MenlerCommunitySection className="menler-community--confirm" />
+        </div>
 
         <div className="cluster-grid" style={{ maxWidth: 920, margin: '0 auto' }}>
           {PERKS.map((p) => (
@@ -37,10 +41,6 @@ export default function Community() {
               <p className="cluster-sets">{p.d}</p>
             </div>
           ))}
-        </div>
-
-        <div style={{ marginTop: 36 }}>
-          <MenlerCommunitySection className="menler-community--confirm" />
         </div>
       </section>
       <Footer />
