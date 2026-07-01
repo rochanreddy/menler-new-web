@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import MenlerWordmark from '../components/common/MenlerWordmark';
 import Seo from '../components/common/Seo';
 import MenlerCommunitySection from '../components/common/MenlerCommunitySection';
-import { submitLead, deliverResources } from '../services/leadService';
+import { submitLead, deliverResources, completeCheckout } from '../services/leadService';
 import { CHECKOUT_CATALOG } from '../data/resourceCatalog';
 
 import { MENLER_WHATSAPP_URL } from '../data/communityLinks';
@@ -41,16 +41,26 @@ export default function Checkout() {
   const pay = async () => {
     setErr(false); setPlacing(true);
     try {
-      await submitLead({
-        name: reg.name, email: reg.email, phone: reg.phone,
-        source: 'checkout-order',
-        cta_label: `Checkout: ${workshopTitle}`,
+      const order = {
         section: `Checkout · ${workshopTitle}`,
-        campaign: reg.campaign,
-        workshop: workshopTitle,
+        cta_label: `Checkout: ${workshopTitle}`,
         items: ['Workshop: ' + workshopTitle, ...addedItems.map((i) => i.title)].join(' | '),
         amount: total,
-      });
+      };
+      if (reg.leadId) {
+        // Update the same registration lead → one lead per registrant, flagged done.
+        await completeCheckout(reg.leadId, order);
+      } else {
+        // Fallback (no registration id in state): create a checked-out lead,
+        // carrying the background so it's still captured.
+        await submitLead({
+          name: reg.name, email: reg.email, phone: reg.phone,
+          background: reg.background,
+          source: 'checkout-order', campaign: reg.campaign, workshop: workshopTitle,
+          checkout_completed: true,
+          ...order,
+        });
+      }
       if (addedItems.length && reg.email) {
         await deliverResources({
           name: reg.name,

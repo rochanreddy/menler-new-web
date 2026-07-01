@@ -41,6 +41,11 @@ const leadSchema = new mongoose.Schema(
     verified: { type: Boolean, default: false },
     verified_at: { type: Date, default: null },
 
+    // Campaign flow: the registration lead is updated (not duplicated) when the
+    // visitor completes the checkout step, so there's one lead per registrant.
+    checkout_completed: { type: Boolean, default: false },
+    checkout_at: { type: Date, default: null },
+
     // Any extra fields a form sends are preserved here.
     extra: { type: mongoose.Schema.Types.Mixed, default: {} },
   },

@@ -62,6 +62,7 @@ const KNOWN_FIELDS = new Set([
   'source', 'page', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content',
   'utm_term', 'gclid', 'fbclid', 'page_url', 'referrer_url', 'cta_label',
   'communication_optin', 'lead_source', 'lead_sub_source', 'resource', 'section', 'report_url',
+  'checkout_completed',
 ]);
 
 // ── Amplifeed CRM webhook ──────────────────────────────────────────────────
@@ -120,6 +121,8 @@ function buildAmplifeedPayload(lead) {
     section: lead.section || undefined,
     report_url: lead.report_url || undefined,
     lead_quality: lead.verified ? 'verified' : 'unverified',
+    checkout_completed: lead.checkout_completed || undefined,
+    checkout_at: lead.checkout_at || undefined,
     submitted_at: lead.createdAt,
     // Campaign / form-specific custom fields (campaign, workshop, score, etc.)
     ...extra,
@@ -194,6 +197,8 @@ router.post('/', async (req, res) => {
     // → mark verified so the admin panel + CRM see them as high quality.
     if (body.otp_token) { doc.verified = true; doc.verified_at = new Date(); }
 
+    if (doc.checkout_completed) doc.checkout_at = new Date();
+
     const lead = await Lead.create(doc);
     // Push to Amplifeed CRM (non-blocking — don't await; failures are logged only).
     forwardLeadToCrm(lead);
@@ -201,6 +206,39 @@ router.post('/', async (req, res) => {
   } catch (err) {
     console.error('lead capture error', err);
     res.status(500).json({ error: 'Could not submit. Please try again.' });
+  }
+});
+
+/* ── Mark an existing lead as checked-out ────────────────────────────────── */
+// Called after the checkout step completes. Updates the SAME registration lead
+// (so there's one lead per registrant) and flags checkout as done, instead of
+// creating a duplicate lead.
+router.post('/:id/checkout', async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!/^[a-f\d]{24}$/i.test(id)) return res.status(400).json({ error: 'Invalid lead id.' });
+
+    const lead = await Lead.findById(id);
+    if (!lead) return res.status(404).json({ error: 'Lead not found.' });
+
+    const body = req.body || {};
+    lead.checkout_completed = true;
+    lead.checkout_at = new Date();
+    if (body.section) lead.section = body.section;
+    if (body.cta_label) lead.cta_label = body.cta_label;
+    lead.extra = {
+      ...(lead.extra && typeof lead.extra === 'object' ? lead.extra : {}),
+      ...(body.items !== undefined ? { items: body.items } : {}),
+      ...(body.amount !== undefined ? { amount: body.amount } : {}),
+    };
+    await lead.save();
+
+    // Reflect the checkout in the CRM (non-blocking).
+    forwardLeadToCrm(lead);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('lead checkout update error', err);
+    res.status(500).json({ error: 'Could not update the lead.' });
   }
 });
 

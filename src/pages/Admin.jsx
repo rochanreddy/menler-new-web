@@ -307,7 +307,7 @@ function LeadsTab() {
           <thead>
             <tr>
               <th>Name</th><th>Email</th><th>Phone</th>
-              <th>Program</th><th>Source</th><th>Section</th><th>CTA / button</th><th>Page</th><th>Created</th>
+              <th>Background</th><th>Source</th><th>Checkout</th><th>Section</th><th>CTA / button</th><th>Created</th>
             </tr>
           </thead>
           <tbody>
@@ -320,11 +320,15 @@ function LeadsTab() {
                 <td>{dash(l.name)}</td>
                 <td>{dash(l.email)}</td>
                 <td>{dash(l.phone)}</td>
-                <td>{l.program ? <span className="admin-pill">{l.program}</span> : '—'}</td>
+                <td className="admin-muted">{dash(l.background)}</td>
                 <td>{dash(l.source)}</td>
+                <td>
+                  {l.checkout_completed
+                    ? <span className="admin-badge admin-badge--ok">Done</span>
+                    : (l.source === 'campaign-workshop' ? <span className="admin-badge">Pending</span> : '—')}
+                </td>
                 <td className="admin-muted">{dash(l.section)}</td>
                 <td className="admin-muted">{dash(l.cta_label || l.resource)}</td>
-                <td className="admin-muted">{dash(l.page)}</td>
                 <td className="admin-muted">{fmtDate(l.createdAt)}</td>
               </tr>
             ))}
@@ -346,6 +350,7 @@ function LeadsTab() {
             ['Track', selected.track],
             ['Background', selected.background],
             ['Message', selected.message],
+            ['Checkout completed', selected.checkout_completed ? `Yes${selected.checkout_at ? ' · ' + fmtDate(selected.checkout_at) : ''}` : 'No'],
             ['Source', selected.source],
             ['Section', selected.section],
             ['CTA / button', selected.cta_label],

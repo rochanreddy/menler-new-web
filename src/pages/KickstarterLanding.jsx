@@ -182,7 +182,7 @@ export default function KickstarterLanding() {
       const token = await sendOtp(form.email.trim());
       setOtpBusy(false);
       setBusy(true);
-      await submitLead({
+      const created = await submitLead({
         name: form.name, email: form.email, phone,
         city: form.city, background: form.background,
         otp_token: token, otp_channel: 'email', otp_identifier: form.email.trim(),
@@ -191,6 +191,7 @@ export default function KickstarterLanding() {
       });
       navigate('/checkout', {
         state: {
+          leadId: created?.id,
           workshop: heading,
           price: d.price,
           name: form.name,

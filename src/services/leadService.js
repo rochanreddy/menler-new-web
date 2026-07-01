@@ -50,6 +50,21 @@ export async function submitLead(payload) {
 }
 
 /**
+ * Mark an existing lead (from campaign registration) as checked-out. Updates the
+ * same lead instead of creating a duplicate, so the admin/CRM shows one record
+ * per registrant with a "checkout completed" flag.
+ */
+export async function completeCheckout(id, payload = {}) {
+  const res = await fetch(`${API_URL}/leads/${id}/checkout`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error(await errorMessage(res, 'Checkout update failed'));
+  return res.json();
+}
+
+/**
  * Create a shareable aptitude report. Returns { id, url } — the url is a public
  * read-only report page (/report/:id) that can be attached to the lead/CRM.
  */
