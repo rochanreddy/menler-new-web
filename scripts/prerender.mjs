@@ -11,12 +11,31 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { dirname, join } from 'path';
 import { PROJECTS } from '../src/data/projectsData.js';
-import { HOME_FAQS } from '../src/data/faqData.js';
+import { HOME_FAQS, GENERALIST_FAQS, ENGINEERING_FAQS, KICKSTARTER_FAQS } from '../src/data/faqData.js';
 import { POLICIES } from '../src/data/policyContent.js';
 
 const SITE = 'https://menler.in';
 const DIST = 'dist';
-const ORG = { '@type': 'Organization', name: 'Menler', url: SITE, sameAs: SITE };
+const SOCIAL = [
+  'https://www.linkedin.com/company/menler/',
+  'https://www.instagram.com/menler.in',
+  'https://www.facebook.com/profile.php?id=61589670181082',
+];
+// Compact org reference used as a course `provider`.
+const ORG = { '@type': 'Organization', name: 'Menler', url: SITE };
+
+// Full standalone brand entity (emitted on the homepage).
+const ORG_FULL = {
+  '@context': 'https://schema.org',
+  '@type': 'EducationalOrganization',
+  name: 'Menler',
+  alternateName: 'Menler Learning Systems',
+  url: SITE,
+  logo: `${SITE}/icon-512.png`,
+  image: `${SITE}/og-image.png`,
+  description: "India's Claude-native AI learning company — AI courses and fellowships (Generalist, Engineering and the Gen AI Kickstarter) with real projects and placement support.",
+  sameAs: SOCIAL,
+};
 
 // Schema helpers ------------------------------------------------------------
 const crumbs = (items) => ({
@@ -25,21 +44,25 @@ const crumbs = (items) => ({
   itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, item: SITE + it.path })),
 });
 
-const course = (name, description, weeks, mode) => ({
+const course = (name, description, workload, urlPath, price) => ({
   '@context': 'https://schema.org',
   '@type': 'Course',
   name,
   description,
   provider: ORG,
+  url: SITE + urlPath,
   inLanguage: 'en',
-  ...(mode ? { hasCourseInstance: { '@type': 'CourseInstance', courseMode: 'online', courseWorkload: weeks } } : {}),
+  hasCourseInstance: { '@type': 'CourseInstance', courseMode: 'online', courseWorkload: workload },
+  ...(price
+    ? { offers: { '@type': 'Offer', price: String(price).replace(/[^\d.]/g, ''), priceCurrency: 'INR', availability: 'https://schema.org/InStock', url: SITE + urlPath } }
+    : {}),
 });
 
-const faqPage = {
+const faqOf = (faqs) => ({
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  mainEntity: HOME_FAQS.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
-};
+  mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+});
 
 // Routes --------------------------------------------------------------------
 const STATIC_ROUTES = [
@@ -47,20 +70,21 @@ const STATIC_ROUTES = [
     path: '/', file: 'index.html', nav: 'Home',
     title: 'Menler — AI Learning India · Claude AI Fellowship & Courses',
     description: "India's Claude-native AI learning. AI courses & fellowships — Generalist (no-code), Engineering, and the Gen AI Kickstarter. Real projects.",
-    keywords: 'AI learning India, AI courses India, AI fellowship India, Claude AI fellowship, AI upskilling India, AI skills training, AI-native work, AI-native workforce, AI careers India, AI jobs future, AI workflows, AI automation workflows, best AI tools, AI productivity tools, large language models explained, enterprise AI transformation, AI adoption, AI bootcamp India',
+    keywords: 'top AI courses, best AI course India, best AI courses in India, top Claude AI courses, best Claude AI course, Claude AI course, Claude AI training, online AI course India, AI certification India, AI learning India, AI courses India, AI fellowship India, Claude AI fellowship, AI upskilling India, AI skills training, AI-native work, AI-native workforce, AI careers India, AI bootcamp India, learn AI India',
     h1: "Menler — India's Claude-native AI learning",
     intro: 'AI courses and fellowships: the no-code Claude AI Generalist, the Claude AI Engineering fellowship, and the 14-day Gen AI Kickstarter. Learn AI, build real projects, and get placement support.',
-    jsonLd: [faqPage],
+    jsonLd: [ORG_FULL, faqOf(HOME_FAQS)],
   },
   {
     path: '/generalist', file: 'generalist.html', nav: 'Generalist Fellowship',
     title: 'Claude AI Generalist Fellowship — No-Code AI Course India | Menler',
     description: 'A 10-week no-code Claude AI fellowship for non-tech professionals and students. Master AI workflows across marketing, finance, product, HR & ops — with placement support.',
-    keywords: 'Claude AI Generalist course, no-code AI fellowship, AI generalist program India, AI fellowship for non-tech, AI workflows, AI-native work, AI upskilling India, AI course India',
+    keywords: 'best Claude AI course, top AI course for professionals, best no-code AI course, Claude AI Generalist course, no-code AI fellowship, AI generalist program India, AI fellowship for non-tech, best AI course India, AI course for professionals, AI workflows, AI-native work, AI upskilling India, AI course India',
     h1: 'Claude AI Generalist Fellowship',
     intro: 'A 10-week no-code Claude AI fellowship for non-technical professionals and students — master AI workflows across marketing, finance, product, HR and operations, with real projects and placement support.',
     jsonLd: [
-      course('Claude AI Generalist Fellowship', '10-week no-code Claude AI fellowship for non-technical professionals — domain AI workflows, real projects and placement support.', '10 weeks', true),
+      course('Claude AI Generalist Fellowship', '10-week no-code Claude AI fellowship for non-technical professionals — domain AI workflows, real projects and placement support.', '10 weeks', '/generalist', '59999'),
+      faqOf(GENERALIST_FAQS),
       crumbs([{ name: 'Home', path: '/' }, { name: 'Generalist Fellowship', path: '/generalist' }]),
     ],
   },
@@ -68,11 +92,12 @@ const STATIC_ROUTES = [
     path: '/engineering', file: 'engineering.html', nav: 'Engineering Fellowship',
     title: 'Claude AI Engineering Fellowship — AI Specialist Program India | Menler',
     description: 'A 12-week Claude AI engineering fellowship for developers. Build production AI systems — API, RAG, MCP, agents, evals & LLMOps — with placement support.',
-    keywords: 'Claude AI engineering fellowship, AI engineering course India, agentic AI engineering, AI engineering roadmap, AI systems engineering, Claude API engineering, RAG engineering, MCP, agentic AI workflows, AI specialist program India',
+    keywords: 'best AI engineering course, top Claude AI course for developers, best Claude AI course, Claude AI engineering fellowship, AI engineering course India, agentic AI engineering, AI engineering roadmap, AI systems engineering, Claude API engineering, RAG engineering, MCP, agentic AI workflows, AI specialist program India',
     h1: 'Claude AI Engineering Fellowship',
     intro: 'A 12-week Claude AI engineering fellowship for developers — build production AI systems: API, RAG, MCP, agents, evals and LLMOps, with placement support.',
     jsonLd: [
-      course('Claude AI Engineering Fellowship', '12-week Claude AI engineering fellowship — production AI systems: API, RAG, MCP, agents, evals and LLMOps, with placement support.', '12 weeks', true),
+      course('Claude AI Engineering Fellowship', '12-week Claude AI engineering fellowship — production AI systems: API, RAG, MCP, agents, evals and LLMOps, with placement support.', '12 weeks', '/engineering'),
+      faqOf(ENGINEERING_FAQS),
       crumbs([{ name: 'Home', path: '/' }, { name: 'Engineering Fellowship', path: '/engineering' }]),
     ],
   },
@@ -80,11 +105,12 @@ const STATIC_ROUTES = [
     path: '/kickstarter', file: 'kickstarter.html', nav: 'Gen AI Kickstarter',
     title: 'Gen AI Kickstarter — AI Bootcamp India for Beginners | Menler',
     description: 'A 14-day beginner AI bootcamp. Get hands-on with 10+ AI tools, build your first AI projects, and become AI-fluent — no prerequisites.',
-    keywords: 'AI bootcamp India, beginner AI course, Gen AI Kickstarter, AI tools onboarding, AI upskilling, learn AI India',
+    keywords: 'best beginner AI course, top AI bootcamp India, best AI course for beginners, AI bootcamp India, beginner AI course, Gen AI Kickstarter, learn AI India, AI tools onboarding, AI upskilling, best AI course India',
     h1: 'Gen AI Kickstarter',
     intro: 'A 14-day beginner AI bootcamp — get hands-on with 10+ AI tools, build your first AI projects, and become AI-fluent with no prerequisites.',
     jsonLd: [
-      course('Gen AI Kickstarter', '14-day beginner AI bootcamp — hands-on with 10+ AI tools and first real AI projects, no prerequisites.', '14 days', true),
+      course('Gen AI Kickstarter', '14-day beginner AI bootcamp — hands-on with 10+ AI tools and first real AI projects, no prerequisites.', '14 days', '/kickstarter', '4999'),
+      faqOf(KICKSTARTER_FAQS),
       crumbs([{ name: 'Home', path: '/' }, { name: 'Gen AI Kickstarter', path: '/kickstarter' }]),
     ],
   },
