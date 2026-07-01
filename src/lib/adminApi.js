@@ -49,6 +49,14 @@ export const adminApi = {
   saveCampaign: (slug, body) =>
     api(`/admin/campaigns/${encodeURIComponent(slug)}`, { method: 'PUT', body }),
 
+  // Branded URL shortener (admin-only).
+  getShortLinks: () => api('/admin/shortlinks'),
+  createShortLink: (body) => api('/admin/shortlinks', { method: 'POST', body }),
+  updateShortLink: (code, body) =>
+    api(`/admin/shortlinks/${encodeURIComponent(code)}`, { method: 'PUT', body }),
+  deleteShortLink: (code) =>
+    api(`/admin/shortlinks/${encodeURIComponent(code)}`, { method: 'DELETE' }),
+
   /** Fetches a CSV with credentials and triggers a browser download. */
   async downloadCsv(kind, params = {}) {
     const path = kind === 'users' ? '/admin/users/export.csv' : '/admin/leads/export.csv';

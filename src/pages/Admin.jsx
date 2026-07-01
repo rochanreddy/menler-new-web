@@ -599,6 +599,146 @@ function CampaignsTab() {
   );
 }
 
+/* ── Short links tab (branded URL shortener — admin only) ────────────────── */
+
+// Where the short links live. Defaults to the API origin + /l so links work
+// out of the box; set VITE_SHORT_BASE to "https://go.menler.in/l" once that
+// subdomain points at the API.
+const SHORT_BASE = (import.meta.env.VITE_SHORT_BASE || '').trim()
+  || `${(import.meta.env.VITE_API_URL || 'http://localhost:4000').replace(/\/+$/, '')}/l`;
+
+function ShortLinksTab() {
+  const [rows, setRows] = useState([]);
+  const [drafts, setDrafts] = useState({}); // code -> target being edited
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [savingCode, setSavingCode] = useState('');
+  const [copied, setCopied] = useState('');
+  // Create form
+  const [target, setTarget] = useState('');
+  const [code, setCode] = useState('');
+  const [label, setLabel] = useState('');
+  const [creating, setCreating] = useState(false);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const d = await adminApi.getShortLinks();
+      const list = d.rows || [];
+      setRows(list);
+      setDrafts(Object.fromEntries(list.map((r) => [r.code, r.target])));
+    } catch (e) {
+      setError(e.message || 'Could not load short links.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const shortUrl = (c) => `${SHORT_BASE}/${c}`;
+
+  const copy = async (c) => {
+    try { await navigator.clipboard.writeText(shortUrl(c)); setCopied(c); setTimeout(() => setCopied((x) => (x === c ? '' : x)), 1500); } catch { /* clipboard blocked */ }
+  };
+
+  const create = async (e) => {
+    e.preventDefault();
+    setCreating(true);
+    setError('');
+    try {
+      await adminApi.createShortLink({ target: target.trim(), code: code.trim(), label: label.trim() });
+      setTarget(''); setCode(''); setLabel('');
+      await load();
+    } catch (e2) {
+      setError(e2.message || 'Could not create the short link.');
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const saveTarget = async (c) => {
+    setSavingCode(c);
+    setError('');
+    try {
+      await adminApi.updateShortLink(c, { target: (drafts[c] || '').trim() });
+      setRows((rs) => rs.map((r) => (r.code === c ? { ...r, target: drafts[c] } : r)));
+    } catch (e) {
+      setError(e.message || 'Could not update.');
+    } finally {
+      setSavingCode('');
+    }
+  };
+
+  const remove = async (c) => {
+    setError('');
+    try {
+      await adminApi.deleteShortLink(c);
+      setRows((rs) => rs.filter((r) => r.code !== c));
+    } catch (e) {
+      setError(e.message || 'Could not delete.');
+    }
+  };
+
+  return (
+    <div>
+      <div className="admin-panel-card" style={{ marginBottom: 16 }}>
+        <p className="admin-card-title">Create a short link</p>
+        <p className="admin-empty" style={{ textAlign: 'left', margin: '0 0 12px' }}>
+          Paste a long URL (a campaign, a Zoom link, anything) and get a short link at <b>{SHORT_BASE}/…</b>. Great for SMS — the short domain is whitelisted once, then every code under it is covered. Leave the code blank for a random one, or type your own (e.g. <b>cm</b>).
+        </p>
+        <form className="admin-toolbar" onSubmit={create}>
+          <input className="admin-search" style={{ flex: 2 }} type="url" required placeholder="https://menler.in/campaign/…  (long URL)" value={target} onChange={(e) => setTarget(e.target.value)} />
+          <input className="admin-search" style={{ maxWidth: 150 }} placeholder="code (optional)" value={code} onChange={(e) => setCode(e.target.value)} />
+          <input className="admin-search" style={{ maxWidth: 180 }} placeholder="label (optional)" value={label} onChange={(e) => setLabel(e.target.value)} />
+          <button className="admin-btn admin-btn--primary" type="submit" disabled={creating}>{creating ? 'Creating…' : '+ Create'}</button>
+        </form>
+      </div>
+
+      {error && <p className="admin-empty">{error}</p>}
+
+      <div className="admin-table-wrap">
+        <table className="admin-table">
+          <thead>
+            <tr><th>Short link</th><th>Target URL</th><th>Clicks</th><th /></tr>
+          </thead>
+          <tbody>
+            {loading && <tr><td colSpan={4} className="admin-empty">Loading…</td></tr>}
+            {!loading && rows.length === 0 && <tr><td colSpan={4} className="admin-empty">No short links yet.</td></tr>}
+            {!loading && rows.map((r) => (
+              <tr key={r.code}>
+                <td>
+                  <button className="admin-btn" onClick={() => copy(r.code)} title="Copy short link" style={{ fontFamily: 'monospace' }}>
+                    {copied === r.code ? 'Copied ✓' : `/${r.code}`}
+                  </button>
+                  {r.label && <div className="admin-muted" style={{ marginTop: 4 }}>{r.label}</div>}
+                </td>
+                <td>
+                  <input
+                    className="admin-search"
+                    style={{ width: '100%', minWidth: 260 }}
+                    type="url"
+                    value={drafts[r.code] ?? ''}
+                    onChange={(e) => setDrafts((d) => ({ ...d, [r.code]: e.target.value }))}
+                  />
+                </td>
+                <td className="admin-muted">{r.clicks || 0}</td>
+                <td style={{ whiteSpace: 'nowrap' }}>
+                  <button className="admin-btn admin-btn--primary" disabled={savingCode === r.code} onClick={() => saveTarget(r.code)}>
+                    {savingCode === r.code ? 'Saving…' : 'Save'}
+                  </button>{' '}
+                  <button className="admin-btn" onClick={() => remove(r.code)}>Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 /* ── Shell ───────────────────────────────────────────────────────────────── */
 
 const TABS = [
@@ -606,6 +746,7 @@ const TABS = [
   { key: 'leads', label: 'Leads' },
   { key: 'users', label: 'Users' },
   { key: 'campaigns', label: 'Campaigns' },
+  { key: 'shortlinks', label: 'Short links' },
 ];
 
 function AdminPanel({ onLogout }) {
@@ -637,6 +778,7 @@ function AdminPanel({ onLogout }) {
         {tab === 'leads' && <LeadsTab />}
         {tab === 'users' && <UsersTab />}
         {tab === 'campaigns' && <CampaignsTab />}
+        {tab === 'shortlinks' && <ShortLinksTab />}
       </main>
     </div>
   );

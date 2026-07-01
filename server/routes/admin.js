@@ -5,6 +5,7 @@ import { Lead } from '../models/Lead.js';
 import { User } from '../models/User.js';
 import { Profile } from '../models/Profile.js';
 import { CampaignSetting } from '../models/CampaignSetting.js';
+import { ShortLink } from '../models/ShortLink.js';
 import { requireAdmin } from '../middleware/adminAuth.js';
 import {
   ADMIN_COOKIE_NAME,
@@ -377,6 +378,93 @@ router.put('/campaigns/:slug', requireAdmin, async (req, res) => {
   } catch (err) {
     console.error('admin campaign save error', err);
     res.status(500).json({ error: 'Could not save the campaign.' });
+  }
+});
+
+/* ── Short links (branded URL shortener — admin only) ────────────────────── */
+
+// Unambiguous alphabet (no 0/O/1/l/i) for auto-generated codes.
+const CODE_ALPHABET = 'abcdefghjkmnpqrstuvwxyz23456789';
+function genCode(len = 5) {
+  let s = '';
+  for (let i = 0; i < len; i++) s += CODE_ALPHABET[crypto.randomInt(CODE_ALPHABET.length)];
+  return s;
+}
+
+router.get('/shortlinks', requireAdmin, async (_req, res) => {
+  try {
+    const rows = await ShortLink.find({}).sort('-createdAt').lean();
+    res.json({ rows });
+  } catch (err) {
+    console.error('admin shortlinks error', err);
+    res.status(500).json({ error: 'Could not load short links.' });
+  }
+});
+
+// Create a short link. Body: { target, code?, label? }. If no code is given,
+// a unique random one is generated.
+router.post('/shortlinks', requireAdmin, async (req, res) => {
+  try {
+    const target = String(req.body?.target || '').trim();
+    if (!/^https?:\/\//i.test(target)) {
+      return res.status(400).json({ error: 'Target must start with http:// or https://' });
+    }
+    const label = String(req.body?.label || '').trim();
+    let code = String(req.body?.code || '').trim();
+
+    if (code) {
+      if (!/^[A-Za-z0-9_-]{1,40}$/.test(code)) {
+        return res.status(400).json({ error: 'Code can only contain letters, numbers, - and _' });
+      }
+      if (await ShortLink.findOne({ code })) {
+        return res.status(409).json({ error: 'That code is already taken.' });
+      }
+    } else {
+      for (let i = 0; i < 8 && !code; i++) {
+        const c = genCode(5);
+        if (!(await ShortLink.findOne({ code: c }))) code = c;
+      }
+      if (!code) return res.status(500).json({ error: 'Could not generate a code — please try again.' });
+    }
+
+    const doc = await ShortLink.create({ code, target, label });
+    res.status(201).json({ ok: true, link: { code: doc.code, target: doc.target, label: doc.label, clicks: doc.clicks } });
+  } catch (err) {
+    console.error('admin shortlink create error', err);
+    res.status(500).json({ error: 'Could not create the short link.' });
+  }
+});
+
+// Re-point (or relabel) an existing short link without changing its code.
+router.put('/shortlinks/:code', requireAdmin, async (req, res) => {
+  try {
+    const code = String(req.params.code || '').trim();
+    const update = {};
+    if (typeof req.body?.target === 'string') {
+      const t = req.body.target.trim();
+      if (!/^https?:\/\//i.test(t)) {
+        return res.status(400).json({ error: 'Target must start with http:// or https://' });
+      }
+      update.target = t;
+    }
+    if (typeof req.body?.label === 'string') update.label = req.body.label.trim();
+
+    const doc = await ShortLink.findOneAndUpdate({ code }, { $set: update }, { new: true }).lean();
+    if (!doc) return res.status(404).json({ error: 'Short link not found.' });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('admin shortlink update error', err);
+    res.status(500).json({ error: 'Could not update the short link.' });
+  }
+});
+
+router.delete('/shortlinks/:code', requireAdmin, async (req, res) => {
+  try {
+    await ShortLink.deleteOne({ code: String(req.params.code || '').trim() });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('admin shortlink delete error', err);
+    res.status(500).json({ error: 'Could not delete the short link.' });
   }
 });
 

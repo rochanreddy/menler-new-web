@@ -13,6 +13,7 @@ import profileRoutes from './routes/profile.js';
 import leadRoutes from './routes/leads.js';
 import reportRoutes from './routes/reports.js';
 import adminRoutes from './routes/admin.js';
+import shortRoutes from './routes/short.js';
 
 const app = express();
 const port = Number(process.env.PORT || 4000);
@@ -54,6 +55,7 @@ app.use('/profile', profileRoutes);
 app.use('/leads', leadRoutes);
 app.use('/reports', reportRoutes);
 app.use('/admin', adminRoutes);
+app.use('/l', shortRoutes);
 
 async function start() {
   try {
