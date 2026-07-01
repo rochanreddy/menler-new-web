@@ -110,6 +110,15 @@ const STATIC_ROUTES = [
     jsonLd: [crumbs([{ name: 'Home', path: '/' }, { name: 'Resources', path: '/resources' }])],
   },
   {
+    path: '/community', file: 'community.html', nav: 'Community',
+    title: 'Community | Menler',
+    description: 'Join the Menler community — updates, free resources, peer support and mentor tips for your AI journey. Connect with us on WhatsApp.',
+    keywords: 'Menler community, AI community India, AI learning community, WhatsApp AI group, Claude AI community',
+    h1: 'Join the Menler community',
+    intro: 'A space for learners, professionals and builders growing their AI skills together — updates, resources and support across all our channels.',
+    jsonLd: [crumbs([{ name: 'Home', path: '/' }, { name: 'Community', path: '/community' }])],
+  },
+  {
     path: '/outcomes', file: 'outcomes.html', nav: 'Outcomes',
     title: 'AI Placement & Outcomes — AI Jobs After the Fellowship | Menler',
     description: 'Placement outcomes from the Menler AI fellowship — salary bands, hiring partners, fellow portfolios and AI jobs after the program.',

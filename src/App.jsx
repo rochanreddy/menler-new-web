@@ -20,6 +20,7 @@ const Report = lazy(() => import('./pages/Report'));
 const Join = lazy(() => import('./pages/Join'));
 const Resources = lazy(() => import('./pages/Resources'));
 const Blog = lazy(() => import('./pages/Blog'));
+const Community = lazy(() => import('./pages/Community'));
 const BlogArticle = lazy(() => import('./pages/BlogArticle'));
 const About = lazy(() => import('./pages/About'));
 const SignUp = lazy(() => import('./pages/SignUp'));
@@ -107,6 +108,7 @@ export default function App() {
             <Route path="/report/:id" element={<Report />} />
             <Route path="/join" element={<Join />} />
             <Route path="/resources" element={<Resources />} />
+            <Route path="/community" element={<Community />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/earnings-agent" element={<BlogArticle />} />
             <Route path="/about" element={<About />} />
