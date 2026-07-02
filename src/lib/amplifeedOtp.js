@@ -11,6 +11,8 @@
 import { getVerifiedLead, saveVerifiedLead } from './verifiedSession';
 
 const WIDGET_ID = import.meta.env.VITE_AMPLIFEED_WIDGET_ID || '3666786e5151323537333631';
+// MSG91 WhatsApp OTP widget (delivers the code over WhatsApp to the phone).
+const WA_WIDGET_ID = import.meta.env.VITE_AMPLIFEED_WA_WIDGET_ID || '366761674d78303532383739';
 const TOKEN_AUTH = import.meta.env.VITE_AMPLIFEED_TOKEN_AUTH || '517767Ts6KDsui6a3bef4eP1';
 
 // The OTP provider is MSG91 (Amplifeed's documented verify.amplifeed.tech host
@@ -67,10 +69,19 @@ export async function verifyEmailOtp(email) {
   return { otp_token: token, otp_channel: 'email', otp_identifier: email };
 }
 
-// Send an OTP to `identifier` (an email address). Resolves with the verified
-// token once the user enters the correct code in the provider's UI; rejects on
-// failure/cancel.
-export function sendOtp(identifier) {
+// Convenience: verify a PHONE via WhatsApp OTP (code delivered over WhatsApp).
+// `phone` must include the country code, e.g. "+919876543210" or "919876543210".
+export async function verifyWhatsappOtp(phone) {
+  const clean = String(phone || '').trim();
+  await loadOtpProvider();
+  const token = await sendOtp(clean, WA_WIDGET_ID);
+  return { otp_token: token, otp_channel: 'whatsapp', otp_identifier: clean };
+}
+
+// Send an OTP to `identifier` (an email for the email widget, or a phone with
+// country code for the WhatsApp widget). Resolves with the verified token once
+// the user enters the correct code in the provider's UI; rejects on failure/cancel.
+export function sendOtp(identifier, widgetId = WIDGET_ID) {
   return new Promise((resolve, reject) => {
     const init = getInit();
     if (!init) {
@@ -78,7 +89,7 @@ export function sendOtp(identifier) {
       return;
     }
     init({
-      widgetId: WIDGET_ID,
+      widgetId,
       tokenAuth: TOKEN_AUTH,
       identifier,
       success: (token) => resolve(token),

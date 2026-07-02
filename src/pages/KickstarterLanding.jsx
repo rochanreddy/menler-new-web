@@ -6,7 +6,7 @@ import MenlerCommunitySection from '../components/common/MenlerCommunitySection'
 import { MENLER_WHATSAPP_URL } from '../data/communityLinks';
 import { submitLead } from '../services/leadService';
 import { useContentState } from '../lib/useContent';
-import { loadOtpProvider, sendOtp } from '../lib/amplifeedOtp';
+import { verifyWhatsappOtp } from '../lib/amplifeedOtp';
 
 // ── Single-mentor workshop registration landing page (/ai-kickstarter) ──
 // Left column scrolls (mentor + workshop details); right column is a STATIC
@@ -162,8 +162,8 @@ export default function KickstarterLanding() {
   setVar('--hl-bg', d.highlightBg);
   setVar('--hl-text', d.highlightText);
 
-  // Validate → verify email via real OTP (Amplifeed/MSG91 shows its own code-entry
-  // UI) → submit the lead → go straight to checkout. No manual "submit OTP" step.
+  // Validate → verify the phone via WhatsApp OTP (Amplifeed/MSG91 shows its own
+  // code-entry UI) → submit the lead → go straight to checkout.
   const register = async (e) => {
     e.preventDefault();
     if (!form.name.trim() || !form.email.trim() || !form.city.trim() || !form.background) {
@@ -177,17 +177,16 @@ export default function KickstarterLanding() {
     setErr(null);
     setOtpBusy(true);
     try {
-      await loadOtpProvider();
       const phone = `${form.countryCode} ${form.phone}`;
-      // Widget is email-only (confirmed: it pops "Email Verification" even when sent
-      // a phone). Verify email until Amplifeed enables SMS on the widget.
-      const token = await sendOtp(form.email.trim());
+      // WhatsApp OTP identifier: country code + number in E.164 (no spaces).
+      const phoneE164 = `${form.countryCode}${form.phone}`.replace(/[^\d+]/g, '');
+      const otp = await verifyWhatsappOtp(phoneE164);
       setOtpBusy(false);
       setBusy(true);
       const created = await submitLead({
         name: form.name, email: form.email, phone,
         city: form.city, background: form.background,
-        otp_token: token, otp_channel: 'email', otp_identifier: form.email.trim(),
+        ...otp,
         source: 'campaign-workshop', campaign: activeSlug, workshop: heading,
         cta_label: `Register: ${heading}`, section: `Campaign · ${activeSlug}`,
       });
