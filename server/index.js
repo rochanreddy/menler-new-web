@@ -55,7 +55,8 @@ app.use('/profile', profileRoutes);
 app.use('/leads', leadRoutes);
 app.use('/reports', reportRoutes);
 app.use('/admin', adminRoutes);
-app.use('/l', shortRoutes);
+app.use('/MNLRAI', shortRoutes);
+app.use('/l', shortRoutes); // legacy prefix — keeps older short links working
 
 async function start() {
   try {

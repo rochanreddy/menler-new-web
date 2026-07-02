@@ -606,11 +606,11 @@ function CampaignsTab() {
 
 /* ── Short links tab (branded URL shortener — admin only) ────────────────── */
 
-// Where the short links live. Defaults to the API origin + /l so links work
-// out of the box; set VITE_SHORT_BASE to "https://go.menler.in/l" once that
-// subdomain points at the API.
+// Where the short links live. Defaults to the API origin + /MNLRAI so links
+// work out of the box; set VITE_SHORT_BASE to "https://go.menler.in/MNLRAI"
+// once that subdomain points at the API.
 const SHORT_BASE = (import.meta.env.VITE_SHORT_BASE || '').trim()
-  || `${(import.meta.env.VITE_API_URL || 'http://localhost:4000').replace(/\/+$/, '')}/l`;
+  || `${(import.meta.env.VITE_API_URL || 'http://localhost:4000').replace(/\/+$/, '')}/MNLRAI`;
 
 function ShortLinksTab() {
   const [rows, setRows] = useState([]);
