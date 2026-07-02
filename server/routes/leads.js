@@ -356,17 +356,37 @@ router.post('/resource-batch', async (req, res) => {
     if (!v.ok) return res.status(400).json({ error: v.reason });
 
     const labels = valid.map((i) => i.title || i.resource).filter(Boolean);
-    const doc = {
-      extra: { resource_items: labels },
-      verified: false,
-      resource: labels.join(' | ') || 'Menler resources',
-    };
-    for (const [key, value] of Object.entries(body)) {
-      if (key === 'hp_field' || key === 'resources') continue;
-      if (KNOWN_FIELDS.has(key)) doc[key] = value;
-      else if (!(key in doc)) doc.extra[key] = value;
+    const resourceLabel = labels.join(' | ') || 'Menler resources';
+
+    // If this batch belongs to an existing lead (e.g. a checkout registrant),
+    // attach the resources to that SAME lead instead of creating a duplicate —
+    // so the admin/CRM shows one record per person, not a second row.
+    let lead = null;
+    const leadId = String(body.leadId || '');
+    if (/^[a-f\d]{24}$/i.test(leadId)) {
+      lead = await Lead.findById(leadId);
     }
-    const lead = await Lead.create(doc);
+
+    if (lead) {
+      lead.resource = lead.resource ? `${lead.resource} | ${resourceLabel}` : resourceLabel;
+      lead.extra = {
+        ...(lead.extra && typeof lead.extra === 'object' ? lead.extra : {}),
+        resource_items: labels,
+      };
+      await lead.save();
+    } else {
+      const doc = {
+        extra: { resource_items: labels },
+        verified: false,
+        resource: resourceLabel,
+      };
+      for (const [key, value] of Object.entries(body)) {
+        if (key === 'hp_field' || key === 'resources' || key === 'leadId') continue;
+        if (KNOWN_FIELDS.has(key)) doc[key] = value;
+        else if (!(key in doc)) doc.extra[key] = value;
+      }
+      lead = await Lead.create(doc);
+    }
 
     await emailPdfAttachments({
       to: email,

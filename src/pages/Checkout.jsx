@@ -64,10 +64,11 @@ export default function Checkout() {
       }
       if (addedItems.length && reg.email) {
         await deliverResources({
+          leadId: reg.leadId, // attach to the SAME registration lead (no duplicate row)
           name: reg.name,
           email: reg.email,
           phone: reg.phone,
-          source: 'checkout-resources',
+          source: 'checkout-resources', // only used if there's no leadId (standalone batch)
           section: `Checkout · ${workshopTitle}`,
           resources: addedItems.map((i) => ({ title: i.title, pdf: i.pdf, resource: i.title })),
         });
