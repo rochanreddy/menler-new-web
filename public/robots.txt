@@ -10,4 +10,29 @@ Disallow: /verify-email
 Disallow: /forgot-password
 Disallow: /reset-password
 
+# AI answer engines / LLM crawlers (Generative Engine Optimization) — explicitly
+# welcome to read public pages; private/auth paths stay blocked.
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: ClaudeBot
+User-agent: Claude-Web
+User-agent: anthropic-ai
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: CCBot
+User-agent: cohere-ai
+Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /login
+Disallow: /signup
+Disallow: /register
+Disallow: /verify-email
+Disallow: /forgot-password
+Disallow: /reset-password
+
 Sitemap: https://menler.in/sitemap.xml

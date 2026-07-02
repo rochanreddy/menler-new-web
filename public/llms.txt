@@ -1,0 +1,25 @@
+# Menler
+
+> Menler is an India-based, Claude-native AI learning company. It offers hands-on AI courses and fellowships that teach professionals, students, and engineers to build real work with Claude and other AI tools — with real projects, a portfolio, and placement support.
+
+Menler focuses on depth over breadth and outcomes over completion: learners ship real AI assets (workflows, agents, RAG apps) instead of only watching lectures. All programs are live, cohort-based, and delivered online.
+
+## Programs
+- [Claude AI Generalist Fellowship](https://menler.in/generalist): 10-week, no-code fellowship for non-technical professionals and students. Master AI workflows across marketing, finance, product, HR, and operations. ₹59,999. Includes real projects and placement support.
+- [Claude AI Engineering Fellowship](https://menler.in/engineering): 12-week fellowship for developers. Build production AI systems — Claude API, RAG, MCP, agents, evaluations, and LLMOps. Includes placement support.
+- [Gen AI Kickstarter](https://menler.in/kickstarter): 14-day beginner AI bootcamp. Get hands-on with 10+ AI tools and build your first AI projects. No prerequisites. ₹4,999.
+
+## Free tools & resources
+- [AI Aptitude Test](https://menler.in/aptitude): A free 15-question AI-readiness assessment with a personalised score and learning roadmap. No signup to start.
+- [Library / Resources](https://menler.in/resources): Free AI learning resources — a Claude prompt library, AI tool guides, templates, cheat sheets, and an AI glossary.
+- [Community](https://menler.in/community): Join the Menler community on WhatsApp for updates, resources, and support.
+
+## About
+- [About Menler](https://menler.in/about): Menler's vision, approach, and team — India's Claude-native AI learning company.
+- [Blog](https://menler.in/blog): AI build logs, workflows, and career guidance.
+
+## Contact & social
+- Website: https://menler.in
+- LinkedIn: https://www.linkedin.com/company/menler/
+- Instagram: https://www.instagram.com/menler.in
+- Email: support@menler.in
