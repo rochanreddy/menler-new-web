@@ -116,11 +116,11 @@ const STATIC_ROUTES = [
   },
   {
     path: '/aptitude', file: 'aptitude.html', nav: 'AI Aptitude Test',
-    title: 'AI Aptitude Test — Free AI Readiness Assessment | Menler',
-    description: 'Take the free AI Aptitude Test — a 15-question AI readiness assessment. Get a personalised score, learning roadmap and a downloadable question bank. No signup to start.',
-    keywords: 'AI aptitude test, AI readiness test, AI test, AI assessment, free AI test, AI generalist mock test, AI engineering mock test, AI workflow aptitude test, AI beginner assessment test, Claude API engineering test, agentic AI engineering test, AI skills assessment, AI career test',
-    h1: 'AI Aptitude Test',
-    intro: 'A free 15-question AI readiness assessment — get a personalised score, a learning roadmap, and a downloadable question bank. No signup to start.',
+    title: 'Menler AI Aptitude Test — Free AI Readiness Assessment',
+    description: 'The Menler AI Aptitude Test is a free AI readiness assessment — answer a short set of questions and get a personalised score, a learning roadmap, and program recommendations. No signup to start.',
+    keywords: 'menler aptitude, menler aptitude test, menler AI aptitude test, menler.in aptitude, menler AI test, AI aptitude test, AI readiness test, AI test, AI assessment, free AI test, AI generalist mock test, AI engineering mock test, AI workflow aptitude test, AI beginner assessment test, Claude API engineering test, agentic AI engineering test, AI skills assessment, AI career test',
+    h1: 'Menler AI Aptitude Test',
+    intro: 'The Menler AI Aptitude Test is a free AI readiness assessment — get a personalised score, a learning roadmap, and program recommendations. No signup to start.',
     jsonLd: [
       { '@context': 'https://schema.org', '@type': 'Quiz', name: 'AI Aptitude Test', about: 'AI readiness assessment', educationalLevel: 'Beginner to Advanced', provider: ORG },
       crumbs([{ name: 'Home', path: '/' }, { name: 'AI Aptitude Test', path: '/aptitude' }]),
