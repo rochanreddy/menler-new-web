@@ -21,7 +21,7 @@ import { APTITUDE_FAQS } from '../data/faqData';
 
 const TRUST_CARDS = [
   { title: 'What it tests', desc: 'AI readiness across three core dimensions: problem-solving, execution ability, and role alignment.' },
-  { title: 'How it\'s scored', desc: '0–15 readiness score, broken into sub-scores and benchmarked against real-world performance indicators.' },
+  { title: 'How it\'s scored', desc: '0–10 readiness score, broken into sub-scores and benchmarked against real-world performance indicators.' },
   { title: 'What you\'ll receive', desc: 'A personalised readiness report, learning roadmap, and placement-readiness insights.' },
   { title: 'Why it matters', desc: 'Most people dont know where they stand with AI. This assessment gives you a clear baseline before you invest resources.' },
 ];
@@ -34,6 +34,34 @@ function buildDimensions(length) {
     { label: 'Execution ability', from: size, to: size * 2 },
     { label: 'Role alignment', from: size * 2, to: length },
   ];
+}
+
+// Fisher–Yates shuffle (local copy for the runner).
+function shuffleArr(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Build a balanced session: draw `total` questions spread as evenly as possible
+// across the domain's sets, so every set is represented — and rotate which
+// questions (and, when total doesn't divide evenly, which sets get the extra)
+// are picked each attempt. e.g. a 5-set domain → 2 per set = 10; a 10-set
+// domain → 1 per set = 10.
+function buildBalancedSession(d, total = 10) {
+  const numSets = d.setLabels?.length || 0;
+  if (!numSets) return d.getRandom(total);
+  const base = Math.floor(total / numSets);
+  const remainder = total - base * numSets;
+  const alloc = d.setLabels.map(() => base);
+  // Hand the leftover picks to distinct random sets (rotates each attempt).
+  shuffleArr(d.setLabels.map((_, i) => i)).slice(0, remainder).forEach((i) => { alloc[i] += 1; });
+  let qs = [];
+  alloc.forEach((n, i) => { if (n > 0) qs = qs.concat(d.getSet(i, n)); });
+  return shuffleArr(qs);
 }
 
 const blankArr = (len, fill) => Array(len).fill(fill);
@@ -140,7 +168,7 @@ export default function Aptitude() {
   // drops straight into a random session drawn from that domain's full pool.
   const startDomain = (d) => {
     if (!d) return;
-    dispatch({ type: 'START_TEST', cluster: d.name, questions: d.getRandom(15) });
+    dispatch({ type: 'START_TEST', cluster: d.name, questions: buildBalancedSession(d, 10) });
     setDomainOpen(false);
   };
 
@@ -159,8 +187,8 @@ export default function Aptitude() {
     else window.scrollTo(0, 0);
   }, [state.view]);
 
-  // 15-minute countdown for the test runner. Resets when a new set starts.
-  const TEST_SECONDS = 15 * 60;
+  // 10-minute countdown for the test runner. Resets when a new set starts.
+  const TEST_SECONDS = 10 * 60;
   const [elapsed, setElapsed] = useState(0);
   useEffect(() => {
     if (state.view !== 'runner') return;
@@ -475,7 +503,7 @@ export default function Aptitude() {
     const sets = domain
       ? domain.setLabels.map((label, i) => ({
           label,
-          start: () => dispatch({ type: 'START_TEST', cluster: domain.name, setIdx: i, questions: domain.getSet(i) }),
+          start: () => dispatch({ type: 'START_TEST', cluster: domain.name, setIdx: i, questions: domain.getSet(i, 10) }),
         }))
       : (CLUSTERS.find(c => c.name === state.cluster) ?? CLUSTERS[0]).sets.map((s, i) => ({
           label: s.label,
@@ -489,12 +517,12 @@ export default function Aptitude() {
           </div>
           <p className="apt-track-badge">{trackName}</p>
           <h2 className="section-h2">Pick a set<br /><em>to begin.</em></h2>
-          <p className="section-sub" style={{ margin: '0 auto' }}>{sets.length} sets, 15 questions each. Choose any — your report and 14-day roadmap come at the end.</p>
+          <p className="section-sub" style={{ margin: '0 auto' }}>{sets.length} sets, 10 questions each. Choose any — your report and 14-day roadmap come at the end.</p>
           <div className="cluster-grid cluster-grid--sets">
             {sets.map((s, i) => (
               <div key={i} className="cluster-card">
                 <p className="cluster-name">Set {i + 1} · {s.label}</p>
-                <p className="cluster-sets">15 questions · ~15 min</p>
+                <p className="cluster-sets">10 questions · ~10 min</p>
                 <button className="cluster-btn" onClick={s.start}>Start Test</button>
               </div>
             ))}
@@ -537,7 +565,7 @@ export default function Aptitude() {
     <>
       <Seo
         title="AI Aptitude Test — Free AI Readiness Assessment | Menler"
-        description="Take the free AI Aptitude Test — a 15-question AI readiness assessment. Get a personalised score and learning roadmap. No signup to start."
+        description="Take the free AI Aptitude Test — a 10-question AI readiness assessment. Get a personalised score and learning roadmap. No signup to start."
         keywords="AI aptitude test, AI readiness test, AI test, AI assessment, free AI test, AI generalist mock test, AI engineering mock test, AI workflow aptitude test, AI beginner assessment test, Claude API engineering test, agentic AI engineering test, AI skills assessment, AI career test"
         path="/aptitude"
         jsonLd={{ '@context': 'https://schema.org', '@type': 'Quiz', name: 'AI Aptitude Test', about: 'AI readiness assessment', educationalLevel: 'Beginner to Advanced', provider: { '@type': 'Organization', name: 'Menler', sameAs: 'https://menler.in' } }}
@@ -547,7 +575,7 @@ export default function Aptitude() {
         <div className="apt-hero-inner">
           <p className="apt-eyebrow">Free · No signup to start</p>
           <h1 className="apt-h1">Where do you stand<br /><em>on the AI Curve?</em></h1>
-          <p className="apt-sub">A 15 question AI Aptitude Test designed to assess your AI readiness<br />and recommend the most relevant learning pathway for your goals.</p>
+          <p className="apt-sub">A 10 question AI Aptitude Test designed to assess your AI readiness<br />and recommend the most relevant learning pathway for your goals.</p>
           <button className="apt-cta-big" onClick={() => setDomainOpen(true)}>Start the Test</button>
         </div>
       </section>
@@ -601,7 +629,7 @@ export default function Aptitude() {
             <div key={d.name} className="cluster-card">
               <span className="cluster-num">{String(i + 1).padStart(2, '0')}</span>
               <p className="cluster-name">{d.name}</p>
-              <p className="cluster-sets">15 questions · ~15 min</p>
+              <p className="cluster-sets">10 questions · ~10 min</p>
               <button className="cluster-btn" onClick={() => openDomainSets(d)}>Take Test</button>
             </div>
           ))}

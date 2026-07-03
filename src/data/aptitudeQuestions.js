@@ -5188,9 +5188,11 @@ export function maxScoreForQuestions(questions) {
   return questions?.length || 0;
 }
 
-export function getRecommendation(score) {
-  // Score-based recommendation (1 mark/question): 7 or fewer → Kickstarter, 8 or more → Fellowship.
-  if (score >= 8) {
+export function getRecommendation(score, maxScore = 15) {
+  // Proportional recommendation (1 mark/question): at or above half → Fellowship,
+  // below half → Kickstarter. Half of 15 keeps the original 8+ cutoff; at 10
+  // questions the cutoff is 5+, so the bands stay fair regardless of test length.
+  if (score >= (maxScore || 15) * 0.5) {
     return {
       band: 'Fellowship track — AI Specialist path',
       program: 'Claude AI Generalist Fellowship',
