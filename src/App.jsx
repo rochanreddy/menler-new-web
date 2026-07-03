@@ -1,5 +1,5 @@
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
-import { useEffect, lazy, Suspense } from 'react';
+import { useEffect, useRef, lazy, Suspense } from 'react';
 import Lenis from 'lenis';
 import Navbar from './components/layout/Navbar';
 import PageLoader from './components/common/PageLoader';
@@ -36,6 +36,7 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
+  const firstRun = useRef(true);
   useEffect(() => {
     // Jump to top instantly on navigation. Use Lenis if it's running so its
     // internal scroll state stays in sync; otherwise fall back to the native API.
@@ -45,6 +46,11 @@ function ScrollToTop() {
     // land at the start of the new page's content.
     const main = document.getElementById('main');
     if (main) main.focus({ preventScroll: true });
+    // Meta Pixel: fire a PageView on each client-side route change (the base
+    // pixel in index.html only fires on the initial hard load). Skip the first
+    // run so we don't double-count that initial PageView.
+    if (firstRun.current) firstRun.current = false;
+    else if (typeof window.fbq === 'function') window.fbq('track', 'PageView');
   }, [pathname]);
   return null;
 }
