@@ -92,10 +92,30 @@ function normalizePhone(p) {
   return t;
 }
 
+// Internal keys that must never be forwarded to the CRM as custom fields:
+// a spent OTP token, the honeypot, an internal PDF path, and the resource-name
+// array that is already sent as the scalar `resource` string.
+const CRM_EXCLUDE = new Set(['otp_token', 'hp_field', 'resource_pdf', 'resource_items']);
+
 // Map our lead document → Amplifeed's canonical payload keys.
 function buildAmplifeedPayload(lead) {
-  const extra = (lead.extra && typeof lead.extra === 'object') ? lead.extra : {};
+  const rawExtra = (lead.extra && typeof lead.extra === 'object') ? lead.extra : {};
+  // Form / campaign custom fields are forwarded as-is, but sanitised first:
+  //  - drop internal keys (spent token, honeypot, internal paths),
+  //  - flatten any array to a comma-joined string. The CRM maps each field into
+  //    a scalar column, so an array (e.g. resource names) could otherwise be
+  //    mis-mapped into a string field like `source`.
+  const extra = {};
+  for (const [k, v] of Object.entries(rawExtra)) {
+    if (CRM_EXCLUDE.has(k) || v === undefined || v === null || v === '') continue;
+    extra[k] = Array.isArray(v) ? v.join(', ') : v;
+  }
+
   const payload = {
+    // Custom fields FIRST so the canonical mapped fields below always win — a
+    // stray key in `extra` (e.g. an array) can never override `source`,
+    // `background`, `section`, etc.
+    ...extra,
     name: lead.name || undefined,
     email: lead.email || undefined,
     phone: normalizePhone(lead.phone),
@@ -104,6 +124,7 @@ function buildAmplifeedPayload(lead) {
     source: lead.source || undefined,
     channel: 'web',
     communication_optin: lead.communication_optin !== false,
+    background: lead.background || undefined,
     utm_source: lead.utm_source || undefined,
     utm_medium: lead.utm_medium || undefined,
     utm_campaign: lead.utm_campaign || undefined,
@@ -124,8 +145,6 @@ function buildAmplifeedPayload(lead) {
     checkout_completed: lead.checkout_completed || undefined,
     checkout_at: lead.checkout_at || undefined,
     submitted_at: lead.createdAt,
-    // Campaign / form-specific custom fields (campaign, workshop, score, etc.)
-    ...extra,
   };
   // Drop undefined keys.
   Object.keys(payload).forEach((k) => payload[k] === undefined && delete payload[k]);
