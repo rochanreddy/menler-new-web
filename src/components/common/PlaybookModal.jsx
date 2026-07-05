@@ -121,7 +121,7 @@ export default function PlaybookModal({ item, onClose }) {
             <div className="pb-modal-done">
               <div className="pb-done-icon">✓</div>
               <h3 className="pb-modal-title">Your download has started</h3>
-              <p className="pb-modal-sub"><b>{item.title}</b> is downloading. Didn’t start?{' '}
+              <p className="pb-modal-sub"><b>{item.title}</b> has been downloaded. Didn’t start?{' '}
                 <button type="button" onClick={() => downloadFile(item.pdf, `${item.title}.pdf`)} style={{ background: 'none', border: 'none', padding: 0, color: 'var(--specialist, #5a3fd6)', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>Download Again</button>.
               </p>
             </div>

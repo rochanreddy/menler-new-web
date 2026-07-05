@@ -23,7 +23,7 @@ const TRUST_CARDS = [
   { title: 'What it tests', desc: 'AI readiness across three core dimensions: problem-solving, execution ability, and role alignment.' },
   { title: 'How it\'s scored', desc: '0–15 readiness score, broken into sub-scores and benchmarked against real-world performance indicators.' },
   { title: 'What you\'ll receive', desc: 'A personalised readiness report, learning roadmap, and placement-readiness insights.' },
-  { title: 'Why it matters', desc: 'Most people dont know where they stand with AI. This assessment gives you a clear baseline before you invest resources.' },
+  { title: 'Why it matters', desc: 'Most people don\'t know where they stand with AI. This assessment gives you a clear baseline before you invest resources.' },
 ];
 
 // Three readiness dimensions, mapped to question ranges.
