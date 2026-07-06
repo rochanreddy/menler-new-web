@@ -9,7 +9,6 @@ import ProjectModal from '../components/common/ProjectModal';
 import PlaybookModal from '../components/common/PlaybookModal';
 import { useApply } from '../components/common/ApplyContext';
 import PayModal from '../components/common/PayModal';
-import { formatINR, PROGRAM_PRICES } from '../data/pricing';
 import HiringJobs from '../components/common/HiringJobs';
 import PricingCard from '../components/common/PricingCard';
 import { useContent } from '../lib/useContent';
@@ -302,8 +301,7 @@ export default function Generalist() {
           <h1 className="hero-h1">Master Claude AI.<br /><em>Transform your domain.</em></h1>
           <p className="hero-sub">India's only Claude AI Specialist Fellowship.<strong className="hero-tagline" style={{ color: '#EEEDFE', fontWeight: 500 }}>Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
           <div className="hero-actions">
-            <button className="btn-primary" style={{ minWidth: 220, textAlign: 'center' }} onClick={() => setPayProgram('generalist')}>Enrol now · Pay {formatINR(PROGRAM_PRICES.generalist.amount)}</button>
-            <button className="btn-outline" style={{ minWidth: 220, textAlign: 'center' }} onClick={openApply}>Apply Now</button>
+            <button className="btn-primary" style={{ minWidth: 220, textAlign: 'center' }} onClick={openApply}>Apply Now</button>
             <button className="btn-outline" style={{ minWidth: 220, textAlign: 'center' }} onClick={() => go('/aptitude')}>Take the AI Aptitude Test</button>
           </div>
           <div className="hero-stats">

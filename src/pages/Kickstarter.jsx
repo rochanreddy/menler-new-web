@@ -11,7 +11,6 @@ import { useApply } from '../components/common/ApplyContext';
 import HiringJobs from '../components/common/HiringJobs';
 import PricingCard from '../components/common/PricingCard';
 import PayModal from '../components/common/PayModal';
-import { formatINR, PROGRAM_PRICES } from '../data/pricing';
 import { useContent } from '../lib/useContent';
 import { KICKSTARTER_FAQS } from '../data/faqData';
 import { submitLead } from '../services/leadService';
@@ -211,8 +210,7 @@ export default function Kickstarter() {
           <h1 className="hero-h1" style={{ color: '#FFF6E1' }}>14 days. 4 builds.<br /><em style={{ color: '#FAEEDA' }}>AI-fluent.</em></h1>
           <p className="hero-sub" style={{ color: 'rgba(255,246,225,0.7)' }}>India's most accessible Gen AI program.<strong className="hero-tagline" style={{ color: '#FFF6E1', fontWeight: 500 }}>Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
           <div className="hero-actions">
-            <button className="btn-primary" style={{ background: '#BA7517', minWidth: 220, textAlign: 'center' }} onClick={() => setPayProgram('kickstarter')}>Enrol now · Pay {formatINR(PROGRAM_PRICES.kickstarter.amount)}</button>
-            <button className="btn-outline" style={{ color: '#FAEEDA', borderColor: 'rgba(250,238,218,0.5)', minWidth: 220, textAlign: 'center' }} onClick={openKickstarterLead}>Apply Now</button>
+            <button className="btn-primary" style={{ background: '#BA7517', minWidth: 220, textAlign: 'center' }} onClick={openKickstarterLead}>Apply Now</button>
             <button className="btn-outline" style={{ color: '#FAEEDA', borderColor: 'rgba(250,238,218,0.5)', minWidth: 220, textAlign: 'center' }} onClick={() => go('/aptitude')}>Take the AI Aptitude Test</button>
           </div>
           <div className="hero-stats" style={{ borderColor: 'rgba(250,238,218,0.2)' }}>

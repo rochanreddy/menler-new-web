@@ -12,7 +12,7 @@ import { openCashfreeCheckout } from '../../lib/cashfree';
  */
 export default function PayModal({ program, onClose }) {
   const price = PROGRAM_PRICES[program];
-  const [form, setForm] = useState({ name: '', email: '', phone: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', background: '' });
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const [done, setDone] = useState(false);
@@ -75,6 +75,14 @@ export default function PayModal({ program, onClose }) {
               <input className="pay-input" required placeholder="Full name" value={form.name} onChange={(e) => set('name', e.target.value)} autoComplete="name" />
               <input className="pay-input" required type="email" placeholder="Email" value={form.email} onChange={(e) => set('email', e.target.value)} autoComplete="email" />
               <input className="pay-input" required type="tel" placeholder="Phone (10 digits)" value={form.phone} onChange={(e) => set('phone', e.target.value)} autoComplete="tel" />
+              <select className="pay-input" required value={form.background} onChange={(e) => set('background', e.target.value)}>
+                <option value="" disabled>Your background</option>
+                <option>Working professional (Tech)</option>
+                <option>Working professional (Non-tech)</option>
+                <option>Student</option>
+                <option>Founder / Business owner</option>
+                <option>Other</option>
+              </select>
               {err && <p className="pay-modal-err">{err}</p>}
               <button className="pay-modal-btn" type="submit" disabled={busy}>
                 {busy ? 'Processing…' : `Pay ${formatINR(price.amount)}`}
