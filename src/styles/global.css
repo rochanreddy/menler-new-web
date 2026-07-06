@@ -3219,6 +3219,24 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .admin-detail-val { font-size: 14px; color: var(--ink); word-break: break-word; }
 .admin-detail-pre { margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; background: var(--parchment); padding: 10px; border-radius: 8px; overflow: auto; }
 
+/* Enrolment / Cashfree payment modal */
+.pay-modal-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(38,33,92,0.55); display: flex; align-items: center; justify-content: center; padding: 20px; }
+.pay-modal { position: relative; width: min(420px, 100%); background: var(--white); border-radius: 18px; padding: 30px 28px 26px; box-shadow: 0 30px 80px -30px rgba(38,33,92,0.6); animation: payIn .2s ease; }
+@keyframes payIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.pay-modal-close { position: absolute; top: 12px; right: 15px; background: none; border: none; font-size: 26px; line-height: 1; color: var(--text-muted); cursor: pointer; padding: 0 4px; }
+.pay-modal-close:hover { color: var(--ink); }
+.pay-modal-eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--lavender); margin: 0 0 6px; }
+.pay-modal-title { font-family: 'DM Serif Display', serif; font-size: 34px; color: var(--ink); margin: 0 0 4px; }
+.pay-modal-sub { font-size: 14px; color: var(--text-muted); margin: 0 0 18px; }
+.pay-input { display: block; width: 100%; box-sizing: border-box; padding: 12px 14px; margin-bottom: 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 15px; font-family: inherit; outline: none; }
+.pay-input:focus { border-color: var(--specialist); }
+.pay-modal-btn { display: block; width: 100%; padding: 14px; margin-top: 4px; background: var(--specialist); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; }
+.pay-modal-btn:disabled { opacity: .65; cursor: not-allowed; }
+.pay-modal-err { color: #dc2626; font-size: 13px; margin: 0 0 10px; }
+.pay-modal-fine { text-align: center; font-size: 11.5px; color: var(--text-muted); margin: 12px 0 0; }
+.pay-modal-done { text-align: center; padding: 8px 0; }
+.pay-done-icon { width: 56px; height: 56px; margin: 0 auto 14px; border-radius: 999px; background: rgba(29,158,117,0.14); color: var(--placed); font-size: 28px; display: grid; place-items: center; }
+
 @media (max-width: 760px) {
   .admin-two-col { grid-template-columns: 1fr; }
   .admin-topbar { flex-wrap: wrap; gap: 12px; }

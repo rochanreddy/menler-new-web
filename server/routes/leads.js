@@ -171,7 +171,7 @@ async function postWithRetry(url, options, attempts = 3) {
 }
 
 // Fire-and-forget; never blocks or breaks lead capture.
-async function forwardLeadToCrm(lead) {
+export async function forwardLeadToCrm(lead) {
   const secret = AMPLIFEED_SECRET;
   if (!secret) return; // not configured → skip silently
   // Amplifeed requires name + (email or phone); skip clearly invalid leads.
