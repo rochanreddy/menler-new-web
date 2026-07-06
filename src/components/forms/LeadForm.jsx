@@ -12,7 +12,7 @@ const DEFAULT_BACKGROUNDS = [
   'Product Management', 'Program Management', 'Strategy & Consulting', 'Other',
 ];
 
-export default function LeadForm({ defaultProgram = '', showProgram = true, backgroundOptions }) {
+export default function LeadForm({ defaultProgram = '', showProgram = true, backgroundOptions, ctaLabel = 'Express interest', source = 'lead-form', section }) {
   const bgOptions = backgroundOptions && backgroundOptions.length ? backgroundOptions : DEFAULT_BACKGROUNDS;
   const toast = useToast();
   const [form, setForm] = useState({
@@ -33,7 +33,7 @@ export default function LeadForm({ defaultProgram = '', showProgram = true, back
     try {
       // Verify the email via OTP before capturing the lead.
       const otp = await verifyEmailOtp(form.email.trim());
-      await submitLead({ ...form, ...otp, source: 'lead-form', hp_field: hp, cta_label: 'Express interest', section: form.program || 'Express interest' });
+      await submitLead({ ...form, ...otp, source, hp_field: hp, cta_label: ctaLabel, section: section || form.program || ctaLabel });
       setSubmitted(true);
       toast.success("Application received — we'll be in touch within 48 hours.");
     } catch (err) {

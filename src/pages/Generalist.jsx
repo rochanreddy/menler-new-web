@@ -259,6 +259,13 @@ export default function Generalist() {
     }
   };
   const openApply = useApply();
+  // Distinct CTA label per button so the CRM can tell Apply / Book a Call /
+  // Enrol apart (section stays the course name).
+  const openGeneralistLead = (ctaLabel = 'Apply · Generalist') => openApply({
+    ctaLabel,
+    source: 'generalist-lead',
+    section: 'Claude AI Generalist Fellowship',
+  });
   const genPricing = useContent(GEN_PRICING_QUERY, GEN_PRICING);
   const curriculum = useContent(GEN_CURRICULUM_QUERY, CURRICULUM);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
@@ -299,7 +306,7 @@ export default function Generalist() {
           <h1 className="hero-h1">Master Claude AI.<br /><em>Transform your domain.</em></h1>
           <p className="hero-sub">India's only Claude AI Specialist Fellowship.<strong className="hero-tagline" style={{ color: '#EEEDFE', fontWeight: 500 }}>Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
           <div className="hero-actions">
-            <button className="btn-primary" style={{ minWidth: 220, textAlign: 'center' }} onClick={openApply}>Apply Now</button>
+            <button className="btn-primary" style={{ minWidth: 220, textAlign: 'center' }} onClick={() => openGeneralistLead('Apply · Generalist')}>Apply Now</button>
             <button className="btn-outline" style={{ minWidth: 220, textAlign: 'center' }} onClick={() => go('/aptitude')}>Take the AI Aptitude Test</button>
           </div>
           <div className="hero-stats">
@@ -516,10 +523,10 @@ export default function Generalist() {
           {...genPricing}
           tagline=""
           description={<>Build your AI Native portfolio in just 10 weeks.<span className="kp-desc-line2">Master Claude AI, across all domains, get certified and graduate with a domain-focused portfolio.</span></>}
-          onCta={openApply}
+          onCta={() => openGeneralistLead('Enrol · Generalist')}
         />
         <div style={{ textAlign: 'center', marginTop: 56 }}>
-          <button className="btn-primary" style={{ minWidth: 220 }} onClick={openApply}>Book a Call</button>
+          <button className="btn-primary" style={{ minWidth: 220 }} onClick={() => openGeneralistLead('Book a Call · Generalist')}>Book a Call</button>
         </div>
       </section>
 
@@ -535,7 +542,7 @@ export default function Generalist() {
         title="Ready to become a Claude AI Generalist?"
         subtitle={<><span style={{ whiteSpace: 'nowrap' }}>No coding experience.</span> <span style={{ whiteSpace: 'nowrap' }}>Just 10 weeks and real ambition.</span></>}
         buttonText="Apply Now"
-        onButtonClick={openApply}
+        onButtonClick={() => openGeneralistLead('Apply · Generalist')}
       />
 
       <Footer />

@@ -158,9 +158,12 @@ export default function Kickstarter() {
   const moduleDetailRef = useRef(null);
   const openApply = useApply();
   // Kickstarter enrolment form: only name/email/phone/background, no Program.
-  const openKickstarterLead = () => openApply({
+  const openKickstarterLead = (ctaLabel = 'Apply · Kickstarter') => openApply({
     showProgram: false,
     backgroundOptions: ['School student', 'College student', 'Graduate', 'Fresher'],
+    ctaLabel,
+    source: 'kickstarter-lead',
+    section: 'Gen AI Kickstarter',
   });
   const ksPricing = useContent(KS_PRICING_QUERY, KS_PRICING);
   const days = useContent(KS_DAYS_QUERY, DAYS);
@@ -207,7 +210,7 @@ export default function Kickstarter() {
           <h1 className="hero-h1" style={{ color: '#FFF6E1' }}>14 days. 4 builds.<br /><em style={{ color: '#FAEEDA' }}>AI-fluent.</em></h1>
           <p className="hero-sub" style={{ color: 'rgba(255,246,225,0.7)' }}>India's most accessible Gen AI program.<strong className="hero-tagline" style={{ color: '#FFF6E1', fontWeight: 500 }}>Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
           <div className="hero-actions">
-            <button className="btn-primary" style={{ background: '#BA7517', minWidth: 220, textAlign: 'center' }} onClick={openKickstarterLead}>Apply Now</button>
+            <button className="btn-primary" style={{ background: '#BA7517', minWidth: 220, textAlign: 'center' }} onClick={() => openKickstarterLead('Apply · Kickstarter')}>Apply Now</button>
             <button className="btn-outline" style={{ color: '#FAEEDA', borderColor: 'rgba(250,238,218,0.5)', minWidth: 220, textAlign: 'center' }} onClick={() => go('/aptitude')}>Take the AI Aptitude Test</button>
           </div>
           <div className="hero-stats" style={{ borderColor: 'rgba(250,238,218,0.2)' }}>
@@ -392,10 +395,10 @@ export default function Kickstarter() {
           {...ksPricing}
           ctaLabel="Enroll Now"
           description={<>Build your AI foundation in just two weekends.<span className="kp-desc-line2">Learn AI fundamentals, build real workflows, and ship your first projects.</span></>}
-          onCta={openKickstarterLead}
+          onCta={() => openKickstarterLead('Enrol · Kickstarter')}
         />
         <div style={{ textAlign: 'center', marginTop: 56 }}>
-          <button className="btn-primary" style={{ background: '#BA7517', minWidth: 200 }} onClick={openKickstarterLead}>Book a Call</button>
+          <button className="btn-primary" style={{ background: '#BA7517', minWidth: 200 }} onClick={() => openKickstarterLead('Book a Call · Kickstarter')}>Book a Call</button>
         </div>
       </section>
 
@@ -430,7 +433,7 @@ export default function Kickstarter() {
         subtitle="Kickstarter alumni get a 30% scholarship to either Generalist or Engineering tracks."
         buttonText="Apply Now"
         buttonStyle={{ color: '#854F0B' }}
-        onButtonClick={openKickstarterLead}
+        onButtonClick={() => openKickstarterLead('Apply · Kickstarter')}
         sectionStyle={{ background: '#854F0B' }}
       />
 
