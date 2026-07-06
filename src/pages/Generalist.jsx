@@ -519,8 +519,9 @@ export default function Generalist() {
         <PricingCard
           {...genPricing}
           tagline=""
+          ctaLabel="Enrol Now"
           description={<>Build your AI Native portfolio in just 10 weeks.<span className="kp-desc-line2">Master Claude AI, across all domains, get certified and graduate with a domain-focused portfolio.</span></>}
-          onCta={openApply}
+          onCta={() => setPayProgram('generalist')}
         />
         <div style={{ textAlign: 'center', marginTop: 56 }}>
           <button className="btn-primary" style={{ minWidth: 220 }} onClick={openApply}>Book a Call</button>

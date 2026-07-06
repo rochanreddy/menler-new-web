@@ -395,9 +395,9 @@ export default function Kickstarter() {
 
         <PricingCard
           {...ksPricing}
-          ctaLabel="Enroll Now"
+          ctaLabel="Enrol Now"
           description={<>Build your AI foundation in just two weekends.<span className="kp-desc-line2">Learn AI fundamentals, build real workflows, and ship your first projects.</span></>}
-          onCta={openKickstarterLead}
+          onCta={() => setPayProgram('kickstarter')}
         />
         <div style={{ textAlign: 'center', marginTop: 56 }}>
           <button className="btn-primary" style={{ background: '#BA7517', minWidth: 200 }} onClick={openKickstarterLead}>Book a Call</button>
