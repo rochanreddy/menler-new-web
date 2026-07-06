@@ -343,7 +343,7 @@ export default function Aptitude() {
               <div className="apt-lead-row apt-lead-row--col">
                 <input type="text" required placeholder="Your name" value={gateForm.name} onChange={e => setG('name', e.target.value)} />
                 <input type="email" required placeholder="you@email.com" value={gateForm.email} onChange={e => setG('email', e.target.value)} />
-                <input type="tel" placeholder="Phone number" value={gateForm.phone} onChange={e => setG('phone', e.target.value)} />
+                <input type="tel" required placeholder="Phone number" value={gateForm.phone} onChange={e => setG('phone', e.target.value)} />
                 <button type="submit" disabled={gateBusy}>{gateBusy ? 'Verifying…' : 'Verify & See My Score'}</button>
               </div>
               {gateErr && <p className="apt-gate-err">{gateErr}</p>}

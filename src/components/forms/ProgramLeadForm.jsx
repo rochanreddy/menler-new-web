@@ -52,12 +52,12 @@ export default function ProgramLeadForm({ program, programColor = 'var(--special
         </div>
         <div>
           <label>Phone</label>
-          <input type="tel" placeholder="+91 …" value={form.phone} onChange={e => set('phone', e.target.value)} autoComplete="tel" />
+          <input required type="tel" placeholder="+91 …" value={form.phone} onChange={e => set('phone', e.target.value)} autoComplete="tel" />
         </div>
       </div>
       <div>
         <label>Your background</label>
-        <select value={form.track} onChange={e => set('track', e.target.value)}>
+        <select required value={form.track} onChange={e => set('track', e.target.value)}>
           <option value="">Select…</option>
           <option>Student</option>
           <option>Working professional</option>

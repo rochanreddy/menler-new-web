@@ -40,7 +40,7 @@ export default function MiniLeadForm({ defaultProgram = '' }) {
         onChange={e => setEmail(e.target.value)}
         autoComplete="email"
       />
-      <select aria-label="Program of interest" value={program} onChange={e => setProgram(e.target.value)}>
+      <select required aria-label="Program of interest" value={program} onChange={e => setProgram(e.target.value)}>
         <option value="">Select program…</option>
         <option>Gen AI Kickstarter</option>
         <option>Claude AI Generalist</option>

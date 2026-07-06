@@ -101,25 +101,25 @@ export default function LeadForm({ defaultProgram = '', showProgram = true, back
         </div>
         <div className="lf-field">
           <label>Phone / WhatsApp</label>
-          <input type="tel" placeholder="+91 …" value={form.phone} onChange={e => set('phone', e.target.value)} autoComplete="tel" />
+          <input required type="tel" placeholder="+91 …" value={form.phone} onChange={e => set('phone', e.target.value)} autoComplete="tel" />
         </div>
       </div>
 
       <div className="lf-field">
         <label>Background</label>
-        <select value={form.background} onChange={e => set('background', e.target.value)}>
+        <select required value={form.background} onChange={e => set('background', e.target.value)}>
           <option value="">Select…</option>
           {bgOptions.map(opt => <option key={opt}>{opt}</option>)}
         </select>
         {form.background === 'Other' && (
-          <input style={{ marginTop: 8 }} placeholder="Tell us your background" value={form.backgroundOther} onChange={e => set('backgroundOther', e.target.value)} />
+          <input required style={{ marginTop: 8 }} placeholder="Tell us your background" value={form.backgroundOther} onChange={e => set('backgroundOther', e.target.value)} />
         )}
       </div>
 
       {showProgram && (
         <div className="lf-field">
           <label>Program</label>
-          <select value={form.program} onChange={e => set('program', e.target.value)}>
+          <select required value={form.program} onChange={e => set('program', e.target.value)}>
             <option value="">Select…</option>
             <option>Claude AI Generalist</option>
             <option>Claude AI Engineering</option>
