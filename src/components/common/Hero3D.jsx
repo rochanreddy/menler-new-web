@@ -78,7 +78,7 @@ export default function Hero3D() {
     // Named domain dots, evenly spaced on the ring; each carries a camera-facing label.
     const dotsSpin = new THREE.Group();
     ringGroup.add(dotsSpin);
-    const DOMAINS = ["Founder's Office", 'Product Management', 'Engineering', 'Finance', 'Marketing', 'HR', 'Operations', 'Analytics'];
+    const DOMAINS = ['Analyst', 'Engineering', 'Finance', "Founder's Office", 'HR', 'Marketing & Sales', 'Product', 'Program'];
     const dotColors = [0xAFA9EC, 0x1D9E75, 0xEEEDFE, 0x534AB7, 0xBA7517];
     const dotGeo = new THREE.SphereGeometry(0.085, 16, 16);
     const dotMats = [];
@@ -134,14 +134,14 @@ export default function Hero3D() {
 
     // Sub-skills revealed when a domain name reaches the front of the orbit.
     const SUBSKILLS = {
-      "Founder's Office": ['Strategy', 'Chief of Staff', 'Board Decks', 'Briefings', 'Fundraising'],
-      'Product Management': ['PRDs', 'Roadmaps', 'User Research', 'Specs', 'Prioritisation'],
-      'Engineering': ['RAG', 'MCP', 'Agents', 'Evals', 'LLMOps', 'Fine-tuning'],
-      'Finance': ['Deal Memos', 'Forecasts', 'Reporting', 'Diligence', 'Budgets'],
-      'Marketing': ['Content', 'Campaigns', 'SEO', 'Outreach', 'Creative'],
-      'HR': ['Hiring', 'SOPs', 'Onboarding', 'Policies', 'Payroll'],
-      'Operations': ['Automation', 'Workflows', 'Dashboards', 'Tickets', 'Vendors'],
-      'Analytics': ['SQL', 'Insights', 'Pipelines', 'Charts', 'Modelling'],
+      'Analyst': ['Research', 'Data', 'Insights', 'Reporting', 'Strategy'],
+      'Engineering': ['AI Agents', 'LLMs', 'APIs', 'Automation', 'Deployment'],
+      'Finance': ['Budgeting', 'Forecasting', 'Compliance', 'Reconciliation', 'Analytics'],
+      "Founder's Office": ['Execution', 'Operations', 'Growth', 'Problem-Solving', 'Leadership'],
+      'HR': ['Recruitment', 'Onboarding', 'People', 'Engagement', 'Compliance'],
+      'Marketing & Sales': ['Branding', 'Content', 'Outreach', 'Growth', 'Conversion'],
+      'Product': ['Discovery', 'Roadmaps', 'User Research', 'Prioritization', 'UX'],
+      'Program': ['Planning', 'Coordination', 'Delivery', 'Stakeholders', 'Operations'],
     };
     // Smaller, lighter label for a sub-skill node.
     const makeSubTexture = (text) => {
