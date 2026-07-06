@@ -42,6 +42,7 @@ export const adminApi = {
   getSession: () => api('/admin/session'),
   getStats: () => api('/admin/stats'),
   getLeads: (params) => api(`/admin/leads${qs(params)}`),
+  deleteLead: (id) => api(`/admin/leads/${encodeURIComponent(id)}`, { method: 'DELETE' }),
   getUsers: (params) => api(`/admin/users${qs(params)}`),
 
   // Per-campaign Zoom links (admin-only; never shown on the public site).
