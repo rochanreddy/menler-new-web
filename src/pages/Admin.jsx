@@ -242,6 +242,8 @@ function LeadsTab() {
   const [search, setSearch] = useState('');
   const [program, setProgram] = useState('');
   const [source, setSource] = useState('');
+  const [from, setFrom] = useState('');
+  const [to, setTo] = useState('');
   const [sort, setSort] = useState('-createdAt');
   const [page, setPage] = useState(1);
   const [data, setData] = useState({ rows: [], total: 0, page: 1, limit: 25 });
@@ -252,12 +254,25 @@ function LeadsTab() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const d = await adminApi.getLeads({ search, program, source, sort, page, limit: 25 });
+      const d = await adminApi.getLeads({ search, program, source, from, to, sort, page, limit: 25 });
       setData(d);
     } finally {
       setLoading(false);
     }
-  }, [search, program, source, sort, page]);
+  }, [search, program, source, from, to, sort, page]);
+
+  // Delete a lead (with confirm). Stops the row click so the drawer doesn't open.
+  const onDelete = async (e, l) => {
+    e.stopPropagation();
+    const who = l.name || l.email || l.phone || 'this lead';
+    if (!window.confirm(`Delete "${who}"? This permanently removes the lead and cannot be undone.`)) return;
+    try {
+      await adminApi.deleteLead(l._id);
+      load();
+    } catch (err) {
+      window.alert(err.message || 'Could not delete the lead.');
+    }
+  };
 
   useEffect(() => { load(); }, [load]);
 
@@ -294,9 +309,18 @@ function LeadsTab() {
         <select value={sort} onChange={(e) => { setPage(1); setSort(e.target.value); }}>
           {LEAD_SORTS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
         </select>
+        <label className="admin-date"><span>From</span>
+          <input type="date" value={from} max={to || undefined} onChange={(e) => { setPage(1); setFrom(e.target.value); }} />
+        </label>
+        <label className="admin-date"><span>To</span>
+          <input type="date" value={to} min={from || undefined} onChange={(e) => { setPage(1); setTo(e.target.value); }} />
+        </label>
+        {(from || to) && (
+          <button className="admin-btn" onClick={() => { setPage(1); setFrom(''); setTo(''); }}>Clear dates</button>
+        )}
         <button
           className="admin-btn"
-          onClick={() => adminApi.downloadCsv('leads', { search, program, source })}
+          onClick={() => adminApi.downloadCsv('leads', { search, program, source, from, to })}
         >
           ⭳ Export CSV
         </button>
@@ -307,13 +331,13 @@ function LeadsTab() {
           <thead>
             <tr>
               <th>Name</th><th>Email</th><th>Phone</th>
-              <th>Background</th><th>Source</th><th>Checkout</th><th>Section</th><th>CTA / button</th><th>Created</th>
+              <th>Background</th><th>Source</th><th>Checkout</th><th>Section</th><th>CTA / button</th><th>Created</th><th></th>
             </tr>
           </thead>
           <tbody>
-            {loading && <tr><td colSpan={9} className="admin-empty">Loading…</td></tr>}
+            {loading && <tr><td colSpan={10} className="admin-empty">Loading…</td></tr>}
             {!loading && data.rows.length === 0 && (
-              <tr><td colSpan={9} className="admin-empty">No leads found.</td></tr>
+              <tr><td colSpan={10} className="admin-empty">No leads found.</td></tr>
             )}
             {!loading && data.rows.map((l) => (
               <tr key={l._id} onClick={() => setSelected(l)}>
@@ -330,6 +354,14 @@ function LeadsTab() {
                 <td className="admin-muted">{dash(l.section)}</td>
                 <td className="admin-muted">{dash(l.cta_label || l.resource)}</td>
                 <td className="admin-muted">{fmtDate(l.createdAt)}</td>
+                <td>
+                  <button className="admin-del" title="Delete lead" aria-label="Delete lead" onClick={(e) => onDelete(e, l)}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7" />
+                      <path d="M10 11v5M14 11v5" />
+                    </svg>
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

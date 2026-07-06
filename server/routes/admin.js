@@ -70,6 +70,14 @@ function leadFilter(query) {
   }
   if (query.program) filter.program = query.program;
   if (query.source) filter.source = query.source;
+  // Date range on createdAt (YYYY-MM-DD; `to` is inclusive to end of day).
+  const from = (query.from || '').trim();
+  const to = (query.to || '').trim();
+  if (from || to) {
+    filter.createdAt = {};
+    if (from) filter.createdAt.$gte = new Date(`${from}T00:00:00.000`);
+    if (to) filter.createdAt.$lte = new Date(`${to}T23:59:59.999`);
+  }
   return filter;
 }
 
@@ -205,6 +213,20 @@ router.get('/leads', requireAdmin, async (req, res) => {
   } catch (err) {
     console.error('admin leads error', err);
     res.status(500).json({ error: 'Could not load leads.' });
+  }
+});
+
+/* Delete one lead (permanent). */
+router.delete('/leads/:id', requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!/^[a-f\d]{24}$/i.test(id)) return res.status(400).json({ error: 'Invalid lead id.' });
+    const deleted = await Lead.findByIdAndDelete(id);
+    if (!deleted) return res.status(404).json({ error: 'Lead not found.' });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('admin lead delete error', err);
+    res.status(500).json({ error: 'Could not delete the lead.' });
   }
 });
 
