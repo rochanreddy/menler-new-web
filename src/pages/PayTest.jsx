@@ -31,9 +31,6 @@ export default function PayTest() {
           >
             Pay {formatINR(price.amount)}
           </button>
-          <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: '16px 0 0' }}>
-            ⚠️ Real money. Refund the {formatINR(price.amount)} from the Cashfree dashboard after the test.
-          </p>
         </div>
       </section>
       <Footer />
