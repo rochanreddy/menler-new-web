@@ -251,6 +251,7 @@ function LeadsTab() {
   const [search, setSearch] = useState('');
   const [program, setProgram] = useState('');
   const [source, setSource] = useState('');
+  const [utmSource, setUtmSource] = useState('');
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [sort, setSort] = useState('-createdAt');
@@ -258,17 +259,17 @@ function LeadsTab() {
   const [data, setData] = useState({ rows: [], total: 0, page: 1, limit: 25 });
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
-  const [facets, setFacets] = useState({ programs: [], sources: [] });
+  const [facets, setFacets] = useState({ programs: [], sources: [], utmSources: [] });
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const d = await adminApi.getLeads({ search, program, source, from, to, sort, page, limit: 25 });
+      const d = await adminApi.getLeads({ search, program, source, utm_source: utmSource, from, to, sort, page, limit: 25 });
       setData(d);
     } finally {
       setLoading(false);
     }
-  }, [search, program, source, from, to, sort, page]);
+  }, [search, program, source, utmSource, from, to, sort, page]);
 
   // Delete a lead (with confirm). Stops the row click so the drawer doesn't open.
   const onDelete = async (e, l) => {
@@ -291,6 +292,7 @@ function LeadsTab() {
       .then((s) => setFacets({
         programs: s.byProgram.map((x) => x.label).filter((x) => x && x !== '—'),
         sources: s.bySource.map((x) => x.label).filter((x) => x && x !== '—'),
+        utmSources: (s.byUtmSource || []).map((x) => x.label).filter(Boolean),
       }))
       .catch(() => {});
   }, []);
@@ -315,6 +317,10 @@ function LeadsTab() {
           <option value="">All sources</option>
           {facets.sources.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
+        <select value={utmSource} onChange={(e) => { setPage(1); setUtmSource(e.target.value); }}>
+          <option value="">All UTM sources</option>
+          {facets.utmSources.map((u) => <option key={u} value={u}>{u}</option>)}
+        </select>
         <select value={sort} onChange={(e) => { setPage(1); setSort(e.target.value); }}>
           {LEAD_SORTS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
         </select>
@@ -329,7 +335,7 @@ function LeadsTab() {
         )}
         <button
           className="admin-btn"
-          onClick={() => adminApi.downloadCsv('leads', { search, program, source, from, to })}
+          onClick={() => adminApi.downloadCsv('leads', { search, program, source, utm_source: utmSource, from, to })}
         >
           ⭳ Export CSV
         </button>

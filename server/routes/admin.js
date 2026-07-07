@@ -70,6 +70,7 @@ function leadFilter(query) {
   }
   if (query.program) filter.program = query.program;
   if (query.source) filter.source = query.source;
+  if (query.utm_source) filter.utm_source = query.utm_source;
   // Date range on createdAt (YYYY-MM-DD; `to` is inclusive to end of day).
   const from = (query.from || '').trim();
   const to = (query.to || '').trim();
@@ -137,6 +138,7 @@ router.get('/stats', requireAdmin, async (_req, res) => {
       totalProfiles,
       byProgram,
       bySource,
+      byUtmSource,
       byDayRaw,
       uniqueAgg,
       recentLeads,
@@ -158,6 +160,12 @@ router.get('/stats', requireAdmin, async (_req, res) => {
         { $group: { _id: '$_id.g', count: { $sum: '$n' }, unique: { $sum: 1 } } },
         { $sort: { count: -1 } },
         { $limit: 12 },
+      ]),
+      Lead.aggregate([
+        { $match: { utm_source: { $nin: [null, ''] } } },
+        { $group: { _id: '$utm_source', count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+        { $limit: 50 },
       ]),
       Lead.aggregate([
         { $match: { createdAt: { $gte: since14 } } },
@@ -199,6 +207,7 @@ router.get('/stats', requireAdmin, async (_req, res) => {
       },
       byProgram: tidy(byProgram),
       bySource: tidy(bySource),
+      byUtmSource: byUtmSource.map((x) => ({ label: x._id, count: x.count })),
       byDay,
       recentLeads,
     });
