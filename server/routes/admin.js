@@ -111,6 +111,15 @@ router.get('/session', requireAdmin, (_req, res) => {
 
 /* ── Overview stats ──────────────────────────────────────────────────────── */
 
+// Identity for a "unique lead": lowercased email if present, else phone. Used to
+// dedupe repeat submissions (e.g. someone who registers the campaign twice).
+const CONTACT_KEY = {
+  $let: {
+    vars: { e: { $toLower: { $trim: { input: { $ifNull: ['$email', ''] } } } } },
+    in: { $cond: [{ $eq: ['$$e', ''] }, { $ifNull: ['$phone', ''] }, '$$e'] },
+  },
+};
+
 router.get('/stats', requireAdmin, async (_req, res) => {
   try {
     const now = Date.now();
@@ -129,6 +138,7 @@ router.get('/stats', requireAdmin, async (_req, res) => {
       byProgram,
       bySource,
       byDayRaw,
+      uniqueAgg,
       recentLeads,
     ] = await Promise.all([
       Lead.countDocuments({}),
@@ -138,12 +148,14 @@ router.get('/stats', requireAdmin, async (_req, res) => {
       User.countDocuments({ emailVerified: true }),
       Profile.countDocuments({}),
       Lead.aggregate([
-        { $group: { _id: { $ifNull: ['$program', ''] }, count: { $sum: 1 } } },
+        { $group: { _id: { g: { $ifNull: ['$program', ''] }, person: CONTACT_KEY }, n: { $sum: 1 } } },
+        { $group: { _id: '$_id.g', count: { $sum: '$n' }, unique: { $sum: 1 } } },
         { $sort: { count: -1 } },
         { $limit: 12 },
       ]),
       Lead.aggregate([
-        { $group: { _id: { $ifNull: ['$source', ''] }, count: { $sum: 1 } } },
+        { $group: { _id: { g: { $ifNull: ['$source', ''] }, person: CONTACT_KEY }, n: { $sum: 1 } } },
+        { $group: { _id: '$_id.g', count: { $sum: '$n' }, unique: { $sum: 1 } } },
         { $sort: { count: -1 } },
         { $limit: 12 },
       ]),
@@ -155,6 +167,10 @@ router.get('/stats', requireAdmin, async (_req, res) => {
             count: { $sum: 1 },
           },
         },
+      ]),
+      Lead.aggregate([
+        { $group: { _id: CONTACT_KEY } },
+        { $count: 'n' },
       ]),
       Lead.find({}).sort({ createdAt: -1 }).limit(5).lean(),
     ]);
@@ -169,11 +185,12 @@ router.get('/stats', requireAdmin, async (_req, res) => {
     }
 
     const tidy = (arr) =>
-      arr.map((x) => ({ label: x._id || '—', count: x.count }));
+      arr.map((x) => ({ label: x._id || '—', count: x.count, unique: x.unique }));
 
     res.json({
       totals: {
         leads: totalLeads,
+        uniqueLeads: uniqueAgg[0]?.n || 0,
         leads7,
         leads30,
         users: totalUsers,

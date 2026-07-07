@@ -130,9 +130,13 @@ function StatCard({ label, value, accent }) {
 
 function BreakdownList({ title, rows }) {
   const max = Math.max(1, ...rows.map((r) => r.count));
+  const hasUnique = rows.some((r) => r.unique != null);
   return (
     <div className="admin-panel-card">
-      <p className="admin-card-title">{title}</p>
+      <p className="admin-card-title">
+        {title}
+        {hasUnique && <span style={{ fontWeight: 400, color: 'var(--text-muted)', fontSize: 12 }}> · unique / total</span>}
+      </p>
       {rows.length === 0 && <p className="admin-empty">No data yet.</p>}
       <ul className="admin-breakdown">
         {rows.map((r) => (
@@ -141,7 +145,11 @@ function BreakdownList({ title, rows }) {
             <span className="admin-breakdown-bar">
               <span style={{ width: `${(r.count / max) * 100}%` }} />
             </span>
-            <span className="admin-breakdown-count">{r.count}</span>
+            <span className="admin-breakdown-count">
+              {r.unique != null
+                ? <>{r.unique}<span style={{ opacity: 0.45, fontWeight: 400 }}> / {r.count}</span></>
+                : r.count}
+            </span>
           </li>
         ))}
       </ul>
@@ -167,6 +175,7 @@ function Overview() {
     <div className="admin-overview">
       <div className="admin-stat-grid">
         <StatCard label="Total leads" value={t.leads} accent="var(--specialist)" />
+        <StatCard label="Unique leads" value={t.uniqueLeads} accent="var(--specialist)" />
         <StatCard label="Leads · last 7 days" value={t.leads7} accent="var(--placed)" />
         <StatCard label="Leads · last 30 days" value={t.leads30} accent="var(--placed)" />
         <StatCard label="Registered users" value={t.users} accent="var(--ink)" />
