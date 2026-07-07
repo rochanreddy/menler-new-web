@@ -32,6 +32,7 @@ const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Register = lazy(() => import('./pages/Register'));
 const Admin = lazy(() => import('./pages/Admin'));
 const Policy = lazy(() => import('./pages/Policy'));
+const PayTest = lazy(() => import('./pages/PayTest'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 function ScrollToTop() {
@@ -127,6 +128,7 @@ export default function App() {
             <Route path="/profile" element={<Dashboard />} />
             <Route path="/register" element={<Register />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/pay-test" element={<PayTest />} />
             <Route path="/policy/:slug" element={<Policy />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
