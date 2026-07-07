@@ -10,6 +10,7 @@ import PlaybookModal from '../components/common/PlaybookModal';
 import { useApply } from '../components/common/ApplyContext';
 import HiringJobs from '../components/common/HiringJobs';
 import PricingCard from '../components/common/PricingCard';
+import PayModal from '../components/common/PayModal';
 import { useContent } from '../lib/useContent';
 import { KICKSTARTER_FAQS } from '../data/faqData';
 import { submitLead } from '../services/leadService';
@@ -155,6 +156,8 @@ export default function Kickstarter() {
   const [activeModule, setActiveModule] = useState(0);
   // Download Curriculum → gated lead form (email OTP) that downloads the PDF.
   const [curricItem, setCurricItem] = useState(null);
+  // Direct Cashfree enrolment (Pay now) modal.
+  const [payProgram, setPayProgram] = useState(null);
   const moduleDetailRef = useRef(null);
   const openApply = useApply();
   // Kickstarter enrolment form: only name/email/phone/background, no Program.
@@ -393,9 +396,9 @@ export default function Kickstarter() {
 
         <PricingCard
           {...ksPricing}
-          ctaLabel="Enroll Now"
+          ctaLabel="Enrol Now"
           description={<>Build your AI foundation in just two weekends.<span className="kp-desc-line2">Learn AI fundamentals, build real workflows, and ship your first projects.</span></>}
-          onCta={() => openKickstarterLead('Enrol · Kickstarter')}
+          onCta={() => setPayProgram('kickstarter')}
         />
         <div style={{ textAlign: 'center', marginTop: 56 }}>
           <button className="btn-primary" style={{ background: '#BA7517', minWidth: 200 }} onClick={() => openKickstarterLead('Book a Call · Kickstarter')}>Book a Call</button>
@@ -441,6 +444,7 @@ export default function Kickstarter() {
 
       <ProjectModal project={activeProject} onClose={() => setActiveProject(null)} />
       <PlaybookModal item={curricItem} onClose={() => setCurricItem(null)} />
+      {payProgram && <PayModal program={payProgram} onClose={() => setPayProgram(null)} />}
     </>
   );
 }

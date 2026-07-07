@@ -8,6 +8,7 @@ import MentorsRail from '../components/common/MentorsRail';
 import ProjectModal from '../components/common/ProjectModal';
 import PlaybookModal from '../components/common/PlaybookModal';
 import { useApply } from '../components/common/ApplyContext';
+import PayModal from '../components/common/PayModal';
 import HiringJobs from '../components/common/HiringJobs';
 import PricingCard from '../components/common/PricingCard';
 import { useContent } from '../lib/useContent';
@@ -239,6 +240,7 @@ export default function Generalist() {
   const [activeProject, setActiveProject] = useState(null);
   // Download Curriculum → gated lead form (email OTP) that downloads the PDF.
   const [curricItem, setCurricItem] = useState(null);
+  const [payProgram, setPayProgram] = useState(null); // direct Cashfree enrolment
   const [activePhase, setActivePhase] = useState(0);
   const [activeDomain, setActiveDomain] = useState(0);
   const [domainWeek, setDomainWeek] = useState(0);
@@ -522,8 +524,9 @@ export default function Generalist() {
         <PricingCard
           {...genPricing}
           tagline=""
+          ctaLabel="Enrol Now"
           description={<>Build your AI Native portfolio in just 10 weeks.<span className="kp-desc-line2">Master Claude AI, across all domains, get certified and graduate with a domain-focused portfolio.</span></>}
-          onCta={() => openGeneralistLead('Enrol · Generalist')}
+          onCta={() => setPayProgram('generalist')}
         />
         <div style={{ textAlign: 'center', marginTop: 56 }}>
           <button className="btn-primary" style={{ minWidth: 220 }} onClick={() => openGeneralistLead('Book a Call · Generalist')}>Book a Call</button>
@@ -549,6 +552,7 @@ export default function Generalist() {
 
       <ProjectModal project={activeProject} onClose={() => setActiveProject(null)} />
       <PlaybookModal item={curricItem} onClose={() => setCurricItem(null)} />
+      {payProgram && <PayModal program={payProgram} onClose={() => setPayProgram(null)} />}
     </>
   );
 }

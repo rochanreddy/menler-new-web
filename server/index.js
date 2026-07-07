@@ -14,6 +14,7 @@ import leadRoutes from './routes/leads.js';
 import reportRoutes from './routes/reports.js';
 import adminRoutes from './routes/admin.js';
 import shortRoutes from './routes/short.js';
+import paymentRoutes from './routes/payments.js';
 
 const app = express();
 const port = Number(process.env.PORT || 4000);
@@ -36,7 +37,9 @@ const allowedOrigins = new Set(
     .filter(Boolean),
 );
 
-app.use(express.json());
+// Capture the raw body so the Cashfree webhook can verify its HMAC signature
+// (the signature is computed over the exact bytes, which JSON.parse would lose).
+app.use(express.json({ verify: (req, _res, buf) => { req.rawBody = buf; } }));
 app.use(cookieParser());
 app.use(cors({
   origin(origin, cb) {
@@ -57,6 +60,7 @@ app.use('/reports', reportRoutes);
 app.use('/admin', adminRoutes);
 app.use('/MNLRAI', shortRoutes);
 app.use('/l', shortRoutes); // legacy prefix — keeps older short links working
+app.use('/payments', paymentRoutes);
 
 async function start() {
   try {
