@@ -9,11 +9,11 @@ async function readError(res, fallback) {
 
 // Create a Cashfree order for a paid program (kickstarter | generalist).
 // Returns { order_id, payment_session_id, mode }.
-export async function createEnrolOrder({ program, name, email, phone }) {
+export async function createEnrolOrder({ program, name, email, phone, city, background, track }) {
   const res = await fetch(`${API_URL}/payments/cashfree/order`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ program, name, email, phone }),
+    body: JSON.stringify({ program, name, email, phone, city, background, track }),
   });
   if (!res.ok) throw new Error(await readError(res, 'Could not start the payment.'));
   return res.json();

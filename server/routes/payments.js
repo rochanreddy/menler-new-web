@@ -47,6 +47,8 @@ router.post('/cashfree/order', async (req, res) => {
     const email = String(body.email || '').trim();
     const phone = cleanPhone(body.phone);
     const background = String(body.background || '').trim();
+    const city = String(body.city || '').trim();
+    const track = String(body.track || '').trim();
     if (!name || !email || phone.length !== 10) {
       return res.status(400).json({ error: 'Name, a valid email and a 10-digit phone are required.' });
     }
@@ -55,12 +57,12 @@ router.post('/cashfree/order', async (req, res) => {
 
     // Capture intent as a lead so it shows in admin + CRM even before payment.
     const lead = await Lead.create({
-      name, email, phone, background,
+      name, email, phone, background, track,
       program,
       source: `enrol-${program}`,
       cta_label: `Enrol: ${price.label}`,
       section: price.label,
-      extra: {},
+      extra: { ...(city ? { city } : {}) },
     });
     forwardLeadToCrm(lead);
 

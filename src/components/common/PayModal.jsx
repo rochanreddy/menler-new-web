@@ -12,7 +12,7 @@ import { openCashfreeCheckout } from '../../lib/cashfree';
  */
 export default function PayModal({ program, onClose }) {
   const price = PROGRAM_PRICES[program];
-  const [form, setForm] = useState({ name: '', email: '', phone: '', background: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', city: '', background: '', track: '' });
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const [done, setDone] = useState(false);
@@ -75,6 +75,7 @@ export default function PayModal({ program, onClose }) {
               <input className="pay-input" required placeholder="Full name" value={form.name} onChange={(e) => set('name', e.target.value)} autoComplete="name" />
               <input className="pay-input" required type="email" placeholder="Email" value={form.email} onChange={(e) => set('email', e.target.value)} autoComplete="email" />
               <input className="pay-input" required type="tel" placeholder="Phone (10 digits)" value={form.phone} onChange={(e) => set('phone', e.target.value)} autoComplete="tel" />
+              <input className="pay-input" required type="text" placeholder="City" value={form.city} onChange={(e) => set('city', e.target.value)} autoComplete="address-level2" />
               <select className="pay-input" required value={form.background} onChange={(e) => set('background', e.target.value)}>
                 <option value="" disabled>Your background</option>
                 <option>Working professional (Tech)</option>
@@ -82,6 +83,19 @@ export default function PayModal({ program, onClose }) {
                 <option>Student</option>
                 <option>Founder / Business owner</option>
                 <option>Other</option>
+              </select>
+              <select className="pay-input" required value={form.track} onChange={(e) => set('track', e.target.value)}>
+                <option value="" disabled>Domain track</option>
+                <option>Analyst</option>
+                <option>Engineering</option>
+                <option>Finance</option>
+                <option>Founder&apos;s Office</option>
+                <option>Human Resources (HR)</option>
+                <option>Marketing &amp; Sales</option>
+                <option>Product Management</option>
+                <option>Program Management</option>
+                <option>Strategy &amp; Consulting</option>
+                <option>Not sure yet</option>
               </select>
               {err && <p className="pay-modal-err">{err}</p>}
               <button className="pay-modal-btn" type="submit" disabled={busy}>
