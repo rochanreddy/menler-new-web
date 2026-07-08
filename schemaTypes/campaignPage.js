@@ -38,6 +38,8 @@ export default defineType({
     defineField({ name: 'bannerBadge', title: 'Badge text', type: 'string', group: 'banner' }),
     defineField({ name: 'bannerLine1', title: 'Title — line 1 (highlighted)', type: 'string', group: 'banner' }),
     defineField({ name: 'bannerLine2', title: 'Title — line 2 (highlighted)', type: 'string', group: 'banner' }),
+    defineField({ name: 'showClaudeLogo', title: 'Show Claude logo next to the title', type: 'boolean', group: 'banner', initialValue: false }),
+    defineField({ name: 'showTrustBar', title: 'Show trust bar (McKinsey · MIT · UT Austin) under the form', type: 'boolean', group: 'banner', initialValue: false }),
     defineField({ name: 'bannerTagline', title: 'Tagline (under title)', type: 'string', group: 'banner' }),
     defineField({ name: 'subtitle', title: 'Intro paragraph (below banner)', type: 'text', rows: 3, group: 'banner' }),
 

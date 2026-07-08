@@ -1753,6 +1753,8 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-banner-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--ink); background: rgba(255,255,255,0.7); border: 1px solid rgba(38,33,92,0.12); padding: 7px 14px; border-radius: 999px; }
 .lp2-banner-title { margin: 18px 0 0; font-family: 'DM Sans', sans-serif; font-weight: 900; font-size: clamp(30px, 5.4vw, 52px); line-height: 1.04; letter-spacing: -0.02em; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
 .lp2-banner-title mark { background: var(--hl-bg); color: var(--hl-text); padding: 2px 12px; border-radius: 6px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.lp2-banner-line2 { display: inline-flex; align-items: center; gap: 12px; }
+.lp2-banner-claude { height: 0.82em; width: auto; flex: 0 0 auto; }
 .lp2-banner-tag { margin-top: 16px; font-size: clamp(14px, 2.4vw, 17px); font-weight: 600; color: var(--a-dark); }
 .lp2-banner-brand { display: flex; align-items: center; gap: 14px; margin-top: 22px; }
 .lp2-banner-brandmark { display: inline-flex; align-items: center; gap: 8px; border-right: 1.5px solid rgba(38,33,92,0.25); padding-right: 14px; }

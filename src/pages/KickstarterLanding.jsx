@@ -71,6 +71,8 @@ const FALLBACK = {
   bannerBadge: WORKSHOP.banner.badge,
   bannerLine1: WORKSHOP.banner.line1,
   bannerLine2: WORKSHOP.banner.line2,
+  showClaudeLogo: false,
+  showTrustBar: false,
   bannerTagline: WORKSHOP.banner.tagline,
   subtitle: WORKSHOP.subtitle,
   date: WORKSHOP.date,
@@ -103,7 +105,7 @@ const FALLBACK = {
 
 // Load the campaign matching the URL slug (defaults to 'ai-kickstarter').
 const CAMPAIGN_QUERY = `*[_type == "campaignPage" && slug.current == $slug][0]{
-  bannerBadge, bannerLine1, bannerLine2, bannerTagline, subtitle,
+  bannerBadge, bannerLine1, bannerLine2, showClaudeLogo, showTrustBar, bannerTagline, subtitle,
   date, time, eventStart, eventEnd, format, price, origPrice, seatsNote,
   themeAccent, themeAccentDark, bannerFrom, bannerTo, highlightBg, highlightText,
   mentorName, mentorRole, "mentorPhoto": mentorPhoto.asset->url, mentorBio, mentorCreds,
@@ -149,6 +151,11 @@ export default function KickstarterLanding() {
   for (const k of Object.keys(FALLBACK)) d[k] = has(c?.[k]) ? c[k] : FALLBACK[k];
   const heading = `${d.bannerLine1} ${d.bannerLine2}`.trim();
   const num = (i) => String(i + 1).padStart(2, '0');
+
+  // Claude logo beside the title + trust bar under the form — Sanity-controlled,
+  // and on by default for the Build-with-Claude campaign.
+  const showClaudeLogo = d.showClaudeLogo || activeSlug === 'build-with-claude';
+  const showTrustBar = d.showTrustBar || ['claude-mastery-for-ai-native-careers', 'build-with-claude'].includes(activeSlug);
 
   // Per-campaign colour theme — only set a CSS var when the client provided a
   // value, otherwise the default (amber) theme from the stylesheet applies.
@@ -239,7 +246,14 @@ export default function KickstarterLanding() {
               <span className="lp2-banner-badge">✦ {d.bannerBadge}</span>
               <h1 className="lp2-banner-title">
                 <mark>{d.bannerLine1}</mark>
-                <mark>{d.bannerLine2}</mark>
+                {showClaudeLogo ? (
+                  <span className="lp2-banner-line2">
+                    <mark>{d.bannerLine2}</mark>
+                    <img src="/logos/claude.svg" alt="Claude" className="lp2-banner-claude" />
+                  </span>
+                ) : (
+                  <mark>{d.bannerLine2}</mark>
+                )}
               </h1>
               <p className="lp2-banner-tag">{d.bannerTagline}</p>
               <div className="lp2-banner-brand">
@@ -433,7 +447,7 @@ export default function KickstarterLanding() {
               the three wordmarks (McKinsey · MIT · UT Austin), reconstructed in
               markup so it needs no image asset. Swap in real logo files later
               by replacing each cell's content with an <img>. */}
-          {activeSlug === 'claude-mastery-for-ai-native-careers' && (
+          {showTrustBar && (
             <div className="lp2-trustbar" aria-label="Trusted by teams from McKinsey & Company, MIT, and The University of Texas at Austin">
               <span className="lp2-tb-cell lp2-tb-mck">McKinsey<br />&amp; Company</span>
               <span className="lp2-tb-cell lp2-tb-mit"><img src="/logos/mit-white.svg" alt="MIT" /></span>
