@@ -48,7 +48,7 @@ export default function Report() {
   }
 
   const { name, cluster, setIdx, score, maxScore, dims = [] } = report;
-  const rec = getRecommendation(score);
+  const rec = getRecommendation(score, maxScore);
   const roadmap = buildRoadmap(rec.program);
 
   return (
