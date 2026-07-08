@@ -319,6 +319,7 @@ function LeadsTab() {
         </select>
         <select value={utmSource} onChange={(e) => { setPage(1); setUtmSource(e.target.value); }}>
           <option value="">All UTM sources</option>
+          <option value="__none__">(No UTM source)</option>
           {facets.utmSources.map((u) => <option key={u} value={u}>{u}</option>)}
         </select>
         <select value={sort} onChange={(e) => { setPage(1); setSort(e.target.value); }}>

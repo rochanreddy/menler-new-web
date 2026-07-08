@@ -70,7 +70,8 @@ function leadFilter(query) {
   }
   if (query.program) filter.program = query.program;
   if (query.source) filter.source = query.source;
-  if (query.utm_source) filter.utm_source = query.utm_source;
+  if (query.utm_source === '__none__') filter.utm_source = { $in: [null, ''] };
+  else if (query.utm_source) filter.utm_source = query.utm_source;
   // Date range on createdAt (YYYY-MM-DD; `to` is inclusive to end of day).
   const from = (query.from || '').trim();
   const to = (query.to || '').trim();
