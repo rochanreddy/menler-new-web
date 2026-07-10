@@ -107,11 +107,11 @@ export const ENGINEERING_FAQS = [
 export const APTITUDE_FAQS = [
   {
     q: 'Is this a real assessment or just a quiz?',
-    a: "It's a 15-question ai aptitude test built by our curriculum team. The score is not pass/fail — it's a signal to help you choose the right entry point and gives you a personalised 10-day learning roadmap.",
+    a: "It's a 10-question ai aptitude test built by our curriculum team. The score is not pass/fail — it's a signal to help you choose the right entry point and gives you a personalised 10-day learning roadmap.",
   },
   {
     q: 'How long does it take?',
-    a: 'About 15 minutes. There is no time limit. No email required to start.',
+    a: 'About 10 minutes. There is no time limit. No email required to start.',
   },
   {
     q: 'Does my score affect my application?',

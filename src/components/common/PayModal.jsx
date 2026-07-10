@@ -84,19 +84,22 @@ export default function PayModal({ program, onClose }) {
                 <option>Founder / Business owner</option>
                 <option>Other</option>
               </select>
-              <select className="pay-input" required value={form.track} onChange={(e) => set('track', e.target.value)}>
-                <option value="" disabled>Domain track</option>
-                <option>Analyst</option>
-                <option>Engineering</option>
-                <option>Finance</option>
-                <option>Founder&apos;s Office</option>
-                <option>Human Resources (HR)</option>
-                <option>Marketing &amp; Sales</option>
-                <option>Product Management</option>
-                <option>Program Management</option>
-                <option>Strategy &amp; Consulting</option>
-                <option>Not sure yet</option>
-              </select>
+              {/* Domain track is only shown for the Generalist enrolment, not Kickstarter. */}
+              {program !== 'kickstarter' && (
+                <select className="pay-input" required value={form.track} onChange={(e) => set('track', e.target.value)}>
+                  <option value="" disabled>Domain track</option>
+                  <option>Analyst</option>
+                  <option>Engineering</option>
+                  <option>Finance</option>
+                  <option>Founder&apos;s Office</option>
+                  <option>Human Resources (HR)</option>
+                  <option>Marketing &amp; Sales</option>
+                  <option>Product Management</option>
+                  <option>Program Management</option>
+                  <option>Strategy &amp; Consulting</option>
+                  <option>Not sure yet</option>
+                </select>
+              )}
               {err && <p className="pay-modal-err">{err}</p>}
               <button className="pay-modal-btn" type="submit" disabled={busy}>
                 {busy ? 'Processing…' : `Pay ${formatINR(price.amount)}`}
