@@ -286,3 +286,28 @@ for (const route of ROUTES) {
   writeFileSync(out, render(template, route), 'utf8');
 }
 console.log(`✓ Prerendered ${ROUTES.length} routes (${STATIC_ROUTES.length} static + ${PROJECT_ROUTES.length} projects + ${POLICY_ROUTES.length} policies) with baked-in SEO + structured data.`);
+
+// Sitemap ------------------------------------------------------------------
+// Auto-generated from the SAME ROUTES list, so every prerendered indexable page
+// is always listed — no hand-maintained sitemap to drift out of sync. noindex
+// routes (e.g. /outcomes) are excluded; lastmod is the build date (always fresh).
+const today = new Date().toISOString().slice(0, 10);
+const sitemapMeta = (path) => {
+  if (path === '/') return { priority: '1.0', changefreq: 'weekly' };
+  if (['/generalist', '/engineering', '/kickstarter'].includes(path)) return { priority: '0.9', changefreq: 'weekly' };
+  if (['/aptitude', '/resources'].includes(path)) return { priority: '0.8', changefreq: 'weekly' };
+  if (path === '/blog') return { priority: '0.6', changefreq: 'weekly' };
+  if (path.startsWith('/blog/')) return { priority: '0.5', changefreq: 'monthly' };
+  if (path.startsWith('/projects/')) return { priority: '0.6', changefreq: 'monthly' };
+  if (path.startsWith('/policy/')) return { priority: '0.3', changefreq: 'yearly' };
+  return { priority: '0.6', changefreq: 'monthly' }; // community, about, …
+};
+const sitemapUrls = ROUTES
+  .filter((r) => !r.noindex)
+  .map((r) => {
+    const { priority, changefreq } = sitemapMeta(r.path);
+    return `  <url><loc>${SITE}${r.path}</loc><lastmod>${today}</lastmod><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`;
+  });
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapUrls.join('\n')}\n</urlset>\n`;
+writeFileSync(join(DIST, 'sitemap.xml'), sitemap, 'utf8');
+console.log(`✓ Generated sitemap.xml with ${sitemapUrls.length} indexable URLs (auto-synced with prerender).`);
