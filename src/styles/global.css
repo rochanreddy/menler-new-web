@@ -1732,8 +1732,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
    wordmarks, divided into equal cells, mirroring the supplied design. */
 /* Company logos under the registration form (per-campaign) — white logo tiles
    on a navy bar, matching the trust-bar look while keeping brand colours. */
-.lp2-logostrip-label { margin: 20px 0 8px; text-align: center; font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--text-muted); }
-.lp2-logostrip { display: flex; align-items: stretch; gap: 12px; background: #0d1430; border: 1px solid rgba(255,255,255,0.14); border-radius: 18px; padding: 14px; }
+.lp2-logostrip { margin-top: 16px; display: flex; align-items: stretch; gap: 12px; background: #0d1430; border: 1px solid rgba(255,255,255,0.14); border-radius: 18px; padding: 14px; }
 .lp2-logochip { flex: 1; display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 12px; padding: 14px 12px; min-width: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
 .lp2-logochip img { display: block; width: auto; height: 48px; max-width: 100%; object-fit: contain; }
 @media (max-width: 560px) {

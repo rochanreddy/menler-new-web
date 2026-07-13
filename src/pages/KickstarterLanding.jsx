@@ -123,7 +123,7 @@ const CAMPAIGN_LOGOS = {
   'turn-messy-data-into-clear-decisions-with-claude': [
     { name: 'Zendesk', logo: '/logos/Zendesk.png' },
     { name: 'Nutanix', logo: '/logos/nutanix.png' },
-    { name: 'LeadSquared', logo: '/logos/lead_squared.png' },
+    { name: 'LeadSquared', logo: 'https://logo.clearbit.com/leadsquared.com' },
   ],
 };
 
@@ -493,14 +493,11 @@ export default function KickstarterLanding() {
           </div>
 
           {campaignLogos && (
-            <>
-              <p className="lp2-logostrip-label">Trusted by teams at</p>
-              <div className="lp2-logostrip" aria-label="Trusted by teams at Zendesk, Nutanix and LeadSquared">
-                {campaignLogos.map((l) => (
-                  <span className="lp2-logochip" key={l.name}><img src={l.logo} alt={l.name} loading="lazy" /></span>
-                ))}
-              </div>
-            </>
+            <div className="lp2-logostrip" aria-label="Trusted by teams at Zendesk, Nutanix and LeadSquared">
+              {campaignLogos.map((l) => (
+                <span className="lp2-logochip" key={l.name}><img src={l.logo} alt={l.name} loading="lazy" /></span>
+              ))}
+            </div>
           )}
 
           {/* Trust bar — only on the Claude Mastery campaign. Navy strip with
