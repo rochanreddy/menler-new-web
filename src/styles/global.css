@@ -1734,14 +1734,18 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
    on a navy bar, matching the trust-bar look while keeping brand colours. */
 .lp2-logostrip { margin-top: 16px; display: flex; align-items: stretch; gap: 12px; background: #0d1430; border: 1px solid rgba(255,255,255,0.14); border-radius: 18px; padding: 14px; }
 .lp2-logochip { flex: 1; display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 12px; padding: 14px 12px; min-width: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
-.lp2-logochip img { display: block; width: auto; height: 48px; max-width: 100%; object-fit: contain; }
-/* LeadSquared's artwork has extra internal padding — scale it up to match. */
-.lp2-logochip img[alt="LeadSquared"] { height: 68px; }
+.lp2-logochip img { display: block; width: auto; max-width: 100%; object-fit: contain; }
+/* Each source image has different internal padding, so heights are tuned
+   per-logo until the three read as the same visual size. Adjust these numbers. */
+.lp2-logochip img[alt="Zendesk"]     { height: 48px; }
+.lp2-logochip img[alt="Nutanix"]     { height: 48px; }
+.lp2-logochip img[alt="LeadSquared"] { height: 88px; }
 @media (max-width: 560px) {
   .lp2-logostrip { gap: 8px; padding: 10px; border-radius: 14px; }
   .lp2-logochip { padding: 10px 6px; border-radius: 10px; }
-  .lp2-logochip img { height: 38px; }
-  .lp2-logochip img[alt="LeadSquared"] { height: 54px; }
+  .lp2-logochip img[alt="Zendesk"]     { height: 38px; }
+  .lp2-logochip img[alt="Nutanix"]     { height: 38px; }
+  .lp2-logochip img[alt="LeadSquared"] { height: 68px; }
 }
 
 .lp2-trustbar { margin-top: 16px; display: flex; align-items: center; background: #0d1430; border: 1px solid rgba(255,255,255,0.14); border-radius: 18px; padding: 22px 8px; }
