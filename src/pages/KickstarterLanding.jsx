@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useLayoutEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import MenlerWordmark from '../components/common/MenlerWordmark';
 import Seo from '../components/common/Seo';
@@ -117,6 +117,37 @@ const CAMPAIGN_QUERY = `*[_type == "campaignPage" && slug.current == $slug][0]{
 
 const has = (v) => v != null && v !== '' && !(Array.isArray(v) && v.length === 0);
 
+// Auto-fit the big banner title: shrink the font until each highlighted line
+// fits on a single line within its box. The CSS size (incl. any Sanity cap)
+// is the MAX; this only scales down when a line would otherwise wrap/overflow.
+// Re-runs on content change, resize, and once web fonts finish loading.
+function useAutoFitTitle(deps) {
+  const ref = useRef(null);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return undefined;
+    let raf = 0;
+    const fit = () => {
+      el.style.fontSize = ''; // reset to the CSS/Sanity size, then measure
+      const base = parseFloat(getComputedStyle(el).fontSize) || 40;
+      const avail = el.clientWidth;
+      let widest = 0;
+      el.querySelectorAll('mark').forEach((m) => { widest = Math.max(widest, m.scrollWidth); });
+      if (avail > 0 && widest > avail) {
+        el.style.fontSize = `${Math.max(18, Math.floor(base * (avail / widest)))}px`;
+      }
+    };
+    const run = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(fit); };
+    run();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(run).catch(() => {});
+    let ro;
+    if (typeof ResizeObserver !== 'undefined') { ro = new ResizeObserver(run); ro.observe(el); }
+    window.addEventListener('resize', run);
+    return () => { cancelAnimationFrame(raf); if (ro) ro.disconnect(); window.removeEventListener('resize', run); };
+  }, deps); // eslint-disable-line react-hooks/exhaustive-deps
+  return ref;
+}
+
 const COUNTRY_CODES = [
   { code: '+91', label: 'IN +91' },
   { code: '+1', label: 'US +1' },
@@ -172,6 +203,9 @@ export default function KickstarterLanding() {
   // Optional per-campaign cap for the big banner title (px). Lower it if the
   // title wraps to too many lines. Accepts "40" or "40px".
   if (has(d.bannerTitleSize)) themeStyle['--banner-title-max'] = /px$/.test(String(d.bannerTitleSize)) ? d.bannerTitleSize : `${d.bannerTitleSize}px`;
+
+  // Auto-shrink the title so each line fits its box (below the Sanity cap).
+  const titleRef = useAutoFitTitle([d.bannerLine1, d.bannerLine2, d.bannerTitleSize, showClaudeLogo, contentLoading]);
 
   // Validate → verify the phone via WhatsApp OTP (Amplifeed/MSG91 shows its own
   // code-entry UI) → submit the lead → go straight to checkout.
@@ -248,7 +282,7 @@ export default function KickstarterLanding() {
                 <MenlerWordmark size={22} theme="light" />
               </div>
               <span className="lp2-banner-badge">✦ {d.bannerBadge}</span>
-              <h1 className="lp2-banner-title">
+              <h1 className="lp2-banner-title" ref={titleRef}>
                 <mark>{d.bannerLine1}</mark>
                 {showClaudeLogo ? (
                   <span className="lp2-banner-line2">
