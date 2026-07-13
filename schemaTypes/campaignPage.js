@@ -40,7 +40,7 @@ export default defineType({
     defineField({ name: 'bannerLine2', title: 'Title — line 2 (highlighted)', type: 'string', group: 'banner' }),
     defineField({
       name: 'bannerTitleSize', title: 'Title size (desktop, px)', type: 'number', group: 'banner',
-      description: 'Max size of the big title on desktop. Default is 46. Lower it (e.g. 40 or 36) if the title wraps onto too many lines. It still scales down automatically on smaller screens.',
+      description: 'Max size of the big title on desktop. Default is 40. Lower it (e.g. 36 or 32) if the title wraps onto too many lines. It still scales down automatically on smaller screens.',
       validation: (r) => r.min(24).max(64),
     }),
     defineField({ name: 'showClaudeLogo', title: 'Show Claude logo next to the title', type: 'boolean', group: 'banner', initialValue: false }),
