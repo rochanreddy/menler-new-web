@@ -13,7 +13,6 @@ import {
 } from '../utils/cashfree.js';
 import { forwardLeadToCrm } from './leads.js';
 import { validateEmail } from '../utils/emailValidation.js';
-import { requireAdmin } from '../middleware/adminAuth.js';
 
 const router = Router();
 
@@ -118,49 +117,6 @@ async function markPaid(order) {
   }
 }
 
-// Map a paid amount back to a program key (₹4999 → kickstarter, etc.).
-function programFromAmount(amount) {
-  const n = Number(amount);
-  const hit = Object.entries(PROGRAM_PRICES).find(([k, v]) => v.amount === n && k !== 'test');
-  return hit ? hit[0] : '';
-}
-
-// A payment arrived that our own checkout didn't create — e.g. a Cashfree
-// PAYMENT LINK. Record the paid lead + order from the payment data so the
-// customer shows up in admin + CRM instead of being lost.
-async function reconcileExternalPayment({ orderId, amount, name, email, phone, cfPaymentId }) {
-  if (!orderId) return null;
-  if (await Order.findOne({ order_id: orderId })) return null; // already recorded / webhook retry
-  const program = programFromAmount(amount);
-
-  // Reuse an existing enrol-lead for this person if one exists; otherwise create.
-  let lead = email ? await Lead.findOne({ email, source: /^enrol-/ }).sort({ createdAt: -1 }) : null;
-  if (!lead) {
-    lead = await Lead.create({
-      name, email, phone,
-      program: program || '',
-      source: program ? `enrol-${program}` : 'cashfree-link',
-      cta_label: 'Paid via Cashfree link',
-      section: program ? priceFor(program)?.label : 'Cashfree payment link',
-      extra: { via: 'cashfree-link' },
-    });
-  }
-  let order;
-  try {
-    order = await Order.create({
-      order_id: orderId, program: program || '', amount: Number(amount) || 0,
-      status: 'CREATED', leadId: lead._id,
-      customer_name: name, customer_email: email, customer_phone: phone,
-      extra: { reconciled: true, via: 'cashfree-link', cf_payment_id: cfPaymentId || '' },
-    });
-  } catch (e) {
-    if (e.code === 11000) return null; // race: created by a concurrent webhook
-    throw e;
-  }
-  await markPaid(order);
-  return order;
-}
-
 /* Webhook — Cashfree posts payment events here. Verify on the RAW body. */
 router.post('/cashfree/webhook', async (req, res) => {
   try {
@@ -181,18 +137,6 @@ router.post('/cashfree/webhook', async (req, res) => {
           order.status = 'FAILED';
           await order.save();
         }
-      } else if (status === 'SUCCESS' || status === 'PAID') {
-        // Paid outside our checkout (a Cashfree payment link) — capture it so the
-        // customer isn't lost. Needs the ACCOUNT-level webhook enabled in Cashfree.
-        const c = data.customer_details || {};
-        await reconcileExternalPayment({
-          orderId,
-          amount: data.order?.order_amount ?? data.payment?.payment_amount,
-          name: String(c.customer_name || '').trim(),
-          email: String(c.customer_email || '').trim().toLowerCase(),
-          phone: cleanPhone(c.customer_phone),
-          cfPaymentId: data.payment?.cf_payment_id,
-        });
       }
     }
     res.json({ ok: true }); // 200 so Cashfree doesn't retry a handled event
@@ -218,47 +162,6 @@ router.get('/cashfree/status/:orderId', async (req, res) => {
   } catch (err) {
     console.error('cashfree status error', err.message);
     res.status(500).json({ error: 'Could not fetch status' });
-  }
-});
-
-/* Admin: manually reconcile a payment made outside our checkout (e.g. a Cashfree
-   payment link) by its Cashfree order id. Verifies with Cashfree that it's PAID
-   before recording it — so we never mark someone paid on their word alone. */
-router.post('/reconcile', requireAdmin, async (req, res) => {
-  try {
-    if (!cashfreeConfigured()) return res.status(503).json({ error: 'Payments are not configured.' });
-    const orderId = String(req.body?.orderId || req.body?.order_id || '').trim();
-    if (!orderId) return res.status(400).json({ error: 'orderId (the Cashfree order id) is required.' });
-
-    const existing = await Order.findOne({ order_id: orderId });
-    if (existing && existing.status === 'PAID') {
-      return res.json({ ok: true, already: true, order_id: orderId });
-    }
-
-    // Source of truth: ask Cashfree whether this order is actually paid.
-    const cf = await getCashfreeOrder(orderId);
-    if ((cf.order_status || '').toUpperCase() !== 'PAID') {
-      return res.status(409).json({ error: `Cashfree reports this order as "${cf.order_status || 'UNKNOWN'}", not PAID.` });
-    }
-
-    const c = cf.customer_details || {};
-    let order = existing;
-    if (order) {
-      await markPaid(order);
-    } else {
-      order = await reconcileExternalPayment({
-        orderId,
-        amount: cf.order_amount,
-        name: String(c.customer_name || '').trim(),
-        email: String(c.customer_email || '').trim().toLowerCase(),
-        phone: cleanPhone(c.customer_phone),
-        cfPaymentId: '',
-      });
-    }
-    res.json({ ok: true, order_id: orderId, program: order?.program || '', amount: order?.amount || cf.order_amount });
-  } catch (err) {
-    console.error('reconcile error', err.data || err.message);
-    res.status(500).json({ error: 'Could not reconcile this order — check the Cashfree order id and try again.' });
   }
 });
 
