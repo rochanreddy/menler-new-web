@@ -1869,6 +1869,9 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 
 /* Premium certificate mock — double gold frame, seal + signature */
 .lp2-cert-mock {
+  /* Always the original gold/amber certificate — independent of the campaign
+     theme accent, so a green/teal campaign doesn't tint the certificate. */
+  --a: #BA7517; --a-dark: #854F0B; --cream: #FFF6E1;
   max-width: 600px; text-align: center; padding: 40px 44px 32px; border-radius: 16px;
   background:
     radial-gradient(120% 80% at 50% 0%, rgba(186,117,23,0.07), transparent 60%),
@@ -1894,7 +1897,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-cert-mock-for { margin-top: 14px; font-size: 13.5px; line-height: 1.6; color: var(--ink); }
 .lp2-cert-mock-for b { color: var(--ink); font-weight: 700; }
 .lp2-cert-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 28px; gap: 16px; }
-.lp2-cert-seal { flex-shrink: 0; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; width: 66px; height: 66px; border-radius: 50%; background: radial-gradient(circle at 50% 24%, rgba(255,255,255,0.5), rgba(255,255,255,0) 58%), linear-gradient(155deg, var(--a) 0%, var(--a-dark, var(--a)) 100%); color: #fff; box-shadow: 0 8px 20px rgba(16,28,24,0.26), inset 0 1px 2px rgba(255,255,255,0.4); border: 2px solid rgba(255,255,255,0.9); }
+.lp2-cert-seal { flex-shrink: 0; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; width: 66px; height: 66px; border-radius: 50%; background: radial-gradient(circle at 50% 24%, rgba(255,255,255,0.6), rgba(255,255,255,0) 56%), linear-gradient(155deg, #F6C457 0%, #BA7517 100%); color: #fff; box-shadow: 0 8px 20px rgba(186,117,23,0.42), inset 0 1px 2px rgba(255,255,255,0.5); border: 2px solid rgba(255,255,255,0.9); }
 .lp2-cert-seal-star { font-size: 18px; line-height: 1; }
 .lp2-cert-seal-txt { font-size: 7px; font-weight: 800; letter-spacing: .08em; line-height: 1.15; margin-top: 3px; }
 .lp2-cert-sign { display: inline-flex; flex-direction: column; align-items: flex-end; text-align: right; }
