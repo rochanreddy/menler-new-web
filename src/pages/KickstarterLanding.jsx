@@ -71,6 +71,7 @@ const FALLBACK = {
   bannerBadge: WORKSHOP.banner.badge,
   bannerLine1: WORKSHOP.banner.line1,
   bannerLine2: WORKSHOP.banner.line2,
+  bannerTitleSize: '', // px cap for the big title on desktop; blank = default (46)
   showClaudeLogo: false,
   showTrustBar: false,
   bannerTagline: WORKSHOP.banner.tagline,
@@ -105,7 +106,7 @@ const FALLBACK = {
 
 // Load the campaign matching the URL slug (defaults to 'ai-kickstarter').
 const CAMPAIGN_QUERY = `*[_type == "campaignPage" && slug.current == $slug][0]{
-  bannerBadge, bannerLine1, bannerLine2, showClaudeLogo, showTrustBar, bannerTagline, subtitle,
+  bannerBadge, bannerLine1, bannerLine2, bannerTitleSize, showClaudeLogo, showTrustBar, bannerTagline, subtitle,
   date, time, eventStart, eventEnd, format, price, origPrice, seatsNote,
   themeAccent, themeAccentDark, bannerFrom, bannerTo, highlightBg, highlightText,
   mentorName, mentorRole, "mentorPhoto": mentorPhoto.asset->url, mentorBio, mentorCreds,
@@ -168,6 +169,9 @@ export default function KickstarterLanding() {
   setVar('--banner-to', d.bannerTo);
   setVar('--hl-bg', d.highlightBg);
   setVar('--hl-text', d.highlightText);
+  // Optional per-campaign cap for the big banner title (px). Lower it if the
+  // title wraps to too many lines. Accepts "40" or "40px".
+  if (has(d.bannerTitleSize)) themeStyle['--banner-title-max'] = /px$/.test(String(d.bannerTitleSize)) ? d.bannerTitleSize : `${d.bannerTitleSize}px`;
 
   // Validate → verify the phone via WhatsApp OTP (Amplifeed/MSG91 shows its own
   // code-entry UI) → submit the lead → go straight to checkout.
