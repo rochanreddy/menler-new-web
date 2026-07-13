@@ -123,7 +123,7 @@ const CAMPAIGN_LOGOS = {
   'turn-messy-data-into-clear-decisions-with-claude': [
     { name: 'Zendesk', logo: '/logos/Zendesk.png' },
     { name: 'Nutanix', logo: '/logos/nutanix.png' },
-    { name: 'LeadSquared', logo: 'https://logo.clearbit.com/leadsquared.com' },
+    { name: 'LeadSquared', logo: '/logos/lead_squared_new.png' },
   ],
 };
 
