@@ -1730,6 +1730,16 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 
 /* Campaign trust bar (Claude Mastery only) — navy strip with the three
    wordmarks, divided into equal cells, mirroring the supplied design. */
+/* Company logos under the registration form (per-campaign). */
+.lp2-logos { margin-top: 18px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.lp2-logos-label { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); }
+.lp2-logos-row { display: flex; align-items: center; justify-content: center; gap: 26px; flex-wrap: wrap; }
+.lp2-logos-row .partner-chip { display: inline-flex; align-items: center; min-width: 0; padding: 0; background: transparent; border: 0; }
+.lp2-logos-row .partner-logo-img { height: 26px; width: auto; max-width: 118px; object-fit: contain; filter: grayscale(1); opacity: .7; transition: filter .2s, opacity .2s; }
+.lp2-logos-row .partner-chip:hover .partner-logo-img { filter: none; opacity: 1; }
+.lp2-logos-row .partner-name { font-weight: 700; color: var(--ink); font-size: 15px; }
+@media (max-width: 560px) { .lp2-logos-row { gap: 18px; } .lp2-logos-row .partner-logo-img { height: 22px; max-width: 96px; } }
+
 .lp2-trustbar { margin-top: 16px; display: flex; align-items: center; background: #0d1430; border: 1px solid rgba(255,255,255,0.14); border-radius: 18px; padding: 22px 8px; }
 .lp2-tb-cell { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: #fff; line-height: 1.12; padding: 0 6px; min-width: 0; }
 .lp2-tb-cell + .lp2-tb-cell { border-left: 1px solid rgba(255,255,255,0.16); }

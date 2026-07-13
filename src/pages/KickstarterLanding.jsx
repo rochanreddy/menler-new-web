@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import MenlerWordmark from '../components/common/MenlerWordmark';
 import Seo from '../components/common/Seo';
 import MenlerCommunitySection from '../components/common/MenlerCommunitySection';
+import { BrandLogo } from '../components/common/PartnersMarquee';
 import { MENLER_WHATSAPP_URL } from '../data/communityLinks';
 import { submitLead } from '../services/leadService';
 import { useContentState } from '../lib/useContent';
@@ -117,6 +118,16 @@ const CAMPAIGN_QUERY = `*[_type == "campaignPage" && slug.current == $slug][0]{
 
 const has = (v) => v != null && v !== '' && !(Array.isArray(v) && v.length === 0);
 
+// Company logos shown under the registration form, per campaign (loaded by
+// domain via BrandLogo — no local asset needed).
+const CAMPAIGN_LOGOS = {
+  'turn-messy-data-into-clear-decisions-with-claude': [
+    { name: 'Zendesk', domain: 'zendesk.com' },
+    { name: 'Nutanix', domain: 'nutanix.com' },
+    { name: 'LeadSquared', domain: 'leadsquared.com' },
+  ],
+};
+
 // Auto-fit the big banner title: shrink the font until each highlighted line
 // fits on a single line within its box. The CSS size (incl. any Sanity cap)
 // is the MAX; this only scales down when a line would otherwise wrap/overflow.
@@ -206,6 +217,7 @@ export default function KickstarterLanding() {
 
   // Auto-shrink the title so each line fits its box (below the Sanity cap).
   const titleRef = useAutoFitTitle([d.bannerLine1, d.bannerLine2, d.bannerTitleSize, showClaudeLogo, contentLoading]);
+  const campaignLogos = CAMPAIGN_LOGOS[activeSlug];
 
   // Validate → verify the phone via WhatsApp OTP (Amplifeed/MSG91 shows its own
   // code-entry UI) → submit the lead → go straight to checkout.
@@ -480,6 +492,15 @@ export default function KickstarterLanding() {
               </>
             )}
           </div>
+
+          {campaignLogos && (
+            <div className="lp2-logos">
+              <span className="lp2-logos-label">Trusted by teams at</span>
+              <div className="lp2-logos-row">
+                {campaignLogos.map((l) => <BrandLogo key={l.name} name={l.name} domain={l.domain} />)}
+              </div>
+            </div>
+          )}
 
           {/* Trust bar — only on the Claude Mastery campaign. Navy strip with
               the three wordmarks (McKinsey · MIT · UT Austin), reconstructed in
