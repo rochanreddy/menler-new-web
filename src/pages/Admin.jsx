@@ -260,6 +260,9 @@ function LeadsTab() {
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
   const [facets, setFacets] = useState({ programs: [], sources: [], utmSources: [] });
+  const [reconId, setReconId] = useState('');
+  const [reconMsg, setReconMsg] = useState(null); // { ok, text }
+  const [reconBusy, setReconBusy] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -299,8 +302,32 @@ function LeadsTab() {
 
   const onSearch = (e) => { setPage(1); setSearch(e.target.value); };
 
+  const onReconcile = async (e) => {
+    e.preventDefault();
+    const id = reconId.trim();
+    if (!id) return;
+    setReconBusy(true); setReconMsg(null);
+    try {
+      const r = await adminApi.reconcilePayment(id);
+      setReconMsg({ ok: true, text: r.already ? 'Already recorded as paid.' : `✓ Recorded as paid${r.program ? ` · ${r.program}` : ''}${r.amount ? ` · ₹${r.amount}` : ''}.` });
+      setReconId('');
+      load();
+    } catch (err) {
+      setReconMsg({ ok: false, text: err.message || 'Could not reconcile.' });
+    } finally {
+      setReconBusy(false);
+    }
+  };
+
   return (
     <div>
+      <form className="admin-reconcile" onSubmit={onReconcile}>
+        <span className="admin-reconcile-label">Reconcile a Cashfree link payment</span>
+        <input className="admin-search" style={{ maxWidth: 300 }} placeholder="Paste the Cashfree order id…" value={reconId} onChange={(e) => setReconId(e.target.value)} />
+        <button className="admin-btn admin-btn--primary" disabled={reconBusy}>{reconBusy ? 'Checking…' : 'Reconcile'}</button>
+        {reconMsg && <span className={reconMsg.ok ? 'admin-reconcile-ok' : 'admin-reconcile-err'}>{reconMsg.text}</span>}
+      </form>
+
       <div className="admin-toolbar">
         <input
           className="admin-search"

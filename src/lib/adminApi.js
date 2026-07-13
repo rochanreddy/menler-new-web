@@ -45,6 +45,10 @@ export const adminApi = {
   deleteLead: (id) => api(`/admin/leads/${encodeURIComponent(id)}`, { method: 'DELETE' }),
   getUsers: (params) => api(`/admin/users${qs(params)}`),
 
+  // Record a payment made outside our checkout (e.g. a Cashfree payment link),
+  // by its Cashfree order id. The server verifies it's PAID before recording.
+  reconcilePayment: (orderId) => api('/payments/reconcile', { method: 'POST', body: { orderId } }),
+
   // Per-campaign Zoom links (admin-only; never shown on the public site).
   getCampaigns: () => api('/admin/campaigns'),
   saveCampaign: (slug, body) =>

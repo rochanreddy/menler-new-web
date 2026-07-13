@@ -3178,6 +3178,10 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 
 /* ── Toolbar (search/filter/export) ── */
 .admin-toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; align-items: center; }
+.admin-reconcile { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; padding: 12px 14px; background: #f6f8fc; border: 1px solid #e5e9f2; border-radius: 10px; }
+.admin-reconcile-label { font-size: 13px; font-weight: 600; color: #334; }
+.admin-reconcile-ok { font-size: 13px; color: #15803d; font-weight: 600; }
+.admin-reconcile-err { font-size: 13px; color: #c0362c; font-weight: 600; }
 .admin-search {
   flex: 1; min-width: 220px; padding: 10px 14px; font-size: 14px; font-family: inherit;
   border: 0.5px solid var(--border); border-radius: 10px; background: var(--white); color: var(--ink);
