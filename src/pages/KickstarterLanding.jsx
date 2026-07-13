@@ -24,7 +24,7 @@ const WORKSHOP = {
     tagline: 'Go from zero to a working agent — live in 2 hours.',
   },
   subtitle: 'A hands-on masterclass where you go from zero to a working AI agent — no coding, no jargon. Walk away with something real you built yourself.',
-  date: 'Saturday, 12 July 2026',
+  date: 'Saturday, 25 July 2026',
   time: '5:00 – 7:00 PM IST',
   format: 'Live online · Recording provided',
   price: '499',
