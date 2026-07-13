@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import MenlerWordmark from '../components/common/MenlerWordmark';
 import Seo from '../components/common/Seo';
 import MenlerCommunitySection from '../components/common/MenlerCommunitySection';
-import { BrandLogo } from '../components/common/PartnersMarquee';
 import { MENLER_WHATSAPP_URL } from '../data/communityLinks';
 import { submitLead } from '../services/leadService';
 import { useContentState } from '../lib/useContent';
@@ -122,9 +121,9 @@ const has = (v) => v != null && v !== '' && !(Array.isArray(v) && v.length === 0
 // domain via BrandLogo — no local asset needed).
 const CAMPAIGN_LOGOS = {
   'turn-messy-data-into-clear-decisions-with-claude': [
-    { name: 'Zendesk', domain: 'zendesk.com' },
-    { name: 'Nutanix', domain: 'nutanix.com' },
-    { name: 'LeadSquared', domain: 'leadsquared.com' },
+    { name: 'Zendesk', logo: '/logos/Zendesk.png' },
+    { name: 'Nutanix', logo: '/logos/nutanix.png' },
+    { name: 'LeadSquared', logo: '/logos/lead_squared.png' },
   ],
 };
 
@@ -494,12 +493,14 @@ export default function KickstarterLanding() {
           </div>
 
           {campaignLogos && (
-            <div className="lp2-logos">
-              <span className="lp2-logos-label">Trusted by teams at</span>
-              <div className="lp2-logos-row">
-                {campaignLogos.map((l) => <BrandLogo key={l.name} name={l.name} domain={l.domain} />)}
+            <>
+              <p className="lp2-logostrip-label">Trusted by teams at</p>
+              <div className="lp2-logostrip" aria-label="Trusted by teams at Zendesk, Nutanix and LeadSquared">
+                {campaignLogos.map((l) => (
+                  <span className="lp2-logochip" key={l.name}><img src={l.logo} alt={l.name} loading="lazy" /></span>
+                ))}
               </div>
-            </div>
+            </>
           )}
 
           {/* Trust bar — only on the Claude Mastery campaign. Navy strip with
