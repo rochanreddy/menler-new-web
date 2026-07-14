@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import MenlerWordmark from '../common/MenlerWordmark';
 import { useApply } from '../common/ApplyContext';
-import { supabase } from '../../lib/supabase';
 
 export default function Navbar() {
   const [openDropdown, setOpenDropdown] = useState(null);
@@ -58,13 +57,6 @@ export default function Navbar() {
   }, [mobileOpen]);
 
   const isActive = (path) => location.pathname === path;
-
-  const [session, setSession] = useState(null);
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => setSession(session));
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
-    return () => subscription.unsubscribe();
-  }, []);
 
   // The admin panel, Sanity Studio, and campaign landing pages are standalone,
   // chrome-free areas — no public navbar.
@@ -123,25 +115,7 @@ export default function Navbar() {
         <button className={`nav-link${isActive('/aptitude') ? ' active' : ''}`} onClick={() => go('/aptitude')}>AI Aptitude Test</button>
         <button className={`nav-link${isActive('/resources') ? ' active' : ''}`} onClick={() => go('/resources')}>Library</button>
         <button className={`nav-link${isActive('/about') ? ' active' : ''}`} onClick={() => go('/about')}>About</button>
-        {session ? (
-          <>
-            <button
-              className="nav-profile"
-              onClick={() => go('/profile')}
-              aria-label="My Profile"
-              title="My Profile"
-              style={{ background: isActive('/profile') ? 'var(--lavender)' : undefined }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-            </button>
-            <button className="nav-cta" onClick={apply}>Apply Now</button>
-          </>
-        ) : (
-          <button className="nav-cta" onClick={apply}>Apply Now</button>
-        )}
+        <button className="nav-cta" onClick={apply}>Apply Now</button>
       </div>
     </nav>
 
@@ -158,14 +132,7 @@ export default function Navbar() {
         <button className={`mm-link${isActive('/resources') ? ' active' : ''}`} onClick={() => go('/resources')}>Library</button>
         <button className={`mm-link${isActive('/about') ? ' active' : ''}`} onClick={() => go('/about')}>About</button>
         <div className="mm-divider" />
-        {session ? (
-          <>
-            <button className="mm-link" onClick={() => go('/profile')}>My Profile</button>
-            <button className="mm-cta" onClick={apply}>Apply Now</button>
-          </>
-        ) : (
-          <button className="mm-cta" onClick={apply}>Apply Now</button>
-        )}
+        <button className="mm-cta" onClick={apply}>Apply Now</button>
       </div>
       <div className={`mobile-overlay${mobileOpen ? ' open' : ''}`} onClick={() => setMobileOpen(false)} aria-hidden="true" />
     </>

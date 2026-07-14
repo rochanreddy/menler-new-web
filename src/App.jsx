@@ -1,11 +1,10 @@
-import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect, useRef, lazy, Suspense } from 'react';
 import Lenis from 'lenis';
 import Navbar from './components/layout/Navbar';
 import PageLoader from './components/common/PageLoader';
 import { ToastProvider } from './components/common/Toast';
 import { ApplyProvider } from './components/common/ApplyContext';
-import { supabase } from './lib/supabase';
 
 const Home = lazy(() => import('./pages/Home'));
 const Kickstarter = lazy(() => import('./pages/Kickstarter'));
@@ -23,13 +22,6 @@ const Blog = lazy(() => import('./pages/Blog'));
 const Community = lazy(() => import('./pages/Community'));
 const BlogArticle = lazy(() => import('./pages/BlogArticle'));
 const About = lazy(() => import('./pages/About'));
-const SignUp = lazy(() => import('./pages/SignUp'));
-const Login = lazy(() => import('./pages/Login'));
-const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));
-const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
-const ResetPassword = lazy(() => import('./pages/ResetPassword'));
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const Register = lazy(() => import('./pages/Register'));
 const Admin = lazy(() => import('./pages/Admin'));
 const Policy = lazy(() => import('./pages/Policy'));
 const PayTest = lazy(() => import('./pages/PayTest'));
@@ -57,7 +49,6 @@ function ScrollToTop() {
 }
 
 export default function App() {
-  const navigate = useNavigate();
 
   // ── Site-wide momentum smooth scrolling (Lenis) ──
   // Honours prefers-reduced-motion (skips entirely → native scroll). The
@@ -82,16 +73,6 @@ export default function App() {
       delete window.__lenis;
     };
   }, []);
-
-  // Handle email confirmation link redirect → send to /profile
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session && window.location.hash.includes('access_token')) {
-        navigate('/profile');
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [navigate]);
 
   return (
     <ToastProvider>
@@ -119,14 +100,6 @@ export default function App() {
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/earnings-agent" element={<BlogArticle />} />
             <Route path="/about" element={<About />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/verify-email" element={<VerifyEmail />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profile" element={<Dashboard />} />
-            <Route path="/register" element={<Register />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/pay-test" element={<PayTest />} />
             <Route path="/policy/:slug" element={<Policy />} />
