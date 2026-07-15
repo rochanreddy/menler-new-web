@@ -13,6 +13,7 @@ export default defineType({
     defineField({ name: 'origPrice', title: 'Original price (struck through)', type: 'string' }),
     defineField({ name: 'priceSub', title: 'Price subtext', type: 'string' }),
     defineField({ name: 'ctaLabel', title: 'CTA label', type: 'string', initialValue: 'Enrol now' }),
+    defineField({ name: 'startDate', title: 'Batch start date', type: 'string', description: 'Shown as the first meta chip on the card, e.g. "July 25, 2026". Change this to update the batch start date.' }),
     defineField({
       name: 'features',
       title: 'Features',

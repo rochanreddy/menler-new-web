@@ -53,14 +53,14 @@ const KS_PRICING = {
   price: '4,999',
   priceSub: 'incl. all taxes · one-time',
   features: KS_FEATS,
+  startDate: 'July 25, 2026',
   chips: [
-    { label: 'Start date', value: 'July 25, 2026' },
     { label: 'Duration', value: '2 Weekends' },
     { label: 'Sessions', value: '4 Live · 8 hrs' },
     { label: 'Format', value: 'Live online' },
   ],
 };
-const KS_PRICING_QUERY = '*[_type == "kickstarterPage"][0].pricing{pill, name, tagline, price, origPrice, priceSub, features, chips}';
+const KS_PRICING_QUERY = '*[_type == "kickstarterPage"][0].pricing{pill, name, tagline, price, origPrice, priceSub, features, startDate, chips}';
 const KS_DAYS_QUERY = '*[_type == "kickstarterPage"][0].days[]{num, topic, tool, cap}';
 const KS_MODULES_QUERY = '*[_type == "kickstarterPage"][0].modules[]{label, span, title, desc, lessons, tools, project}';
 
@@ -169,6 +169,12 @@ export default function Kickstarter() {
     section: 'Gen AI Kickstarter',
   });
   const ksPricing = useContent(KS_PRICING_QUERY, KS_PRICING);
+  // The dedicated "Batch start date" field drives the first chip; any legacy
+  // "Start date" chip is dropped so it never shows twice.
+  const ksChips = [
+    ...(ksPricing.startDate ? [{ label: 'Start date', value: ksPricing.startDate }] : []),
+    ...(ksPricing.chips || []).filter((c) => c.label !== 'Start date'),
+  ];
   const days = useContent(KS_DAYS_QUERY, DAYS);
   const modules = useContent(KS_MODULES_QUERY, MODULES);
 
@@ -396,6 +402,7 @@ export default function Kickstarter() {
 
         <PricingCard
           {...ksPricing}
+          chips={ksChips}
           ctaLabel="Enrol Now"
           description={<>Build your AI foundation in just two weekends.<span className="kp-desc-line2">Learn AI fundamentals, build real workflows, and ship your first projects.</span></>}
           onCta={() => setPayProgram('kickstarter')}
