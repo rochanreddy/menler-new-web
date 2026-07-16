@@ -78,8 +78,10 @@
       #app-loader .dot{position:absolute;top:2px;right:0;width:7px;height:7px;border-radius:50%;background:#1D9E75;animation:mlpulse 1s ease-in-out infinite}
       @keyframes mlpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
     </style>
+    <!-- Load fonts without blocking the first paint (media=print → all onload). -->
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital,wght@0,400;1,400&family=DM+Sans:wght@300;400;500;600;700;900&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital,wght@0,400;1,400&family=DM+Sans:wght@300;400;500;600;700;900&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital,wght@0,400;1,400&family=DM+Sans:wght@300;400;500;600;700;900&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital,wght@0,400;1,400&family=DM+Sans:wght@300;400;500;600;700;900&display=swap" /></noscript>
     <title>Menler — AI Learning India · Claude AI Fellowship & Courses</title>
 
     <!-- Organization + WebSite structured data -->
