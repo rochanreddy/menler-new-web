@@ -73,10 +73,8 @@
     <style>
       #app-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#faf8f3;transition:opacity .35s ease}
       #app-loader.hide{opacity:0;pointer-events:none}
-      #app-loader .ml{font-family:'DM Sans',system-ui,-apple-system,Segoe UI,sans-serif;font-weight:900;font-size:34px;color:#26215C;letter-spacing:-1px;position:relative}
-      #app-loader .ml::after{content:'';position:absolute;left:0;right:15px;bottom:-4px;height:3px;border-radius:2px;background:#534AB7}
-      #app-loader .dot{position:absolute;top:2px;right:0;width:7px;height:7px;border-radius:50%;background:#1D9E75;animation:mlpulse 1s ease-in-out infinite}
-      @keyframes mlpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+      #app-loader .spin{width:38px;height:38px;border-radius:50%;border:3px solid #e3dff2;border-top-color:#534AB7;animation:mlspin .7s linear infinite}
+      @keyframes mlspin{to{transform:rotate(360deg)}}
     </style>
     <!-- Load fonts without blocking the first paint (media=print → all onload). -->
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital,wght@0,400;1,400&family=DM+Sans:wght@300;400;500;600;700;900&display=swap" />
@@ -134,7 +132,7 @@
   <body>
     <!-- Meta Pixel <noscript> fallback (must be in <body>, not <head>) -->
     <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1038055815854731&ev=PageView&noscript=1" alt="" /></noscript>
-    <div id="app-loader"><div class="ml">menler<span class="dot"></span></div></div>
+    <div id="app-loader"><div class="spin"></div></div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
 
