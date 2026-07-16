@@ -26,3 +26,9 @@ createRoot(document.getElementById('root')).render(
     </ErrorBoundary>
   </StrictMode>,
 )
+
+// Dismiss the instant loading screen once React has painted the first frame.
+requestAnimationFrame(() => requestAnimationFrame(() => {
+  const l = document.getElementById('app-loader');
+  if (l) { l.classList.add('hide'); setTimeout(() => l.remove(), 400); }
+}));

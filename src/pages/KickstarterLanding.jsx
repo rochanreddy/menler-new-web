@@ -117,6 +117,10 @@ const CAMPAIGN_QUERY = `*[_type == "campaignPage" && slug.current == $slug][0]{
 
 const has = (v) => v != null && v !== '' && !(Array.isArray(v) && v.length === 0);
 
+// Serve right-sized, auto-format (WebP/AVIF) images from Sanity's CDN instead of
+// the full-res originals — a big LCP + bandwidth win, especially on mobile.
+const optImg = (url, w) => (url && url.includes('cdn.sanity.io') ? `${url}${url.includes('?') ? '&' : '?'}w=${w}&auto=format&q=72&fit=max` : url);
+
 // Company logos shown under the registration form, per campaign (loaded by
 // domain via BrandLogo — no local asset needed).
 const CAMPAIGN_LOGOS = {
@@ -312,7 +316,7 @@ export default function KickstarterLanding() {
             <div className="lp2-banner-photo">
               {contentLoading
                 ? <div className="lp2-skel lp2-banner-photo-skel" aria-hidden="true" />
-                : <img src={d.mentorPhoto} alt={d.mentorName} />}
+                : <img src={optImg(d.mentorPhoto, 820)} alt={d.mentorName} fetchpriority="high" decoding="async" />}
             </div>
             <div className="lp2-banner-strip">
               <span><b>{d.date}</b></span>
@@ -363,7 +367,7 @@ export default function KickstarterLanding() {
             <h2 className="lp2-h2">Sample <em>certificate</em></h2>
             <div className="lp2-cert">
               {d.certificateImage ? (
-                <img className="lp2-cert-img" src={d.certificateImage} alt="Sample Menler certificate" />
+                <img className="lp2-cert-img" src={optImg(d.certificateImage, 960)} alt="Sample Menler certificate" loading="lazy" decoding="async" />
               ) : (
                 <div className="lp2-cert-mock">
                   <div className="lp2-cert-mock-top">
@@ -402,7 +406,7 @@ export default function KickstarterLanding() {
             <div className="lp2-mentor">
               {contentLoading
                 ? <div className="lp2-skel lp2-mentor-img lp2-mentor-img-skel" aria-hidden="true" />
-                : <div className={`lp2-mentor-img mentor-${activeSlug}`} role="img" aria-label={d.mentorName} style={{ backgroundImage: `url("${d.mentorPhoto}")` }} />}
+                : <div className={`lp2-mentor-img mentor-${activeSlug}`} role="img" aria-label={d.mentorName} style={{ backgroundImage: `url("${optImg(d.mentorPhoto, 440)}")` }} />}
               <div className="lp2-mentor-info">
                 <p className="lp2-mentor-name">{d.mentorName}</p>
                 <p className="lp2-mentor-role">{d.mentorRole}</p>

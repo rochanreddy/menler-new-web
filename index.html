@@ -65,6 +65,19 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
+    <link rel="dns-prefetch" href="https://cdn.sanity.io" />
+    <!-- Instant branded loading screen — shown immediately (no JS needed) so a
+         phone never sees a blank white screen while the app boots; main.jsx
+         removes it once React has painted. -->
+    <style>
+      #app-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#faf8f3;transition:opacity .35s ease}
+      #app-loader.hide{opacity:0;pointer-events:none}
+      #app-loader .ml{font-family:'DM Sans',system-ui,-apple-system,Segoe UI,sans-serif;font-weight:900;font-size:34px;color:#26215C;letter-spacing:-1px;position:relative}
+      #app-loader .ml::after{content:'';position:absolute;left:0;right:15px;bottom:-4px;height:3px;border-radius:2px;background:#534AB7}
+      #app-loader .dot{position:absolute;top:2px;right:0;width:7px;height:7px;border-radius:50%;background:#1D9E75;animation:mlpulse 1s ease-in-out infinite}
+      @keyframes mlpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+    </style>
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital,wght@0,400;1,400&family=DM+Sans:wght@300;400;500;600;700;900&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital,wght@0,400;1,400&family=DM+Sans:wght@300;400;500;600;700;900&display=swap" />
     <title>Menler — AI Learning India · Claude AI Fellowship & Courses</title>
@@ -119,6 +132,7 @@
   <body>
     <!-- Meta Pixel <noscript> fallback (must be in <body>, not <head>) -->
     <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1038055815854731&ev=PageView&noscript=1" alt="" /></noscript>
+    <div id="app-loader"><div class="ml">menler<span class="dot"></span></div></div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
 
