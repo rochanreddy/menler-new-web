@@ -164,42 +164,21 @@ const TRACKS = [
   { name: 'Product Management', role: 'User research · PRDs · Product execution' },
 ];
 
-const PROJECTS = [
-  { track: "Founder's office", title: 'CEO weekly briefing agent', meta: 'Week 6 · Skills + MCP · Live deployment', desc: "A Claude Skill that pulls metrics from connected tools, summarises wins/blockers, and publishes a Monday brief to the founder's inbox.", stack: 'Stack: Claude Projects · Skills · Gmail MCP' },
-  { track: 'Finance', title: 'Deal-sourcing research agent', meta: 'Week 7 · Cowork · Multi-doc', desc: 'Cowork-driven workflow that screens decks, writes investment memos, and flags red-flags grounded in your fund thesis.', stack: 'Stack: Cowork · Projects · Web search' },
-  { track: 'Marketing', title: 'Always-on content engine', meta: 'Week 5 · Skills · Brand voice', desc: 'Brand-trained Claude Skill generating blog, LinkedIn, and ad copy with on-brand tone — drafts ready for review in minutes.', stack: 'Stack: Skills · Style guides · Prompt library' },
-  { track: 'Analyst', title: 'Earnings call insight engine', meta: 'Week 8 · Multimodal · Tables', desc: 'Transcript + financials in, structured insight memo out — competitive read, sentiment, and KPI delta in a single Claude run.', stack: 'Stack: Multimodal · Excel · Skills' },
-  { track: 'Finance', title: 'Budget variance commentator', meta: 'Week 9 · Excel + Claude · Templates', desc: 'Claude in Excel that reads actual vs. plan, writes management commentary, and drafts the CFO review deck.', stack: 'Stack: Claude in Excel · PPT · Skills' },
-  { track: 'Operations', title: 'SOP automation agent', meta: 'Week 6 · MCP · Workflow', desc: 'Turn a messy SOP into a Claude-driven workflow that handles intake, triage, and routing with audit-ready logs.', stack: 'Stack: MCP · Cowork · Slack' },
-  { track: 'Technology', title: 'No-code AI app builder', meta: 'Week 10 · Artifacts · Forms', desc: 'Build a working internal tool — input form, Claude reasoning layer, output dashboard — without writing a line of Python.', stack: 'Stack: Artifacts · Projects · Cowork' },
-  { track: 'Capstone', title: 'Domain Specialist capstone', meta: 'Weeks 9–10 · Demo Day · Cert', desc: 'A real, deployed automation for a real organisation — judged by industry mentors. Powers your Claude Specialist certification.', stack: 'Outcome: Claude Specialist — [Your domain]', isCap: true },
-];
-
-
-const ROLES = [
-  { name: 'AI Specialist — Founder\'s Office', comp: '₹16–28L · Series B+ startups', desc: 'Run Claude-powered briefings, decision memos, and reporting agents directly for the CEO.' },
-  { name: 'AI Marketing Lead', comp: '₹14–24L · D2C / SaaS', desc: 'Own content engines, campaign automation, and brand-trained Claude Skills end-to-end.' },
-  { name: 'VC AI Analyst', comp: '₹18–32L · India + US funds', desc: 'Source deals, write memos, and run diligence with Claude-driven research workflows.' },
-  { name: 'AI Finance Analyst', comp: '₹15–22L · BFSI / listed cos.', desc: 'Earnings analysis, variance commentary, and CFO reporting via Claude in Excel.' },
-  { name: 'AI Operations Manager', comp: '₹14–20L · Scale-ups', desc: 'Automate SOPs and intake-triage workflows across customer support and ops.' },
-  { name: 'AI Strategy Consultant', comp: '₹18–30L · Consulting / Big 4', desc: 'Lead Claude transformation engagements for enterprise clients across India.' },
-];
-
 // Logo per curriculum tool (local file, with text fallback if it fails).
 const TOOL_LOGO_SRC = {
   'Claude': '/logos/claude.svg', 'Claude Cowork': '/logos/claude.svg', 'Cowork': '/logos/claude.svg',
   'Claude API': '/logos/claude.svg', 'Projects': '/logos/claude.svg', 'Skills': '/logos/claude.svg',
-  'Artifacts': '/logos/claude.svg', 'MCP': '/logos/mcp.svg', 'OpenAI': '/logos/openai.png',
-  'Canva': '/logos/canva.png', 'Notion': '/logos/notion.png', 'Make': '/logos/make.png',
-  'Zapier': '/logos/zapier.png', 'Airtable': '/logos/airtable.png', 'Typedream': '/logos/typedream.png',
-  'n8n': '/logos/n8n.png', 'N8N': '/logos/n8n.png', 'Slack': '/logos/slack.png', 'Gmail': '/logos/gmail.png',
-  'Excel': '/logos/excel.png', 'PowerPoint': '/logos/powerpoint.png', 'Buffer': '/logos/buffer.png',
+  'Artifacts': '/logos/claude.svg', 'MCP': '/logos/mcp.svg', 'OpenAI': '/logos/openai.webp',
+  'Canva': '/logos/canva.webp', 'Notion': '/logos/notion.webp', 'Make': '/logos/make.webp',
+  'Zapier': '/logos/zapier.webp', 'Airtable': '/logos/airtable.webp', 'Typedream': '/logos/typedream.webp',
+  'n8n': '/logos/n8n.webp', 'N8N': '/logos/n8n.webp', 'Slack': '/logos/slack.webp', 'Gmail': '/logos/gmail.webp',
+  'Excel': '/logos/excel.webp', 'PowerPoint': '/logos/powerpoint.webp', 'Buffer': '/logos/buffer.webp',
   // Phase 3 domain-track tools (match the exact names used in the data).
-  'Perplexity': '/logos/perplexity.svg', 'NotebookLM': '/logos/notebooklm.png', 'Gamma': '/logos/gamma.png',
-  'ElevenLabs': '/logos/elevenlabs.png', 'Canva AI': '/logos/canva.png', 'Midjourney': '/logos/midjourney.png',
-  'Runway': '/logos/runway.png', 'Lovable': '/logos/lovable-logo.png', 'Emergent': '/logos/emergent.png',
-  'Gemini': '/logos/gemini.png', 'Gemini (image)': '/logos/gemini.png', 'ChatGPT': '/logos/chatgpt.png',
-  'Claude Code': '/logos/claude_code-removebg-preview.png', 'Cursor': '/logos/cursor.png',
+  'Perplexity': '/logos/perplexity.svg', 'NotebookLM': '/logos/notebooklm.webp', 'Gamma': '/logos/gamma.webp',
+  'ElevenLabs': '/logos/elevenlabs.png', 'Canva AI': '/logos/canva.webp', 'Midjourney': '/logos/midjourney.webp',
+  'Runway': '/logos/runway.webp', 'Lovable': '/logos/lovable-logo.webp', 'Emergent': '/logos/emergent.webp',
+  'Gemini': '/logos/gemini.webp', 'Gemini (image)': '/logos/gemini.webp', 'ChatGPT': '/logos/chatgpt.webp',
+  'Claude Code': '/logos/claude_code-removebg-preview.webp', 'Cursor': '/logos/cursor.webp',
   'SQL': '/logos/sql.svg',
 };
 
@@ -225,7 +204,7 @@ function ToolChip({ name }) {
   const src = sources[i];
   return (
     <span className="curric-tool">
-      {src && <img className="curric-tool-logo" src={src} alt="" onError={() => setI(i + 1)} />}
+      {src && <img className="curric-tool-logo" src={src} alt="" width="36" height="36" loading="lazy" onError={() => setI(i + 1)} />}
       {name}
     </span>
   );

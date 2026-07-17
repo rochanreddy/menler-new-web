@@ -218,7 +218,8 @@
       "Bash(openssl x509 *)",
       "Bash(node --check server/routes/reports.js)",
       "Bash(node --check server/models/Report.js)",
-      "Bash(node -e \"console.log\\('sample id:', require\\('crypto'\\).randomBytes\\(6\\).toString\\('base64url'\\)\\)\")"
+      "Bash(node -e \"console.log\\('sample id:', require\\('crypto'\\).randomBytes\\(6\\).toString\\('base64url'\\)\\)\")",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\('motion:', p.dependencies.motion||'REMOVED'\\); console.log\\('styled-components:', p.dependencies['styled-components']||'REMOVED'\\);\")"
     ]
   }
 }

@@ -67,18 +67,18 @@ const KS_MODULES_QUERY = '*[_type == "kickstarterPage"][0].modules[]{label, span
 // GenAI toolstack — same set/design as the home page (4 / 5 / 4 rows).
 const TOOLS = [
   { name: 'Claude', logo: '/logos/claude.svg' },
-  { name: 'ChatGPT', logo: '/logos/chatgpt.png' },
-  { name: 'Gemini', logo: '/logos/gemini.png' },
+  { name: 'ChatGPT', logo: '/logos/chatgpt.webp' },
+  { name: 'Gemini', logo: '/logos/gemini.webp' },
   { name: 'Perplexity', logo: '/logos/perplexity.svg' },
-  { name: 'NotebookLM', logo: '/logos/google-notebook-lm.png' },
-  { name: 'Notion', logo: '/logos/notion.png' },
-  { name: 'Canva AI', logo: '/logos/canva.png' },
-  { name: 'Zapier', logo: '/logos/zapier.png' },
-  { name: 'n8n', logo: '/logos/n8n.png' },
-  { name: 'Lovable', logo: '/logos/lovable-logo.png' },
-  { name: 'Emergent', logo: '/logos/emergent.png' },
-  { name: 'Lyzr', logo: '/logos/lyzr.png' },
-  { name: 'HeyGen', logo: '/logos/heygen.png' },
+  { name: 'NotebookLM', logo: '/logos/google-notebook-lm.webp' },
+  { name: 'Notion', logo: '/logos/notion.webp' },
+  { name: 'Canva AI', logo: '/logos/canva.webp' },
+  { name: 'Zapier', logo: '/logos/zapier.webp' },
+  { name: 'n8n', logo: '/logos/n8n.webp' },
+  { name: 'Lovable', logo: '/logos/lovable-logo.webp' },
+  { name: 'Emergent', logo: '/logos/emergent.webp' },
+  { name: 'Lyzr', logo: '/logos/lyzr.webp' },
+  { name: 'HeyGen', logo: '/logos/heygen.webp' },
 ];
 
 const PROJECTS = [
@@ -117,22 +117,22 @@ const TOOL_LOGO_SRC = {
   'Claude in Excel': '/logos/claude.svg',
   'Cowork': '/logos/claude.svg',
   'MCP': '/logos/mcp.svg',
-  'ChatGPT': '/logos/chatgpt.png',
-  'Gemini': '/logos/gemini.png',
+  'ChatGPT': '/logos/chatgpt.webp',
+  'Gemini': '/logos/gemini.webp',
   'Perplexity': '/logos/perplexity.svg',
-  'NotebookLM': '/logos/google-notebook-lm.png',
-  'Canva AI': '/logos/canva.png',
-  'Suno': '/logos/suno.png',
-  'Cursor (free)': '/logos/cursor.png',
+  'NotebookLM': '/logos/google-notebook-lm.webp',
+  'Canva AI': '/logos/canva.webp',
+  'Suno': '/logos/suno.webp',
+  'Cursor (free)': '/logos/cursor.webp',
   'ElevenLabs': '/logos/elevenlabs.png',
-  'Runway': '/logos/runway.png',
+  'Runway': '/logos/runway.webp',
   'Claude Skills': '/logos/claude.svg',
   'Claude Routines': '/logos/claude.svg',
-  'n8n': '/logos/n8n.png',
-  'Zapier': '/logos/zapier.png',
-  'Notion': '/logos/notion.png',
-  'Emergent': '/logos/emergent.png',
-  'Lovable': '/logos/lovable-logo.png',
+  'n8n': '/logos/n8n.webp',
+  'Zapier': '/logos/zapier.webp',
+  'Notion': '/logos/notion.webp',
+  'Emergent': '/logos/emergent.webp',
+  'Lovable': '/logos/lovable-logo.webp',
 };
 
 function ToolChip({ name }) {
@@ -140,7 +140,7 @@ function ToolChip({ name }) {
   const [ok, setOk] = useState(!!src);
   return (
     <span className="curric-tool">
-      {ok && <img className="curric-tool-logo" src={src} alt="" onError={() => setOk(false)} />}
+      {ok && <img className="curric-tool-logo" src={src} alt="" width="36" height="36" loading="lazy" onError={() => setOk(false)} />}
       {name}
     </span>
   );
@@ -158,7 +158,6 @@ export default function Kickstarter() {
   const [curricItem, setCurricItem] = useState(null);
   // Direct Cashfree enrolment (Pay now) modal.
   const [payProgram, setPayProgram] = useState(null);
-  const moduleDetailRef = useRef(null);
   const openApply = useApply();
   // Kickstarter enrolment form: only name/email/phone/background, no Program.
   const openKickstarterLead = (ctaLabel = 'Apply · Kickstarter') => openApply({
@@ -178,20 +177,6 @@ export default function Kickstarter() {
   const days = useContent(KS_DAYS_QUERY, DAYS);
   const modules = useContent(KS_MODULES_QUERY, MODULES);
 
-  // Pick a module. On mobile, the detail panel stacks below the module list,
-  // so scroll it into view (after the state-driven re-render) to make the
-  // open/close behaviour obvious to the user.
-  const pickModule = (i) => {
-    setActiveModule(i);
-    if (window.matchMedia('(max-width: 760px)').matches) {
-      requestAnimationFrame(() => {
-        const el = moduleDetailRef.current;
-        if (!el) return;
-        if (window.__lenis) window.__lenis.scrollTo(el, { offset: -16 });
-        else el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-    }
-  };
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -353,7 +338,7 @@ export default function Kickstarter() {
             <div key={ri} className="toolstack-row">
               {row.map(t => (
                 <div key={t.name} className="toolstack-chip">
-                  <img className="toolstack-logo" src={t.logo} alt="" aria-hidden="true" />
+                  <img className="toolstack-logo" src={t.logo} alt="" aria-hidden="true" loading="lazy" />
                   <span className="toolstack-name">{t.name}</span>
                 </div>
               ))}

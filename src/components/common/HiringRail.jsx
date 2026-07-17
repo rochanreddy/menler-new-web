@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { BrandLogo } from './PartnersMarquee';
+import { visibleRaf } from '../../lib/visibleRaf';
 
 // One logo row. Transform-based continuous marquee (3 identical copies) — moved
 // with translateX each frame so it NEVER stops on touch or hover. Draggable:
@@ -12,7 +13,7 @@ function LogoRow({ list, dir }) {
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
-    let raf, copy = 0, offset = 0;
+    let copy = 0, offset = 0;
     let down = false, dragging = false, startX = 0, downX = 0, startOffset = 0;
     const speed = dir === 'ltr' ? 0.5 : -0.5; // px/frame
 
@@ -23,11 +24,10 @@ function LogoRow({ list, dir }) {
     const ro = new ResizeObserver(measure);
     ro.observe(track);
 
-    const loop = () => {
+    // Only advance while the rail is actually on-screen and the tab is focused.
+    const stopRaf = visibleRaf(track, () => {
       if (copy > 0 && !dragging) { offset += speed; wrap(); apply(); }
-      raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
+    });
 
     const onDown = (e) => { down = true; downX = startX = e.clientX; startOffset = offset; };
     const onMove = (e) => {
@@ -42,7 +42,7 @@ function LogoRow({ list, dir }) {
     window.addEventListener('pointercancel', onUp);
 
     return () => {
-      cancelAnimationFrame(raf);
+      stopRaf();
       ro.disconnect();
       track.removeEventListener('pointerdown', onDown);
       window.removeEventListener('pointermove', onMove);

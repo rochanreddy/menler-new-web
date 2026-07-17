@@ -33,7 +33,7 @@ const WORKSHOP = {
   mentor: {
     name: 'Sachin Roy',
     role: 'Founder, Menler',
-    img: '/mentors/Sachin.png',
+    img: '/mentors/Sachin.webp',
     bio: 'Sachin has spent the last decade building AI products and training professionals to work alongside AI. He has led teams shipping real Claude-powered systems and has mentored hundreds of learners into AI-native roles.',
     creds: [
       '10+ years building AI & software products',
@@ -121,9 +121,9 @@ const has = (v) => v != null && v !== '' && !(Array.isArray(v) && v.length === 0
 // domain via BrandLogo — no local asset needed).
 const CAMPAIGN_LOGOS = {
   'turn-messy-data-into-clear-decisions-with-claude': [
-    { name: 'Zendesk', logo: '/logos/Zendesk.png' },
-    { name: 'Nutanix', logo: '/logos/nutanix.png' },
-    { name: 'LeadSquared', logo: '/logos/lead_squared_new.png' },
+    { name: 'Zendesk', logo: '/logos/Zendesk.webp' },
+    { name: 'Nutanix', logo: '/logos/nutanix.webp' },
+    { name: 'LeadSquared', logo: '/logos/lead_squared_new.webp' },
   ],
 };
 
@@ -312,7 +312,7 @@ export default function KickstarterLanding() {
             <div className="lp2-banner-photo">
               {contentLoading
                 ? <div className="lp2-skel lp2-banner-photo-skel" aria-hidden="true" />
-                : <img src={d.mentorPhoto} alt={d.mentorName} />}
+                : <img src={d.mentorPhoto} alt={d.mentorName} fetchpriority="high" />}
             </div>
             <div className="lp2-banner-strip">
               <span><b>{d.date}</b></span>
@@ -363,7 +363,7 @@ export default function KickstarterLanding() {
             <h2 className="lp2-h2">Sample <em>certificate</em></h2>
             <div className="lp2-cert">
               {d.certificateImage ? (
-                <img className="lp2-cert-img" src={d.certificateImage} alt="Sample Menler certificate" />
+                <img className="lp2-cert-img" src={d.certificateImage} alt="Sample Menler certificate" loading="lazy" />
               ) : (
                 <div className="lp2-cert-mock">
                   <div className="lp2-cert-mock-top">
@@ -507,8 +507,8 @@ export default function KickstarterLanding() {
           {showTrustBar && (
             <div className="lp2-trustbar" aria-label="Trusted by teams from McKinsey & Company, MIT, and The University of Texas at Austin">
               <span className="lp2-tb-cell lp2-tb-mck">McKinsey<br />&amp; Company</span>
-              <span className="lp2-tb-cell lp2-tb-mit"><img src="/logos/mit-white.svg" alt="MIT" /></span>
-              <span className="lp2-tb-cell lp2-tb-tex"><img src="/logos/ut-austin-white.svg" alt="The University of Texas at Austin" /></span>
+              <span className="lp2-tb-cell lp2-tb-mit"><img src="/logos/mit-white.svg" alt="MIT" loading="lazy" /></span>
+              <span className="lp2-tb-cell lp2-tb-tex"><img src="/logos/ut-austin-white.svg" alt="The University of Texas at Austin" loading="lazy" /></span>
             </div>
           )}
         </aside>

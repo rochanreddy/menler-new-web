@@ -1,8 +1,8 @@
 import { BrandLogo } from './PartnersMarquee';
-import skillIndiaLogo from '../../assets/logos/skill-india.png';
-import msmeLogo from '../../assets/logos/msme.png';
-import googleEduLogo from '../../assets/logos/google-education.png';
-import anthropicLogo from '../../assets/logos/anthropic.png';
+import skillIndiaLogo from '../../assets/logos/skill-india.webp';
+import msmeLogo from '../../assets/logos/msme.webp';
+import googleEduLogo from '../../assets/logos/google-education.webp';
+import anthropicLogo from '../../assets/logos/anthropic.webp';
 
 const ACCREDITORS = [
   { name: 'Skill India', domain: 'skillindia.gov.in', logo: skillIndiaLogo },

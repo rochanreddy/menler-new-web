@@ -1,19 +1,20 @@
 import { useRef, useEffect } from 'react';
 import { useContent } from '../../lib/useContent';
+import { visibleRaf } from '../../lib/visibleRaf';
 
 // Fallback content — used until Sanity is configured/populated (see useContent).
 const MENTORS = [
-  { name: 'Anuttam G', role: 'Product Manager', company: 'Flipkart, Ex-BigBasket', img: '/mentors/Anuttam.png' },
-  { name: 'Shashank Kumar', role: 'Technical Operations & Analytics Lead', company: 'Equifax', img: '/mentors/Shashank.png' },
-  { name: 'Abhinay Kumar', role: 'CTO', company: 'Kernel Theory', img: '/mentors/Abhinay.png' },
-  { name: 'Rohit', role: 'CEO-Office · Business Manager at Zolve', company: 'Zolve', img: '/mentors/ROHIT.png' },
-  { name: 'Nitin K Sethi', role: 'AI Engineer', company: 'McKinsey ', img: '/mentors/Nitin.png' },
-  { name: 'Deepak K', role: 'AI Operations Lead', company: 'Testbook', img: '/mentors/Deepak.png' },
-  { name: 'Manish Yadav', role: 'AI Service Business Analyst', company: 'Zendesk', img: '/mentors/Manish.png' },
-  { name: 'Pranay W', role: 'AI Product Generalist', company: 'Wednesday Solution', img: '/mentors/Pranay.jpeg' },
-  { name: 'Salimullah Khan', role: 'AI Product Manager — Digital Solution', company: 'Black Tiger Cement', img: '/mentors/Salimullah.png' },
-  { name: 'Jyotiraditya', role: 'AI Growth Manager', company: 'AstroNext', img: '/mentors/Jyotiraditya.png' },
-  { name: 'Sachin Roy', role: 'Founder', company: 'Menler', img: '/mentors/Sachin.png' },
+  { name: 'Anuttam G', role: 'Product Manager', company: 'Flipkart, Ex-BigBasket', img: '/mentors/Anuttam.webp' },
+  { name: 'Shashank Kumar', role: 'Technical Operations & Analytics Lead', company: 'Equifax', img: '/mentors/Shashank.webp' },
+  { name: 'Abhinay Kumar', role: 'CTO', company: 'Kernel Theory', img: '/mentors/Abhinay.webp' },
+  { name: 'Rohit', role: 'CEO-Office · Business Manager at Zolve', company: 'Zolve', img: '/mentors/ROHIT.webp' },
+  { name: 'Nitin K Sethi', role: 'AI Engineer', company: 'McKinsey ', img: '/mentors/Nitin.webp' },
+  { name: 'Deepak K', role: 'AI Operations Lead', company: 'Testbook', img: '/mentors/Deepak.webp' },
+  { name: 'Manish Yadav', role: 'AI Service Business Analyst', company: 'Zendesk', img: '/mentors/Manish.webp' },
+  { name: 'Pranay W', role: 'AI Product Generalist', company: 'Wednesday Solution', img: '/mentors/Pranay.webp' },
+  { name: 'Salimullah Khan', role: 'AI Product Manager — Digital Solution', company: 'Black Tiger Cement', img: '/mentors/Salimullah.webp' },
+  { name: 'Jyotiraditya', role: 'AI Growth Manager', company: 'AstroNext', img: '/mentors/Jyotiraditya.webp' },
+  { name: 'Sachin Roy', role: 'Founder', company: 'Menler', img: '/mentors/Sachin.webp' },
 ];
 
 // Full-card gradient placeholders (no photo yet — add `img` back later).
@@ -39,7 +40,7 @@ function CaptainRow({ list, dir, tint }) {
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
-    let raf, copy = 0, offset = 0;
+    let copy = 0, offset = 0;
     let down = false, dragging = false, startX = 0, downX = 0, startOffset = 0;
     const speed = dir === 'ltr' ? 0.5 : -0.5; // px/frame (rtl drifts content left)
 
@@ -50,11 +51,10 @@ function CaptainRow({ list, dir, tint }) {
     const ro = new ResizeObserver(measure);
     ro.observe(track);
 
-    const loop = () => {
+    // Only advance while the rail is actually on-screen and the tab is focused.
+    const stopRaf = visibleRaf(track, () => {
       if (copy > 0 && !dragging) { offset += speed; wrap(); apply(); }
-      raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
+    });
 
     // Drag only kicks in once the pointer actually moves (a tap/rest never stops it).
     const onDown = (e) => { down = true; downX = startX = e.clientX; startOffset = offset; };
@@ -70,7 +70,7 @@ function CaptainRow({ list, dir, tint }) {
     window.addEventListener('pointercancel', onUp);
 
     return () => {
-      cancelAnimationFrame(raf);
+      stopRaf();
       ro.disconnect();
       track.removeEventListener('pointerdown', onDown);
       window.removeEventListener('pointermove', onMove);
@@ -85,7 +85,7 @@ function CaptainRow({ list, dir, tint }) {
         {items.map((m, i) => (
           <article className="captain-card" key={i} aria-label={`${m.name}, ${m.role}`}>
             <div className="captain-bg" style={{ backgroundImage: OVERLAYS[(tint + i) % OVERLAYS.length] }} />
-            {m.img && <img className="captain-photo-img" src={encodeURI(m.img)} alt={m.name} loading="lazy" />}
+            {m.img && <img className="captain-photo-img" src={encodeURI(m.img)} alt={m.name} width="600" height="600" loading="lazy" />}
             <div className={`captain-overlay${m.img ? ' captain-overlay--photo' : ''}`}>
               <p className="captain-name">{m.name}</p>
               <p className="captain-role">{m.role}</p>

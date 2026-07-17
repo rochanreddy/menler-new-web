@@ -1,5 +1,28 @@
 {
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "comment": "Vite build output is content-hashed (cache-busted by filename) — cache forever.",
+      "source": "/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "comment": "Static images and fonts from /public — long cache (change the filename to bust).",
+      "source": "/(.*)\\.(webp|png|jpg|jpeg|gif|svg|ico|avif|woff|woff2|ttf|eot)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000" }
+      ]
+    },
+    {
+      "comment": "HTML must always revalidate so SPA/deploy updates take effect immediately.",
+      "source": "/(index\\.html)?",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
+    }
   ]
 }

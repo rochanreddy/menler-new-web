@@ -57,11 +57,12 @@ export default function App() {
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const lenis = new Lenis({
-      duration: 1.5,
+      // Shorter glide so scroll tracks the wheel closely instead of feeling
+      // floaty/laggy; the ease-out keeps it smooth without the long tail.
+      duration: 1.0,
       smoothWheel: true,
-      // Gentle ease-out for a longer, softer glide.
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      wheelMultiplier: 0.9,
+      wheelMultiplier: 1,
     });
     window.__lenis = lenis;
     let raf;

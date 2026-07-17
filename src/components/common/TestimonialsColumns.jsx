@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'motion/react';
 
 // ── Testimonial data ────────────────────────────────────────────────────────
 const TESTIMONIALS = [
@@ -65,11 +64,7 @@ const TESTIMONIALS = [
 function TestimonialsColumn({ testimonials, duration = 15, className = '' }) {
   return (
     <div className={`tmc-col${className ? ` ${className}` : ''}`}>
-      <motion.div
-        animate={{ translateY: '-50%' }}
-        transition={{ duration, repeat: Infinity, ease: 'linear', repeatType: 'loop' }}
-        className="tmc-track"
-      >
+      <div className="tmc-track" style={{ '--tmc-duration': `${duration}s` }}>
         {[0, 1].map((_, copyIdx) => (
           <React.Fragment key={copyIdx}>
             {testimonials.map(({ text, image, name, role }, i) => (
@@ -85,7 +80,7 @@ function TestimonialsColumn({ testimonials, duration = 15, className = '' }) {
             ))}
           </React.Fragment>
         ))}
-      </motion.div>
+      </div>
     </div>
   );
 }

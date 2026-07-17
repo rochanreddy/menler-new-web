@@ -13,21 +13,12 @@ const LIBRARY_CARDS = [
   { num: '04', name: 'AI glossary', desc: '100+ AI terms explained in simple, beginner-friendly language.', tags: ['Beginners', '100+ terms'], pdf: '/pdfs/Menler_AI_Glossary_AtoZ.pdf' },
 ];
 
-const TEMPLATE_CARDS = [
-  { title: 'Prompt-engineering one-pager', type: 'PDF', desc: 'The 8 prompt patterns that cover 90% of use cases. Print it. Pin it.' },
-  { title: 'MCP server starter', type: 'GitHub', desc: 'Boilerplate MCP server in TypeScript. Clone, rename, and deploy in 20 minutes.' },
-  { title: 'Finance Claude templates', type: 'XLSX', desc: 'Excel workbook with 6 pre-built Claude formulas for finance analysis and commentary.' },
-  { title: 'AI evals checklist', type: 'PDF', desc: 'A 12-point checklist for testing any Claude pipeline before production deploy.' },
-  { title: 'Cowork project template', type: 'Notion', desc: 'Notion template for running a Cowork research project — structure, prompts, outputs.' },
-  { title: 'Prompt pattern flashcards', type: 'PDF', desc: '40 double-sided flashcards covering all major prompting patterns. Print or Anki import.' },
-];
-
 const PLAYBOOK = [
-  { logo: '/logos/claude_code-removebg-preview.png', thumb: 'Ship faster with Claude', badge: 'Claude Code', cat: 'Engineering', title: 'Claude Code Playbook', desc: 'Build, refactor, and ship real code with Claude in your terminal and editor.', pdf: '/pdfs/Menler_Claude_Code_Playbook.pdf' },
+  { logo: '/logos/claude_code-removebg-preview.webp', thumb: 'Ship faster with Claude', badge: 'Claude Code', cat: 'Engineering', title: 'Claude Code Playbook', desc: 'Build, refactor, and ship real code with Claude in your terminal and editor.', pdf: '/pdfs/Menler_Claude_Code_Playbook.pdf' },
   { logo: '/logos/claude.svg', thumb: 'Your Claude Chat OS', badge: 'Claude Chat', cat: 'Generalist', title: 'Claude Chat Playbook', desc: 'Everyday prompting — research, writing, analysis, and fast answers.', pdf: '/pdfs/Menler_Claude_Chat_Playbook.pdf' },
-  { logo: '/logos/claude_cowork.png', thumb: 'Multi-Step AI Workflows', badge: 'Claude Cowork', cat: 'Workflows', title: 'Claude Cowork Playbook', desc: 'Multi-document, multi-step work that turns raw inputs into finished deliverables.', pdf: '/pdfs/Menler_Claude_Cowork_Playbook.pdf' },
-  { logo: '/logos/claude_design.png', thumb: 'Design Faster with Claude', badge: 'Claude Design', cat: 'Design', title: 'Claude Design Playbook', desc: 'Generate visuals, mockups, and on-brand design assets with Claude.', pdf: '/pdfs/Menler_Claude_Design_Playbook.pdf' },
-  { logo: '/logos/claude.svg', ms: '/logos/microsoft.png', thumb: 'Microsoft 365 Workflows', badge: 'Claude MS', cat: 'Microsoft 365', title: 'Claude in MS', desc: 'Use Claude across Microsoft 365 — Word, Excel, PowerPoint, and Teams.', pdf: '/pdfs/Menler_Claude_Microsoft_Playbook.pdf' },
+  { logo: '/logos/claude_cowork.webp', thumb: 'Multi-Step AI Workflows', badge: 'Claude Cowork', cat: 'Workflows', title: 'Claude Cowork Playbook', desc: 'Multi-document, multi-step work that turns raw inputs into finished deliverables.', pdf: '/pdfs/Menler_Claude_Cowork_Playbook.pdf' },
+  { logo: '/logos/claude_design.webp', thumb: 'Design Faster with Claude', badge: 'Claude Design', cat: 'Design', title: 'Claude Design Playbook', desc: 'Generate visuals, mockups, and on-brand design assets with Claude.', pdf: '/pdfs/Menler_Claude_Design_Playbook.pdf' },
+  { logo: '/logos/claude.svg', ms: '/logos/microsoft.webp', thumb: 'Microsoft 365 Workflows', badge: 'Claude MS', cat: 'Microsoft 365', title: 'Claude in MS', desc: 'Use Claude across Microsoft 365 — Word, Excel, PowerPoint, and Teams.', pdf: '/pdfs/Menler_Claude_Microsoft_Playbook.pdf' },
 ];
 
 // Group every project's tag class into a small set of filterable domains for
@@ -133,8 +124,8 @@ export default function Resources() {
                   <h3 className="pb-thumb-title">{p.thumb}</h3>
                 </div>
                 <div className="pb-logos">
-                  <img className="pb-logo" src={p.logo} alt="" aria-hidden="true" />
-                  {p.ms && <img className="pb-logo" src={p.ms} alt="" aria-hidden="true" />}
+                  <img className="pb-logo" src={p.logo} alt="" aria-hidden="true" width="48" height="48" loading="lazy" />
+                  {p.ms && <img className="pb-logo" src={p.ms} alt="" aria-hidden="true" width="48" height="48" loading="lazy" />}
                 </div>
                 <div className="pb-body">
                   <span className="pb-cat">{p.cat}</span>
@@ -197,7 +188,7 @@ export default function Resources() {
                 onClick={() => go(`/projects/${p.slug}`)}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(`/projects/${p.slug}`); } }}
               >
-                {p.image && <div className="proj-card-img"><img src={p.image} alt={p.title} loading="lazy" /></div>}
+                {p.image && <div className="proj-card-img"><img src={p.image} alt={p.title} width="800" height="450" loading="lazy" /></div>}
                 <span className={`proj-domain-tag ${tagClassFor(p)}`}>{p.tag}</span>
                 <h3 className="proj-card-title">{p.title}</h3>
                 <div className="proj-stack">{p.stack.map(s => <span key={s}>{s}</span>)}</div>
@@ -267,67 +258,3 @@ export default function Resources() {
     </>
   );
 }
-
-const QB_CARDS = [
-  {
-    co: 'Claude', diff: 'Beginner', topic: 'Prompting',
-    q: 'What is the primary difference between a "role" and "context" in a Claude prompt?',
-    a: 'Role defines who Claude is pretending to be (persona/expertise), while context provides background information about the situation, user, or task. Both shape the response but in different ways — role affects tone and knowledge framing, context affects relevance and specificity.',
-  },
-  {
-    co: 'Claude API', diff: 'Intermediate', topic: 'Tool Use',
-    q: 'When using Claude\'s tool_use feature, what happens if Claude decides a tool isn\'t needed for a query?',
-    a: 'Claude will simply respond directly without invoking any tools. The stop_reason in the response will be "end_turn" instead of "tool_use". You should always handle both cases in your code.',
-  },
-  {
-    co: 'Claude', diff: 'Advanced', topic: 'Prompting',
-    q: 'Describe the "chain-of-draft" prompting pattern and when it outperforms standard chain-of-thought.',
-    a: 'Chain-of-draft asks Claude to produce multiple brief draft answers before committing to a final response. It outperforms standard CoT on tasks requiring creative judgment or where the "correct" framing isn\'t obvious upfront — it prevents Claude from committing too early to one reasoning path.',
-  },
-  {
-    co: 'Claude API', diff: 'Intermediate', topic: 'Context',
-    q: 'How does the "cache_control" parameter in the Anthropic API reduce costs for repeated context?',
-    a: 'Setting cache_control: {type: "ephemeral"} on a content block tells Anthropic to cache that block\'s tokens for up to 5 minutes. Subsequent requests that include the same cached prefix are charged at a significantly reduced input token rate (roughly 90% discount), making it highly efficient for repeated system prompts or large documents.',
-  },
-];
-
-const PROMPT_TEMPLATES = [
-  {
-    title: 'The Analyst Brief Template',
-    meta: 'Generalist · Finance & Strategy',
-    body: `You are a senior analyst at a top consulting firm. Your writing style is precise, insight-first, and executive-readable.
-
-TASK: Analyse [COMPANY/TOPIC] and produce a brief structured as follows:
-
-SITUATION (2-3 sentences): What is happening right now?
-INSIGHT (1-2 sentences): The non-obvious observation.
-IMPLICATION (2-3 sentences): What this means for [AUDIENCE].
-RECOMMENDATION (1-2 bullets): Specific next actions.
-
-Use only facts I provide. Flag uncertainty explicitly. Avoid hedging language. Max 350 words total.
-
-INPUT DATA:
-[paste your data here]`,
-  },
-  {
-    title: 'The Domain Expert Role Lock',
-    meta: 'Generalist · All tracks',
-    body: `You are [EXPERT ROLE — e.g., "a CA with 15 years of tax advisory experience in India"].
-
-Before responding, think through what a real expert in this role would consider before answering. Prioritise practical, contextually relevant advice over generic frameworks.
-
-When you are uncertain, say so explicitly rather than speculating.
-
-My question: [YOUR QUESTION]`,
-  },
-];
-
-const RESOURCES = [
-  { num: '01', name: 'Prompt Architecture Guide', desc: 'The definitive Menler framework for building Claude prompts that work the first time. Covers role, context, format, constraints, and worked examples.', tags: ['Prompting', 'All levels', 'PDF + interactive'] },
-  { num: '02', name: 'Claude API Quickstart', desc: 'Get from zero to your first Claude API call in 30 minutes. Python-focused. Covers auth, messages, streaming, and tool use basics.', tags: ['Claude API', 'Engineering', 'Python'] },
-  { num: '03', name: 'Domain Track Playbooks', desc: 'Nine playbooks — one per Generalist track. Each contains 10 vetted prompt patterns, 3 workflow templates, and a 30-day starter project.', tags: ['Generalist', 'All tracks', 'Templates'] },
-  { num: '04', name: 'MCP Builder\'s Handbook', desc: 'Step-by-step guide to building your first Model Context Protocol server. Includes schema reference, worked examples, and a sample weather + database MCP server.', tags: ['MCP', 'Engineering', 'Advanced'] },
-  { num: '05', name: 'India AI Career Guide', desc: 'Salary benchmarks, role descriptions, and hiring trends for AI-augmented roles in India. Updated quarterly with data from our hiring partner network.', tags: ['Career', 'All levels', 'India'] },
-  { num: '06', name: 'Evaluation Framework', desc: 'How to measure whether your Claude system is actually working. Covers human eval, automated evals, and cost-performance tradeoffs.', tags: ['Engineering', 'Advanced', 'Evals'] },
-];
-

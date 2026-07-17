@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import * as THREE from 'three';
+import { visibleRaf } from '../../lib/visibleRaf';
 
 // Interactive 3D object for the home hero — a round wireframe sphere with vertex
 // points, an orbit ring and coloured dots. Auto-spins; drag to rotate (with
@@ -290,7 +291,6 @@ export default function Hero3D() {
     el.addEventListener('pointercancel', onUp);
     el.addEventListener('pointerleave', onUp);
 
-    let raf;
     const animate = () => {
       if (!dragging) {
         rotY += velY; rotX += velX;
@@ -366,9 +366,10 @@ export default function Hero3D() {
       }
 
       renderer.render(scene, camera);
-      raf = requestAnimationFrame(animate);
     };
-    animate();
+    // Only render while the hero is on-screen and the tab is focused — no point
+    // spinning the WebGL scene while the user has scrolled past it.
+    const stopRaf = visibleRaf(mount, animate);
 
     const onResize = () => {
       width = mount.clientWidth || width;
@@ -381,7 +382,7 @@ export default function Hero3D() {
     ro.observe(mount);
 
     return () => {
-      cancelAnimationFrame(raf);
+      stopRaf();
       ro.disconnect();
       el.removeEventListener('pointerdown', onDown);
       el.removeEventListener('pointermove', onMove);

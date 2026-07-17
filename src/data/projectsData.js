@@ -10,7 +10,7 @@ export const PROJECTS_QUERY = `*[_type == "project"] | order(orderRank) {
 
 export const PROJECTS = [
   {
-    slug: 'ceo-decision-intelligence-agent', image: '/projects/CEO_Decession.png',
+    slug: 'ceo-decision-intelligence-agent', image: '/projects/CEO_Decession.webp',
     tag: "Founder's Office", tagCls: 't-founder', title: 'CEO decision-intelligence agent',
     desc: "Pulls from Slack, Asana, GitHub, finance docs & reports — synthesises a Monday-morning briefing on what changed, what's at risk, and what to decide.",
     stack: ['MCP', 'Cowork', 'Tool use'], outcome: '15-min briefing replaces 90-min catch-up',
@@ -24,7 +24,7 @@ export const PROJECTS = [
     },
   },
   {
-    slug: 'deal-flow-triage-agent', image: '/projects/dEAL_fLOW_tRIAGE.png',
+    slug: 'deal-flow-triage-agent', image: '/projects/dEAL_fLOW_tRIAGE.webp',
     tag: 'Finance Operations', tagCls: 't-vc', title: 'Deal-flow triage agent',
     desc: 'Ingests pitch decks, founder emails, and public data, then outputs a partner-ready memo on fit, market, traction, and follow-up questions.',
     stack: ['Claude API', 'Tool use', 'RAG'], outcome: 'Cuts initial screening time by 70%',
@@ -38,7 +38,7 @@ export const PROJECTS = [
     },
   },
   {
-    slug: 'insights-to-prd-pipeline', image: '/projects/Insights_to_PRD.png',
+    slug: 'insights-to-prd-pipeline', image: '/projects/Insights_to_PRD.webp',
     tag: 'Product Management', tagCls: 't-pm', title: 'Insights-to-PRD pipeline',
     desc: 'Synthesises user interviews, support tickets, NPS comments, and sales notes into structured product requirement docs and themed opportunity stacks.',
     stack: ['Claude Projects', 'Multimodal', 'Cowork'], outcome: '5× faster discovery → PRD turnaround',
@@ -52,7 +52,7 @@ export const PROJECTS = [
     },
   },
   {
-    slug: 'pmo-status-agent', image: '/projects/pmo_status.png',
+    slug: 'pmo-status-agent', image: '/projects/pmo_status.webp',
     tag: 'Product Management', tagCls: 't-pjm', title: 'PMO status agent',
     desc: 'Reads sprint boards, code commits, and stand-up notes — drafts the weekly leadership update with risks, slippage, and the asks for next week.',
     stack: ['MCP', 'Cowork', 'Skills'], outcome: 'Saves 6+ hrs/PM/week of status writing',
@@ -66,7 +66,7 @@ export const PROJECTS = [
     },
   },
   {
-    slug: 'production-rag-pipeline-custom-mcp', image: '/projects/Production_RAG.png',
+    slug: 'production-rag-pipeline-custom-mcp', image: '/projects/Production_RAG.webp',
     tag: 'Engineering', tagCls: 't-eng', title: 'Production RAG pipeline + custom MCP',
     desc: 'Document ingestion → vector DB → grounded Claude service, with caching, RAGAS evals and a remote MCP exposing internal tools to Claude Desktop.',
     stack: ['Python', 'MCP SDK', 'Claude API'], outcome: '<800ms p95, ship-ready to enterprise',
@@ -80,7 +80,7 @@ export const PROJECTS = [
     },
   },
   {
-    slug: 'research-synthesis-insight-engine', image: '/projects/Research_synthesis.png',
+    slug: 'research-synthesis-insight-engine', image: '/projects/Research_synthesis.webp',
     tag: 'Analyst', tagCls: 't-analyst', title: 'Research synthesis & insight engine',
     desc: 'Multi source agent across PDFs, web data, and internal reports produces a competitive landscape with citations and contradictions flagged for review.',
     stack: ['Claude API', 'Web search', 'Citations'], outcome: 'Days → hours per research cycle',
@@ -94,7 +94,7 @@ export const PROJECTS = [
     },
   },
   {
-    slug: 'sop-automation-suite', image: '/projects/SOP_Automation.png',
+    slug: 'sop-automation-suite', image: '/projects/SOP_Automation.webp',
     tag: 'Human Resource', tagCls: 't-ops', title: 'SOP automation suite',
     desc: 'Replaces six manual checklists with a single audit-ready agent that intakes, triages, and escalates exceptions across customer support and ops.',
     stack: ['Agentic design', 'Cowork', 'MCP'], outcome: 'Reclaims 8–12 hrs/manager/week',
@@ -108,7 +108,7 @@ export const PROJECTS = [
     },
   },
   {
-    slug: 'always-on-content-outreach-engine', image: '/projects/Content_Outreach.png',
+    slug: 'always-on-content-outreach-engine', image: '/projects/Content_Outreach.webp',
     tag: 'Marketing & Sales', tagCls: 't-marketing', title: 'Always-on content & outreach engine',
     desc: 'Turns one strategic brief into a coordinated multichannel campaign — blog, email, LinkedIn, ads, and sales sequences — with brand voice enforced.',
     stack: ['Prompt patterns', 'Skills', 'MCP'], outcome: '3× output velocity, single-author voice',
@@ -126,7 +126,7 @@ export const PROJECTS = [
   // Grounded in real survey respondents; outcome lines are operator-portfolio
   // framing, not survey-reported figures. Each carries a full build doc.
   {
-    slug: 'retail-support-rag-service', image: '/projects/Retail_support.png', tag: 'Engineering', tagCls: 't-eng',
+    slug: 'retail-support-rag-service', image: '/projects/Retail_support.webp', tag: 'Engineering', tagCls: 't-eng',
     title: 'Retail support RAG service',
     desc: 'Ingests product catalogs, SOPs and past tickets into a vector store, serving a grounded Claude assistant that answers retail ops queries with sources attached.',
     stack: ['Python', 'Claude', 'Pinecone', 'FastAPI', 'Git'], outcome: '~55% fewer escalations to senior engineers',
@@ -140,7 +140,7 @@ export const PROJECTS = [
     },
   },
   {
-    slug: 'api-doc-summariser-agent', image: '/projects/API_DOC_Summariser.png', tag: 'Engineering', tagCls: 't-eng',
+    slug: 'api-doc-summariser-agent', image: '/projects/API_DOC_Summariser.webp', tag: 'Engineering', tagCls: 't-eng',
     title: 'API doc summariser agent',
     desc: 'Crawls internal API references and changelogs, then drafts integration guides and flags breaking changes for downstream engineering teams.',
     stack: ['Claude', 'Python', 'MCP', 'GitHub'], outcome: 'Integration ramp-up cut from days to hours',
@@ -154,7 +154,7 @@ export const PROJECTS = [
     },
   },
   {
-    slug: 'internal-engineering-copilot', image: '/projects/Internal_engineering_copilot.png', tag: 'Engineering', tagCls: 't-eng',
+    slug: 'internal-engineering-copilot', image: '/projects/Internal_engineering_copilot.webp', tag: 'Engineering', tagCls: 't-eng',
     title: 'Internal engineering copilot',
     desc: 'An agent over internal repos and docs that scaffolds code, runs retrieval-grounded reviews, and drafts design notes without leaving the IDE.',
     stack: ['Claude CLI', 'Cursor', 'Python', 'RAG'], outcome: 'Design-to-first-PR time down ~40%',
@@ -168,7 +168,7 @@ export const PROJECTS = [
     },
   },
   {
-    slug: 'quote-to-order-automation-engine', image: '/projects/Quote_to_order.png', tag: 'Finance Operations', tagCls: 't-finance', domain: 'Finance Operations',
+    slug: 'quote-to-order-automation-engine', image: '/projects/Quote_to_order.webp', tag: 'Finance Operations', tagCls: 't-finance', domain: 'Finance Operations',
     title: 'Quote-to-order automation engine',
     desc: 'Reads inbound quotes, validates them against catalog and pricing rules, auto-creates clean orders, and raises Jira stories only for the exceptions.',
     stack: ['Salesforce Agentforce', 'Claude', 'Python'], outcome: '~70% of standard quotes processed untouched',
@@ -182,7 +182,7 @@ export const PROJECTS = [
     },
   },
   {
-    slug: 'requirement-to-dashboard-pipeline', image: '/projects/Requirement_to_dashboard.png', tag: 'Analytics', tagCls: 't-analyst',
+    slug: 'requirement-to-dashboard-pipeline', image: '/projects/Requirement_to_dashboard.webp', tag: 'Analytics', tagCls: 't-analyst',
     title: 'Requirement-to-dashboard pipeline',
     desc: 'Turns raw stakeholder notes and source tables into a structured BRD, then scaffolds the BI dashboard spec and a first-pass EDA for review.',
     stack: ['Claude Projects', 'Clay', 'HubSpot', 'BigQuery'], outcome: 'Requirement-to-dashboard cycle roughly halved',
@@ -196,7 +196,7 @@ export const PROJECTS = [
     },
   },
   {
-    slug: 'incident-management-auto-sync', image: '/projects/Incident_management.png', tag: 'Analytics', tagCls: 't-analyst',
+    slug: 'incident-management-auto-sync', image: '/projects/Incident_management.webp', tag: 'Analytics', tagCls: 't-analyst',
     title: 'Incident management auto-sync',
     desc: 'Connects ServiceNow to Google Sheets via API and Apps Script, classifies incidents, and refreshes live dashboards with no analyst input.',
     stack: ['ServiceNow', 'Google Apps Script', 'Gemini', 'Data Studio'], outcome: '~10 hrs/week of manual logging eliminated',
@@ -210,7 +210,7 @@ export const PROJECTS = [
     },
   },
   {
-    slug: 'ai-job-matching-workflow', image: '/projects/AI_Job_Matching.png', tag: 'Human Resource', tagCls: 't-ops', domain: 'HR Operations',
+    slug: 'ai-job-matching-workflow', image: '/projects/AI_Job_Matching.webp', tag: 'Human Resource', tagCls: 't-ops', domain: 'HR Operations',
     title: 'AI job-matching workflow',
     desc: 'Parses candidate resumes against open roles, scores fit with reasoning, and routes ranked shortlists straight into the recruiter queue.',
     stack: ['Claude', 'Make', 'Lovable'], outcome: 'Shortlisting effort per role down ~80%',
@@ -224,7 +224,7 @@ export const PROJECTS = [
     },
   },
   {
-    slug: 'account-research-solutioning-agent', image: '/projects/Account_research.png', tag: 'Marketing & Sales', tagCls: 't-marketing',
+    slug: 'account-research-solutioning-agent', image: '/projects/Account_research.webp', tag: 'Marketing & Sales', tagCls: 't-marketing',
     title: 'Account research & solutioning agent',
     desc: 'Gathers public company signals, synthesises an account brief, and drafts a tailored solution narrative plus a first-cut sales deck for the deal team.',
     stack: ['Claude', 'ChatGPT', 'Python'], outcome: 'Pre-meeting prep cut from ~4 hours to 30 mins',
@@ -238,7 +238,7 @@ export const PROJECTS = [
     },
   },
   {
-    slug: 'crm-hygiene-autopilot', image: '/projects/CRM.png', tag: 'Marketing & Sales', tagCls: 't-marketing',
+    slug: 'crm-hygiene-autopilot', image: '/projects/CRM.webp', tag: 'Marketing & Sales', tagCls: 't-marketing',
     title: 'CRM hygiene autopilot',
     desc: 'Captures call and meeting transcripts, summarises outcomes, and updates CRM fields and next-step tasks without any rep data entry.',
     stack: ['Gong', 'Zapier', 'Konnector.io'], outcome: '~5 hrs/week recovered from CRM admin per rep',
@@ -252,7 +252,7 @@ export const PROJECTS = [
     },
   },
   {
-    slug: 'end-to-end-seo-content-agent', image: '/projects/End_to_end.png', tag: 'Product Management', tagCls: 't-pm',
+    slug: 'end-to-end-seo-content-agent', image: '/projects/End_to_end.webp', tag: 'Product Management', tagCls: 't-pm',
     title: 'End-to-end SEO content agent',
     desc: 'Takes a topic brief, researches and drafts on-brand articles, then publishes straight to the CMS with metadata and internal links in place.',
     stack: ['Claude', 'OpenRouter', 'n8n'], outcome: 'Content output 4× with no added headcount',
@@ -266,7 +266,7 @@ export const PROJECTS = [
     },
   },
   {
-    slug: 'inbound-email-triage-agent', image: '/projects/Inbound_Email.png', tag: 'Product Management', tagCls: 't-pm',
+    slug: 'inbound-email-triage-agent', image: '/projects/Inbound_Email.webp', tag: 'Product Management', tagCls: 't-pm',
     title: 'Inbound email triage agent',
     desc: 'Screens incoming emails, classifies intent, drafts context-aware replies, and queues CRM follow-ups for one-click human approval.',
     stack: ['Claude', 'n8n', 'HubSpot'], outcome: 'First-response handling automated for ~90% of inbound',
@@ -280,7 +280,7 @@ export const PROJECTS = [
     },
   },
   {
-    slug: 'insight-on-demand-data-agent', image: '/projects/Insights_on_demand.png', tag: 'Analytics', tagCls: 't-analyst',
+    slug: 'insight-on-demand-data-agent', image: '/projects/Insights_on_demand.webp', tag: 'Analytics', tagCls: 't-analyst',
     title: 'Insight-on-demand data agent',
     desc: 'Turns plain-English business questions into SQL, runs them against the warehouse, and returns narrated insights and charts for leadership.',
     stack: ['Claude', 'BigQuery', 'Comet'], outcome: "Self-serve analytics for the CEO's office — zero wait",

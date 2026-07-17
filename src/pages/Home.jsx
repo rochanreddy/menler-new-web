@@ -25,58 +25,44 @@ import TestimonialsColumns from '../components/common/TestimonialsColumns';
 // (drop official PNG/SVGs in /public/logos with the names below), then the
 // Clearbit logo CDN by domain, then a clean text name d.
 const HIRING_COMPANIES = [
-  { name: 'Ringg AI', domain: 'ringg.ai', logo: '/logos/ringg.png' },
-  { name: 'MyGate', domain: 'mygate.com', logo: '/logos/mygate_new.png' },
-  { name: 'Zolve', domain: 'zolve.com', logo: '/logos/zolve.png' },
-  { name: 'Instawork', domain: 'instawork.com', logo: '/logos/instawork.png' },
-  { name: 'Lyzr', domain: 'lyzr.ai', logo: '/logos/lyzr.png' },
-  { name: 'Emergent', domain: 'emergent.sh', logo: '/logos/emergent.png' },
-  { name: 'Gushwork', domain: 'gushwork.ai', logo: '/logos/gushwork.png' },
-  { name: 'Cars24', domain: 'cars24.com', logo: '/logos/cars24.png' },
-  { name: 'Matters', domain: 'matters.ai', logo: '/logos/matters.png' },
-  { name: 'Razorpay', domain: 'razorpay.com', logo: '/logos/razorpay.png' },
-  { name: 'Figr', domain: 'figr.design', logo: '/logos/figr.png' },
-  { name: 'Mercor', domain: 'mercor.com', logo: '/logos/mercor.png' },
-  { name: 'Adobe', domain: 'adobe.com', logo: '/logos/adobe.png' },
-  { name: 'Sarvam AI', domain: 'sarvam.ai', logo: '/logos/sarvam_ai_logo.png' },
+  { name: 'Ringg AI', domain: 'ringg.ai', logo: '/logos/ringg.webp' },
+  { name: 'MyGate', domain: 'mygate.com', logo: '/logos/mygate_new.webp' },
+  { name: 'Zolve', domain: 'zolve.com', logo: '/logos/zolve.webp' },
+  { name: 'Instawork', domain: 'instawork.com', logo: '/logos/instawork.webp' },
+  { name: 'Lyzr', domain: 'lyzr.ai', logo: '/logos/lyzr.webp' },
+  { name: 'Emergent', domain: 'emergent.sh', logo: '/logos/emergent.webp' },
+  { name: 'Gushwork', domain: 'gushwork.ai', logo: '/logos/gushwork.webp' },
+  { name: 'Cars24', domain: 'cars24.com', logo: '/logos/cars24.webp' },
+  { name: 'Matters', domain: 'matters.ai', logo: '/logos/matters.webp' },
+  { name: 'Razorpay', domain: 'razorpay.com', logo: '/logos/razorpay.webp' },
+  { name: 'Figr', domain: 'figr.design', logo: '/logos/figr.webp' },
+  { name: 'Mercor', domain: 'mercor.com', logo: '/logos/mercor.webp' },
+  { name: 'Adobe', domain: 'adobe.com', logo: '/logos/adobe.webp' },
+  { name: 'Sarvam AI', domain: 'sarvam.ai', logo: '/logos/sarvam_ai_logo.webp' },
   { name: 'Anthropic', domain: 'anthropic.com', logo: '/logos/anthropic.png' },
-  { name: 'PwC', domain: 'pwc.com', logo: '/logos/pwc.png' },
-  { name: 'Cognizant', domain: 'cognizant.com', logo: '/logos/cognizant.png' },
-  { name: 'Accenture', domain: 'accenture.com', logo: '/logos/accenture.png' },
-  { name: 'Flipkart', domain: 'flipkart.com', logo: '/logos/flipkart.png' },
+  { name: 'PwC', domain: 'pwc.com', logo: '/logos/pwc.webp' },
+  { name: 'Cognizant', domain: 'cognizant.com', logo: '/logos/cognizant.webp' },
+  { name: 'Accenture', domain: 'accenture.com', logo: '/logos/accenture.webp' },
+  { name: 'Flipkart', domain: 'flipkart.com', logo: '/logos/flipkart.webp' },
   { name: 'Autodesk', domain: 'autodesk.com', logo: '/logos/autodesk.png' },
-  { name: 'AnyDesk', domain: 'anydesk.com', logo: '/logos/anydesk.png' },
-  { name: 'MathCo', domain: 'themathcompany.com', logo: '/logos/mathco.png' },
-  { name: 'Masai', domain: 'masaischool.com', logo: '/logos/masai.png' },
-  { name: 'Scaler', domain: 'scaler.com', logo: '/logos/scaler.png' },
-  { name: 'PhysicsWallah', domain: 'pw.live', logo: '/logos/physicswallah.png' },
+  { name: 'AnyDesk', domain: 'anydesk.com', logo: '/logos/anydesk.webp' },
+  { name: 'MathCo', domain: 'themathcompany.com', logo: '/logos/mathco.webp' },
+  { name: 'Masai', domain: 'masaischool.com', logo: '/logos/masai.webp' },
+  { name: 'Scaler', domain: 'scaler.com', logo: '/logos/scaler.webp' },
+  { name: 'PhysicsWallah', domain: 'pw.live', logo: '/logos/physicswallah.webp' },
 ];
-
-// Small logo shown inside each project's tool-stack pill. Conceptual items
-// (RAG, Multimodal, Web search, Citations, Agentic design, Prompt patterns)
-// have no logo and render as text only.
-const TOOL_LOGO = {
-  'Claude API': '/logos/claude.svg',
-  'Claude Projects': '/logos/claude.svg',
-  'Cowork': '/logos/claude.svg',
-  'Skills': '/logos/claude.svg',
-  'Tool use': '/logos/claude.svg',
-  'MCP': '/logos/mcp.svg',
-  'MCP SDK': '/logos/mcp.svg',
-  'Python': '/logos/python.svg',
-};
 
 // "Builders from" company logos shown on the program cards.
 const GEN_BUILDERS = [
-  { name: 'Flipkart', domain: 'flipkart.com', logo: '/logos/flipkart-new-logo.png' },
-  { name: 'McKinsey', domain: 'mckinsey.com', logo: '/logos/mckinsey.png' },
-  { name: 'Black Tiger Cement', domain: 'blacktigercement.com', logo: '/logos/black_tiger_cement.png' },
+  { name: 'Flipkart', domain: 'flipkart.com', logo: '/logos/flipkart-new-logo.webp' },
+  { name: 'McKinsey', domain: 'mckinsey.com', logo: '/logos/mckinsey.webp' },
+  { name: 'Black Tiger Cement', domain: 'blacktigercement.com', logo: '/logos/black_tiger_cement.webp' },
   { name: 'Zendesk', domain: 'zendesk.com' },
   { name: 'Al Yusr Leasing & Financing', domain: 'alyusr.com' },
 ];
 const ENG_BUILDERS = [
   { name: 'Google', domain: 'google.com' },
-  { name: 'Razorpay', domain: 'razorpay.com', logo: '/logos/razorpay.png' },
+  { name: 'Razorpay', domain: 'razorpay.com', logo: '/logos/razorpay.webp' },
   { name: 'Autodesk', domain: 'autodesk.com', logo: '/logos/autodesk.png' },
   { name: 'Microsoft', domain: 'microsoft.com' },
   { name: 'Samsung', domain: 'samsung.com' },
@@ -86,29 +72,20 @@ const ENG_BUILDERS = [
 const TECH = [
   { name: 'Claude', logo: '/logos/claude.svg' },
   { name: 'Perplexity', logo: '/logos/perplexity.svg' },
-  { name: 'NotebookLM', logo: '/logos/google-notebook-lm.png' },
-  { name: 'Notion AI', logo: '/logos/notion.png' },
-  { name: 'Gamma', logo: '/logos/gamma.png' },
-  { name: 'Canva AI', logo: '/logos/canva.png' },
-  { name: 'Granola', logo: '/logos/granola_ai.png' },
-  { name: 'Fireflies', logo: '/logos/fireflies.png' },
+  { name: 'NotebookLM', logo: '/logos/google-notebook-lm.webp' },
+  { name: 'Notion AI', logo: '/logos/notion.webp' },
+  { name: 'Gamma', logo: '/logos/gamma.webp' },
+  { name: 'Canva AI', logo: '/logos/canva.webp' },
+  { name: 'Granola', logo: '/logos/granola_ai.webp' },
+  { name: 'Fireflies', logo: '/logos/fireflies.webp' },
   { name: 'ElevenLabs', logo: '/logos/elevenlabs.png' },
-  { name: 'Runway', logo: '/logos/runway.png' },
-  { name: 'HeyGen', logo: '/logos/heygen.png' },
-  { name: 'n8n', logo: '/logos/n8n.png' },
-  { name: 'Zapier', logo: '/logos/zapier.png' },
-  { name: 'Lovable', logo: '/logos/lovable-logo.png' },
-  { name: 'Emergent', logo: '/logos/emergent.png' },
-  { name: 'Lyzr', logo: '/logos/lyzr.png' },
-];
-
-const STORIES = [
-  { quote: '"We\'re seeing plenty of AI certificates in the market. What\'s rare are candidates who can demonstrate real builds. Menler\'s portfolio-led model makes evaluation significantly easier."', initials: 'TP', name: 'Talent Partner', trans: 'High-Growth SaaS Company', cls: '' },
-  { quote: '"What stood out was the portfolio-first approach. Fellows aren\'t just learning concepts; they\'re shipping assets, agents, and workflows that can be reviewed by employers."', initials: 'NS', name: 'Neha Sinha', trans: 'Founder · AI Automation Studio', cls: 'dark' },
-  { quote: '"I joined expecting another AI course. Instead, I left with a portfolio I could actually discuss in interviews and a much clearer understanding of how AI is used inside real businesses"', initials: 'BF', name: 'Beta Fellow', trans: 'Cohort 0', cls: 'green' },
-  { quote: '"The strongest signal for us is proof of work. Menler\'s focus on projects, reviews, and operator mentorship aligns far better with how modern AI hiring decisions are made."', initials: 'HM', name: 'Hiring Manager', trans: 'AI & Automation Practice', cls: '', avatarStyle: { background: '#FAEEDA', color: '#854F0B' } },
-  { quote: '"Most AI programs teach prompts. Menler teaches systems. The curriculum focuses on workflows, evaluation, deployment, and business impact — the things operators actually get measured on."', initials: 'BF', name: 'Arjun Menon', trans: 'AI Product Lead · Enterprise Automation', cls: 'dark' },
-  { quote: '"The biggest difference was learning from practitioners who use AI every day. Every session felt connected to actual workflows rather than theory."', initials: 'BF', name: 'Beta Fellow', trans: 'Cohort 0', cls: 'green' },
+  { name: 'Runway', logo: '/logos/runway.webp' },
+  { name: 'HeyGen', logo: '/logos/heygen.webp' },
+  { name: 'n8n', logo: '/logos/n8n.webp' },
+  { name: 'Zapier', logo: '/logos/zapier.webp' },
+  { name: 'Lovable', logo: '/logos/lovable-logo.webp' },
+  { name: 'Emergent', logo: '/logos/emergent.webp' },
+  { name: 'Lyzr', logo: '/logos/lyzr.webp' },
 ];
 
 // One toolstack chip. Falls back to text-only if the logo fails to load.
@@ -116,7 +93,7 @@ function ToolStackChip({ tool }) {
   const [ok, setOk] = useState(!!tool.logo);
   return (
     <div className="toolstack-chip">
-      {ok && <img className="toolstack-logo" src={tool.logo} alt="" aria-hidden="true" onError={() => setOk(false)} />}
+      {ok && <img className="toolstack-logo" src={tool.logo} alt="" aria-hidden="true" loading="lazy" onError={() => setOk(false)} />}
       <span className="toolstack-name">{tool.name}</span>
     </div>
   );
@@ -134,10 +111,22 @@ export default function Home() {
     else el.scrollIntoView({ behavior: 'smooth' });
   };
   const interestRef = useRef(null);
-  const scrollToInterest = () => smoothTo(interestRef.current);
   const programsRef = useRef(null);
   const scrollToPrograms = () => smoothTo(programsRef.current);
   const location = useLocation();
+
+  // Defer the decorative WebGL hero (Hero3D → three.js, ~530 KB) until the
+  // browser is idle, so its script parse + GPU init doesn't compete with first
+  // paint and main-thread startup. Skipped entirely under prefers-reduced-motion.
+  const [mount3D, setMount3D] = useState(false);
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const start = () => setMount3D(true);
+    const ric = window.requestIdleCallback;
+    const id = ric ? ric(start, { timeout: 2500 }) : setTimeout(start, 1200);
+    return () => { if (ric && window.cancelIdleCallback) window.cancelIdleCallback(id); else clearTimeout(id); };
+  }, []);
+
   useEffect(() => {
     if (location.hash === '#programs') {
       const t = setTimeout(() => smoothTo(programsRef.current), 120);
@@ -213,7 +202,7 @@ export default function Home() {
         <div className="hero-visual" aria-hidden="true">
           {/* If WebGL/3D fails (e.g. hardware accel disabled), skip it — don't crash the page. */}
           <ErrorBoundary fallback={null}>
-            <Suspense fallback={null}><Hero3D /></Suspense>
+            {mount3D && <Suspense fallback={null}><Hero3D /></Suspense>}
           </ErrorBoundary>
         </div>
         <div className="hero-inner">
@@ -334,7 +323,7 @@ export default function Home() {
               onClick={() => go(`/projects/${p.slug}`)}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(`/projects/${p.slug}`); } }}
             >
-              {p.image && <div className="proj-card-img"><img src={p.image} alt={p.title} loading="lazy" /></div>}
+              {p.image && <div className="proj-card-img"><img src={p.image} alt={p.title} width="800" height="450" loading="lazy" /></div>}
               <span className={`proj-domain-tag ${tagClassFor(p)}`}>{p.tag}</span>
               <h3 className="proj-card-title">{p.title}</h3>
               <p className="proj-card-desc">{p.desc}</p>
