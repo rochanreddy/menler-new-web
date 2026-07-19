@@ -13,6 +13,7 @@
     "update-photos": "node scripts/updateMentorPhotos.mjs"
   },
   "dependencies": {
+    "@pdf-lib/fontkit": "^1.1.1",
     "@sanity/client": "^7.22.1",
     "@sanity/orderable-document-list": "^2.0.1",
     "@sanity/vision": "^6.0.0",
@@ -26,6 +27,7 @@
     "mongoose": "^8.20.0",
     "motion": "^12.40.0",
     "nodemailer": "^7.0.10",
+    "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^6.0.227",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",

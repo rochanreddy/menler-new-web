@@ -22,7 +22,7 @@ if (smtpConfigured) {
  * Send an email. When SMTP isn't configured (dev), the message is logged to
  * the server console instead — attachment filenames are listed when present.
  */
-export async function sendMail({ to, subject, text, attachments = [] }) {
+export async function sendMail({ to, subject, text, html, attachments = [] }) {
   if (!transporter) {
     console.log('\n──────── EMAIL (dev console — no SMTP configured) ────────');
     console.log(`To:      ${to}`);
@@ -40,6 +40,7 @@ export async function sendMail({ to, subject, text, attachments = [] }) {
     to,
     subject,
     text,
+    ...(html ? { html } : {}),
     attachments,
   });
 }

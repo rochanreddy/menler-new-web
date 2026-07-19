@@ -7,6 +7,8 @@ import { Profile } from '../models/Profile.js';
 import { CampaignSetting } from '../models/CampaignSetting.js';
 import { ShortLink } from '../models/ShortLink.js';
 import { requireAdmin } from '../middleware/adminAuth.js';
+import { buildCertificatePdf, buildCertificateEmail } from '../utils/certificate.js';
+import { sendMail, isSmtpConfigured } from '../utils/email.js';
 import {
   ADMIN_COOKIE_NAME,
   signAdmin,
@@ -514,6 +516,111 @@ router.delete('/shortlinks/:code', requireAdmin, async (req, res) => {
   } catch (err) {
     console.error('admin shortlink delete error', err);
     res.status(500).json({ error: 'Could not delete the short link.' });
+  }
+});
+
+/* ──────────────────────────  Participation certificates  ──────────────────────── */
+
+const MAX_RECIPIENTS = 500;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/** Filename-safe slug of a participant name, e.g. "Aarav Sharma" → "Aarav-Sharma" */
+const slugName = (name) =>
+  String(name).trim().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').slice(0, 60) || 'participant';
+
+/** Only forwards signature overrides that were actually filled in, so the
+ *  certificate keeps its built-in defaults otherwise. */
+const signatories = (body = {}) =>
+  ['mentorName', 'mentorRole', 'founderName', 'founderRole'].reduce((acc, k) => {
+    const v = String(body[k] ?? '').trim();
+    if (v) acc[k] = v;
+    return acc;
+  }, {});
+
+// Render a single sample certificate so the design can be checked before any send.
+router.post('/certificates/preview', requireAdmin, async (req, res) => {
+  try {
+    const { name, programName } = req.body || {};
+    if (!name || !programName) {
+      return res.status(400).json({ error: 'A name and program name are required.' });
+    }
+    const { buffer } = await buildCertificatePdf({
+      name: String(name).trim(),
+      programName: String(programName).trim(),
+      ...signatories(req.body),
+    });
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'inline; filename="certificate-preview.pdf"');
+    res.send(buffer);
+  } catch (err) {
+    console.error('[admin] certificate preview failed:', err);
+    res.status(500).json({ error: 'Could not generate the preview.' });
+  }
+});
+
+// Generate a certificate per recipient and email it as a PDF attachment.
+router.post('/certificates/send', requireAdmin, async (req, res) => {
+  try {
+    const { recipients, programName, subject } = req.body || {};
+
+    if (!Array.isArray(recipients) || recipients.length === 0) {
+      return res.status(400).json({ error: 'No recipients were provided.' });
+    }
+    if (recipients.length > MAX_RECIPIENTS) {
+      return res.status(400).json({ error: `Too many recipients — the limit is ${MAX_RECIPIENTS} per batch.` });
+    }
+    if (!programName || !String(programName).trim()) {
+      return res.status(400).json({ error: 'A program name is required.' });
+    }
+    if (!isSmtpConfigured()) {
+      return res.status(503).json({ error: 'Email is not configured on this server, so nothing was sent.' });
+    }
+
+    const program = String(programName).trim();
+    const signs = signatories(req.body);
+    const results = [];
+
+    for (const raw of recipients) {
+      const name = String(raw?.name || '').trim();
+      const email = String(raw?.email || '').trim().toLowerCase();
+
+      if (!name || !EMAIL_RE.test(email)) {
+        results.push({ name, email, ok: false, error: 'Missing or invalid name/email' });
+        continue;
+      }
+
+      try {
+        const { buffer, certId } = await buildCertificatePdf({
+          name,
+          programName: program,
+          ...signs,
+        });
+        const { text, html } = buildCertificateEmail({ name, programName: program, certId });
+
+        await sendMail({
+          to: email,
+          subject: String(subject || '').trim() || `Your ${program} certificate`,
+          text,
+          html,
+          attachments: [{
+            filename: `Menler-Certificate-${slugName(name)}.pdf`,
+            content: buffer,
+            contentType: 'application/pdf',
+          }],
+        });
+
+        results.push({ name, email, ok: true, certId });
+      } catch (err) {
+        console.error(`[admin] certificate send failed for ${email}:`, err?.message);
+        results.push({ name, email, ok: false, error: 'Send failed' });
+      }
+    }
+
+    const sent = results.filter((r) => r.ok).length;
+    res.json({ sent, failed: results.length - sent, results });
+  } catch (err) {
+    console.error('[admin] certificate batch failed:', err);
+    res.status(500).json({ error: 'Could not send the certificates.' });
   }
 });
 

@@ -792,6 +792,283 @@ function ShortLinksTab() {
   );
 }
 
+/* ── Certificates ────────────────────────────────────────────────────────── */
+
+/** Minimal RFC-4180-ish parser — handles quoted fields, commas and tabs. */
+function parseDelimited(text) {
+  const rows = [];
+  let row = [];
+  let field = '';
+  let quoted = false;
+  const delim = text.split('\n')[0].includes('\t') ? '\t' : ',';
+
+  for (let i = 0; i < text.length; i += 1) {
+    const c = text[i];
+    if (quoted) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { field += '"'; i += 1; } else quoted = false;
+      } else field += c;
+      continue;
+    }
+    if (c === '"') { quoted = true; continue; }
+    if (c === delim) { row.push(field); field = ''; continue; }
+    if (c === '\n' || c === '\r') {
+      if (c === '\r' && text[i + 1] === '\n') i += 1;
+      row.push(field); field = '';
+      if (row.some((f) => f.trim())) rows.push(row);
+      row = [];
+      continue;
+    }
+    field += c;
+  }
+  row.push(field);
+  if (row.some((f) => f.trim())) rows.push(row);
+  return rows;
+}
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/** Pulls {name,email} out of a parsed sheet, with or without a header row. */
+function toRecipients(rows) {
+  if (!rows.length) return [];
+
+  const header = rows[0].map((h) => h.trim().toLowerCase());
+  const nameIdx = header.findIndex((h) => /^(name|full ?name|participant|student)$/.test(h));
+  const emailIdx = header.findIndex((h) => /^(e-?mail|email ?address)$/.test(h));
+  const hasHeader = nameIdx !== -1 || emailIdx !== -1;
+
+  const body = hasHeader ? rows.slice(1) : rows;
+  // No header — fall back to "whichever column looks like an email".
+  const guessEmail = (r) => r.findIndex((c) => EMAIL_RE.test(c.trim()));
+
+  return body
+    .map((r) => {
+      const ei = emailIdx !== -1 ? emailIdx : guessEmail(r);
+      const ni = nameIdx !== -1 ? nameIdx : r.findIndex((c, i) => i !== ei && c.trim());
+      return { name: (r[ni] || '').trim(), email: (r[ei] || '').trim().toLowerCase() };
+    })
+    .filter((r) => r.name || r.email);
+}
+
+function CertificatesTab() {
+  const [programName, setProgramName] = useState('');
+  const [mentorName, setMentorName] = useState('Nitin K Sethi');
+  const [mentorRole, setMentorRole] = useState('Ex-McKinsey | MIT & UT Mentor');
+  const [founderName, setFounderName] = useState('Sachin Roy');
+  const [founderRole, setFounderRole] = useState('Founder, Menler');
+  const [subject, setSubject] = useState('');
+  const [recipients, setRecipients] = useState([]);
+  const [fileName, setFileName] = useState('');
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState('');
+  const [confirming, setConfirming] = useState(false);
+  const [results, setResults] = useState(null);
+  const [progress, setProgress] = useState(null);
+
+  const valid = recipients.filter((r) => r.name && EMAIL_RE.test(r.email));
+  const invalid = recipients.filter((r) => !(r.name && EMAIL_RE.test(r.email)));
+
+  const onFile = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setError('');
+    setResults(null);
+    try {
+      // .xlsx/.xls are zip/OLE binaries — read as text they parse into garbage
+      // rows rather than failing, so reject them up front with a clear fix.
+      if (/\.xlsx?$/i.test(file.name)) {
+        throw new Error('Excel files aren’t supported yet. In Excel: File → Save As → CSV (Comma delimited), then upload that .csv.');
+      }
+      const list = toRecipients(parseDelimited(await file.text()));
+      if (!list.length) throw new Error('No rows found — the file needs a name and an email per participant.');
+      if (!list.some((r) => EMAIL_RE.test(r.email))) {
+        throw new Error('No email addresses found in that file. It needs a column of emails alongside the names.');
+      }
+      setRecipients(list);
+      setFileName(file.name);
+    } catch (err) {
+      setRecipients([]);
+      setFileName('');
+      setError(err.message || 'Could not read that file.');
+    }
+    e.target.value = ''; // let the same file be picked again
+  };
+
+  const preview = async () => {
+    setError('');
+    if (!programName.trim()) return setError('Enter the program name first.');
+    setBusy('preview');
+    try {
+      await adminApi.previewCertificate({
+        name: valid[0]?.name || 'Your Name',
+        programName: programName.trim(),
+        mentorName, mentorRole, founderName, founderRole,
+      });
+    } catch (err) {
+      setError(err.message || 'Could not generate the preview.');
+    } finally {
+      setBusy('');
+    }
+  };
+
+  // Each certificate costs ~0.2s to render plus an SMTP round trip, so a whole
+  // cohort in one request would run for minutes and trip the gateway timeout —
+  // the browser would error while mail kept going out, and a retry would send
+  // twice. Sending in small batches keeps every request short and lets results
+  // land incrementally, so a failure halfway is visible and recoverable.
+  const CHUNK = 20;
+
+  const send = async () => {
+    setError('');
+    setBusy('send');
+    setConfirming(false);
+
+    const done = [];
+    const tally = (list) => ({
+      sent: list.filter((r) => r.ok).length,
+      failed: list.filter((r) => !r.ok).length,
+      results: [...list],
+    });
+
+    try {
+      for (let i = 0; i < valid.length; i += CHUNK) {
+        setProgress({ done: i, total: valid.length });
+        const r = await adminApi.sendCertificates({
+          recipients: valid.slice(i, i + CHUNK),
+          programName: programName.trim(),
+          mentorName, mentorRole, founderName, founderRole,
+          subject: subject.trim(),
+        });
+        done.push(...(r.results || []));
+        setResults(tally(done));
+      }
+      setProgress(null);
+    } catch (err) {
+      setResults(tally(done));
+      setError(
+        `Stopped after ${done.length} of ${valid.length}. ${err.message || 'Request failed.'} ` +
+        'Everyone marked “Sent” below did receive their certificate — use “Remove already-sent” before retrying so nobody gets two.',
+      );
+    } finally {
+      setBusy('');
+      setProgress(null);
+    }
+  };
+
+  // Retry-safe: drops the recipients that already went out.
+  const dropSent = () => {
+    const sent = new Set((results?.results || []).filter((r) => r.ok).map((r) => r.email));
+    setRecipients((rs) => rs.filter((r) => !sent.has(r.email)));
+    setResults(null);
+  };
+
+  return (
+    <div>
+      <div className="admin-panel-card" style={{ marginBottom: 16 }}>
+        <p className="admin-card-title">Certificate details</p>
+        <p className="admin-empty" style={{ textAlign: 'left', margin: '0 0 12px' }}>
+          Upload a participants <b>.csv</b> (in Excel/Sheets: <i>File → Save As → CSV</i>) with a <b>name</b> and an <b>email</b> column — names are picked up automatically, with or without a header row.
+          Each participant gets their own certificate PDF, emailed to them. <b>Always hit Preview first.</b>
+        </p>
+        <div className="admin-toolbar">
+          <input className="admin-search" style={{ flex: 1 }} placeholder="Program name — printed on the certificate" value={programName} onChange={(e) => setProgramName(e.target.value)} />
+        </div>
+        <div className="admin-toolbar" style={{ marginTop: 10 }}>
+          <input className="admin-search" style={{ maxWidth: 170 }} placeholder="Left signature name" value={mentorName} onChange={(e) => setMentorName(e.target.value)} />
+          <input className="admin-search" style={{ flex: 1 }} placeholder="Left signature role" value={mentorRole} onChange={(e) => setMentorRole(e.target.value)} />
+          <input className="admin-search" style={{ maxWidth: 170 }} placeholder="Right signature name" value={founderName} onChange={(e) => setFounderName(e.target.value)} />
+          <input className="admin-search" style={{ flex: 1 }} placeholder="Right signature role" value={founderRole} onChange={(e) => setFounderRole(e.target.value)} />
+        </div>
+        <div className="admin-toolbar" style={{ marginTop: 10 }}>
+          <input className="admin-search" style={{ flex: 2 }} placeholder="Email subject (optional — defaults to “Your … certificate”)" value={subject} onChange={(e) => setSubject(e.target.value)} />
+          <label className="admin-btn" style={{ cursor: 'pointer' }}>
+            {fileName ? `📄 ${fileName}` : '⬆ Upload participants file'}
+            <input type="file" accept=".csv,.tsv,.txt,text/csv" onChange={onFile} style={{ display: 'none' }} />
+          </label>
+          <button className="admin-btn" onClick={preview} disabled={busy === 'preview'}>
+            {busy === 'preview' ? 'Rendering…' : '👁 Preview certificate'}
+          </button>
+        </div>
+      </div>
+
+      {error && <p className="admin-empty">{error}</p>}
+
+      {recipients.length > 0 && (
+        <>
+          <div className="admin-toolbar" style={{ marginBottom: 12, alignItems: 'center' }}>
+            <span className="admin-muted">
+              <b>{valid.length}</b> ready to send{invalid.length ? ` · ${invalid.length} skipped (missing name or invalid email)` : ''}
+            </span>
+            <span style={{ flex: 1 }} />
+            {results?.sent > 0 && (
+              <button className="admin-btn" onClick={dropSent}>Remove already-sent ({results.sent})</button>
+            )}
+            <button className="admin-btn" onClick={() => { setRecipients([]); setFileName(''); setResults(null); }}>Clear list</button>
+            <button
+              className="admin-btn admin-btn--primary"
+              disabled={!valid.length || !programName.trim() || busy === 'send'}
+              onClick={() => setConfirming(true)}
+            >
+              {busy === 'send'
+                ? `Sending… ${progress ? `${progress.done}/${progress.total}` : ''}`
+                : `✉ Send ${valid.length} certificate${valid.length === 1 ? '' : 's'}`}
+            </button>
+          </div>
+
+          {confirming && (
+            <div className="admin-panel-card" style={{ marginBottom: 12, borderColor: '#E0B23C' }}>
+              <p className="admin-card-title">Send for real?</p>
+              <p className="admin-empty" style={{ textAlign: 'left', margin: '0 0 12px' }}>
+                This emails <b>{valid.length}</b> {valid.length === 1 ? 'person' : 'people'} a certificate for <b>{programName.trim()}</b>. It can't be undone — make sure you've previewed the design.
+                {valid.length > CHUNK && <> Sending goes out in batches of {CHUNK}, so keep this tab open until it finishes.</>}
+              </p>
+              <button className="admin-btn admin-btn--primary" onClick={send}>Yes, send them</button>{' '}
+              <button className="admin-btn" onClick={() => setConfirming(false)}>Cancel</button>
+            </div>
+          )}
+
+          <div className="admin-table-wrap">
+            <table className="admin-table">
+              <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Status</th><th /></tr></thead>
+              <tbody>
+                {recipients.map((r, i) => {
+                  const res = results?.results?.find((x) => x.email === r.email && x.name === r.name);
+                  const ok = r.name && EMAIL_RE.test(r.email);
+                  return (
+                    <tr key={`${r.email}-${i}`}>
+                      <td className="admin-muted">{i + 1}</td>
+                      <td>
+                        <input className="admin-search" style={{ width: '100%', minWidth: 160 }} value={r.name}
+                          onChange={(e) => setRecipients((rs) => rs.map((x, j) => (j === i ? { ...x, name: e.target.value } : x)))} />
+                      </td>
+                      <td>
+                        <input className="admin-search" style={{ width: '100%', minWidth: 200 }} value={r.email}
+                          onChange={(e) => setRecipients((rs) => rs.map((x, j) => (j === i ? { ...x, email: e.target.value.trim() } : x)))} />
+                      </td>
+                      <td className="admin-muted" style={{ whiteSpace: 'nowrap' }}>
+                        {res ? (res.ok ? `✓ Sent · ${res.certId}` : `✗ ${res.error}`) : ok ? 'Ready' : 'Needs fixing'}
+                      </td>
+                      <td>
+                        <button className="admin-btn" onClick={() => setRecipients((rs) => rs.filter((_, j) => j !== i))}>Remove</button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+
+      {results && (
+        <p className="admin-empty" style={{ marginTop: 12 }}>
+          Done — <b>{results.sent}</b> sent{results.failed ? `, ${results.failed} failed` : ''}.
+        </p>
+      )}
+    </div>
+  );
+}
+
 /* ── Shell ───────────────────────────────────────────────────────────────── */
 
 const TABS = [
@@ -800,6 +1077,7 @@ const TABS = [
   { key: 'users', label: 'Users' },
   { key: 'campaigns', label: 'Campaigns' },
   { key: 'shortlinks', label: 'Short links' },
+  { key: 'certificates', label: 'Certificates' },
 ];
 
 function AdminPanel({ onLogout }) {
@@ -832,6 +1110,7 @@ function AdminPanel({ onLogout }) {
         {tab === 'users' && <UsersTab />}
         {tab === 'campaigns' && <CampaignsTab />}
         {tab === 'shortlinks' && <ShortLinksTab />}
+        {tab === 'certificates' && <CertificatesTab />}
       </main>
     </div>
   );

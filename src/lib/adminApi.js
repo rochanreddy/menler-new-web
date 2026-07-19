@@ -58,6 +58,27 @@ export const adminApi = {
   deleteShortLink: (code) =>
     api(`/admin/shortlinks/${encodeURIComponent(code)}`, { method: 'DELETE' }),
 
+  sendCertificates: (body) =>
+    api('/admin/certificates/send', { method: 'POST', body }),
+
+  /** Renders one sample certificate and opens it in a new tab for checking. */
+  async previewCertificate(body) {
+    const res = await fetch(`${API_URL}/admin/certificates/preview`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      let msg = 'Preview failed';
+      try { msg = (await res.json())?.error || msg; } catch { /* not JSON */ }
+      throw new Error(msg);
+    }
+    const url = URL.createObjectURL(await res.blob());
+    window.open(url, '_blank', 'noopener');
+    setTimeout(() => URL.revokeObjectURL(url), 60_000);
+  },
+
   /** Fetches a CSV with credentials and triggers a browser download. */
   async downloadCsv(kind, params = {}) {
     const path = kind === 'users' ? '/admin/users/export.csv' : '/admin/leads/export.csv';
