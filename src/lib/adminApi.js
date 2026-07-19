@@ -61,6 +61,8 @@ export const adminApi = {
   sendCertificates: (body) =>
     api('/admin/certificates/send', { method: 'POST', body }),
 
+  mailStatus: () => api('/admin/certificates/mail-status'),
+
   /** Renders one sample certificate and opens it in a new tab for checking. */
   async previewCertificate(body) {
     const res = await fetch(`${API_URL}/admin/certificates/preview`, {

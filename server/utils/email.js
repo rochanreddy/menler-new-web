@@ -15,7 +15,29 @@ if (smtpConfigured) {
     port: Number(SMTP_PORT || 587),
     secure: Number(SMTP_PORT) === 465,
     auth: { user: SMTP_USER, pass: SMTP_PASS },
+    // Without these, a wrong password or blocked connection hangs for minutes
+    // (until the platform gateway kills the request). Fail fast instead.
+    connectionTimeout: 15000,
+    greetingTimeout: 10000,
+    socketTimeout: 20000,
   });
+}
+
+/**
+ * Opens a connection and authenticates without sending anything, so a
+ * misconfiguration surfaces its real reason (bad password, blocked port,
+ * unreachable host) instead of hanging mid-send.
+ */
+export async function verifySmtp() {
+  if (!transporter) {
+    return { ok: false, error: 'SMTP is not configured (SMTP_HOST, SMTP_USER or SMTP_PASS is missing on the server).' };
+  }
+  try {
+    await transporter.verify();
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: err?.message || 'SMTP connection failed.' };
+  }
 }
 
 /**

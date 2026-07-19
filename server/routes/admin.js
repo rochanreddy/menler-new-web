@@ -8,7 +8,7 @@ import { CampaignSetting } from '../models/CampaignSetting.js';
 import { ShortLink } from '../models/ShortLink.js';
 import { requireAdmin } from '../middleware/adminAuth.js';
 import { buildCertificatePdf, buildCertificateEmail } from '../utils/certificate.js';
-import { sendMail, isSmtpConfigured } from '../utils/email.js';
+import { sendMail, isSmtpConfigured, verifySmtp } from '../utils/email.js';
 import {
   ADMIN_COOKIE_NAME,
   signAdmin,
@@ -537,6 +537,16 @@ const signatories = (body = {}) =>
     return acc;
   }, {});
 
+// Checks whether the mail server is configured and reachable, without sending
+// anything — lets an admin diagnose "stuck sending" from the panel itself.
+router.get('/certificates/mail-status', requireAdmin, async (_req, res) => {
+  if (!isSmtpConfigured()) {
+    return res.json({ ok: false, configured: false, error: 'SMTP is not configured on the server (SMTP_HOST / SMTP_USER / SMTP_PASS).' });
+  }
+  const conn = await verifySmtp();
+  res.json({ ok: conn.ok, configured: true, error: conn.error || null });
+});
+
 // Render a single sample certificate so the design can be checked before any send.
 router.post('/certificates/preview', requireAdmin, async (req, res) => {
   try {
@@ -574,6 +584,13 @@ router.post('/certificates/send', requireAdmin, async (req, res) => {
     }
     if (!isSmtpConfigured()) {
       return res.status(503).json({ error: 'Email is not configured on this server, so nothing was sent.' });
+    }
+
+    // Confirm the mail server actually accepts us before generating and
+    // looping — otherwise a bad password would hang on the first recipient.
+    const conn = await verifySmtp();
+    if (!conn.ok) {
+      return res.status(502).json({ error: `Couldn't connect to the email server, so nothing was sent. ${conn.error}` });
     }
 
     const program = String(programName).trim();

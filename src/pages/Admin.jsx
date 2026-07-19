@@ -864,6 +864,19 @@ function CertificatesTab() {
   const [confirming, setConfirming] = useState(false);
   const [results, setResults] = useState(null);
   const [progress, setProgress] = useState(null);
+  const [mail, setMail] = useState(null);
+
+  const checkMail = async () => {
+    setMail({ checking: true });
+    try {
+      const s = await adminApi.mailStatus();
+      setMail(s.ok
+        ? { ok: true, msg: 'Email server connected — sending will work.' }
+        : { ok: false, msg: s.error || 'Email server is not reachable.' });
+    } catch (err) {
+      setMail({ ok: false, msg: err.message || 'Could not check the email server.' });
+    }
+  };
 
   const valid = recipients.filter((r) => r.name && EMAIL_RE.test(r.email));
   const invalid = recipients.filter((r) => !(r.name && EMAIL_RE.test(r.email)));
@@ -988,7 +1001,15 @@ function CertificatesTab() {
           <button className="admin-btn" onClick={preview} disabled={busy === 'preview'}>
             {busy === 'preview' ? 'Rendering…' : '👁 Preview certificate'}
           </button>
+          <button className="admin-btn" onClick={checkMail} disabled={mail?.checking}>
+            {mail?.checking ? 'Checking…' : '✉ Check email connection'}
+          </button>
         </div>
+        {mail && !mail.checking && (
+          <p className="admin-empty" style={{ textAlign: 'left', margin: '10px 0 0', color: mail.ok ? '#1D9E75' : undefined }}>
+            {mail.ok ? '✓ ' : '⚠ '}{mail.msg}
+          </p>
+        )}
       </div>
 
       {error && <p className="admin-empty">{error}</p>}
