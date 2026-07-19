@@ -1,5 +1,16 @@
 {
   "rewrites": [
+    { "source": "/brochure-download", "destination": "/pdfs/Menler_Claude_Gen_brochure.pdf" },
     { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/brochure-download",
+      "headers": [
+        { "key": "Content-Disposition", "value": "attachment; filename=\"Menler-Claude-AI-Generalist-Brochure.pdf\"" },
+        { "key": "Content-Type", "value": "application/pdf" },
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    }
   ]
 }
