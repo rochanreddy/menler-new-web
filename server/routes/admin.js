@@ -628,8 +628,11 @@ router.post('/certificates/send', requireAdmin, async (req, res) => {
 
         results.push({ name, email, ok: true, certId });
       } catch (err) {
-        console.error(`[admin] certificate send failed for ${email}:`, err?.message);
-        results.push({ name, email, ok: false, error: 'Send failed' });
+        // Surface the provider's actual reason (e.g. Resend "domain not
+        // verified" / "can only send to your own address") so it can be fixed.
+        const reason = (err?.message || 'Send failed').replace(/\s+/g, ' ').trim().slice(0, 200);
+        console.error(`[admin] certificate send failed for ${email}:`, reason);
+        results.push({ name, email, ok: false, error: reason });
       }
     }
 
