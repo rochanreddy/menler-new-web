@@ -118,7 +118,8 @@ export async function buildCertificatePdf({
   frame(CARD + 21, 11.2, GOLD, 1.2, 0.3);
 
   /* ── Top row: wordmark (left) · verified seal (right) ───────────────────── */
-  const ROW_MID = 470;
+  const ROW_MID = 484;                     // nudged up slightly
+  const EDGE_INSET = 10;                    // pulled in a touch from the frame
 
   if (fs.existsSync(LOGO)) {
     const png = await pdf.embedPng(fs.readFileSync(LOGO));
@@ -126,11 +127,11 @@ export async function buildCertificatePdf({
     const lh = (png.height / png.width) * lw;
     // The PNG carries transparent padding (18/14px at 96px) — offset so the
     // glyphs, not the padding, align to the content edge.
-    page.drawImage(png, { x: LEFT - lw * (18 / 358), y: ROW_MID - lh / 2, width: lw, height: lh });
+    page.drawImage(png, { x: LEFT + EDGE_INSET - lw * (18 / 358), y: ROW_MID - lh / 2, width: lw, height: lh });
   }
 
   const R = 43.5;                           // 66px seal
-  const cx = RIGHT - R;
+  const cx = RIGHT - EDGE_INSET - R;
   const cy = ROW_MID;
   // linear-gradient(155deg, #F6C457, #BA7517) + top highlight, approximated by
   // concentric circles drifting toward the light source.
@@ -203,16 +204,19 @@ export async function buildCertificatePdf({
   }
 
   /* ── For successfully completing · programme ────────────────────────────── */
-  centre('for successfully completing', { y: 190, font: sans, size: 18.9, color: INK });
+  const line = 'for successfully completing the masterclass on';
+  let lineSize = 18.9;
+  while (sans.widthOfTextAtSize(line, lineSize) > RIGHT - LEFT && lineSize > 11) lineSize -= 0.5;
+  centre(line, { y: 190, font: sans, size: lineSize, color: INK });
 
-  let progSize = 18.9;
+  let progSize = 22;
   while (sansBold.widthOfTextAtSize(programName, progSize) > RIGHT - LEFT && progSize > 11) progSize -= 0.5;
-  centre(programName, { y: 160, font: sansBold, size: progSize, color: INK });
+  centre(programName, { y: 158, font: sansBold, size: progSize, color: INK });
 
   /* ── Signatures ─────────────────────────────────────────────────────────── */
   const signature = (label, role, anchorX, align) => {
     if (!label) return;
-    const nSize = 23.9;
+    const nSize = 21.5;
     const nW = serif.widthOfTextAtSize(label, nSize);
     const x = align === 'left' ? anchorX : anchorX - nW;
     draw(label, { x, y: 84, font: serif, size: nSize, color: INK });
@@ -220,7 +224,7 @@ export async function buildCertificatePdf({
       start: { x: x - 8.4, y: 76 }, end: { x: x + nW + 8.4, y: 76 },
       thickness: 1, color: INK, opacity: 0.3,
     });
-    const rSize = 15.4;
+    const rSize = 12.5;
     const rW = sans.widthOfTextAtSize(role || '', rSize);
     const rx = align === 'left' ? anchorX : anchorX - rW;
     if (role) draw(role, { x: rx, y: 50, font: sans, size: rSize, color: MUTED });
