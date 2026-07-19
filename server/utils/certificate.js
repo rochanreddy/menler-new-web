@@ -235,20 +235,45 @@ export async function buildCertificatePdf({
 const esc = (s = '') =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+// The default heading and body used when the admin doesn't customise them.
+// Exported so the admin panel can pre-fill the editable fields with the same
+// copy (single source of truth).
+export const DEFAULT_EMAIL_HEADING = 'Congratulations, {first_name}!';
+export const DEFAULT_EMAIL_MESSAGE =
+  "You've completed **{program}**. Your certificate of participation is attached to this email as a PDF.\n\n" +
+  'Share it on LinkedIn, add it to your CV, and keep building.';
+
+/** Fills {name} / {first_name} / {program} placeholders (single or double braces). */
+function fillPlaceholders(tmpl, { name, first, programName }) {
+  return String(tmpl)
+    .replace(/\{\{?\s*(first_name|first)\s*\}?\}/gi, first)
+    .replace(/\{\{?\s*(name|full_name)\s*\}?\}/gi, name)
+    .replace(/\{\{?\s*(program_name|program)\s*\}?\}/gi, programName);
+}
+
 /**
  * Covering email for the certificate — same minimal banner/footer shell as the
- * transactional templates (menler-templates).
+ * transactional templates (menler-templates). `heading` and `message` are
+ * optional overrides from the admin panel; both support {name}/{first_name}/
+ * {program} placeholders, and `message` supports **bold** and blank-line
+ * paragraph breaks.
  */
-export function buildCertificateEmail({ name, programName, certId }) {
+export function buildCertificateEmail({ name, programName, certId, heading, message }) {
   const first = String(name || '').trim().split(/\s+/)[0] || 'there';
-  const text = `Hi ${first},
+  const ctx = { name: String(name || '').trim() || 'there', first, programName };
 
-Congratulations on completing ${programName}.
+  const headingText = fillPlaceholders(heading || DEFAULT_EMAIL_HEADING, ctx).trim();
+  const messageText = fillPlaceholders(message || DEFAULT_EMAIL_MESSAGE, ctx).trim();
 
-Your certificate of participation is attached to this email as a PDF.
+  // Split the message into paragraphs on blank lines; keep single newlines as breaks.
+  const paras = messageText.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+
+  const plainMessage = messageText.replace(/\*\*(.+?)\*\*/g, '$1');
+  const text = `${headingText}
+
+${plainMessage}
+
 Certificate ID: ${certId}
-
-Share it on LinkedIn, add it to your CV, and keep building.
 
 Looking forward, talk soon!
 Menler
@@ -280,10 +305,9 @@ menler.in · support@menler.in`;
         </td></tr>
 
         <tr><td class="px" style="padding:38px 40px 0;">
-          <h1 style="margin:0 0 22px; font-size:23px; line-height:1.35; color:#14142B; font-weight:700;">Congratulations, ${esc(first)}!</h1>
-          <p style="margin:0 0 16px; font-size:16px; line-height:1.65; color:#41465A;">You've completed <strong>${esc(programName)}</strong>. Your certificate of participation is attached to this email as a PDF.</p>
-          <p style="margin:0 0 22px; font-size:16px; line-height:1.65; color:#41465A;">Share it on LinkedIn, add it to your CV, and keep building.</p>
-          <p style="margin:0 0 26px; font-size:13px; line-height:1.6; color:#7A7F92;">Certificate ID: <strong style="color:#41465A;">${esc(certId)}</strong></p>
+          <h1 style="margin:0 0 22px; font-size:23px; line-height:1.35; color:#14142B; font-weight:700;">${esc(headingText)}</h1>
+          ${paras.map((p) => `<p style="margin:0 0 16px; font-size:16px; line-height:1.65; color:#41465A;">${esc(p).replace(/\n/g, '<br />').replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')}</p>`).join('\n          ')}
+          <p style="margin:16px 0 26px; font-size:13px; line-height:1.6; color:#7A7F92;">Certificate ID: <strong style="color:#41465A;">${esc(certId)}</strong></p>
         </td></tr>
 
         <tr><td class="px" style="padding:0 40px;">

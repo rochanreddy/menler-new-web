@@ -850,6 +850,12 @@ function toRecipients(rows) {
     .filter((r) => r.name || r.email);
 }
 
+// Kept in sync with the server defaults in server/utils/certificate.js.
+const DEFAULT_EMAIL_HEADING = 'Congratulations, {first_name}!';
+const DEFAULT_EMAIL_MESSAGE =
+  "You've completed **{program}**. Your certificate of participation is attached to this email as a PDF.\n\n" +
+  'Share it on LinkedIn, add it to your CV, and keep building.';
+
 function CertificatesTab() {
   const [programName, setProgramName] = useState('');
   const [mentorName, setMentorName] = useState('Nitin K Sethi');
@@ -857,6 +863,8 @@ function CertificatesTab() {
   const [founderName, setFounderName] = useState('Sachin Roy');
   const [founderRole, setFounderRole] = useState('Founder, Menler');
   const [subject, setSubject] = useState('');
+  const [emailHeading, setEmailHeading] = useState(DEFAULT_EMAIL_HEADING);
+  const [emailMessage, setEmailMessage] = useState(DEFAULT_EMAIL_MESSAGE);
   const [recipients, setRecipients] = useState([]);
   const [fileName, setFileName] = useState('');
   const [error, setError] = useState('');
@@ -924,6 +932,23 @@ function CertificatesTab() {
     }
   };
 
+  const previewEmail = async () => {
+    setError('');
+    if (!programName.trim()) return setError('Enter the program name first.');
+    setBusy('email');
+    try {
+      await adminApi.previewCertificateEmail({
+        name: valid[0]?.name || 'Aarav Sharma',
+        programName: programName.trim(),
+        emailHeading, emailMessage,
+      });
+    } catch (err) {
+      setError(err.message || 'Could not preview the email.');
+    } finally {
+      setBusy('');
+    }
+  };
+
   // Each certificate costs ~0.2s to render plus an SMTP round trip, so a whole
   // cohort in one request would run for minutes and trip the gateway timeout —
   // the browser would error while mail kept going out, and a retry would send
@@ -951,6 +976,7 @@ function CertificatesTab() {
           programName: programName.trim(),
           mentorName, mentorRole, founderName, founderRole,
           subject: subject.trim(),
+          emailHeading, emailMessage,
         });
         done.push(...(r.results || []));
         setResults(tally(done));
@@ -1004,6 +1030,38 @@ function CertificatesTab() {
           <button className="admin-btn" onClick={checkMail} disabled={mail?.checking}>
             {mail?.checking ? 'Checking…' : '✉ Check email connection'}
           </button>
+        </div>
+
+        <div style={{ marginTop: 16, borderTop: '1px solid #ECECF2', paddingTop: 16 }}>
+          <p className="admin-card-title" style={{ margin: '0 0 4px' }}>Email write-up</p>
+          <p className="admin-empty" style={{ textAlign: 'left', margin: '0 0 12px' }}>
+            The message that goes in the email body (the certificate PDF is always attached). Use <b>{'{first_name}'}</b>, <b>{'{name}'}</b> and <b>{'{program}'}</b> — they’re filled in per person. <b>{'**bold**'}</b> works, and a blank line starts a new paragraph.
+          </p>
+          <input
+            className="admin-search"
+            style={{ width: '100%', marginBottom: 10 }}
+            placeholder="Email heading"
+            value={emailHeading}
+            onChange={(e) => setEmailHeading(e.target.value)}
+          />
+          <textarea
+            className="admin-search"
+            style={{ width: '100%', minHeight: 120, resize: 'vertical', fontFamily: 'inherit', lineHeight: 1.5 }}
+            placeholder="Email message"
+            value={emailMessage}
+            onChange={(e) => setEmailMessage(e.target.value)}
+          />
+          <div className="admin-toolbar" style={{ marginTop: 10 }}>
+            <button className="admin-btn" onClick={previewEmail} disabled={busy === 'email'}>
+              {busy === 'email' ? 'Rendering…' : '👁 Preview email'}
+            </button>
+            <button
+              className="admin-btn"
+              onClick={() => { setEmailHeading(DEFAULT_EMAIL_HEADING); setEmailMessage(DEFAULT_EMAIL_MESSAGE); }}
+            >
+              ↺ Reset to default
+            </button>
+          </div>
         </div>
         {mail && !mail.checking && (
           <p className="admin-empty" style={{ textAlign: 'left', margin: '10px 0 0', color: mail.ok ? '#1D9E75' : undefined }}>
