@@ -8,7 +8,7 @@ import { CampaignSetting } from '../models/CampaignSetting.js';
 import { ShortLink } from '../models/ShortLink.js';
 import { requireAdmin } from '../middleware/adminAuth.js';
 import { buildCertificatePdf, buildCertificateEmail } from '../utils/certificate.js';
-import { sendMail, isSmtpConfigured, verifySmtp } from '../utils/email.js';
+import { sendMail, isMailConfigured, verifyMailer } from '../utils/email.js';
 import {
   ADMIN_COOKIE_NAME,
   signAdmin,
@@ -540,11 +540,11 @@ const signatories = (body = {}) =>
 // Checks whether the mail server is configured and reachable, without sending
 // anything — lets an admin diagnose "stuck sending" from the panel itself.
 router.get('/certificates/mail-status', requireAdmin, async (_req, res) => {
-  if (!isSmtpConfigured()) {
-    return res.json({ ok: false, configured: false, error: 'SMTP is not configured on the server (SMTP_HOST / SMTP_USER / SMTP_PASS).' });
+  if (!isMailConfigured()) {
+    return res.json({ ok: false, configured: false, error: 'No email transport is configured on the server (Gmail API or SMTP).' });
   }
-  const conn = await verifySmtp();
-  res.json({ ok: conn.ok, configured: true, error: conn.error || null });
+  const conn = await verifyMailer();
+  res.json({ ok: conn.ok, configured: true, mode: conn.mode, error: conn.error || null });
 });
 
 // Render a single sample certificate so the design can be checked before any send.
@@ -582,15 +582,15 @@ router.post('/certificates/send', requireAdmin, async (req, res) => {
     if (!programName || !String(programName).trim()) {
       return res.status(400).json({ error: 'A program name is required.' });
     }
-    if (!isSmtpConfigured()) {
+    if (!isMailConfigured()) {
       return res.status(503).json({ error: 'Email is not configured on this server, so nothing was sent.' });
     }
 
-    // Confirm the mail server actually accepts us before generating and
-    // looping — otherwise a bad password would hang on the first recipient.
-    const conn = await verifySmtp();
+    // Confirm the transport actually works before generating and looping —
+    // otherwise a bad key/connection would fail on every recipient.
+    const conn = await verifyMailer();
     if (!conn.ok) {
-      return res.status(502).json({ error: `Couldn't connect to the email server, so nothing was sent. ${conn.error}` });
+      return res.status(502).json({ error: `Couldn't connect to the email service, so nothing was sent. ${conn.error}` });
     }
 
     const program = String(programName).trim();
