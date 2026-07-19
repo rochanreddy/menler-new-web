@@ -8,33 +8,77 @@ const require = createRequire(import.meta.url);
 const MailComposer = require('nodemailer/lib/mail-composer');
 
 const {
+  RESEND_API_KEY,
   SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS,
   GOOGLE_SA_KEY, GMAIL_SENDER,
-  MAIL_FROM,
+  MAIL_FROM, MAIL_REPLY_TO,
 } = process.env;
 
 const GMAIL_SCOPE = 'https://www.googleapis.com/auth/gmail.send';
 const FROM = MAIL_FROM || (GMAIL_SENDER ? `Menler <${GMAIL_SENDER}>` : 'Menler <no-reply@menler.in>');
+const REPLY_TO = MAIL_REPLY_TO || '';
 
 /* ── Transport selection ──────────────────────────────────────────────────────
- * Gmail API (HTTPS) is preferred because platforms like Render block outbound
- * SMTP — the API goes over 443, which is never blocked. SMTP stays as a
- * fallback (useful locally); with neither, mail logs to the console.
+ * Resend (HTTPS API) is preferred because platforms like Render block outbound
+ * SMTP — HTTPS on 443 is never blocked, and it needs no Google org access.
+ * Gmail API (also HTTPS) and SMTP remain as alternates; with none configured,
+ * mail logs to the console (dev).
  * ─────────────────────────────────────────────────────────────────────────── */
 
+const resendConfigured = Boolean(RESEND_API_KEY);
 const gmailConfigured = Boolean(GOOGLE_SA_KEY && GMAIL_SENDER);
 const smtpConfigured = Boolean(SMTP_HOST && SMTP_USER && SMTP_PASS);
 
 export function isMailConfigured() {
-  return gmailConfigured || smtpConfigured;
+  return resendConfigured || gmailConfigured || smtpConfigured;
 }
 // Back-compat name used elsewhere.
 export const isSmtpConfigured = isMailConfigured;
 
 function mailMode() {
+  if (resendConfigured) return 'resend';
   if (gmailConfigured) return 'gmail-api';
   if (smtpConfigured) return 'smtp';
   return 'console';
+}
+
+/* ── Resend (HTTPS API) ────────────────────────────────────────────────────── */
+
+async function resendFetch(path, init = {}) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 20000);
+  try {
+    return await fetch(`https://api.resend.com${path}`, {
+      ...init,
+      headers: { Authorization: `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json', ...(init.headers || {}) },
+      signal: ctrl.signal,
+    });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function resendSend(message) {
+  const attachments = (message.attachments || []).map((a) => ({
+    filename: a.filename,
+    content: Buffer.isBuffer(a.content) ? a.content.toString('base64') : Buffer.from(a.content).toString('base64'),
+  }));
+  const res = await resendFetch('/emails', {
+    method: 'POST',
+    body: JSON.stringify({
+      from: message.from,
+      to: [message.to],
+      subject: message.subject,
+      ...(message.text ? { text: message.text } : {}),
+      ...(message.html ? { html: message.html } : {}),
+      ...(REPLY_TO ? { reply_to: REPLY_TO } : {}),
+      ...(attachments.length ? { attachments } : {}),
+    }),
+  });
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    throw new Error(`Resend ${res.status}: ${body.slice(0, 300)}`);
+  }
 }
 
 /* ── Gmail API ─────────────────────────────────────────────────────────────── */
@@ -116,7 +160,18 @@ if (smtpConfigured) {
 export async function verifyMailer() {
   const mode = mailMode();
   if (mode === 'console') {
-    return { ok: false, mode, error: 'No email transport is configured (set GOOGLE_SA_KEY + GMAIL_SENDER, or SMTP_HOST/USER/PASS).' };
+    return { ok: false, mode, error: 'No email transport is configured (set RESEND_API_KEY, or Gmail/SMTP credentials).' };
+  }
+  if (mode === 'resend') {
+    try {
+      // Lists domains — a cheap authenticated call that validates the API key.
+      const res = await resendFetch('/domains');
+      if (res.ok) return { ok: true, mode };
+      const body = await res.text().catch(() => '');
+      return { ok: false, mode, error: `Resend rejected the API key (${res.status}). ${body.slice(0, 200)}` };
+    } catch (err) {
+      return { ok: false, mode, error: err?.message || 'Could not reach Resend.' };
+    }
   }
   if (mode === 'gmail-api') {
     if (jwtInitError) return { ok: false, mode, error: jwtInitError };
@@ -154,7 +209,13 @@ export async function sendMail({ to, subject, text, html, attachments = [] }) {
     return;
   }
 
-  const message = { from: FROM, to, subject, text, ...(html ? { html } : {}), attachments };
+  const message = {
+    from: FROM, to, subject, text,
+    ...(html ? { html } : {}),
+    ...(REPLY_TO ? { replyTo: REPLY_TO } : {}),
+    attachments,
+  };
+  if (mode === 'resend') return resendSend(message);
   if (mode === 'gmail-api') return gmailSend(message);
   return transporter.sendMail(message);
 }
