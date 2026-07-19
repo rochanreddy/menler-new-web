@@ -273,8 +273,6 @@ export function buildCertificateEmail({ name, programName, certId, heading, mess
 
 ${plainMessage}
 
-Certificate ID: ${certId}
-
 Looking forward, talk soon!
 Menler
 Your turning point in the AI era
@@ -304,10 +302,9 @@ menler.in · support@menler.in`;
           <img src="https://menler.in/email-logo.png" width="132" alt="Menler" style="width:132px; height:auto; margin:0 auto;" />
         </td></tr>
 
-        <tr><td class="px" style="padding:38px 40px 0;">
+        <tr><td class="px" style="padding:38px 40px 26px;">
           <h1 style="margin:0 0 22px; font-size:23px; line-height:1.35; color:#14142B; font-weight:700;">${esc(headingText)}</h1>
           ${paras.map((p) => `<p style="margin:0 0 16px; font-size:16px; line-height:1.65; color:#41465A;">${esc(p).replace(/\n/g, '<br />').replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')}</p>`).join('\n          ')}
-          <p style="margin:16px 0 26px; font-size:13px; line-height:1.6; color:#7A7F92;">Certificate ID: <strong style="color:#41465A;">${esc(certId)}</strong></p>
         </td></tr>
 
         <tr><td class="px" style="padding:0 40px;">
