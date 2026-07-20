@@ -853,7 +853,7 @@ function toRecipients(rows) {
 // Kept in sync with the server defaults in server/utils/certificate.js.
 const DEFAULT_EMAIL_HEADING = 'Congratulations, {first_name}!';
 const DEFAULT_EMAIL_MESSAGE =
-  "You've completed **{program}**. Your certificate of participation is attached to this email as a PDF.\n\n" +
+  "You've completed **{program}**. Your certificate of participation is ready — download it below.\n\n" +
   'Share it on LinkedIn, add it to your CV, and keep building.';
 
 function CertificatesTab() {

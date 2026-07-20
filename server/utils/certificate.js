@@ -265,7 +265,7 @@ const esc = (s = '') =>
 // copy (single source of truth).
 export const DEFAULT_EMAIL_HEADING = 'Congratulations, {first_name}!';
 export const DEFAULT_EMAIL_MESSAGE =
-  "You've completed **{program}**. Your certificate of participation is attached to this email as a PDF.\n\n" +
+  "You've completed **{program}**. Your certificate of participation is ready — download it below.\n\n" +
   'Share it on LinkedIn, add it to your CV, and keep building.';
 
 /** Fills {name} / {first_name} / {program} placeholders (single or double braces). */
@@ -283,7 +283,7 @@ function fillPlaceholders(tmpl, { name, first, programName }) {
  * {program} placeholders, and `message` supports **bold** and blank-line
  * paragraph breaks.
  */
-export function buildCertificateEmail({ name, programName, certId, heading, message }) {
+export function buildCertificateEmail({ name, programName, certId, heading, message, downloadUrl }) {
   const first = String(name || '').trim().split(/\s+/)[0] || 'there';
   const ctx = { name: String(name || '').trim() || 'there', first, programName };
 
@@ -292,75 +292,142 @@ export function buildCertificateEmail({ name, programName, certId, heading, mess
 
   // Split the message into paragraphs on blank lines; keep single newlines as breaks.
   const paras = messageText.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
-
   const plainMessage = messageText.replace(/\*\*(.+?)\*\*/g, '$1');
+
   const text = `${headingText}
 
 ${plainMessage}
-
+${downloadUrl ? `\nDownload your certificate: ${downloadUrl}\n` : ''}
 Looking forward, talk soon!
+
 Menler
 Your turning point in the AI era
 
-menler.in · support@menler.in`;
+menler.in`;
 
-  const html = `<!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Your ${esc(programName)} certificate</title>
-<style>
-  img{ border:0; outline:none; text-decoration:none; display:block; }
-  table{ border-collapse:collapse !important; }
-  @media only screen and (max-width:600px){
-    .container{ width:100% !important; }
-    .px{ padding-left:24px !important; padding-right:24px !important; }
-    .btn a{ display:block !important; text-align:center !important; }
-  }
-</style></head>
-<body style="margin:0; padding:0; background:#F4F5F7; font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-  <div style="display:none; max-height:0; overflow:hidden; opacity:0;">Your certificate of participation is attached.&nbsp;&zwnj;&nbsp;&zwnj;</div>
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F4F5F7;">
-    <tr><td align="center" style="padding:32px 12px;">
-      <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px; max-width:600px; background:#ffffff; border-radius:12px; overflow:hidden;">
+  const social = [
+    ['https://menler.in', 'Website', 'internet'],
+    ['https://www.linkedin.com/company/menler', 'LinkedIn', 'linkedin'],
+    ['https://www.instagram.com/menler.in/', 'Instagram', 'instagram-new'],
+    ['https://www.facebook.com/people/Menler/61589670181082/', 'Facebook', 'facebook-new'],
+  ].map(([href, title, icon]) => `<td style="padding:0 0 0 8px;">
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+                    <td width="36" height="36" align="center" valign="middle" style="width:36px; height:36px; border:1px solid #453D80; border-radius:11px;">
+                      <a href="${href}" title="${title}" style="text-decoration:none;"><img src="https://img.icons8.com/ios-filled/100/B9B3E8/${icon}.png" width="17" height="17" alt="${title}" style="width:17px; height:17px; display:inline-block; vertical-align:middle; border:0;" /></a>
+                    </td>
+                  </tr></table>
+                </td>`).join('\n                ');
 
-        <tr><td bgcolor="#2A2260" align="center" style="background-color:#2A2260; padding:30px 20px;">
-          <img src="https://menler.in/email-logo.png" width="132" alt="Menler" style="width:132px; height:auto; margin:0 auto;" />
+  const html = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="color-scheme" content="light" />
+  <title>${esc(headingText)}</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet" />
+  <style>
+    body,table,td,a{ -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
+    img{ border:0; line-height:100%; outline:none; text-decoration:none; display:block; }
+    table{ border-collapse:collapse !important; }
+    a{ color:#534AB7; }
+    @media only screen and (max-width:620px){
+      .container{ width:100% !important; }
+      .px{ padding-left:24px !important; padding-right:24px !important; }
+      .stack{ display:block !important; width:100% !important; max-width:100% !important; text-align:left !important; }
+      .stack-r{ display:block !important; width:100% !important; max-width:100% !important; text-align:left !important; padding-top:26px !important; }
+      .gap{ display:none !important; }
+      .fluid{ width:100% !important; height:auto !important; }
+      .al{ float:none !important; }
+    }
+  </style>
+</head>
+<body style="margin:0; padding:0; background:#FFFFFF; font-family:'DM Sans',-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+
+  <div style="display:none; max-height:0; overflow:hidden; opacity:0;">Your certificate is ready — download it or find it attached.&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;</div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#FFFFFF;">
+    <tr><td align="center" style="padding:0;">
+      <table role="presentation" class="container" width="620" cellpadding="0" cellspacing="0" border="0" style="width:620px; max-width:620px; background:#ffffff;">
+
+        <!-- ── BANNER — unlinked on purpose so Gmail offers its own image preview ── -->
+        <tr><td style="font-size:0; line-height:0;">
+          <img src="https://menler.in/email-banner.jpg" width="620" alt="Menler — Your turning point in the AI era."
+               class="fluid" style="width:100%; max-width:620px; height:auto; display:block; border:0;" />
         </td></tr>
 
-        <tr><td class="px" style="padding:38px 40px 26px;">
-          <h1 style="margin:0 0 22px; font-size:23px; line-height:1.35; color:#14142B; font-weight:700;">${esc(headingText)}</h1>
-          ${paras.map((p) => `<p style="margin:0 0 16px; font-size:16px; line-height:1.65; color:#41465A;">${esc(p).replace(/\n/g, '<br />').replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')}</p>`).join('\n          ')}
+        <!-- ── BODY ── -->
+        <tr><td class="px" style="padding:40px 40px 0;">
+          <p style="margin:0 0 22px; font-size:22px; line-height:1.4; color:#1F2430; font-weight:700;">${esc(headingText)}</p>
+          ${paras.map((p) => `<p style="margin:0 0 22px; font-size:16px; line-height:1.8; color:#1F2430;">${esc(p).replace(/\n/g, '<br />').replace(/\*\*(.+?)\*\*/g, '<strong style="font-weight:700;">$1</strong>')}</p>`).join('\n          ')}
         </td></tr>
-
-        <tr><td class="px" style="padding:0 40px;">
-          <table role="presentation" class="btn" cellpadding="0" cellspacing="0" border="0" width="100%"><tr>
-            <td bgcolor="#534AB7" align="center" style="border-radius:8px;">
-              <a href="https://menler.in/generalist" style="display:inline-block; padding:15px 30px; font-size:16px; font-weight:700; color:#ffffff; text-decoration:none; border-radius:8px;">Explore Programs</a>
+${downloadUrl ? `
+        <!-- ── DOWNLOAD BUTTON ── -->
+        <tr><td align="center" class="px" style="padding:8px 40px 6px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+            <td bgcolor="#211B4C" style="border-radius:6px;">
+              <a href="${esc(downloadUrl)}" style="display:inline-block; padding:15px 42px; font-family:'DM Sans',Arial,sans-serif; font-size:15px; font-weight:700; color:#ffffff; text-decoration:none; border-radius:6px;">Download Certificate</a>
             </td>
+          </tr></table>
+          <p style="margin:14px 0 0; font-size:13.5px; line-height:1.6; color:#6B7185;">It's also attached to this email as a PDF.</p>
+        </td></tr>` : ''}
+
+        <!-- ── SIGN-OFF ── -->
+        <tr><td class="px" style="padding:32px 40px 44px;">
+          <p style="margin:0; font-size:16px; line-height:1.8; color:#1F2430;">
+            While you're here, explore what's next at
+            <a href="https://menler.in/generalist" style="color:#534AB7; text-decoration:underline;">menler.in</a>.
+          </p>
+          <p style="margin:24px 0 0; font-size:16px; line-height:1.8; color:#1F2430;">Looking forward, talk soon!</p>
+          <p style="margin:24px 0 0; font-size:16px; line-height:1.8; color:#1F2430;">
+            <strong style="font-weight:700;">Menler</strong><br />
+            Your turning point in the AI era
+          </p>
+        </td></tr>
+
+        <!-- ── FOOTER ── -->
+        <tr><td bgcolor="#211B4C" class="px" style="background-color:#211B4C; padding:34px 40px 30px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+
+            <td class="stack" width="56%" valign="top" style="width:56%;">
+              <img src="https://menler.in/email-logo.png" width="128" alt="menler" style="width:128px; height:auto; display:block;" />
+              <div style="font-family:'DM Serif Display',Georgia,serif; font-style:italic; font-size:15px; color:#8E82F5; margin-top:14px; line-height:1.4;">
+                Your turning point in the AI Era.
+              </div>
+              <div style="font-size:13.5px; color:#B9B3E8; margin-top:11px; line-height:1.6; max-width:215px;">
+                AI learning, built for the people doing the work.
+              </div>
+            </td>
+
+            <td class="gap" width="4%" style="width:4%; font-size:0;">&nbsp;</td>
+
+            <td class="stack-r" width="40%" valign="top" align="right" style="width:40%;">
+              <div style="font-size:11px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#8F87C9; padding-bottom:14px;">Follow us</div>
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="right" class="al"><tr>
+                ${social}
+              </tr></table>
+            </td>
+
           </tr></table>
         </td></tr>
 
-        <tr><td class="px" style="padding:30px 40px 38px;">
-          <p style="margin:0 0 18px; font-size:16px; line-height:1.65; color:#41465A;">Looking forward, talk soon!</p>
-          <p style="margin:0; font-size:16px; line-height:1.5; color:#14142B; font-weight:700;">Menler</p>
-          <p style="margin:2px 0 0; font-size:14px; line-height:1.5; color:#7A7F92; font-style:italic;">Your turning point in the AI era</p>
-        </td></tr>
+        <!-- ── ACCENT RULE ── -->
+        <tr><td height="3" bgcolor="#534AB7" style="height:3px; background-color:#534AB7; font-size:0; line-height:0;">&nbsp;</td></tr>
 
-        <tr><td bgcolor="#F7F7FA" class="px" style="background-color:#F7F7FA; padding:24px 40px; text-align:center; border-top:1px solid #ECECF2;">
-          <div style="font-size:13px; line-height:1.9;">
-            <a href="https://menler.in" style="color:#6B7185; text-decoration:none;">menler.in</a>
-            <span style="color:#C9CCD8;">&nbsp;·&nbsp;</span>
-            <a href="mailto:support@menler.in" style="color:#6B7185; text-decoration:none;">Support</a>
-          </div>
-          <div style="font-size:11.5px; color:#9DA2B3; line-height:1.7; margin-top:10px;">
-            Menler Learning Systems Private Limited · Bengaluru, India
+        <!-- ── PERMISSION BAR ── -->
+        <tr><td bgcolor="#1B1640" align="center" class="px" style="background-color:#1B1640; padding:22px 40px 24px;">
+          <div style="font-size:13px; line-height:1.6; color:#8F87C9;">
+            You're receiving this because you took part in a Menler program at
+            <a href="https://menler.in" style="color:#8E82F5; text-decoration:underline;">menler.in</a>.
           </div>
         </td></tr>
 
       </table>
     </td></tr>
   </table>
-</body></html>`;
+</body>
+</html>`;
 
   return { text, html };
 }
