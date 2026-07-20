@@ -23,6 +23,7 @@ const GOLD = hex('#BA7517');
 const GOLD_DARK = hex('#854F0B');
 const GOLD_LIGHT = hex('#F6C457');
 const INK = hex('#26215C');
+const PURPLE = hex('#534AB7');            // brand accent — wordmark rule + tagline
 const MUTED = hex('#888780');
 const CREAM_TOP = hex('#FFFDF8');
 const CREAM_BOTTOM = hex('#FFF6E1');
@@ -81,6 +82,7 @@ export async function buildCertificatePdf({
   const sansMed = await ttf('DMSans-Medium.ttf');
   const sansBold = await ttf('DMSans-Bold.ttf');
   const sansItalic = await ttf('DMSans-Italic.ttf');
+  const serifItalic = await ttf('DMSerifDisplay-Italic.ttf');
 
   /* ── Helpers ────────────────────────────────────────────────────────────── */
 
@@ -117,17 +119,29 @@ export async function buildCertificatePdf({
   frame(CARD + 15.4, 15.4, GOLD, 2.1, 1);
   frame(CARD + 21, 11.2, GOLD, 1.2, 0.3);
 
-  /* ── Top row: wordmark (left) · verified seal (right) ───────────────────── */
-  const ROW_MID = 484;                     // nudged up slightly
-  const EDGE_INSET = 10;                    // pulled in a touch from the frame
+  /* ── Top row: wordmark + tagline (left) · verified seal (right) ─────────── */
+  const ROW_MID = 484;
+  const EDGE_INSET = 10;                    // seal pulled in a touch from the frame
 
   if (fs.existsSync(LOGO)) {
     const png = await pdf.embedPng(fs.readFileSync(LOGO));
-    const lw = 114;                       // 24px wordmark at page scale
+    const lw = 114;                         // 24px wordmark at page scale
     const lh = (png.height / png.width) * lw;
     // The PNG carries transparent padding (18/14px at 96px) — offset so the
     // glyphs, not the padding, align to the content edge.
-    page.drawImage(png, { x: LEFT + EDGE_INSET - lw * (18 / 358), y: ROW_MID - lh / 2, width: lw, height: lh });
+    const logoX = LEFT - 4 - lw * (18 / 358);
+    const logoMid = ROW_MID + 14;           // sits diagonally up-left of centre
+    page.drawImage(png, { x: logoX, y: logoMid - lh / 2, width: lw, height: lh });
+
+    // Brand tagline, tucked under the wordmark and aligned to its glyph edge.
+    const tag = 'Your turning point in the AI era.';
+    draw(tag, {
+      x: LEFT - 2,
+      y: logoMid - lh / 2 - 13,
+      font: serifItalic,
+      size: 11.5,
+      color: PURPLE,
+    });
   }
 
   const R = 43.5;                           // 66px seal
@@ -214,20 +228,27 @@ export async function buildCertificatePdf({
   centre(programName, { y: 158, font: sansBold, size: progSize, color: INK });
 
   /* ── Signatures ─────────────────────────────────────────────────────────── */
+  // The name, its rule and the designation all share one centre axis, and the
+  // block's outer edge sits flush to the margin — so both signatures read as
+  // one solid unit instead of three independently-placed lines.
   const signature = (label, role, anchorX, align) => {
     if (!label) return;
     const nSize = 21.5;
+    const rSize = 12.5;
     const nW = serif.widthOfTextAtSize(label, nSize);
-    const x = align === 'left' ? anchorX : anchorX - nW;
-    draw(label, { x, y: 84, font: serif, size: nSize, color: INK });
+    const rW = role ? sans.widthOfTextAtSize(role, rSize) : 0;
+    const blockW = Math.max(nW, rW);
+    const axis = align === 'left' ? anchorX + blockW / 2 : anchorX - blockW / 2;
+
+    draw(label, { x: axis - nW / 2, y: 84, font: serif, size: nSize, color: INK });
+
+    const ruleW = nW + 17;                  // rule hugs the name, centred on the axis
     page.drawLine({
-      start: { x: x - 8.4, y: 76 }, end: { x: x + nW + 8.4, y: 76 },
+      start: { x: axis - ruleW / 2, y: 76 }, end: { x: axis + ruleW / 2, y: 76 },
       thickness: 1, color: INK, opacity: 0.3,
     });
-    const rSize = 12.5;
-    const rW = sans.widthOfTextAtSize(role || '', rSize);
-    const rx = align === 'left' ? anchorX : anchorX - rW;
-    if (role) draw(role, { x: rx, y: 50, font: sans, size: rSize, color: MUTED });
+
+    if (role) draw(role, { x: axis - rW / 2, y: 50, font: sans, size: rSize, color: MUTED });
   };
   signature(mentorName, mentorRole, LEFT, 'left');
   signature(founderName, founderRole, RIGHT, 'right');
