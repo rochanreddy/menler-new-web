@@ -140,12 +140,13 @@ export async function buildCertificatePdf({
     // Sized from the brand ratio rather than by eye: the wordmark PNG is 358pt
     // wide at a 96pt font, and .menler-wm__tagline is 0.22em of that — so the
     // tagline stays correctly proportioned if the logo width ever changes.
-    const tagSize = lw * (96 / 358) * 0.22;
+    const TAG_EM = 0.245;                   // brand is 0.22em; nudged up slightly here
+    const TAG_GAP = 8;                      // distance below the wordmark
     draw('Your turning point in the AI era.', {
       x: LEFT - SHIFT + 2,
-      y: logoMid - lh / 2 - 11,
+      y: logoMid - lh / 2 - TAG_GAP,
       font: serifItalic,
-      size: tagSize,
+      size: lw * (96 / 358) * TAG_EM,
       color: PURPLE,
     });
   }
