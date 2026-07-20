@@ -851,10 +851,17 @@ function toRecipients(rows) {
 }
 
 // Kept in sync with the server defaults in server/utils/certificate.js.
-const DEFAULT_EMAIL_HEADING = 'Congratulations, {first_name}!';
-const DEFAULT_EMAIL_MESSAGE =
-  "You've completed **{program}**. Your certificate of participation is attached to this email as a PDF.\n\n" +
-  'Share it on LinkedIn, add it to your CV, and keep building.';
+const DEFAULT_EMAIL_HEADING = 'Hi {first_name},';
+const DEFAULT_EMAIL_MESSAGE = [
+  "We're glad you made it to Menler Live Masterclass — **{program}**",
+  "Your certificate of participation is attached. It's yours to keep, share, and add to your LinkedIn profile.",
+  'Before you go, we have one small ask.',
+  'Tell us how the session was for you. Honestly. It takes just a minute, and every response helps us make the next session better.',
+].join('\n\n');
+const DEFAULT_EMAIL_CLOSING = [
+  "If today's session sparked something for you, here's where to go next.",
+  'Menler Claude AI Generalist Fellowship is designed to take you from where you are today to where AI-native professionals are headed.',
+].join('\n\n');
 
 function CertificatesTab() {
   const [programName, setProgramName] = useState('');
@@ -865,6 +872,8 @@ function CertificatesTab() {
   const [subject, setSubject] = useState('');
   const [emailHeading, setEmailHeading] = useState(DEFAULT_EMAIL_HEADING);
   const [emailMessage, setEmailMessage] = useState(DEFAULT_EMAIL_MESSAGE);
+  const [emailClosing, setEmailClosing] = useState(DEFAULT_EMAIL_CLOSING);
+  const [feedbackUrl, setFeedbackUrl] = useState('');
   const [recipients, setRecipients] = useState([]);
   const [fileName, setFileName] = useState('');
   const [error, setError] = useState('');
@@ -1051,13 +1060,28 @@ function CertificatesTab() {
             value={emailMessage}
             onChange={(e) => setEmailMessage(e.target.value)}
           />
+          <input
+            className="admin-search"
+            style={{ width: '100%', marginTop: 10 }}
+            type="url"
+            placeholder="Feedback form link (leave blank to hide the feedback button)"
+            value={feedbackUrl}
+            onChange={(e) => setFeedbackUrl(e.target.value)}
+          />
+          <textarea
+            className="admin-search"
+            style={{ width: '100%', minHeight: 90, marginTop: 10, resize: 'vertical', fontFamily: 'inherit', lineHeight: 1.5 }}
+            placeholder="Closing copy — shown above the “Explore program and enroll” button"
+            value={emailClosing}
+            onChange={(e) => setEmailClosing(e.target.value)}
+          />
           <div className="admin-toolbar" style={{ marginTop: 10 }}>
             <button className="admin-btn" onClick={previewEmail} disabled={busy === 'email'}>
               {busy === 'email' ? 'Rendering…' : '👁 Preview email'}
             </button>
             <button
               className="admin-btn"
-              onClick={() => { setEmailHeading(DEFAULT_EMAIL_HEADING); setEmailMessage(DEFAULT_EMAIL_MESSAGE); }}
+              onClick={() => { setEmailHeading(DEFAULT_EMAIL_HEADING); setEmailMessage(DEFAULT_EMAIL_MESSAGE); setEmailClosing(DEFAULT_EMAIL_CLOSING); }}
             >
               ↺ Reset to default
             </button>

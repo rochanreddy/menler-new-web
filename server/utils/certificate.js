@@ -270,10 +270,19 @@ const esc = (s = '') =>
 // The default heading and body used when the admin doesn't customise them.
 // Exported so the admin panel can pre-fill the editable fields with the same
 // copy (single source of truth).
-export const DEFAULT_EMAIL_HEADING = 'Congratulations, {first_name}!';
-export const DEFAULT_EMAIL_MESSAGE =
-  "You've completed **{program}**. Your certificate of participation is attached to this email as a PDF.\n\n" +
-  'Share it on LinkedIn, add it to your CV, and keep building.';
+export const DEFAULT_EMAIL_HEADING = 'Hi {first_name},';
+export const DEFAULT_EMAIL_MESSAGE = [
+  "We're glad you made it to Menler Live Masterclass — **{program}**",
+  "Your certificate of participation is attached. It's yours to keep, share, and add to your LinkedIn profile.",
+  'Before you go, we have one small ask.',
+  'Tell us how the session was for you. Honestly. It takes just a minute, and every response helps us make the next session better.',
+].join('\n\n');
+
+// Copy shown between the feedback button and the programme button.
+export const DEFAULT_EMAIL_CLOSING = [
+  "If today's session sparked something for you, here's where to go next.",
+  'Menler Claude AI Generalist Fellowship is designed to take you from where you are today to where AI-native professionals are headed.',
+].join('\n\n');
 
 /** Fills {name} / {first_name} / {program} placeholders (single or double braces). */
 function fillPlaceholders(tmpl, { name, first, programName }) {
@@ -290,22 +299,38 @@ function fillPlaceholders(tmpl, { name, first, programName }) {
  * {program} placeholders, and `message` supports **bold** and blank-line
  * paragraph breaks.
  */
-export function buildCertificateEmail({ name, programName, certId, heading, message }) {
+export function buildCertificateEmail({
+  name, programName, certId, heading, message, closing, feedbackUrl,
+}) {
   const first = String(name || '').trim().split(/\s+/)[0] || 'there';
   const ctx = { name: String(name || '').trim() || 'there', first, programName };
 
   const headingText = fillPlaceholders(heading || DEFAULT_EMAIL_HEADING, ctx).trim();
   const messageText = fillPlaceholders(message || DEFAULT_EMAIL_MESSAGE, ctx).trim();
+  const closingText = fillPlaceholders(closing ?? DEFAULT_EMAIL_CLOSING, ctx).trim();
+  const feedback = String(feedbackUrl || '').trim();
 
-  // Split the message into paragraphs on blank lines; keep single newlines as breaks.
-  const paras = messageText.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
-  const plainMessage = messageText.replace(/\*\*(.+?)\*\*/g, '$1');
+  // Split on blank lines into paragraphs; single newlines stay as breaks.
+  const split = (s) => s.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+  const paras = split(messageText);
+  const closingParas = split(closingText);
+  const plain = (s) => s.replace(/\*\*(.+?)\*\*/g, '$1').replace(/\[(.+?)\]\((.+?)\)/g, '$1: $2');
+
+  // Escapes first, then applies the small markup set the admin panel documents:
+  // **bold**, [text](url) links, and single newlines as breaks.
+  const rich = (s) => esc(s)
+    .replace(/\n/g, '<br />')
+    .replace(/\*\*(.+?)\*\*/g, '<strong style="font-weight:700;">$1</strong>')
+    .replace(/\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g,
+      '<a href="$2" style="color:#534AB7; text-decoration:underline;">$1</a>');
 
   const text = `${headingText}
 
-${plainMessage}
+${plain(messageText)}
+${feedback ? `\n→ Share your feedback here: ${feedback}\n` : ''}
+${plain(closingText)}
 
-Explore our programs: https://menler.in/generalist
+→ Explore program and enroll: https://menler.in/generalist
 
 Looking forward, talk soon!
 
@@ -368,26 +393,36 @@ menler.in`;
 
         <!-- ── BODY ── -->
         <tr><td class="px" style="padding:40px 40px 0;">
-          <p style="margin:0 0 22px; font-size:22px; line-height:1.4; color:#1F2430; font-weight:700;">${esc(headingText)}</p>
-          ${paras.map((p) => `<p style="margin:0 0 22px; font-size:16px; line-height:1.8; color:#1F2430;">${esc(p).replace(/\n/g, '<br />').replace(/\*\*(.+?)\*\*/g, '<strong style="font-weight:700;">$1</strong>')}</p>`).join('\n          ')}
+          <p style="margin:0 0 22px; font-size:16px; line-height:1.8; color:#1F2430;">${esc(headingText)}</p>
+          ${paras.map((p) => `<p style="margin:0 0 22px; font-size:16px; line-height:1.8; color:#1F2430;">${rich(p)}</p>`).join('\n          ')}
         </td></tr>
+${feedback ? `
+        <!-- ── FEEDBACK CTA ── -->
+        <tr><td align="center" class="px" style="padding:8px 40px 6px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+            <td bgcolor="#534AB7" style="border-radius:6px;">
+              <a href="${esc(feedback)}" style="display:inline-block; padding:15px 42px; font-family:'DM Sans',Arial,sans-serif; font-size:15px; font-weight:700; color:#ffffff; text-decoration:none; border-radius:6px;">Share your feedback</a>
+            </td>
+          </tr></table>
+        </td></tr>` : ''}
+${closingParas.length ? `
+        <!-- ── CLOSING COPY ── -->
+        <tr><td class="px" style="padding:30px 40px 0;">
+          ${closingParas.map((p) => `<p style="margin:0 0 22px; font-size:16px; line-height:1.8; color:#1F2430;">${rich(p)}</p>`).join('\n          ')}
+        </td></tr>` : ''}
 
-        <!-- ── CTA ── -->
+        <!-- ── PROGRAMME CTA ── -->
         <tr><td align="center" class="px" style="padding:8px 40px 6px;">
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
             <td bgcolor="#211B4C" style="border-radius:6px;">
-              <a href="https://menler.in/generalist" style="display:inline-block; padding:15px 42px; font-family:'DM Sans',Arial,sans-serif; font-size:15px; font-weight:700; color:#ffffff; text-decoration:none; border-radius:6px;">Explore Programs</a>
+              <a href="https://menler.in/generalist" style="display:inline-block; padding:15px 42px; font-family:'DM Sans',Arial,sans-serif; font-size:15px; font-weight:700; color:#ffffff; text-decoration:none; border-radius:6px;">Explore program and enroll</a>
             </td>
           </tr></table>
         </td></tr>
 
         <!-- ── SIGN-OFF ── -->
         <tr><td class="px" style="padding:32px 40px 44px;">
-          <p style="margin:0; font-size:16px; line-height:1.8; color:#1F2430;">
-            While you're here, explore what's next at
-            <a href="https://menler.in/generalist" style="color:#534AB7; text-decoration:underline;">menler.in</a>.
-          </p>
-          <p style="margin:24px 0 0; font-size:16px; line-height:1.8; color:#1F2430;">Looking forward, talk soon!</p>
+          <p style="margin:0; font-size:16px; line-height:1.8; color:#1F2430;">Looking forward, talk soon!</p>
           <p style="margin:24px 0 0; font-size:16px; line-height:1.8; color:#1F2430;">
             <strong style="font-weight:700;">Menler</strong><br />
             Your turning point in the AI era
