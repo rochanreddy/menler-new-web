@@ -137,12 +137,15 @@ export async function buildCertificatePdf({
     page.drawImage(png, { x: logoX, y: logoMid - lh / 2, width: lw, height: lh });
 
     // Brand tagline, tucked under the wordmark and aligned to its glyph edge.
-    const tag = 'Your turning point in the AI era.';
-    draw(tag, {
+    // Sized from the brand ratio rather than by eye: the wordmark PNG is 358pt
+    // wide at a 96pt font, and .menler-wm__tagline is 0.22em of that — so the
+    // tagline stays correctly proportioned if the logo width ever changes.
+    const tagSize = lw * (96 / 358) * 0.22;
+    draw('Your turning point in the AI era.', {
       x: LEFT - SHIFT + 2,
-      y: logoMid - lh / 2 - 13,
+      y: logoMid - lh / 2 - 11,
       font: serifItalic,
-      size: 8.4,
+      size: tagSize,
       color: PURPLE,
     });
   }
