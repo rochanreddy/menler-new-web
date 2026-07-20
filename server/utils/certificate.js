@@ -435,7 +435,7 @@ ${closingParas.length ? `
 
             <td class="stack" width="56%" valign="top" style="width:56%;">
               <img src="https://menler.in/email-logo.png" width="128" alt="menler" style="width:128px; height:auto; display:block;" />
-              <div style="font-family:'DM Serif Display',Georgia,serif; font-style:italic; font-size:15px; color:#8E82F5; margin-top:14px; line-height:1.4;">
+              <div style="font-family:'DM Serif Display',Georgia,serif; font-style:italic; font-size:13px; color:#8E82F5; margin-top:7px; line-height:1.4;">
                 Your turning point in the AI Era.
               </div>
               <div style="font-size:13.5px; color:#B9B3E8; margin-top:11px; line-height:1.6; max-width:215px;">
