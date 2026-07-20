@@ -248,7 +248,7 @@ export async function buildCertificatePdf({
       thickness: 1, color: INK, opacity: 0.3,
     });
 
-    if (role) draw(role, { x: axis - rW / 2, y: 50, font: sans, size: rSize, color: MUTED });
+    if (role) draw(role, { x: axis - rW / 2, y: 60, font: sans, size: rSize, color: MUTED });
   };
   signature(mentorName, mentorRole, LEFT, 'left');
   signature(founderName, founderRole, RIGHT, 'right');
