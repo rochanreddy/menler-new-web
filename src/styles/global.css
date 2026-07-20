@@ -1786,6 +1786,14 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-banner-mc { font-family: 'DM Sans', sans-serif; font-weight: 800; font-size: 12px; letter-spacing: 0.06em; color: var(--ink); }
 .lp2-banner-credit { font-size: 12.5px; line-height: 1.45; color: var(--ink); }
 .lp2-banner-credit b { font-weight: 700; }
+/* Small credential marks under the mentor credit (per-campaign, see
+   CAMPAIGN_LOGOS). Sized individually so square marks and wordmarks read at
+   the same visual weight. */
+.lp2-banner-creds { display: flex; align-items: center; gap: 16px; margin-top: 10px; }
+.lp2-banner-creds img { display: block; width: auto; opacity: 0.92; }
+.lp2-banner-creds img[alt="Microsoft"]    { height: 18px; }
+.lp2-banner-creds img[alt="IIT Guwahati"] { height: 26px; }
+.lp2-banner-creds img[alt="ISB"]          { height: 19px; }
 .lp2-banner-free { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--a-dark); border: 1px solid var(--a); border-radius: 5px; padding: 2px 7px; margin-right: 8px; }
 .lp2-banner-photo { position: absolute; right: 0; bottom: 0; top: 0; width: 42%; z-index: 1; }
 .lp2-banner-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 22%); mask-image: linear-gradient(90deg, transparent 0%, #000 22%); }
@@ -1812,6 +1820,10 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .lp2-banner-tag { font-size: 10.5px; margin-top: 7px; }
   .lp2-banner-brand { margin-top: 8px; }
   .lp2-banner-credit { font-size: 9px; line-height: 1.35; }
+  .lp2-banner-creds { gap: 10px; margin-top: 7px; }
+  .lp2-banner-creds img[alt="Microsoft"]    { height: 13px; }
+  .lp2-banner-creds img[alt="IIT Guwahati"] { height: 18px; }
+  .lp2-banner-creds img[alt="ISB"]          { height: 13px; }
   .lp2-banner-photo { width: 44%; }
   .lp2-banner-strip { padding: 7px 12px; font-size: 9.5px; gap: 7px; }
   .lp2-banner-strip span:first-child::before { margin-right: 5px; }

@@ -318,6 +318,13 @@ export default function KickstarterLanding() {
               <div className="lp2-banner-brand">
                 {!contentLoading && <span className="lp2-banner-credit">By <b>{d.mentorName}</b> — {d.mentorRole}</span>}
               </div>
+              {!contentLoading && campaignLogos && (
+                <div className="lp2-banner-creds" aria-label={campaignLogos.map((l) => l.name).join(', ')}>
+                  {campaignLogos.map((l) => (
+                    <img key={l.name} src={l.logo} alt={l.name} decoding="async" />
+                  ))}
+                </div>
+              )}
             </div>
             <div className="lp2-banner-photo">
               {contentLoading
