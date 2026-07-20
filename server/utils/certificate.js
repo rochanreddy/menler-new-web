@@ -120,8 +120,11 @@ export async function buildCertificatePdf({
   frame(CARD + 21, 11.2, GOLD, 1.2, 0.3);
 
   /* ── Top row: wordmark + tagline (left) · verified seal (right) ─────────── */
+  // Both marks sit diagonally outward-and-up toward their corners: the wordmark
+  // up-left, the seal up-right. RISE/SHIFT tune that offset together.
   const ROW_MID = 484;
-  const EDGE_INSET = 10;                    // seal pulled in a touch from the frame
+  const RISE = 28;                          // how far up from the row centre
+  const SHIFT = 12;                         // how far out toward the corner
 
   if (fs.existsSync(LOGO)) {
     const png = await pdf.embedPng(fs.readFileSync(LOGO));
@@ -129,14 +132,14 @@ export async function buildCertificatePdf({
     const lh = (png.height / png.width) * lw;
     // The PNG carries transparent padding (18/14px at 96px) — offset so the
     // glyphs, not the padding, align to the content edge.
-    const logoX = LEFT - 4 - lw * (18 / 358);
-    const logoMid = ROW_MID + 14;           // sits diagonally up-left of centre
+    const logoX = LEFT - SHIFT - lw * (18 / 358);
+    const logoMid = ROW_MID + RISE;
     page.drawImage(png, { x: logoX, y: logoMid - lh / 2, width: lw, height: lh });
 
     // Brand tagline, tucked under the wordmark and aligned to its glyph edge.
     const tag = 'Your turning point in the AI era.';
     draw(tag, {
-      x: LEFT - 2,
+      x: LEFT - SHIFT + 2,
       y: logoMid - lh / 2 - 13,
       font: serifItalic,
       size: 11.5,
@@ -145,8 +148,8 @@ export async function buildCertificatePdf({
   }
 
   const R = 43.5;                           // 66px seal
-  const cx = RIGHT - EDGE_INSET - R;
-  const cy = ROW_MID;
+  const cx = RIGHT + SHIFT - R;
+  const cy = ROW_MID + RISE;
   // linear-gradient(155deg, #F6C457, #BA7517) + top highlight, approximated by
   // concentric circles drifting toward the light source.
   page.drawCircle({ x: cx, y: cy, size: R, color: GOLD });
