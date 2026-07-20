@@ -1740,12 +1740,19 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-logochip img[alt="Zendesk"]     { height: 48px; }
 .lp2-logochip img[alt="Nutanix"]     { height: 48px; }
 .lp2-logochip img[alt="LeadSquared"] { height: 88px; }
+/* Square marks sit a little shorter than wordmarks so they read the same size. */
+.lp2-logochip img[alt="Microsoft"]     { height: 40px; }
+.lp2-logochip img[alt="IIT Guwahati"]  { height: 64px; }
+.lp2-logochip img[alt="ISB"]           { height: 42px; }
 @media (max-width: 560px) {
   .lp2-logostrip { gap: 8px; padding: 10px; border-radius: 14px; }
   .lp2-logochip { padding: 10px 6px; border-radius: 10px; }
   .lp2-logochip img[alt="Zendesk"]     { height: 38px; }
   .lp2-logochip img[alt="Nutanix"]     { height: 38px; }
   .lp2-logochip img[alt="LeadSquared"] { height: 68px; }
+  .lp2-logochip img[alt="Microsoft"]     { height: 30px; }
+  .lp2-logochip img[alt="IIT Guwahati"]  { height: 48px; }
+  .lp2-logochip img[alt="ISB"]           { height: 32px; }
 }
 
 .lp2-trustbar { margin-top: 16px; display: flex; align-items: center; background: #0d1430; border: 1px solid rgba(255,255,255,0.14); border-radius: 18px; padding: 22px 8px; }

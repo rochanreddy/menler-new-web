@@ -129,6 +129,12 @@ const CAMPAIGN_LOGOS = {
     { name: 'Nutanix', logo: '/logos/nutanix.png' },
     { name: 'LeadSquared', logo: '/logos/lead_squared_new.png' },
   ],
+  // Sridevi Edupuganti's credentials: Ex-Microsoft · IIT-G · ISB
+  'build-your-portfolio-with-claude': [
+    { name: 'Microsoft', logo: '/logos/microsoft.png' },
+    { name: 'IIT Guwahati', logo: '/logos/iitg.png' },
+    { name: 'ISB', logo: '/logos/isb.png' },
+  ],
 };
 
 // Auto-fit the big banner title: shrink the font until each highlighted line
@@ -497,7 +503,7 @@ export default function KickstarterLanding() {
           </div>
 
           {campaignLogos && (
-            <div className="lp2-logostrip" aria-label="Trusted by teams at Zendesk, Nutanix and LeadSquared">
+            <div className="lp2-logostrip" aria-label={campaignLogos.map((l) => l.name).join(', ')}>
               {campaignLogos.map((l) => (
                 <span className="lp2-logochip" key={l.name}><img src={l.logo} alt={l.name} loading="lazy" /></span>
               ))}
