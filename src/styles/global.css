@@ -2204,7 +2204,10 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .lp2-stickybar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px; background: var(--ink); color: #fff; text-decoration: none; box-shadow: 0 -8px 24px rgba(0,0,0,0.18); }
   .lp2-stickybar span { font-size: 13px; }
   .lp2-stickybar b { color: #FFF6E1; }
-  .lp2-stickybar-btn { background: var(--a); padding: 9px 18px; border-radius: 9px; font-weight: 600; font-size: 13.5px; }
+  /* The border keeps the button readable even when a campaign's accent is
+     close to (or identical to) the bar colour, which would otherwise render
+     it invisible. */
+  .lp2-stickybar-btn { background: var(--a); border: 1px solid rgba(255,255,255,0.45); box-shadow: 0 1px 0 rgba(0,0,0,0.15); padding: 9px 18px; border-radius: 9px; font-weight: 700; font-size: 13.5px; }
   .lp2-foot { padding-bottom: 76px; }
 }
 
