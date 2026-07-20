@@ -15,7 +15,6 @@ import reportRoutes from './routes/reports.js';
 import adminRoutes from './routes/admin.js';
 import shortRoutes from './routes/short.js';
 import paymentRoutes from './routes/payments.js';
-import certificateRoutes from './routes/certificates.js';
 
 const app = express();
 const port = Number(process.env.PORT || 4000);
@@ -62,7 +61,6 @@ app.use('/admin', adminRoutes);
 app.use('/MNLRAI', shortRoutes);
 app.use('/l', shortRoutes); // legacy prefix — keeps older short links working
 app.use('/payments', paymentRoutes);
-app.use('/certificates', certificateRoutes); // public per-certificate download links
 
 async function start() {
   try {

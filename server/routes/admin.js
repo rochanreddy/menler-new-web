@@ -6,7 +6,6 @@ import { User } from '../models/User.js';
 import { Profile } from '../models/Profile.js';
 import { CampaignSetting } from '../models/CampaignSetting.js';
 import { ShortLink } from '../models/ShortLink.js';
-import { Certificate } from '../models/Certificate.js';
 import { requireAdmin } from '../middleware/adminAuth.js';
 import { buildCertificatePdf, buildCertificateEmail } from '../utils/certificate.js';
 import { sendMail, isMailConfigured, verifyMailer } from '../utils/email.js';
@@ -573,14 +572,12 @@ router.post('/certificates/preview', requireAdmin, async (req, res) => {
 // can be checked before sending.
 router.post('/certificates/email-preview', requireAdmin, (req, res) => {
   const { name, programName, emailHeading, emailMessage } = req.body || {};
-  const apiBase = (process.env.PUBLIC_API_URL || `${req.protocol}://${req.get('host')}`).replace(/\/+$/, '');
   const { html } = buildCertificateEmail({
     name: String(name || '').trim() || 'Your Name',
     programName: String(programName || '').trim() || 'the program',
     certId: 'MNLR-PREVIEW',
     heading: String(emailHeading || '').trim() || undefined,
     message: String(emailMessage || '').trim() || undefined,
-    downloadUrl: `${apiBase}/certificates/MNLR-PREVIEW`,
   });
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.send(html);
@@ -613,8 +610,6 @@ router.post('/certificates/send', requireAdmin, async (req, res) => {
 
     const program = String(programName).trim();
     const signs = signatories(req.body);
-    // Public download links point back at this API host.
-    const apiBase = (process.env.PUBLIC_API_URL || `${req.protocol}://${req.get('host')}`).replace(/\/+$/, '');
     const results = [];
 
     for (const raw of recipients) {
@@ -632,21 +627,12 @@ router.post('/certificates/send', requireAdmin, async (req, res) => {
           programName: program,
           ...signs,
         });
-        // Persist the inputs so the emailed link can regenerate this exact
-        // certificate later. Saved before sending, so the link never 404s.
-        await Certificate.findOneAndUpdate(
-          { certId },
-          { certId, name, email, programName: program, ...signs },
-          { upsert: true, new: true, setDefaultsOnInsert: true },
-        );
-
         const { text, html } = buildCertificateEmail({
           name,
           programName: program,
           certId,
           heading: String(emailHeading || '').trim() || undefined,
           message: String(emailMessage || '').trim() || undefined,
-          downloadUrl: `${apiBase}/certificates/${certId}`,
         });
 
         await sendMail({

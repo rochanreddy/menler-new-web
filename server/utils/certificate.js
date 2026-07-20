@@ -265,7 +265,7 @@ const esc = (s = '') =>
 // copy (single source of truth).
 export const DEFAULT_EMAIL_HEADING = 'Congratulations, {first_name}!';
 export const DEFAULT_EMAIL_MESSAGE =
-  "You've completed **{program}**. Your certificate of participation is ready — download it below.\n\n" +
+  "You've completed **{program}**. Your certificate of participation is attached to this email as a PDF.\n\n" +
   'Share it on LinkedIn, add it to your CV, and keep building.';
 
 /** Fills {name} / {first_name} / {program} placeholders (single or double braces). */
@@ -283,7 +283,7 @@ function fillPlaceholders(tmpl, { name, first, programName }) {
  * {program} placeholders, and `message` supports **bold** and blank-line
  * paragraph breaks.
  */
-export function buildCertificateEmail({ name, programName, certId, heading, message, downloadUrl }) {
+export function buildCertificateEmail({ name, programName, certId, heading, message }) {
   const first = String(name || '').trim().split(/\s+/)[0] || 'there';
   const ctx = { name: String(name || '').trim() || 'there', first, programName };
 
@@ -297,7 +297,9 @@ export function buildCertificateEmail({ name, programName, certId, heading, mess
   const text = `${headingText}
 
 ${plainMessage}
-${downloadUrl ? `\nDownload your certificate: ${downloadUrl}\n` : ''}
+
+Explore our programs: https://menler.in/generalist
+
 Looking forward, talk soon!
 
 Menler
@@ -362,16 +364,15 @@ menler.in`;
           <p style="margin:0 0 22px; font-size:22px; line-height:1.4; color:#1F2430; font-weight:700;">${esc(headingText)}</p>
           ${paras.map((p) => `<p style="margin:0 0 22px; font-size:16px; line-height:1.8; color:#1F2430;">${esc(p).replace(/\n/g, '<br />').replace(/\*\*(.+?)\*\*/g, '<strong style="font-weight:700;">$1</strong>')}</p>`).join('\n          ')}
         </td></tr>
-${downloadUrl ? `
-        <!-- ── DOWNLOAD BUTTON ── -->
+
+        <!-- ── CTA ── -->
         <tr><td align="center" class="px" style="padding:8px 40px 6px;">
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
             <td bgcolor="#211B4C" style="border-radius:6px;">
-              <a href="${esc(downloadUrl)}" style="display:inline-block; padding:15px 42px; font-family:'DM Sans',Arial,sans-serif; font-size:15px; font-weight:700; color:#ffffff; text-decoration:none; border-radius:6px;">Download Certificate</a>
+              <a href="https://menler.in/generalist" style="display:inline-block; padding:15px 42px; font-family:'DM Sans',Arial,sans-serif; font-size:15px; font-weight:700; color:#ffffff; text-decoration:none; border-radius:6px;">Explore Programs</a>
             </td>
           </tr></table>
-          <p style="margin:14px 0 0; font-size:13.5px; line-height:1.6; color:#6B7185;">It's also attached to this email as a PDF.</p>
-        </td></tr>` : ''}
+        </td></tr>
 
         <!-- ── SIGN-OFF ── -->
         <tr><td class="px" style="padding:32px 40px 44px;">
