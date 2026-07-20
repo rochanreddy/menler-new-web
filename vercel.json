@@ -1,6 +1,17 @@
 {
   "rewrites": [
     { "source": "/brochure-download", "destination": "/pdfs/Menler_Claude_Gen_brochure.pdf" },
+    { "source": "/downloads/kickstarter-brochure", "destination": "/pdfs/1_updated_Menler AI Kickstarter Brochure_2026.pdf" },
+    { "source": "/downloads/kickstarter-curriculum", "destination": "/pdfs/Menler_AI_Kickstarter_Curriculum.pdf" },
+    { "source": "/downloads/claude-code-playbook", "destination": "/pdfs/Menler_Claude_Code_Playbook.pdf" },
+    { "source": "/downloads/claude-chat-playbook", "destination": "/pdfs/Menler_Claude_Chat_Playbook.pdf" },
+    { "source": "/downloads/claude-cowork-playbook", "destination": "/pdfs/Menler_Claude_Cowork_Playbook.pdf" },
+    { "source": "/downloads/claude-design-playbook", "destination": "/pdfs/Menler_Claude_Design_Playbook.pdf" },
+    { "source": "/downloads/claude-microsoft-playbook", "destination": "/pdfs/Menler_Claude_Microsoft_Playbook.pdf" },
+    { "source": "/downloads/prompt-library", "destination": "/pdfs/Menler_100_Prompts_Playbook.pdf" },
+    { "source": "/downloads/ai-stack-map", "destination": "/pdfs/Menler_AI_Stack_Map.pdf" },
+    { "source": "/downloads/project-connectors", "destination": "/pdfs/Menler_Connector_Projects.pdf" },
+    { "source": "/downloads/ai-glossary", "destination": "/pdfs/Menler_AI_Glossary_AtoZ.pdf" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
@@ -8,6 +19,94 @@
       "source": "/brochure-download",
       "headers": [
         { "key": "Content-Disposition", "value": "attachment; filename=\"Menler-Claude-AI-Generalist-Brochure.pdf\"" },
+        { "key": "Content-Type", "value": "application/pdf" },
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    },
+    {
+      "source": "/downloads/kickstarter-brochure",
+      "headers": [
+        { "key": "Content-Disposition", "value": "attachment; filename=\"Menler-AI-Kickstarter-Brochure.pdf\"" },
+        { "key": "Content-Type", "value": "application/pdf" },
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    },
+    {
+      "source": "/downloads/kickstarter-curriculum",
+      "headers": [
+        { "key": "Content-Disposition", "value": "attachment; filename=\"Menler-AI-Kickstarter-Curriculum.pdf\"" },
+        { "key": "Content-Type", "value": "application/pdf" },
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    },
+    {
+      "source": "/downloads/claude-code-playbook",
+      "headers": [
+        { "key": "Content-Disposition", "value": "attachment; filename=\"Menler-Claude-Code-Playbook.pdf\"" },
+        { "key": "Content-Type", "value": "application/pdf" },
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    },
+    {
+      "source": "/downloads/claude-chat-playbook",
+      "headers": [
+        { "key": "Content-Disposition", "value": "attachment; filename=\"Menler-Claude-Chat-Playbook.pdf\"" },
+        { "key": "Content-Type", "value": "application/pdf" },
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    },
+    {
+      "source": "/downloads/claude-cowork-playbook",
+      "headers": [
+        { "key": "Content-Disposition", "value": "attachment; filename=\"Menler-Claude-Cowork-Playbook.pdf\"" },
+        { "key": "Content-Type", "value": "application/pdf" },
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    },
+    {
+      "source": "/downloads/claude-design-playbook",
+      "headers": [
+        { "key": "Content-Disposition", "value": "attachment; filename=\"Menler-Claude-Design-Playbook.pdf\"" },
+        { "key": "Content-Type", "value": "application/pdf" },
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    },
+    {
+      "source": "/downloads/claude-microsoft-playbook",
+      "headers": [
+        { "key": "Content-Disposition", "value": "attachment; filename=\"Menler-Claude-Microsoft-365-Playbook.pdf\"" },
+        { "key": "Content-Type", "value": "application/pdf" },
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    },
+    {
+      "source": "/downloads/prompt-library",
+      "headers": [
+        { "key": "Content-Disposition", "value": "attachment; filename=\"Menler-100-Prompts-Playbook.pdf\"" },
+        { "key": "Content-Type", "value": "application/pdf" },
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    },
+    {
+      "source": "/downloads/ai-stack-map",
+      "headers": [
+        { "key": "Content-Disposition", "value": "attachment; filename=\"Menler-AI-Stack-Map.pdf\"" },
+        { "key": "Content-Type", "value": "application/pdf" },
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    },
+    {
+      "source": "/downloads/project-connectors",
+      "headers": [
+        { "key": "Content-Disposition", "value": "attachment; filename=\"Menler-Project-Connectors.pdf\"" },
+        { "key": "Content-Type", "value": "application/pdf" },
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    },
+    {
+      "source": "/downloads/ai-glossary",
+      "headers": [
+        { "key": "Content-Disposition", "value": "attachment; filename=\"Menler-AI-Glossary-A-to-Z.pdf\"" },
         { "key": "Content-Type", "value": "application/pdf" },
         { "key": "Cache-Control", "value": "public, max-age=86400" }
       ]
