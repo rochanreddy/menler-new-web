@@ -142,7 +142,7 @@ export async function buildCertificatePdf({
       x: LEFT - SHIFT + 2,
       y: logoMid - lh / 2 - 13,
       font: serifItalic,
-      size: 10.2,
+      size: 9,
       color: PURPLE,
     });
   }
