@@ -949,7 +949,7 @@ function CertificatesTab() {
       await adminApi.previewCertificateEmail({
         name: valid[0]?.name || 'Aarav Sharma',
         programName: programName.trim(),
-        emailHeading, emailMessage,
+        emailHeading, emailMessage, emailClosing, feedbackUrl,
       });
     } catch (err) {
       setError(err.message || 'Could not preview the email.');
@@ -985,7 +985,7 @@ function CertificatesTab() {
           programName: programName.trim(),
           mentorName, mentorRole, founderName, founderRole,
           subject: subject.trim(),
-          emailHeading, emailMessage,
+          emailHeading, emailMessage, emailClosing, feedbackUrl,
         });
         done.push(...(r.results || []));
         setResults(tally(done));
