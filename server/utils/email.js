@@ -1,3 +1,4 @@
+import fs from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import nodemailer from 'nodemailer';
 import { JWT } from 'google-auth-library';
@@ -58,11 +59,20 @@ async function resendFetch(path, init = {}) {
   }
 }
 
+// Resends the attachment as base64. Nodemailer accepts either an inline
+// `content` (Buffer/string) or a `path` to a file on disk; the resource/
+// brochure emails use `path`, so read that into a Buffer here — otherwise the
+// Resend HTTP API (which only takes inline content) gets nothing and throws.
+async function toResendAttachment(a) {
+  let buf;
+  if (a.content != null) buf = Buffer.isBuffer(a.content) ? a.content : Buffer.from(a.content);
+  else if (a.path) buf = await fs.readFile(a.path);
+  else return null;
+  return { filename: a.filename, content: buf.toString('base64') };
+}
+
 async function resendSend(message) {
-  const attachments = (message.attachments || []).map((a) => ({
-    filename: a.filename,
-    content: Buffer.isBuffer(a.content) ? a.content.toString('base64') : Buffer.from(a.content).toString('base64'),
-  }));
+  const attachments = (await Promise.all((message.attachments || []).map(toResendAttachment))).filter(Boolean);
   const res = await resendFetch('/emails', {
     method: 'POST',
     body: JSON.stringify({
