@@ -123,6 +123,14 @@ const optImg = (url, w) => (url && url.includes('cdn.sanity.io') ? `${url}${url.
 
 // Company logos shown under the registration form, per campaign (loaded by
 // domain via BrandLogo — no local asset needed).
+// Sridevi Edupuganti's credentials: Ex-Microsoft · IIT-G · ISB. Shown both in
+// the banner (small, under the mentor credit) and in the strip under the form.
+const SRIDEVI_CREDS = [
+  { name: 'Microsoft', logo: '/logos/microsoft.png' },
+  { name: 'IIT Guwahati', logo: '/logos/iitg.png' },
+  { name: 'ISB', logo: '/logos/isb.png' },
+];
+
 // Logos shown in the strip UNDER the registration form (see .lp2-logostrip).
 const CAMPAIGN_LOGOS = {
   'turn-messy-data-into-clear-decisions-with-claude': [
@@ -130,18 +138,14 @@ const CAMPAIGN_LOGOS = {
     { name: 'Nutanix', logo: '/logos/nutanix.png' },
     { name: 'LeadSquared', logo: '/logos/lead_squared_new.png' },
   ],
+  'build-your-portfolio-with-claude': SRIDEVI_CREDS,
 };
 
-// Small credential marks shown IN THE BANNER under the mentor credit. Kept
-// separate from CAMPAIGN_LOGOS so a campaign shows its logos in exactly one
-// place, and each set is sized for its own placement.
+// Small credential marks shown IN THE BANNER under the mentor credit. Sized
+// separately (see .lp2-banner-creds) from the form strip, which is why this
+// is its own map — turn-messy shows its logos only under the form, not here.
 const BANNER_CRED_LOGOS = {
-  // Sridevi Edupuganti's credentials: Ex-Microsoft · IIT-G · ISB
-  'build-your-portfolio-with-claude': [
-    { name: 'Microsoft', logo: '/logos/microsoft.png' },
-    { name: 'IIT Guwahati', logo: '/logos/iitg.png' },
-    { name: 'ISB', logo: '/logos/isb.png' },
-  ],
+  'build-your-portfolio-with-claude': SRIDEVI_CREDS,
 };
 
 // Auto-fit the big banner title: shrink the font until each highlighted line
