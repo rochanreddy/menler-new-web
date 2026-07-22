@@ -123,12 +123,19 @@ const optImg = (url, w) => (url && url.includes('cdn.sanity.io') ? `${url}${url.
 
 // Company logos shown under the registration form, per campaign (loaded by
 // domain via BrandLogo — no local asset needed).
+// Logos shown in the strip UNDER the registration form (see .lp2-logostrip).
 const CAMPAIGN_LOGOS = {
   'turn-messy-data-into-clear-decisions-with-claude': [
     { name: 'Zendesk', logo: '/logos/Zendesk.png' },
     { name: 'Nutanix', logo: '/logos/nutanix.png' },
     { name: 'LeadSquared', logo: '/logos/lead_squared_new.png' },
   ],
+};
+
+// Small credential marks shown IN THE BANNER under the mentor credit. Kept
+// separate from CAMPAIGN_LOGOS so a campaign shows its logos in exactly one
+// place, and each set is sized for its own placement.
+const BANNER_CRED_LOGOS = {
   // Sridevi Edupuganti's credentials: Ex-Microsoft · IIT-G · ISB
   'build-your-portfolio-with-claude': [
     { name: 'Microsoft', logo: '/logos/microsoft.png' },
@@ -227,6 +234,7 @@ export default function KickstarterLanding() {
   // Auto-shrink the title so each line fits its box (below the Sanity cap).
   const titleRef = useAutoFitTitle([d.bannerLine1, d.bannerLine2, d.bannerTitleSize, showClaudeLogo, contentLoading]);
   const campaignLogos = CAMPAIGN_LOGOS[activeSlug];
+  const bannerCredLogos = BANNER_CRED_LOGOS[activeSlug];
 
   // Validate → verify the phone via WhatsApp OTP (Amplifeed/MSG91 shows its own
   // code-entry UI) → submit the lead → go straight to checkout.
@@ -318,9 +326,9 @@ export default function KickstarterLanding() {
               <div className="lp2-banner-brand">
                 {!contentLoading && <span className="lp2-banner-credit">By <b>{d.mentorName}</b> — {d.mentorRole}</span>}
               </div>
-              {!contentLoading && campaignLogos && (
-                <div className="lp2-banner-creds" aria-label={campaignLogos.map((l) => l.name).join(', ')}>
-                  {campaignLogos.map((l) => (
+              {!contentLoading && bannerCredLogos && (
+                <div className="lp2-banner-creds" aria-label={bannerCredLogos.map((l) => l.name).join(', ')}>
+                  {bannerCredLogos.map((l) => (
                     <img key={l.name} src={l.logo} alt={l.name} decoding="async" />
                   ))}
                 </div>
