@@ -139,6 +139,14 @@ const CAMPAIGN_LOGOS = {
     { name: 'LeadSquared', logo: '/logos/lead_squared_new.png' },
   ],
   'build-your-portfolio-with-claude': SRIDEVI_CREDS,
+  // The three brands this campaign's mentor operates growth for. Colour marks,
+  // so they need the white chip background (not the navy trust bar, which is
+  // for white/monochrome wordmarks only).
+  'turn-ai-into-your-career-advantage': [
+    { name: 'Alkemmy', logo: '/logos/alkemmy.png' },
+    { name: 'Brand For You', logo: '/logos/brand_for_you.png' },
+    { name: 'AstroNext', logo: '/logos/AstroNext.png' },
+  ],
 };
 
 // Small credential marks shown IN THE BANNER under the mentor credit. Sized
@@ -147,6 +155,18 @@ const CAMPAIGN_LOGOS = {
 const BANNER_CRED_LOGOS = {
   'build-your-portfolio-with-claude': SRIDEVI_CREDS,
 };
+
+// One chip in the strip under the form. If the logo file is missing the chip
+// removes itself rather than leaving a broken-image icon on a live campaign.
+function LogoChip({ name, logo }) {
+  const [failed, setFailed] = useState(false);
+  if (failed) return null;
+  return (
+    <span className="lp2-logochip">
+      <img src={logo} alt={name} loading="lazy" onError={() => setFailed(true)} />
+    </span>
+  );
+}
 
 // Auto-fit the big banner title: shrink the font until each highlighted line
 // fits on a single line within its box. The CSS size (incl. any Sanity cap)
@@ -524,7 +544,7 @@ export default function KickstarterLanding() {
           {campaignLogos && (
             <div className="lp2-logostrip" aria-label={campaignLogos.map((l) => l.name).join(', ')}>
               {campaignLogos.map((l) => (
-                <span className="lp2-logochip" key={l.name}><img src={l.logo} alt={l.name} loading="lazy" /></span>
+                <LogoChip key={l.name} name={l.name} logo={l.logo} />
               ))}
             </div>
           )}

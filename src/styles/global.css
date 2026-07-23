@@ -1744,6 +1744,12 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-logochip img[alt="Microsoft"]     { height: 40px; }
 .lp2-logochip img[alt="IIT Guwahati"]  { height: 64px; }
 .lp2-logochip img[alt="ISB"]           { height: 42px; }
+/* These three are solid-colour square tiles, not transparent wordmarks, so they
+   get rounded corners to sit on the white chip instead of reading as pasted-on
+   squares. All 200x200, so a single height keeps them visually even. */
+.lp2-logochip img[alt="Alkemmy"],
+.lp2-logochip img[alt="Brand For You"],
+.lp2-logochip img[alt="AstroNext"]     { height: 56px; border-radius: 10px; }
 @media (max-width: 560px) {
   .lp2-logostrip { gap: 8px; padding: 10px; border-radius: 14px; }
   .lp2-logochip { padding: 10px 6px; border-radius: 10px; }
@@ -1753,6 +1759,9 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .lp2-logochip img[alt="Microsoft"]     { height: 30px; }
   .lp2-logochip img[alt="IIT Guwahati"]  { height: 48px; }
   .lp2-logochip img[alt="ISB"]           { height: 32px; }
+  .lp2-logochip img[alt="Alkemmy"],
+  .lp2-logochip img[alt="Brand For You"],
+  .lp2-logochip img[alt="AstroNext"]     { height: 42px; border-radius: 8px; }
 }
 
 .lp2-trustbar { margin-top: 16px; display: flex; align-items: center; background: #0d1430; border: 1px solid rgba(255,255,255,0.14); border-radius: 18px; padding: 22px 8px; }
