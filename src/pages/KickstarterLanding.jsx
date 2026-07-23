@@ -105,6 +105,14 @@ const FALLBACK = {
   facebookUrl: '',
   whatsappText: 'Join our WhatsApp community for updates, resources & support.',
   communityText: 'Updates, resources & support across all our channels.',
+
+  // Section visibility (toggled per campaign in Sanity). Everything is on by
+  // default except the community block, which is opt-in.
+  showLearn: true,
+  showGet: true,
+  showCertificate: true,
+  showMentor: true,
+  showCommunity: false,
 };
 
 // Load the campaign matching the URL slug (defaults to 'ai-kickstarter').
@@ -115,7 +123,9 @@ const CAMPAIGN_QUERY = `*[_type == "campaignPage" && slug.current == $slug][0]{
   mentorName, mentorRole, "mentorPhoto": mentorPhoto.asset->url, mentorBio, mentorCreds,
   founderName, founderRole,
   learn[]{title, detail}, forYou, get[]{title, detail},
-  "certificateImage": certificateImage.asset->url, certificateTitle, certificateNote, whatsappUrl, discordUrl, facebookUrl, whatsappText, communityText
+  "certificateImage": certificateImage.asset->url, certificateTitle, certificateNote,
+  whatsappUrl, discordUrl, facebookUrl, whatsappText, communityText,
+  showLearn, showGet, showCertificate, showMentor, showCommunity
 }`;
 
 const has = (v) => v != null && v !== '' && !(Array.isArray(v) && v.length === 0);
@@ -317,6 +327,7 @@ export default function KickstarterLanding() {
           whatsappUrl: d.whatsappUrl,
           whatsappText: d.whatsappText,
           communityText: d.communityText,
+          showCommunity: d.showCommunity,
         },
       });
     } catch (e2) {
@@ -390,6 +401,7 @@ export default function KickstarterLanding() {
           <p className="lp2-subtitle" style={{ marginTop: 26 }}>{d.subtitle}</p>
 
           {/* What you'll learn */}
+          {d.showLearn && (
           <section className="lp2-block">
             <h2 className="lp2-h2">What you'll <em>learn &amp; build</em></h2>
             <div className="lp2-learn">
@@ -404,8 +416,10 @@ export default function KickstarterLanding() {
               ))}
             </div>
           </section>
+          )}
 
           {/* What you get */}
+          {d.showGet && (
           <section className="lp2-block">
             <h2 className="lp2-h2">What you <em>get</em></h2>
             <div className="lp2-get">
@@ -417,8 +431,10 @@ export default function KickstarterLanding() {
               ))}
             </div>
           </section>
+          )}
 
           {/* Sample certificate */}
+          {d.showCertificate && (
           <section className="lp2-block">
             <h2 className="lp2-h2">Sample <em>certificate</em></h2>
             <div className="lp2-cert">
@@ -455,8 +471,10 @@ export default function KickstarterLanding() {
               {d.certificateNote && <p className="lp2-cert-note">{d.certificateNote}</p>}
             </div>
           </section>
+          )}
 
           {/* About your mentor */}
+          {d.showMentor && (
           <section className="lp2-block">
             <h2 className="lp2-h2">About your <em>mentor</em></h2>
             <div className="lp2-mentor">
@@ -473,12 +491,15 @@ export default function KickstarterLanding() {
               </div>
             </div>
           </section>
+          )}
 
-          <MenlerCommunitySection
-            className="lp2-community-wrap"
-            whatsappUrl={d.whatsappUrl || MENLER_WHATSAPP_URL}
-            communityText={d.communityText}
-          />
+          {d.showCommunity && (
+            <MenlerCommunitySection
+              className="lp2-community-wrap"
+              whatsappUrl={d.whatsappUrl || MENLER_WHATSAPP_URL}
+              communityText={d.communityText}
+            />
+          )}
 
         </div>
 

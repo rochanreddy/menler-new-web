@@ -14,6 +14,7 @@ export default defineType({
     { name: 'schedule', title: 'Schedule & Price' },
     { name: 'mentor', title: 'Mentor' },
     { name: 'sections', title: 'Sections' },
+    { name: 'visibility', title: 'Show / hide sections' },
     { name: 'certificate', title: 'Certificate' },
   ],
   fields: [
@@ -104,6 +105,18 @@ export default defineType({
     // ── WhatsApp community ──
     defineField({ name: 'whatsappUrl', title: 'WhatsApp community invite link', type: 'url', group: 'sections', description: 'The WhatsApp group/community join link.' }),
     defineField({ name: 'whatsappText', title: 'WhatsApp bar text', type: 'string', group: 'sections' }),
+
+    // ── Section visibility ──
+    // Turn a whole block off for this campaign. Everything is on by default
+    // except the community block, which is opt-in.
+    defineField({ name: 'showLearn', title: "Show “What you'll learn & build”", type: 'boolean', group: 'visibility', initialValue: true }),
+    defineField({ name: 'showGet', title: 'Show “What you get”', type: 'boolean', group: 'visibility', initialValue: true }),
+    defineField({ name: 'showCertificate', title: 'Show “Sample certificate”', type: 'boolean', group: 'visibility', initialValue: true }),
+    defineField({ name: 'showMentor', title: 'Show “About your mentor”', type: 'boolean', group: 'visibility', initialValue: true }),
+    defineField({
+      name: 'showCommunity', title: 'Show community section', type: 'boolean', group: 'visibility', initialValue: false,
+      description: 'The “Join our Menler community” block — appears on the landing page and the checkout confirmation. Off by default.',
+    }),
   ],
   preview: { select: { title: 'title', subtitle: 'slug.current' } },
 });

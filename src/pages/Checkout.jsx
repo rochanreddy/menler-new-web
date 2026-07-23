@@ -119,11 +119,14 @@ export default function Checkout() {
             );
           })()}
 
-          <MenlerCommunitySection
-            className="menler-community--confirm"
-            whatsappUrl={reg.whatsappUrl || MENLER_WHATSAPP_URL}
-            communityText={reg.whatsappText || reg.communityText}
-          />
+          {/* Follows the campaign's "Show community section" toggle in Sanity. */}
+          {reg.showCommunity && (
+            <MenlerCommunitySection
+              className="menler-community--confirm"
+              whatsappUrl={reg.whatsappUrl || MENLER_WHATSAPP_URL}
+              communityText={reg.whatsappText || reg.communityText}
+            />
+          )}
 
           <button type="button" className="cox-confirm-back" onClick={() => navigate('/')}>Back to Home</button>
         </div>
