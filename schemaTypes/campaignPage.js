@@ -98,6 +98,7 @@ export default defineType({
     defineField({ name: 'certificateImage', title: 'Sample certificate image', type: 'image', options: { hotspot: true }, group: 'certificate', description: 'Upload a sample certificate. If empty, a default certificate mock-up is shown.' }),
     defineField({ name: 'founderName', title: 'Founder name (signature — bottom right)', type: 'string', group: 'certificate', description: 'Shown on the default mock-up. Leave blank to hide the founder signature.' }),
     defineField({ name: 'founderRole', title: 'Founder role / title', type: 'string', group: 'certificate', description: 'e.g. Founder, Menler' }),
+    defineField({ name: 'certificateTitle', title: 'Course name on the certificate', type: 'string', group: 'certificate', description: 'Shown after "for successfully completing". Leave blank to reuse the banner headline.' }),
     defineField({ name: 'certificateNote', title: 'Certificate caption', type: 'string', group: 'certificate' }),
 
     // ── WhatsApp community ──

@@ -96,6 +96,9 @@ const FALLBACK = {
   forYou: FORYOU,
   get: GET.map((g) => ({ title: g.t, detail: g.d })),
   certificateImage: '',
+  // Blank means "reuse the banner headline" — the certificate only needs its own
+  // wording when the course name differs from the campaign's marketing title.
+  certificateTitle: '',
   certificateNote: 'A Menler Certificate of Participation — shareable on LinkedIn.',
   whatsappUrl: MENLER_WHATSAPP_URL,
   discordUrl: '',
@@ -112,7 +115,7 @@ const CAMPAIGN_QUERY = `*[_type == "campaignPage" && slug.current == $slug][0]{
   mentorName, mentorRole, "mentorPhoto": mentorPhoto.asset->url, mentorBio, mentorCreds,
   founderName, founderRole,
   learn[]{title, detail}, forYou, get[]{title, detail},
-  "certificateImage": certificateImage.asset->url, certificateNote, whatsappUrl, discordUrl, facebookUrl, whatsappText, communityText
+  "certificateImage": certificateImage.asset->url, certificateTitle, certificateNote, whatsappUrl, discordUrl, facebookUrl, whatsappText, communityText
 }`;
 
 const has = (v) => v != null && v !== '' && !(Array.isArray(v) && v.length === 0);
@@ -154,6 +157,13 @@ const CAMPAIGN_LOGOS = {
 // is its own map — turn-messy shows its logos only under the form, not here.
 const BANNER_CRED_LOGOS = {
   'build-your-portfolio-with-claude': SRIDEVI_CREDS,
+};
+
+// Certificate wording per campaign, for when the certificate names the course
+// rather than the campaign's marketing headline. Sanity's `certificateTitle`
+// wins over this; both fall back to the banner headline.
+const CERT_TITLES = {
+  'turn-ai-into-your-career-advantage': 'AI Landscape & Foundation',
 };
 
 // One chip in the strip under the form. If the logo file is missing the chip
@@ -259,6 +269,7 @@ export default function KickstarterLanding() {
   const titleRef = useAutoFitTitle([d.bannerLine1, d.bannerLine2, d.bannerTitleSize, showClaudeLogo, contentLoading]);
   const campaignLogos = CAMPAIGN_LOGOS[activeSlug];
   const bannerCredLogos = BANNER_CRED_LOGOS[activeSlug];
+  const certTitle = has(d.certificateTitle) ? d.certificateTitle : (CERT_TITLES[activeSlug] || heading);
 
   // Validate → verify the phone via WhatsApp OTP (Amplifeed/MSG91 shows its own
   // code-entry UI) → submit the lead → go straight to checkout.
@@ -426,7 +437,7 @@ export default function KickstarterLanding() {
                   <p className="lp2-cert-mock-to">This is proudly presented to</p>
                   <p className="lp2-cert-mock-name">Your Name</p>
                   <span className="lp2-cert-rule" />
-                  <p className="lp2-cert-mock-for">for successfully completing<br /><b>{heading}</b></p>
+                  <p className="lp2-cert-mock-for">for successfully completing<br /><b>{certTitle}</b></p>
                   <div className="lp2-cert-foot">
                     <span className="lp2-cert-sign lp2-cert-sign--left">
                       <span className="lp2-cert-sign-name">{d.mentorName}</span>
