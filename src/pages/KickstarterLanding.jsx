@@ -230,7 +230,7 @@ const COUNTRY_CODES = [
 
 export default function KickstarterLanding() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: '', email: '', countryCode: '+91', phone: '', city: '', background: '', otp: '' });
+  const [form, setForm] = useState({ name: '', email: '', countryCode: '+91', phone: '', city: '', college: '', background: '', otp: '' });
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState(null);
   const [done, setDone] = useState(false);
@@ -278,6 +278,8 @@ export default function KickstarterLanding() {
   // Auto-shrink the title so each line fits its box (below the Sanity cap).
   const titleRef = useAutoFitTitle([d.bannerLine1, d.bannerLine2, d.bannerTitleSize, showClaudeLogo, contentLoading]);
   const campaignLogos = CAMPAIGN_LOGOS[activeSlug];
+  // Extra "College / University" field — only on the career-advantage campaign.
+  const showCollege = activeSlug === 'turn-ai-into-your-career-advantage';
   const bannerCredLogos = BANNER_CRED_LOGOS[activeSlug];
   const certTitle = has(d.certificateTitle) ? d.certificateTitle : (CERT_TITLES[activeSlug] || heading);
 
@@ -287,6 +289,10 @@ export default function KickstarterLanding() {
     e.preventDefault();
     if (!form.name.trim() || !form.email.trim() || !form.city.trim() || !form.background) {
       setErr('Please fill in all fields before verifying.');
+      return;
+    }
+    if (showCollege && !form.college.trim()) {
+      setErr('Please enter your college / university.');
       return;
     }
     if (form.phone.length < phoneMinLen) {
@@ -305,6 +311,7 @@ export default function KickstarterLanding() {
       const created = await submitLead({
         name: form.name, email: form.email, phone,
         city: form.city, background: form.background,
+        ...(showCollege ? { college: form.college.trim() } : {}),
         ...otp,
         source: 'campaign-workshop', campaign: activeSlug, workshop: heading,
         cta_label: `Register: ${heading}`, section: `Campaign · ${activeSlug}`,
@@ -549,6 +556,9 @@ export default function KickstarterLanding() {
                     />
                   </div>
                   <input className="lp2-input" type="text" required placeholder="City" value={form.city} onChange={(e) => set('city', e.target.value)} disabled={busy || otpBusy} />
+                  {showCollege && (
+                    <input className="lp2-input" type="text" required placeholder="College / University" value={form.college} onChange={(e) => set('college', e.target.value)} disabled={busy || otpBusy} />
+                  )}
                   <select
                     className="lp2-input"
                     required
