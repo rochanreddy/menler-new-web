@@ -46,6 +46,29 @@ export default defineType({
     }),
     defineField({ name: 'showClaudeLogo', title: 'Show Claude logo next to the title', type: 'boolean', group: 'banner', initialValue: false }),
     defineField({ name: 'showTrustBar', title: 'Show trust bar (McKinsey · MIT · UT Austin) under the form', type: 'boolean', group: 'banner', initialValue: false }),
+    defineField({
+      name: 'credLogos',
+      title: 'Credential logos (under registration form)',
+      type: 'array',
+      of: [{
+        type: 'object',
+        fields: [
+          { name: 'name', title: 'Name (alt text)', type: 'string', validation: (r) => r.required() },
+          { name: 'logoPath', title: 'Logo file path', type: 'string', description: 'Path under public/, e.g. /logos/microsoft.png', validation: (r) => r.required() },
+        ],
+        preview: { select: { title: 'name', subtitle: 'logoPath' } },
+      }],
+      group: 'banner',
+      description: 'Company / institution logos shown in the strip under the registration form — e.g. Microsoft, IIT-G, ISB.',
+    }),
+    defineField({
+      name: 'showCredLogosInBanner',
+      title: 'Also show credential logos in the banner',
+      type: 'boolean',
+      group: 'banner',
+      initialValue: false,
+      description: 'When on, the same credential logos also appear under the mentor credit in the hero banner.',
+    }),
     defineField({ name: 'bannerTagline', title: 'Tagline (under title)', type: 'string', group: 'banner' }),
     defineField({ name: 'subtitle', title: 'Intro paragraph (below banner)', type: 'text', rows: 3, group: 'banner' }),
 

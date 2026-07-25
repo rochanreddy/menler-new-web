@@ -90,6 +90,8 @@ const FALLBACK = {
   mentorPhoto: WORKSHOP.mentor.img,
   mentorBio: WORKSHOP.mentor.bio,
   mentorCreds: WORKSHOP.mentor.creds,
+  credLogos: [],
+  showCredLogosInBanner: false,
   founderName: 'Sachin Roy',
   founderRole: 'Founder, Menler',
   learn: LEARN.map((l) => ({ title: l.t, detail: l.d })),
@@ -121,6 +123,7 @@ const CAMPAIGN_QUERY = `*[_type == "campaignPage" && slug.current == $slug][0]{
   date, time, eventStart, eventEnd, format, price, origPrice, seatsNote,
   themeAccent, themeAccentDark, bannerFrom, bannerTo, highlightBg, highlightText,
   mentorName, mentorRole, "mentorPhoto": mentorPhoto.asset->url, mentorBio, mentorCreds,
+  credLogos[]{ name, logoPath }, showCredLogosInBanner,
   founderName, founderRole,
   learn[]{title, detail}, forYou, get[]{title, detail},
   "certificateImage": certificateImage.asset->url, certificateTitle, certificateNote,
@@ -277,10 +280,13 @@ export default function KickstarterLanding() {
 
   // Auto-shrink the title so each line fits its box (below the Sanity cap).
   const titleRef = useAutoFitTitle([d.bannerLine1, d.bannerLine2, d.bannerTitleSize, showClaudeLogo, contentLoading]);
-  const campaignLogos = CAMPAIGN_LOGOS[activeSlug];
+  const sanityLogos = has(d.credLogos)
+    ? d.credLogos.map((l) => ({ name: l.name, logo: l.logoPath }))
+    : null;
+  const campaignLogos = sanityLogos || CAMPAIGN_LOGOS[activeSlug];
   // Extra "College / University" field — only on the career-advantage campaign.
   const showCollege = activeSlug === 'turn-ai-into-your-career-advantage';
-  const bannerCredLogos = BANNER_CRED_LOGOS[activeSlug];
+  const bannerCredLogos = (d.showCredLogosInBanner && sanityLogos) || BANNER_CRED_LOGOS[activeSlug];
   const certTitle = has(d.certificateTitle) ? d.certificateTitle : (CERT_TITLES[activeSlug] || heading);
 
   // Validate → verify the phone via WhatsApp OTP (Amplifeed/MSG91 shows its own
