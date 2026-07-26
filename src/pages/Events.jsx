@@ -75,8 +75,11 @@ const EVENTS_QUERY = `*[_type == "campaignPage" && hideFromEvents != true] | ord
 /* ── Auto-generated card art (no image upload needed) ────────────────────── */
 function EventArt({ ev }) {
   const accent = ev.accent || '#534AB7';
+  // Uploaded thumbnails are full campaign banners (wide). Render them as a real
+  // <img> at natural aspect — full width, never cropped, responsive — rather
+  // than a fixed-ratio background that would crop the sides.
   if (ev.thumbnail) {
-    return <div className="ev-art" style={{ backgroundImage: `url("${optImg(ev.thumbnail, 720)}")` }} role="img" aria-label={ev.title} />;
+    return <img className="ev-art-img" src={optImg(ev.thumbnail, 1000)} alt={ev.title} loading="lazy" decoding="async" />;
   }
   return (
     <div className={`ev-art ev-art--gen${ev.mentorPhoto ? ' ev-art--face' : ''}`} style={{ '--ev-accent': accent }}>
@@ -155,7 +158,7 @@ export default function Events() {
           <h2 className="section-h2">Live <em>events</em></h2>
           <div className="ev-grid ev-grid--live">
             {live.map((ev) => (
-              <article className="ev-card ev-card--live" key={ev._id}>
+              <article className={`ev-card ev-card--live${ev.thumbnail ? ' ev-card--live-banner' : ''}`} key={ev._id}>
                 <EventArt ev={ev} />
                 <div className="ev-body">
                   <span className="ev-live-dot">● Live masterclass</span>

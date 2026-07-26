@@ -3576,3 +3576,11 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
   .ev-card--live .ev-body { width: 100%; padding: 20px 22px 22px; }
   .ev-card--live .ev-title { font-size: 21px; }
 }
+
+/* Uploaded banner images: real <img>, full width, natural aspect (never cropped) */
+.ev-art-img { display: block; width: 100%; height: auto; }
+/* A live card WITH an uploaded banner stacks (banner on top, details below) so
+   the wide banner shows in full instead of being cropped into a side panel. */
+.ev-card--live-banner { flex-direction: column; }
+.ev-card--live-banner .ev-art-img { width: 100%; }
+.ev-card--live-banner .ev-body { width: 100%; }
