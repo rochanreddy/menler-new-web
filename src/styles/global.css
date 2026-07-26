@@ -3558,3 +3558,21 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .ev-download { background: var(--cloud); color: var(--specialist); }
 .ev-download:hover { transform: translateY(-1px); background: #e2dffb; }
 @media (max-width: 380px) { .ev-foot { flex-direction: column; align-items: stretch; } .ev-join, .ev-download { text-align: center; } }
+
+/* ── Live events: full-width HORIZONTAL card (art left · details right) ── */
+.ev-grid--live { grid-template-columns: 1fr; max-width: 980px; }
+.ev-card--live { flex-direction: row; align-items: stretch; }
+.ev-card--live .ev-art { width: 46%; flex-shrink: 0; aspect-ratio: auto; align-self: stretch; }
+.ev-card--live .ev-art--gen { justify-content: center; padding: 30px 28px; }
+.ev-card--live .ev-art--gen .ev-art-title { max-width: 82%; }
+.ev-card--live .ev-art--face .ev-art-title { max-width: 62%; }
+.ev-card--live .ev-body { width: 54%; padding: 26px 30px 24px; justify-content: center; gap: 12px; }
+.ev-card--live .ev-title { font-size: 25px; }
+.ev-card--live .ev-sub { font-size: 15px; }
+@media (max-width: 720px) {
+  /* Stack back to vertical on small screens so nothing is squeezed. */
+  .ev-card--live { flex-direction: column; }
+  .ev-card--live .ev-art { width: 100%; aspect-ratio: 16 / 8.4; }
+  .ev-card--live .ev-body { width: 100%; padding: 20px 22px 22px; }
+  .ev-card--live .ev-title { font-size: 21px; }
+}

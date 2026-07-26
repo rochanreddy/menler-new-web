@@ -16,6 +16,7 @@ export default defineType({
     { name: 'sections', title: 'Sections' },
     { name: 'visibility', title: 'Show / hide sections' },
     { name: 'certificate', title: 'Certificate' },
+    { name: 'events', title: 'Events page' },
   ],
   fields: [
     // ── Setup: internal title + the page URL ──
@@ -124,6 +125,45 @@ export default defineType({
     defineField({ name: 'founderRole', title: 'Founder role / title', type: 'string', group: 'certificate', description: 'e.g. Founder, Menler' }),
     defineField({ name: 'certificateTitle', title: 'Course name on the certificate', type: 'string', group: 'certificate', description: 'Shown after "for successfully completing". Leave blank to reuse the banner headline.' }),
     defineField({ name: 'certificateNote', title: 'Certificate caption', type: 'string', group: 'certificate' }),
+
+    // ── Events page ──
+    // The /events page is built FROM these campaigns:
+    //   • PAST events  — every campaign appears here automatically.
+    //   • LIVE events  — only campaigns with "Show as a Live event" turned on.
+    // So you only ever manage the Live section; Past fills itself.
+    defineField({
+      name: 'isLiveEvent', title: 'Show as a Live event', type: 'boolean', group: 'events', initialValue: false,
+      description: 'On = shown in the LIVE events section (with a Join button). Off = it sits in Past events with everything else. Turn it off once the class is over.',
+    }),
+    defineField({
+      name: 'hideFromEvents', title: 'Hide from the Events page', type: 'boolean', group: 'events', initialValue: false,
+      description: 'Escape hatch: keep this campaign OUT of the Events page entirely (e.g. a test or internal campaign).',
+    }),
+    defineField({
+      name: 'eventImage', title: 'Event card image (optional)', type: 'image', options: { hotspot: true }, group: 'events',
+      description: 'Upload to override the auto-generated card art. Leave blank and the card is built automatically from the title, mentor photo and accent colour. Recommended ~1200×630.',
+    }),
+    defineField({
+      name: 'eventTags', title: 'Event card tags (pills)', type: 'array', of: [{ type: 'string' }], group: 'events',
+      options: { layout: 'tags' }, description: 'Optional. Small pills on the card, e.g. "Portfolio Projects".',
+    }),
+    defineField({ name: 'eventAttendees', title: 'Attendees (past events, e.g. "500+")', type: 'string', group: 'events' }),
+    defineField({
+      name: 'eventOrder', title: 'Order on the Events page', type: 'number', group: 'events', initialValue: 0,
+      description: 'Lower shows first within its section.',
+    }),
+    defineField({
+      name: 'eventResources', title: 'Downloadable resources (past events)', type: 'array', group: 'events',
+      description: 'PDFs offered via "Download resources". Add the PDF under /pdfs/ in the site, then reference its path.',
+      of: [{
+        type: 'object',
+        fields: [
+          { name: 'title', title: 'Title', type: 'string' },
+          { name: 'pdf', title: 'PDF path (e.g. /pdfs/Name.pdf)', type: 'string' },
+        ],
+        preview: { select: { title: 'title', subtitle: 'pdf' } },
+      }],
+    }),
 
     // ── WhatsApp community ──
     defineField({ name: 'whatsappUrl', title: 'WhatsApp community invite link', type: 'url', group: 'sections', description: 'The WhatsApp group/community join link.' }),

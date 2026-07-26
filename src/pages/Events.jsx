@@ -8,48 +8,68 @@ import { MENLER_WHATSAPP_URL } from '../data/communityLinks';
 
 // ── /events — Menler masterclasses & events ──────────────────────────────────
 // Ticket-style hero → Live events (Join) → Past events (Download resources).
-// Content is Sanity-driven ("Event / Masterclass" documents); the FALLBACK below
-// renders real events until Studio is populated, and whenever Sanity is empty.
+//
+// Events are the CAMPAIGN PAGES themselves:
+//   • PAST — every campaign shows here automatically (unless "Hide from Events").
+//   • LIVE — only campaigns with "Show as a Live event" turned on.
+// So a new campaign becomes a past event with no action; you only ever flip the
+// Live toggle. The card's title, date, mentor, accent and Join link all come
+// from the campaign itself.
 
 const optImg = (url, w) =>
   (url && url.includes('cdn.sanity.io') ? `${url}${url.includes('?') ? '&' : '?'}w=${w}&auto=format&q=72&fit=max` : url);
 
-// One place decides the Join target so the button and its logic never drift.
-const joinTarget = (ev) => ev.joinUrl || (ev.campaignSlug ? `/campaign/${ev.campaignSlug}` : '');
+// Map a raw campaign doc → the shape the cards render. One place, so the query,
+// the fallback and the cards never drift.
+const toEvent = (c) => ({
+  _id: c._id || c.slug,
+  status: c.isLiveEvent ? 'live' : 'past',
+  title: [c.bannerLine1, c.bannerLine2].filter(Boolean).join(' ') || c.title,
+  subtitle: c.bannerTagline || c.subtitle || '',
+  tags: c.eventTags || [],
+  date: c.date || '', time: c.time || '',
+  campaignSlug: c.slug || '',
+  accent: c.themeAccent || c.highlightBg || '#534AB7',
+  thumbnail: c.eventImage || '',
+  mentorName: c.mentorName || '', mentorRole: c.mentorRole || '', mentorPhoto: c.mentorPhoto || '',
+  attendees: c.eventAttendees || '',
+  resources: c.eventResources || [],
+});
 
-/* ── Fallback events (used until Sanity is populated) ─────────────────────── */
+// Join always goes to the campaign's own registration page.
+const joinTarget = (ev) => (ev.campaignSlug ? `/campaign/${ev.campaignSlug}` : '');
+
+/* ── Fallback (used until Sanity is populated) — shaped like campaign docs ── */
 const FALLBACK = [
   {
-    _id: 'f-live-1', status: 'live',
-    title: 'Build Your Portfolio with Claude',
-    subtitle: 'Build projects that recruiters actually notice — live, hands-on.',
-    tags: ['Portfolio Projects', 'Case Studies', 'Personal Brand'],
-    date: '25th Jul, 2026', time: '7:00 – 9:00 PM IST',
-    campaignSlug: 'build-your-portfolio-with-claude', joinUrl: '',
-    accent: '#2563EB',
+    _id: 'f-live-1', slug: 'build-your-portfolio-with-claude', isLiveEvent: true,
+    bannerLine1: 'Build Your', bannerLine2: 'Portfolio with Claude',
+    bannerTagline: 'Build projects that recruiters actually notice — live, hands-on.',
+    eventTags: ['Portfolio Projects', 'Case Studies', 'Personal Brand'],
+    date: '25th Jul, 2026', time: '7:00 – 9:00 PM IST', themeAccent: '#2563EB',
     mentorName: 'Sridevi Edupuganti', mentorRole: 'Co-Founder, Zenithworks AI', mentorPhoto: '/mentors/sridevi.png',
-    attendees: '', resources: [],
   },
   {
-    _id: 'f-past-1', status: 'past',
-    title: 'Turn Messy Data Into Clear Decisions',
-    subtitle: 'How analysts use Claude to turn raw data into decisions leaders trust.',
-    tags: ['Claude for Analysts'],
-    date: '19th Jul, 2026', time: '2:00 – 3:30 PM IST',
-    campaignSlug: 'turn-messy-data-into-clear-decisions-with-claude', joinUrl: '',
-    accent: '#1D9E75',
-    mentorName: 'Manish Yadav', mentorRole: 'AI Service Business Analyst', mentorPhoto: '',
-    attendees: '500+',
-    resources: [{ title: 'Prompt Library', pdf: '/pdfs/Menler_100_Prompts_Playbook.pdf' }],
+    _id: 'f-past-1', slug: 'turn-messy-data-into-clear-decisions-with-claude', // no isLiveEvent → Past
+    bannerLine1: 'Turn Messy Data', bannerLine2: 'Into Clear Decisions',
+    bannerTagline: 'How analysts use Claude to turn raw data into decisions leaders trust.',
+    eventTags: ['Claude for Analysts'],
+    date: '19th Jul, 2026', time: '2:00 – 3:30 PM IST', themeAccent: '#1D9E75',
+    mentorName: 'Manish Yadav', mentorRole: 'AI Service Business Analyst',
+    eventAttendees: '500+',
+    eventResources: [{ title: 'Prompt Library', pdf: '/pdfs/Menler_100_Prompts_Playbook.pdf' }],
   },
-];
+].map(toEvent);
 
-const EVENTS_QUERY = `*[_type == "event"] | order(sortOrder asc, _createdAt desc){
-  "_id": _id, status, title, subtitle, tags, date, time,
-  campaignSlug, joinUrl, accent,
-  "thumbnail": thumbnail.asset->url,
+// Every campaign (except explicitly hidden ones) — Past fills from all of them,
+// Live is the ones flagged isLiveEvent.
+const EVENTS_QUERY = `*[_type == "campaignPage" && hideFromEvents != true] | order(eventOrder asc, _createdAt desc){
+  "_id": _id, "slug": slug.current, title,
+  bannerLine1, bannerLine2, bannerTagline, subtitle,
+  date, time, themeAccent, highlightBg,
   mentorName, mentorRole, "mentorPhoto": mentorPhoto.asset->url,
-  attendees, resources[]{ title, pdf }
+  "eventImage": eventImage.asset->url,
+  isLiveEvent, eventTags, eventAttendees, eventResources[]{ title, pdf }
 }`;
 
 /* ── Auto-generated card art (no image upload needed) ────────────────────── */
@@ -86,11 +106,14 @@ function Host({ ev }) {
 
 export default function Events() {
   const navigate = useNavigate();
-  const { data: events } = useContentState(EVENTS_QUERY, FALLBACK);
+  const { data } = useContentState(EVENTS_QUERY, FALLBACK);
   const [resource, setResource] = useState(null); // PlaybookModal item
 
-  const live = (events || []).filter((e) => e.status !== 'past');
-  const past = (events || []).filter((e) => e.status === 'past');
+  // Sanity returns raw campaign docs; the fallback is already mapped. Normalise
+  // by running anything that still looks like a campaign doc through toEvent.
+  const events = (data || []).map((e) => (e && e.status ? e : toEvent(e)));
+  const live = events.filter((e) => e.status !== 'past');
+  const past = events.filter((e) => e.status === 'past');
 
   const join = (ev) => {
     const t = joinTarget(ev);
@@ -130,9 +153,9 @@ export default function Events() {
         <section className="section ev-section">
           <p className="section-label">Happening now</p>
           <h2 className="section-h2">Live <em>events</em></h2>
-          <div className="ev-grid">
+          <div className="ev-grid ev-grid--live">
             {live.map((ev) => (
-              <article className="ev-card" key={ev._id}>
+              <article className="ev-card ev-card--live" key={ev._id}>
                 <EventArt ev={ev} />
                 <div className="ev-body">
                   <span className="ev-live-dot">● Live masterclass</span>

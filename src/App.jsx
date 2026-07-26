@@ -98,11 +98,10 @@ export default function App() {
             <Route path="/join" element={<Join />} />
             <Route path="/resources" element={<Resources />} />
             <Route path="/community" element={<Community />} />
-            {/* Events page is dev-only until it's ready: import.meta.env.DEV is
-                true under `npm run dev`, false in the production build — so it's
-                reachable locally but 404s on the live site. Drop the guard (and
-                un-hide the nav links in Navbar.jsx) to launch it. */}
-            {import.meta.env.DEV && <Route path="/events" element={<Events />} />}
+            {/* Events page — live by direct URL (menler.in/events) but kept OUT
+                of the navbar for now: the nav links stay dev-gated in
+                Navbar.jsx, so they show locally but not on the public nav. */}
+            <Route path="/events" element={<Events />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/earnings-agent" element={<BlogArticle />} />
             <Route path="/about" element={<About />} />
