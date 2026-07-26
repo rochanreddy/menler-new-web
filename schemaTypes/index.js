@@ -14,6 +14,7 @@ import kickstarterPage from './kickstarterPage';
 import generalistPage from './generalistPage';
 import engineeringPage from './engineeringPage';
 import campaignPage from './campaignPage';
+import event from './event';
 
 // Objects must be registered before the documents that embed them.
 export const schemaTypes = [
@@ -21,4 +22,5 @@ export const schemaTypes = [
   curricWeek, curricDomain, curricPhase, kickDay, kickModule,
   mentor, project, playbook,
   homePage, kickstarterPage, generalistPage, engineeringPage, campaignPage,
+  event,
 ];

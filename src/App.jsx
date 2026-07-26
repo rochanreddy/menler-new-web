@@ -20,6 +20,7 @@ const Join = lazy(() => import('./pages/Join'));
 const Resources = lazy(() => import('./pages/Resources'));
 const Blog = lazy(() => import('./pages/Blog'));
 const Community = lazy(() => import('./pages/Community'));
+const Events = lazy(() => import('./pages/Events'));
 const BlogArticle = lazy(() => import('./pages/BlogArticle'));
 const About = lazy(() => import('./pages/About'));
 const Admin = lazy(() => import('./pages/Admin'));
@@ -97,6 +98,7 @@ export default function App() {
             <Route path="/join" element={<Join />} />
             <Route path="/resources" element={<Resources />} />
             <Route path="/community" element={<Community />} />
+            <Route path="/events" element={<Events />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/earnings-agent" element={<BlogArticle />} />
             <Route path="/about" element={<About />} />
