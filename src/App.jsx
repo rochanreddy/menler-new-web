@@ -20,6 +20,7 @@ const Join = lazy(() => import('./pages/Join'));
 const Resources = lazy(() => import('./pages/Resources'));
 const Blog = lazy(() => import('./pages/Blog'));
 const Community = lazy(() => import('./pages/Community'));
+const Events = lazy(() => import('./pages/Events'));
 const BlogArticle = lazy(() => import('./pages/BlogArticle'));
 const About = lazy(() => import('./pages/About'));
 const Admin = lazy(() => import('./pages/Admin'));
@@ -97,8 +98,11 @@ export default function App() {
             <Route path="/join" element={<Join />} />
             <Route path="/resources" element={<Resources />} />
             <Route path="/community" element={<Community />} />
-            {/* /events is built but hidden until it's ready — re-add the route
-                and the nav links (Navbar.jsx) to go live. */}
+            {/* Events page is dev-only until it's ready: import.meta.env.DEV is
+                true under `npm run dev`, false in the production build — so it's
+                reachable locally but 404s on the live site. Drop the guard (and
+                un-hide the nav links in Navbar.jsx) to launch it. */}
+            {import.meta.env.DEV && <Route path="/events" element={<Events />} />}
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/earnings-agent" element={<BlogArticle />} />
             <Route path="/about" element={<About />} />
