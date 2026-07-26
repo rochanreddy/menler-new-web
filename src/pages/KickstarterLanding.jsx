@@ -457,7 +457,7 @@ export default function KickstarterLanding() {
               ) : (
                 <div className="lp2-cert-mock">
                   <div className="lp2-cert-mock-top">
-                    <MenlerWordmark size={24} theme="light" />
+                    <MenlerWordmark size={28} theme="light" tagline />
                     <span className="lp2-cert-seal">
                       <span className="lp2-cert-seal-star">★</span>
                       <span className="lp2-cert-seal-txt">MENLER<br />VERIFIED</span>

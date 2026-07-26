@@ -9,21 +9,23 @@ const WM_CSS = `
   .menler-wm__ruled{ position:relative; }
   .menler-wm__ruled::after{ content:''; position:absolute; left:0; right:0; bottom:0.04em; height:0.0625em; min-height:2px; border-radius:3px; background:var(--menler-rule,#534AB7); }
   .menler-wm__dot{ position:absolute; top:0.06em; right:-0.1em; width:0.175em; height:0.175em; border-radius:50%; }
+  .menler-wm__tagline{ font-family:'DM Serif Display',serif; font-style:italic; font-weight:400; font-size:0.245em; margin-top:0.08em; line-height:1.25; color:var(--menler-tagline,#534AB7); }
 `;
 
-const page = (word, rule, dot) => `<!doctype html><html><head><meta charset="utf-8" />
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@900&display=swap" rel="stylesheet" />
+const page = ({ word, rule, dot, tagline, taglineColor }) => `<!doctype html><html><head><meta charset="utf-8" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@900&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
 <style>html,body{margin:0;padding:0;background:transparent;} #wrap{display:inline-block;padding:14px 18px;} ${WM_CSS}</style>
 </head><body><div id="wrap">
-  <span class="menler-wm" style="font-size:96px; color:${word}; --menler-rule:${rule};">
+  <span class="menler-wm" style="font-size:96px; color:${word}; --menler-rule:${rule}; --menler-tagline:${taglineColor || rule};">
     <span class="menler-wm__word"><span class="menler-wm__ruled">menle</span>r<span class="menler-wm__dot" style="background:${dot};"></span></span>
+    ${tagline ? `<span class="menler-wm__tagline">Your turning point in the AI era.</span>` : ''}
   </span>
 </div></body></html>`;
 
 const OUT = [
   // On the dark navy email header: parchment word, brand purple rule, green dot.
   { file: 'public/email-logo.png', word: '#FFFFFF', rule: '#8A7EE8', dot: '#1D9E75' },
-  // Light-background variant, for future use.
+  // Light-background wordmark — tagline is drawn separately in certificate PDFs.
   { file: 'public/email-logo-dark.png', word: '#26215C', rule: '#534AB7', dot: '#1D9E75' },
 ];
 
@@ -32,7 +34,7 @@ try {
   for (const o of OUT) {
     const p = await browser.newPage();
     await p.setViewport({ width: 900, height: 300, deviceScaleFactor: 3 });
-    await p.setContent(page(o.word, o.rule, o.dot), { waitUntil: 'networkidle0' });
+    await p.setContent(page(o), { waitUntil: 'networkidle0' });
     await p.evaluate(() => document.fonts.ready);
     await new Promise((r) => setTimeout(r, 400));
     const el = await p.$('#wrap');

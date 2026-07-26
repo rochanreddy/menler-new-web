@@ -1942,7 +1942,8 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-cert-mock::before { content: ''; position: absolute; inset: 11px; border: 1.5px solid var(--a); border-radius: 11px; pointer-events: none; }
 .lp2-cert-mock::after { content: ''; position: absolute; inset: 15px; border: 1px solid rgba(186,117,23,0.3); border-radius: 8px; pointer-events: none; }
 .lp2-cert-mock > * { position: relative; z-index: 1; }
-.lp2-cert-mock-top { display: flex; align-items: center; justify-content: space-between; }
+.lp2-cert-mock-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.lp2-cert-mock-top .menler-wm__tagline { font-size: 0.34em; margin-top: 0.1em; line-height: 1.25; white-space: nowrap; }
 .lp2-cert-mock-issued { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--a-dark); }
 .lp2-cert-mock-kicker { margin-top: 22px; display: flex; align-items: center; justify-content: center; flex-wrap: nowrap; font-size: 12px; font-weight: 800; letter-spacing: .22em; text-transform: uppercase; color: var(--a-dark); }
 .lp2-cert-mock-kicker::before, .lp2-cert-mock-kicker::after { content: ''; flex: 0 0 auto; width: 22px; height: 1px; margin: 0 10px; background: var(--a); opacity: .55; }
@@ -1984,6 +1985,8 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .lp2-cert-sign--left { align-items: flex-start; text-align: left; }
   .lp2-cert-sign-name { font-size: 12px; padding: 0 4px 3px; }
   .lp2-cert-sign-role { font-size: 8.5px; margin-top: 3px; }
+  .lp2-cert-mock-top .menler-wm { font-size: 22px !important; }
+  .lp2-cert-mock-top .menler-wm__tagline { font-size: 0.32em; white-space: normal; max-width: 140px; }
 }
 
 /* Join WhatsApp community — narrow bar */
