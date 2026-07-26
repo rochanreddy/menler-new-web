@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import MenlerWordmark from '../components/common/MenlerWordmark';
 import Seo from '../components/common/Seo';
 import MenlerCommunitySection from '../components/common/MenlerCommunitySection';
-import { MENLER_WHATSAPP_URL } from '../data/communityLinks';
+import { MENLER_WHATSAPP_URL, MENLER_INSTAGRAM_URL, CAMPAIGN_INSTAGRAM_SLUGS } from '../data/communityLinks';
 import { submitLead } from '../services/leadService';
 import { useContentState } from '../lib/useContent';
 import { verifyWhatsappOtp } from '../lib/amplifeedOtp';
@@ -252,6 +252,7 @@ export default function KickstarterLanding() {
   // Sanity-editable content for this slug, merged per-field over the fallback.
   const { slug } = useParams();
   const activeSlug = slug || 'ai-kickstarter';
+  const useInstagramCommunity = CAMPAIGN_INSTAGRAM_SLUGS.has(activeSlug);
   const { data: c, loading: contentLoading } = useContentState(CAMPAIGN_QUERY, FALLBACK, { slug: activeSlug });
   const d = {};
   for (const k of Object.keys(FALLBACK)) d[k] = has(c?.[k]) ? c[k] : FALLBACK[k];
@@ -337,7 +338,8 @@ export default function KickstarterLanding() {
           city: form.city,
           background: form.background,
           campaign: activeSlug,
-          whatsappUrl: d.whatsappUrl,
+          whatsappUrl: useInstagramCommunity ? undefined : d.whatsappUrl,
+          instagramUrl: useInstagramCommunity ? MENLER_INSTAGRAM_URL : undefined,
           whatsappText: d.whatsappText,
           communityText: d.communityText,
           showCommunity: d.showCommunity,
@@ -509,7 +511,8 @@ export default function KickstarterLanding() {
           {d.showCommunity && (
             <MenlerCommunitySection
               className="lp2-community-wrap"
-              whatsappUrl={d.whatsappUrl || MENLER_WHATSAPP_URL}
+              whatsappUrl={useInstagramCommunity ? undefined : (d.whatsappUrl || MENLER_WHATSAPP_URL)}
+              instagramUrl={useInstagramCommunity ? MENLER_INSTAGRAM_URL : undefined}
               communityText={d.communityText}
             />
           )}

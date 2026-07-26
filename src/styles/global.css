@@ -2039,6 +2039,9 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-wa-join { display: inline-flex; align-items: center; gap: 10px; flex: 0 0 auto; background: #25D366; color: #fff; font-weight: 700; font-size: 14px; padding: 13px 24px; border-radius: 999px; text-decoration: none; box-shadow: 0 8px 22px rgba(37,211,102,0.3); transition: transform .15s, box-shadow .15s; }
 .lp2-wa-join:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(37,211,102,0.42); }
 .lp2-wa-join svg { width: 20px; height: 20px; }
+.lp2-ig-join { display: inline-flex; align-items: center; gap: 10px; flex: 0 0 auto; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: #fff; font-weight: 700; font-size: 14px; padding: 13px 24px; border-radius: 999px; text-decoration: none; box-shadow: 0 8px 22px rgba(188,24,136,0.28); transition: transform .15s, box-shadow .15s; }
+.lp2-ig-join:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(188,24,136,0.38); }
+.lp2-ig-join svg { width: 20px; height: 20px; }
 
 /* Campaign variant: heading outside the card, horizontal layout */
 .lp2-community-wrap,
@@ -2050,6 +2053,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .menler-community-card { border-radius: 18px; }
 .menler-community .mini-lead-inner { gap: 14px; }
 .menler-community .lp2-wa-join { gap: 6px; }
+.menler-community .lp2-ig-join { gap: 6px; }
 
 /* Full-width cloud band on home, about, aptitude */
 .menler-community--page {
@@ -2104,9 +2108,16 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   white-space: nowrap;
 }
 .menler-community--confirm .lp2-wa-join svg { width: 18px; height: 18px; }
+.menler-community--confirm .lp2-ig-join {
+  font-size: 14px;
+  padding: 12px 20px;
+  white-space: nowrap;
+}
+.menler-community--confirm .lp2-ig-join svg { width: 18px; height: 18px; }
 @media (max-width: 520px) {
   .menler-community--confirm .mini-lead-inner { flex-direction: column; align-items: stretch; }
   .menler-community--confirm .lp2-wa-join { justify-content: center; }
+  .menler-community--confirm .lp2-ig-join { justify-content: center; }
 }
 .lp2-comm-h-out { font-size: clamp(22px, 3vw, 30px); font-weight: 800; color: var(--ink); margin: 0 0 16px; letter-spacing: -0.02em; }
 .lp2-comm-h-out em { font-style: italic; color: var(--specialist, #5a3fd6); }
