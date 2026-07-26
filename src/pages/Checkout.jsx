@@ -7,6 +7,9 @@ import AddToCalendar from '../components/common/AddToCalendar';
 import { parseEventDateTime } from '../lib/calendar';
 import { submitLead, deliverResources, completeCheckout } from '../services/leadService';
 import { CHECKOUT_CATALOG } from '../data/resourceCatalog';
+import { PROGRAM_PRICES, formatINR } from '../data/pricing';
+import { createEnrolOrder, getPaymentStatus } from '../services/paymentService';
+import { openCashfreeCheckout } from '../lib/cashfree';
 
 import { MENLER_WHATSAPP_URL } from '../data/communityLinks';
 
@@ -21,7 +24,7 @@ export default function Checkout() {
   const [cart, setCart] = useState(() => new Set());
   const [placing, setPlacing] = useState(false);
   const [placed, setPlaced] = useState(false);
-  const [err, setErr] = useState(false);
+  const [err, setErr] = useState('');
 
   // Guard: /checkout is only valid after registering on a campaign, which passes
   // the verified registrant in router state. A direct URL visit has no state, so
@@ -37,46 +40,72 @@ export default function Checkout() {
     return n;
   });
   const addedItems = catalog.filter((i) => cart.has(i.id));
-  const total = 0; // launch offer — everything free
+  const campaignPrice = reg.campaign ? PROGRAM_PRICES[reg.campaign] : null;
+  const workshopFee = campaignPrice?.amount ?? 0;
+  const isPaid = workshopFee > 0;
+  const total = workshopFee;
+
+  const finishRegistration = async () => {
+    const order = {
+      section: `Checkout · ${workshopTitle}`,
+      cta_label: `Checkout: ${workshopTitle}`,
+      items: ['Workshop: ' + workshopTitle, ...addedItems.map((i) => i.title)].join(' | '),
+      amount: total,
+    };
+    if (reg.leadId) {
+      await completeCheckout(reg.leadId, order);
+    } else {
+      await submitLead({
+        name: reg.name, email: reg.email, phone: reg.phone,
+        background: reg.background,
+        source: 'checkout-order', campaign: reg.campaign, workshop: workshopTitle,
+        checkout_completed: true,
+        ...order,
+      });
+    }
+    if (addedItems.length && reg.email) {
+      await deliverResources({
+        leadId: reg.leadId,
+        name: reg.name,
+        email: reg.email,
+        phone: reg.phone,
+        source: 'checkout-resources',
+        section: `Checkout · ${workshopTitle}`,
+        resources: addedItems.map((i) => ({ title: i.title, pdf: i.pdf, resource: i.title })),
+      });
+    }
+    setPlaced(true);
+    window.scrollTo(0, 0);
+  };
 
   const pay = async () => {
-    setErr(false); setPlacing(true);
+    setErr(''); setPlacing(true);
     try {
-      const order = {
-        section: `Checkout · ${workshopTitle}`,
-        cta_label: `Checkout: ${workshopTitle}`,
-        items: ['Workshop: ' + workshopTitle, ...addedItems.map((i) => i.title)].join(' | '),
-        amount: total,
-      };
-      if (reg.leadId) {
-        // Update the same registration lead → one lead per registrant, flagged done.
-        await completeCheckout(reg.leadId, order);
-      } else {
-        // Fallback (no registration id in state): create a checked-out lead,
-        // carrying the background so it's still captured.
-        await submitLead({
-          name: reg.name, email: reg.email, phone: reg.phone,
-          background: reg.background,
-          source: 'checkout-order', campaign: reg.campaign, workshop: workshopTitle,
-          checkout_completed: true,
-          ...order,
-        });
-      }
-      if (addedItems.length && reg.email) {
-        await deliverResources({
-          leadId: reg.leadId, // attach to the SAME registration lead (no duplicate row)
+      if (isPaid) {
+        const phoneDigits = String(reg.phone || '').replace(/\D/g, '').slice(-10);
+        const order = await createEnrolOrder({
+          program: reg.campaign,
+          leadId: reg.leadId,
           name: reg.name,
           email: reg.email,
-          phone: reg.phone,
-          source: 'checkout-resources', // only used if there's no leadId (standalone batch)
-          section: `Checkout · ${workshopTitle}`,
-          resources: addedItems.map((i) => ({ title: i.title, pdf: i.pdf, resource: i.title })),
+          phone: phoneDigits,
+          city: reg.city,
+          background: reg.background,
         });
+        const result = await openCashfreeCheckout(order.payment_session_id, order.mode);
+        if (result && result.error) {
+          setErr(result.error.message || 'Payment was cancelled.');
+          return;
+        }
+        const status = await getPaymentStatus(order.order_id);
+        if (status.status !== 'PAID') {
+          setErr('Payment not completed. If you were charged, it will confirm shortly — check your email.');
+          return;
+        }
       }
-      setPlaced(true);
-      window.scrollTo(0, 0);
-    } catch {
-      setErr(true);
+      await finishRegistration();
+    } catch (e) {
+      setErr(e?.message || 'Something went wrong — please try again.');
     } finally {
       setPlacing(false);
     }
@@ -203,7 +232,7 @@ export default function Checkout() {
             <div className="cox-order-head-main">
               <p className="cox-eyebrow">Register for</p>
               <p className="cox-name">{workshopTitle}</p>
-              <p className="cox-price">₹{total}<span> · free seat</span></p>
+              <p className="cox-price">{formatINR(total)}{!isPaid && <span> · free seat</span>}</p>
             </div>
             {/* Mobile-only: contact details tucked into the header (top-right). */}
             <div className="cox-order-contact">
@@ -219,7 +248,7 @@ export default function Checkout() {
           <div className="cox-items">
             <div className="cox-row">
               <div><p className="cox-row-t">{workshopTitle}</p><p className="cox-row-d">Live masterclass seat</p></div>
-              <span className="cox-row-amt">Free</span>
+              <span className="cox-row-amt">{isPaid ? formatINR(workshopFee) : 'Free'}</span>
             </div>
             {addedItems.map((i) => (
               <div className="cox-row" key={i.id}>
@@ -229,14 +258,15 @@ export default function Checkout() {
             ))}
           </div>
 
-          <div className="cox-sub-line"><span>Subtotal</span><span>₹{total}</span></div>
+          <div className="cox-sub-line"><span>Subtotal</span><span>{formatINR(total)}</span></div>
           <div className="cox-sub-line cox-sub-line--muted"><span>Taxes</span><span>₹0</span></div>
-          <div className="cox-total"><span>Total</span><span>₹{total}</span></div>
+          <div className="cox-total"><span>Total</span><span>{formatINR(total)}</span></div>
 
           <button className="cox-complete" onClick={pay} disabled={placing}>
-            {placing ? 'Processing…' : 'Complete Registration'}
+            {placing ? 'Processing…' : isPaid ? `Pay ${formatINR(total)} & Register` : 'Complete Registration'}
           </button>
-          {err && <p className="cox-err">Something went wrong — please try again.</p>}
+          {err && <p className="cox-err">{err}</p>}
+          {isPaid && <p className="cox-pay-fine">Secured by Cashfree · UPI · Cards · Netbanking</p>}
         </div>
       </div>
     </div>

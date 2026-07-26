@@ -34,7 +34,7 @@ router.get('/pricing', (_req, res) => {
   res.json({ mode: CASHFREE_MODE, configured: cashfreeConfigured(), prices: PROGRAM_PRICES });
 });
 
-/* Create a Cashfree order for a paid program (kickstarter | generalist). */
+/* Create a Cashfree order for a paid program or paid campaign. */
 router.post('/cashfree/order', async (req, res) => {
   try {
     if (!cashfreeConfigured()) return res.status(503).json({ error: 'Payments are not configured.' });
@@ -43,37 +43,49 @@ router.post('/cashfree/order', async (req, res) => {
     const price = priceFor(program);
     if (!price) return res.status(400).json({ error: 'Unknown or free program.' });
 
-    const name = String(body.name || '').trim();
-    const email = String(body.email || '').trim();
-    const phone = cleanPhone(body.phone);
-    const background = String(body.background || '').trim();
-    const city = String(body.city || '').trim();
-    const track = String(body.track || '').trim();
+    const leadId = String(body.leadId || '').trim();
+    let lead = null;
+
+    if (leadId) {
+      if (!/^[a-f\d]{24}$/i.test(leadId)) return res.status(400).json({ error: 'Invalid lead id.' });
+      lead = await Lead.findById(leadId);
+      if (!lead) return res.status(404).json({ error: 'Lead not found.' });
+    }
+
+    const name = String(body.name || lead?.name || '').trim();
+    const email = String(body.email || lead?.email || '').trim();
+    const phone = cleanPhone(body.phone || lead?.phone);
+    const background = String(body.background || lead?.background || '').trim();
+    const city = String(body.city || lead?.extra?.city || '').trim();
+    const track = String(body.track || lead?.track || '').trim();
     if (!name || !email || phone.length !== 10) {
       return res.status(400).json({ error: 'Name, a valid email and a 10-digit phone are required.' });
     }
     const v = await validateEmail(email);
     if (!v.ok) return res.status(400).json({ error: v.reason });
 
-    // Capture intent as a lead so it shows in admin + CRM even before payment.
-    const lead = await Lead.create({
-      name, email, phone, background, track,
-      program,
-      source: `enrol-${program}`,
-      cta_label: `Enrol: ${price.label}`,
-      section: price.label,
-      extra: { ...(city ? { city } : {}) },
-    });
-    forwardLeadToCrm(lead);
+    // Campaign checkout reuses the registration lead; fellowship enrolment creates one.
+    if (!lead) {
+      lead = await Lead.create({
+        name, email, phone, background, track,
+        program,
+        source: `enrol-${program}`,
+        cta_label: `Enrol: ${price.label}`,
+        section: price.label,
+        extra: { ...(city ? { city } : {}) },
+      });
+      forwardLeadToCrm(lead);
+    }
 
-    const orderId = `MNLR_${program}_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`;
+    const orderId = `MNLR_${program.replace(/-/g, '_')}_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`;
     const notifyBase = API_PUBLIC_BASE();
+    const returnPath = leadId ? '/checkout' : `/${program}`;
 
     const cf = await createCashfreeOrder({
       orderId,
       amount: price.amount,
       customer: { id: String(lead._id), name, email, phone },
-      returnUrl: `${FRONTEND_BASE()}/${program}?order_id={order_id}`,
+      returnUrl: `${FRONTEND_BASE()}${returnPath}?order_id={order_id}`,
       notifyUrl: notifyBase ? `${notifyBase}/payments/cashfree/webhook` : undefined,
     });
 

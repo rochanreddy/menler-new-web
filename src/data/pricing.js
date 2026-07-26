@@ -3,6 +3,8 @@
 export const PROGRAM_PRICES = {
   kickstarter: { amount: 4999, label: 'Gen AI Kickstarter' },
   generalist: { amount: 59999, label: 'Claude AI Generalist Fellowship' },
+  // Paid campaign masterclasses (keyed by Sanity slug)
+  'build-ai-automation-with-claude': { amount: 99, label: 'Build AI Automation with Claude' },
   // Internal gateway test — a live ₹5 charge via /pay-test. Remove after testing.
   test: { amount: 5, label: 'Payment Gateway Test' },
 };
