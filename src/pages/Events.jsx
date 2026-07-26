@@ -158,7 +158,7 @@ export default function Events() {
           <h2 className="section-h2">Live <em>events</em></h2>
           <div className="ev-grid ev-grid--live">
             {live.map((ev) => (
-              <article className={`ev-card ev-card--live${ev.thumbnail ? ' ev-card--live-banner' : ''}`} key={ev._id}>
+              <article className="ev-card ev-card--live" key={ev._id}>
                 <EventArt ev={ev} />
                 <div className="ev-body">
                   <span className="ev-live-dot">● Live masterclass</span>

@@ -3561,7 +3561,7 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 
 /* ── Live events: full-width HORIZONTAL card (art left · details right) ── */
 .ev-grid--live { grid-template-columns: 1fr; max-width: 980px; }
-.ev-card--live { flex-direction: row; align-items: stretch; }
+.ev-card--live { flex-direction: row; align-items: center; }
 .ev-card--live .ev-art { width: 46%; flex-shrink: 0; aspect-ratio: auto; align-self: stretch; }
 .ev-card--live .ev-art--gen { justify-content: center; padding: 30px 28px; }
 .ev-card--live .ev-art--gen .ev-art-title { max-width: 82%; }
@@ -3577,10 +3577,13 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
   .ev-card--live .ev-title { font-size: 21px; }
 }
 
-/* Uploaded banner images: real <img>, full width, natural aspect (never cropped) */
+/* Uploaded banner image. In a PAST card it sits on top at its natural ratio;
+   in the horizontal LIVE card it fills the left panel, fitted (cover) to the
+   panel so the card stays a clean horizontal shape. */
 .ev-art-img { display: block; width: 100%; height: auto; }
-/* A live card WITH an uploaded banner stacks (banner on top, details below) so
-   the wide banner shows in full instead of being cropped into a side panel. */
-.ev-card--live-banner { flex-direction: column; }
-.ev-card--live-banner .ev-art-img { width: 100%; }
-.ev-card--live-banner .ev-body { width: 100%; }
+/* Show the whole banner at its own ratio (no crop), filling the left half of
+   the horizontal card. Rounded to match the card's left corners. */
+.ev-card--live .ev-art-img { width: 50%; flex-shrink: 0; height: auto; border-radius: 18px 0 0 18px; }
+@media (max-width: 720px) {
+  .ev-card--live .ev-art-img { width: 100%; border-radius: 18px 18px 0 0; }
+}
