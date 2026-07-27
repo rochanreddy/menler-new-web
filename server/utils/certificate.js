@@ -297,7 +297,7 @@ function fillPlaceholders(tmpl, { name, first, programName }) {
  * paragraph breaks.
  */
 export function buildCertificateEmail({
-  name, programName, certId, heading, message, closing, feedbackUrl,
+  name, programName, certId, heading, message, closing, feedbackUrl, deckUrl,
 }) {
   const first = String(name || '').trim().split(/\s+/)[0] || 'there';
   const ctx = { name: String(name || '').trim() || 'there', first, programName };
@@ -306,6 +306,7 @@ export function buildCertificateEmail({
   const messageText = fillPlaceholders(message || DEFAULT_EMAIL_MESSAGE, ctx).trim();
   const closingText = fillPlaceholders(closing ?? DEFAULT_EMAIL_CLOSING, ctx).trim();
   const feedback = String(feedbackUrl || '').trim();
+  const deck = String(deckUrl || '').trim();
 
   // Split on blank lines into paragraphs; single newlines stay as breaks.
   const split = (s) => s.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
@@ -324,6 +325,7 @@ export function buildCertificateEmail({
   const text = `${headingText}
 
 ${plain(messageText)}
+${deck ? `\n→ Download the session slides: ${deck}\n` : ''}
 ${feedback ? `\n→ Share your feedback here: ${feedback}\n` : ''}
 ${plain(closingText)}
 
@@ -393,6 +395,15 @@ menler.in`;
           <p style="margin:0 0 22px; font-size:16px; line-height:1.8; color:#1F2430;">${esc(headingText)}</p>
           ${paras.map((p) => `<p style="margin:0 0 22px; font-size:16px; line-height:1.8; color:#1F2430;">${rich(p)}</p>`).join('\n          ')}
         </td></tr>
+${deck ? `
+        <!-- ── SESSION DECK CTA ── -->
+        <tr><td align="center" class="px" style="padding:8px 40px 6px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+            <td bgcolor="#534AB7" style="border-radius:6px;">
+              <a href="${esc(deck)}" style="display:inline-block; padding:15px 42px; font-family:'DM Sans',Arial,sans-serif; font-size:15px; font-weight:700; color:#ffffff; text-decoration:none; border-radius:6px;">&#8595; Download the session slides</a>
+            </td>
+          </tr></table>
+        </td></tr>` : ''}
 ${feedback ? `
         <!-- ── FEEDBACK CTA ── -->
         <tr><td align="center" class="px" style="padding:8px 40px 6px;">

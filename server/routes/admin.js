@@ -571,7 +571,7 @@ router.post('/certificates/preview', requireAdmin, async (req, res) => {
 // Renders the covering email (with the admin's custom heading/message) so it
 // can be checked before sending.
 router.post('/certificates/email-preview', requireAdmin, (req, res) => {
-  const { name, programName, emailHeading, emailMessage, emailClosing, feedbackUrl } = req.body || {};
+  const { name, programName, emailHeading, emailMessage, emailClosing, feedbackUrl, deckUrl } = req.body || {};
   const { html } = buildCertificateEmail({
     name: String(name || '').trim() || 'Your Name',
     programName: String(programName || '').trim() || 'the program',
@@ -580,6 +580,7 @@ router.post('/certificates/email-preview', requireAdmin, (req, res) => {
     message: String(emailMessage || '').trim() || undefined,
     closing: typeof emailClosing === 'string' ? emailClosing : undefined,
     feedbackUrl: String(feedbackUrl || '').trim() || undefined,
+    deckUrl: String(deckUrl || '').trim() || undefined,
   });
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.send(html);
@@ -588,7 +589,7 @@ router.post('/certificates/email-preview', requireAdmin, (req, res) => {
 // Generate a certificate per recipient and email it as a PDF attachment.
 router.post('/certificates/send', requireAdmin, async (req, res) => {
   try {
-    const { recipients, programName, subject, emailHeading, emailMessage, emailClosing, feedbackUrl } = req.body || {};
+    const { recipients, programName, subject, emailHeading, emailMessage, emailClosing, feedbackUrl, deckUrl } = req.body || {};
 
     if (!Array.isArray(recipients) || recipients.length === 0) {
       return res.status(400).json({ error: 'No recipients were provided.' });
@@ -637,6 +638,7 @@ router.post('/certificates/send', requireAdmin, async (req, res) => {
           message: String(emailMessage || '').trim() || undefined,
           closing: typeof emailClosing === 'string' ? emailClosing : undefined,
           feedbackUrl: String(feedbackUrl || '').trim() || undefined,
+          deckUrl: String(deckUrl || '').trim() || undefined,
         });
 
         await sendMail({

@@ -874,6 +874,7 @@ function CertificatesTab() {
   const [emailMessage, setEmailMessage] = useState(DEFAULT_EMAIL_MESSAGE);
   const [emailClosing, setEmailClosing] = useState(DEFAULT_EMAIL_CLOSING);
   const [feedbackUrl, setFeedbackUrl] = useState('');
+  const [deckUrl, setDeckUrl] = useState('');
   const [recipients, setRecipients] = useState([]);
   const [fileName, setFileName] = useState('');
   const [error, setError] = useState('');
@@ -949,7 +950,7 @@ function CertificatesTab() {
       await adminApi.previewCertificateEmail({
         name: valid[0]?.name || 'Aarav Sharma',
         programName: programName.trim(),
-        emailHeading, emailMessage, emailClosing, feedbackUrl,
+        emailHeading, emailMessage, emailClosing, feedbackUrl, deckUrl,
       });
     } catch (err) {
       setError(err.message || 'Could not preview the email.');
@@ -985,7 +986,7 @@ function CertificatesTab() {
           programName: programName.trim(),
           mentorName, mentorRole, founderName, founderRole,
           subject: subject.trim(),
-          emailHeading, emailMessage, emailClosing, feedbackUrl,
+          emailHeading, emailMessage, emailClosing, feedbackUrl, deckUrl,
         });
         done.push(...(r.results || []));
         setResults(tally(done));
@@ -1067,6 +1068,14 @@ function CertificatesTab() {
             placeholder="Feedback form link (leave blank to hide the feedback button)"
             value={feedbackUrl}
             onChange={(e) => setFeedbackUrl(e.target.value)}
+          />
+          <input
+            className="admin-search"
+            style={{ width: '100%', marginTop: 10 }}
+            type="url"
+            placeholder="Session slides link (leave blank to hide the “Download the session slides” button)"
+            value={deckUrl}
+            onChange={(e) => setDeckUrl(e.target.value)}
           />
           <textarea
             className="admin-search"
