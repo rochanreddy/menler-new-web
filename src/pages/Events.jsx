@@ -209,15 +209,14 @@ export default function Events() {
                     <div className="ev-tags">{ev.tags.map((t) => <span key={t}>{t}</span>)}</div>
                   )}
                   {(ev.date || ev.time || ev.attendees) && (
-                    <p className="ev-when">
-                      {[ev.date, ev.time].filter(Boolean).join(' · ')}
-                      {ev.attendees && (
-                        <span className="ev-attend">{(ev.date || ev.time) ? ' · ' : ''}{ev.attendees} attendees</span>
-                      )}
-                    </p>
+                    <div className="ev-when">
+                      {ev.date && <span>{ev.date}</span>}
+                      {ev.time && <span>{ev.time}</span>}
+                      {ev.attendees && <span className="ev-attend">{ev.attendees} attendees</span>}
+                    </div>
                   )}
                   <div className="ev-foot">
-                    {ev.resources?.length > 0 && (
+                    {ev.resources?.length > 0 ? (
                       <button
                         className="ev-download"
                         onClick={() => setResource({
@@ -230,6 +229,13 @@ export default function Events() {
                         })}
                       >
                         ↓ Download resources
+                      </button>
+                    ) : (
+                      <button
+                        className="ev-download ev-download--alt"
+                        onClick={() => ev.campaignSlug && navigate(`/campaign/${ev.campaignSlug}`)}
+                      >
+                        View event →
                       </button>
                     )}
                   </div>
