@@ -191,7 +191,7 @@ export default function Events() {
         <section className="section ev-section ev-section--past">
           <p className="section-label">Catch up</p>
           <h2 className="section-h2">Past <em>events</em></h2>
-          <div className="ev-grid">
+          <div className="ev-grid ev-grid--past">
             {pastVisible.map((ev) => (
               <article className="ev-card ev-card--past" key={ev._id}>
                 <EventArt ev={ev} />
