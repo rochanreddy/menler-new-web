@@ -203,26 +203,46 @@ export default function Checkout() {
           <div className="cox-addons-head">
             <div className="cox-addons-head-text">
               <h3 className="cox-h3">Add the resource pack</h3>
-              <p className="cox-addons-sub">Optional — get every playbook in one bundle, emailed to you.</p>
+              <p className="cox-addons-sub">Optional — all {pack.items.length} playbooks in one bundle, emailed to you.</p>
             </div>
+            <div className={`cox-cart${packOn ? ' cox-cart--active' : ''}`} aria-label={`${packOn ? pack.items.length : 0} item${packOn && pack.items.length !== 1 ? 's' : ''} added`} title={`${packOn ? pack.items.length : 0} added`}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+              </svg>
+              <span className="cox-cart-count">{packOn ? pack.items.length : 0}</span>
+            </div>
+          </div>
+          {/* The pack is all-or-nothing: the rows below just show what's inside,
+              and the single CTA underneath adds or removes the whole bundle. */}
+          <div className="cox-addons">
+            {pack.items.map((i) => (
+              <div key={i.id} className={`cox-addon cox-addon--static${packOn ? ' cox-addon--on' : ''}`}>
+                <span className="cox-addon-check">✓</span>
+                <span className="cox-addon-info">
+                  <span className="cox-addon-t">{i.title}</span>
+                  <span className="cox-addon-d">{i.desc}</span>
+                </span>
+                <span className="cox-addon-right">
+                  <span className="cox-addon-price"><s>₹{i.price}</s> Included</span>
+                </span>
+              </div>
+            ))}
           </div>
           <button
             type="button"
-            className={`cox-pack${packOn ? ' cox-pack--on' : ''}`}
+            className={`cox-packcta${packOn ? ' cox-packcta--on' : ''}`}
             onClick={() => setPackOn((v) => !v)}
             aria-pressed={packOn}
           >
-            <span className="cox-pack-check">{packOn ? '✓' : '+'}</span>
-            <span className="cox-pack-info">
-              <span className="cox-pack-t">{pack.title}</span>
-              <span className="cox-pack-d">{pack.desc}</span>
-              <span className="cox-pack-list">
-                {pack.items.map((i) => <span key={i.id} className="cox-pack-chip">{i.title}</span>)}
-              </span>
+            <span className="cox-packcta-info">
+              <span className="cox-packcta-t">{pack.title}</span>
+              <span className="cox-packcta-d">All {pack.items.length} playbooks · one payment · emailed to you</span>
             </span>
-            <span className="cox-pack-right">
-              <span className="cox-pack-price">₹{pack.price}</span>
-              <span className="cox-pack-action">{packOn ? '✓ Added' : '+ Add pack'}</span>
+            <span className="cox-packcta-right">
+              <span className="cox-packcta-price">₹{pack.price}</span>
+              <span className="cox-packcta-action">{packOn ? '✓ Pack added · Remove' : '+ Add all'}</span>
             </span>
           </button>
           </div>
