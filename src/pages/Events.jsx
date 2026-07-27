@@ -97,7 +97,7 @@ function EventArt({ ev }) {
     return <img className="ev-art-img" src={optImg(ev.thumbnail, 1000)} alt={ev.title} loading="lazy" decoding="async" />;
   }
   return (
-    <div className="ev-art ev-art--gen" style={{ '--ev-accent': accent }}>
+    <div className={`ev-art ev-art--gen${ev.mentorPhoto ? ' ev-art--face' : ''}`} style={{ '--ev-accent': accent }}>
       <span className="ev-art-dots" aria-hidden="true" />
       <span className="ev-art-glow" aria-hidden="true" />
       <div className="ev-art-top">
@@ -106,6 +106,9 @@ function EventArt({ ev }) {
       </div>
       <span className="ev-art-title">{ev.title}</span>
       {ev.tags?.[0] && <span className="ev-art-foot">{ev.tags[0]}</span>}
+      {ev.mentorPhoto && (
+        <img className="ev-art-face" src={optImg(ev.mentorPhoto, 300)} alt={ev.mentorName || ''} loading="lazy" decoding="async" />
+      )}
     </div>
   );
 }
