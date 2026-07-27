@@ -92,21 +92,6 @@ function EventArt({ ev }) {
   );
 }
 
-function Host({ ev }) {
-  if (!ev.mentorName) return <span />;
-  return (
-    <span className="ev-host">
-      {ev.mentorPhoto
-        ? <img className="ev-host-face" src={optImg(ev.mentorPhoto, 96)} alt={ev.mentorName} loading="lazy" decoding="async" />
-        : <span className="ev-host-face ev-host-face--ph" aria-hidden="true">{ev.mentorName.charAt(0)}</span>}
-      <span>
-        <b>{ev.mentorName}</b>
-        {ev.mentorRole && <i>{ev.mentorRole}</i>}
-      </span>
-    </span>
-  );
-}
-
 export default function Events() {
   const navigate = useNavigate();
   const { data } = useContentState(EVENTS_QUERY, FALLBACK);
@@ -171,7 +156,6 @@ export default function Events() {
                     <p className="ev-when">{[ev.date, ev.time].filter(Boolean).join(' · ')}</p>
                   )}
                   <div className="ev-foot">
-                    <Host ev={ev} />
                     {joinTarget(ev) && (
                       <button className="ev-join" onClick={() => join(ev)}>Join masterclass →</button>
                     )}
@@ -203,7 +187,6 @@ export default function Events() {
                     {ev.attendees && <span className="ev-attend">{ev.attendees} attendees</span>}
                   </div>
                   <div className="ev-foot">
-                    <Host ev={ev} />
                     {ev.resources?.length > 0 && (
                       <button
                         className="ev-download"
