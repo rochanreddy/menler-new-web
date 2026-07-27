@@ -6,7 +6,7 @@ import MenlerCommunitySection from '../components/common/MenlerCommunitySection'
 import AddToCalendar from '../components/common/AddToCalendar';
 import { parseEventDateTime } from '../lib/calendar';
 import { submitLead, deliverResources, completeCheckout } from '../services/leadService';
-import { CHECKOUT_CATALOG } from '../data/resourceCatalog';
+import { CHECKOUT_CATALOG, resourcePackFor } from '../data/resourceCatalog';
 import { PROGRAM_PRICES, formatINR } from '../data/pricing';
 import { createEnrolOrder, getPaymentStatus } from '../services/paymentService';
 import { openCashfreeCheckout } from '../lib/cashfree';
@@ -20,8 +20,13 @@ export default function Checkout() {
   const workshopTitle = reg.workshop || 'Menler Masterclass';
 
   const catalog = CHECKOUT_CATALOG;
+  // Some campaigns sell all their resources as a single paid PACK instead of the
+  // free individual add-ons. When a pack exists, registration is free and the
+  // pack is an optional paid upsell (Cashfree only opens once it's selected).
+  const pack = resourcePackFor(reg.campaign);
 
-  const [cart, setCart] = useState(() => new Set());
+  const [cart, setCart] = useState(() => new Set()); // add-on mode: per-item selection
+  const [packOn, setPackOn] = useState(false);       // pack mode: is the pack selected
   const [placing, setPlacing] = useState(false);
   const [placed, setPlaced] = useState(false);
   const [err, setErr] = useState('');
@@ -39,11 +44,16 @@ export default function Checkout() {
     n.has(id) ? n.delete(id) : n.add(id);
     return n;
   });
-  const addedItems = catalog.filter((i) => cart.has(i.id));
+  // Resources being taken: the whole pack (if selected) in pack mode, otherwise
+  // the individually-ticked add-ons.
+  const addedItems = pack ? (packOn ? pack.items : []) : catalog.filter((i) => cart.has(i.id));
+  // Registration seat fee (0 = free). Campaigns with a resource pack have no
+  // seat fee — the only charge is the optional pack.
   const campaignPrice = reg.campaign ? PROGRAM_PRICES[reg.campaign] : null;
   const workshopFee = campaignPrice?.amount ?? 0;
-  const isPaid = workshopFee > 0;
-  const total = workshopFee;
+  const packFee = pack && packOn ? pack.price : 0;
+  const total = workshopFee + packFee;
+  const isPaid = total > 0;
 
   const finishRegistration = async () => {
     const order = {
@@ -187,6 +197,35 @@ export default function Checkout() {
           </div>
           </div>
 
+          {pack ? (
+          <div className="cox-resources">
+          <div className="cox-addons-head">
+            <div className="cox-addons-head-text">
+              <h3 className="cox-h3">Add the resource pack</h3>
+              <p className="cox-addons-sub">Optional — get every playbook in one bundle, emailed to you.</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            className={`cox-pack${packOn ? ' cox-pack--on' : ''}`}
+            onClick={() => setPackOn((v) => !v)}
+            aria-pressed={packOn}
+          >
+            <span className="cox-pack-check">{packOn ? '✓' : '+'}</span>
+            <span className="cox-pack-info">
+              <span className="cox-pack-t">{pack.title}</span>
+              <span className="cox-pack-d">{pack.desc}</span>
+              <span className="cox-pack-list">
+                {pack.items.map((i) => <span key={i.id} className="cox-pack-chip">{i.title}</span>)}
+              </span>
+            </span>
+            <span className="cox-pack-right">
+              <span className="cox-pack-price">₹{pack.price}</span>
+              <span className="cox-pack-action">{packOn ? '✓ Added' : '+ Add pack'}</span>
+            </span>
+          </button>
+          </div>
+          ) : (
           <div className="cox-resources">
           <div className="cox-addons-head">
             <div className="cox-addons-head-text">
@@ -221,6 +260,7 @@ export default function Checkout() {
             })}
           </div>
           </div>
+          )}
         </div>
       </div>
 
@@ -232,7 +272,7 @@ export default function Checkout() {
             <div className="cox-order-head-main">
               <p className="cox-eyebrow">Register for</p>
               <p className="cox-name">{workshopTitle}</p>
-              <p className="cox-price">{formatINR(total)}{!isPaid && <span> · free seat</span>}</p>
+              <p className="cox-price">{total > 0 ? formatINR(total) : <>Free<span> · free seat</span></>}</p>
             </div>
             {/* Mobile-only: contact details tucked into the header (top-right). */}
             <div className="cox-order-contact">
@@ -248,14 +288,23 @@ export default function Checkout() {
           <div className="cox-items">
             <div className="cox-row">
               <div><p className="cox-row-t">{workshopTitle}</p><p className="cox-row-d">Live masterclass seat</p></div>
-              <span className="cox-row-amt">{isPaid ? formatINR(workshopFee) : 'Free'}</span>
+              <span className="cox-row-amt">{workshopFee > 0 ? formatINR(workshopFee) : 'Free'}</span>
             </div>
-            {addedItems.map((i) => (
-              <div className="cox-row" key={i.id}>
-                <div><p className="cox-row-t">{i.title}</p><p className="cox-row-d">Resource pack</p></div>
-                <span className="cox-row-amt"><s>₹{i.price}</s> Free</span>
-              </div>
-            ))}
+            {pack ? (
+              packOn && (
+                <div className="cox-row">
+                  <div><p className="cox-row-t">{pack.title}</p><p className="cox-row-d">{pack.items.length} playbooks · emailed to you</p></div>
+                  <span className="cox-row-amt">{formatINR(pack.price)}</span>
+                </div>
+              )
+            ) : (
+              addedItems.map((i) => (
+                <div className="cox-row" key={i.id}>
+                  <div><p className="cox-row-t">{i.title}</p><p className="cox-row-d">Resource pack</p></div>
+                  <span className="cox-row-amt"><s>₹{i.price}</s> Free</span>
+                </div>
+              ))
+            )}
           </div>
 
           <div className="cox-sub-line"><span>Subtotal</span><span>{formatINR(total)}</span></div>

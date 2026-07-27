@@ -2301,6 +2301,22 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .cox-addon-action { font-size: 11px; font-weight: 700; letter-spacing: .02em; color: var(--lavender); white-space: nowrap; }
 .cox-addon--on .cox-addon-action { color: #9FE1CB; }
 
+/* Paid resource pack card — one bundle (pack-mode campaigns) instead of add-ons */
+.cox-pack { display: flex; align-items: flex-start; gap: 12px; width: 100%; text-align: left; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); border-radius: 13px; padding: 15px 16px; cursor: pointer; font-family: inherit; transition: border-color .15s, box-shadow .15s, transform .15s, background .15s; }
+.cox-pack:hover { border-color: var(--lavender); transform: translateY(-1px); }
+.cox-pack--on { border-color: var(--lavender); box-shadow: 0 0 0 1px var(--lavender); background: rgba(122,108,245,0.12); }
+.cox-pack-check { flex-shrink: 0; width: 22px; height: 22px; margin-top: 2px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; border: 1.5px solid rgba(255,255,255,0.35); color: var(--lavender); font-size: 13px; font-weight: 700; }
+.cox-pack--on .cox-pack-check { background: var(--lavender); border-color: var(--lavender); color: var(--ink); }
+.cox-pack-info { flex: 1; min-width: 0; }
+.cox-pack-t { display: block; font-size: 14.5px; font-weight: 700; color: #fff; }
+.cox-pack-d { display: block; font-size: 12px; line-height: 1.45; color: rgba(238,237,254,0.65); margin-top: 3px; }
+.cox-pack-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.cox-pack-chip { font-size: 10.5px; font-weight: 600; color: rgba(238,237,254,0.8); background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); border-radius: 999px; padding: 3px 9px; }
+.cox-pack-right { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.cox-pack-price { font-size: 18px; font-weight: 800; color: #fff; white-space: nowrap; }
+.cox-pack-action { font-size: 11px; font-weight: 700; letter-spacing: .02em; color: var(--lavender); white-space: nowrap; }
+.cox-pack--on .cox-pack-action { color: #9FE1CB; }
+
 /* Back button (top of the left panel). */
 .cox-back-btn { background: transparent; border: 1px solid rgba(255,255,255,0.3); color: #fff; font-family: inherit; font-size: 13.5px; font-weight: 600; padding: 10px 18px; border-radius: 10px; cursor: pointer; transition: background .15s, border-color .15s; }
 .cox-back-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.5); }
