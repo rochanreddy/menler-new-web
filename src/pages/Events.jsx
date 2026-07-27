@@ -117,6 +117,11 @@ export default function Events() {
   const live = events.filter((e) => e.status !== 'past');
   const past = events.filter((e) => e.status === 'past');
 
+  // Past events grow over time — show a few, reveal the rest in place.
+  const PAST_STEP = 3;
+  const [pastShown, setPastShown] = useState(PAST_STEP);
+  const pastVisible = past.slice(0, pastShown);
+
   const join = (ev) => {
     const t = joinTarget(ev);
     if (!t) return;
@@ -187,7 +192,7 @@ export default function Events() {
           <p className="section-label">Catch up</p>
           <h2 className="section-h2">Past <em>events</em></h2>
           <div className="ev-grid">
-            {past.map((ev) => (
+            {pastVisible.map((ev) => (
               <article className="ev-card ev-card--past" key={ev._id}>
                 <EventArt ev={ev} />
                 <div className="ev-body">
@@ -221,6 +226,13 @@ export default function Events() {
               </article>
             ))}
           </div>
+          {past.length > pastShown && (
+            <div className="ev-more">
+              <button className="ev-more-btn" onClick={() => setPastShown((n) => n + PAST_STEP)}>
+                Show more <span>({past.length - pastShown} more)</span>
+              </button>
+            </div>
+          )}
         </section>
       )}
 

@@ -3587,3 +3587,9 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 @media (max-width: 720px) {
   .ev-card--live .ev-art-img { width: 100%; border-radius: 18px 18px 0 0; }
 }
+
+/* "Show more" for past events */
+.ev-more { display: flex; justify-content: center; margin-top: 32px; }
+.ev-more-btn { cursor: pointer; font-family: inherit; font-weight: 700; font-size: 14.5px; color: var(--specialist); background: var(--cloud); border: 1px solid var(--border); border-radius: 12px; padding: 13px 28px; transition: transform .15s ease, background .15s ease; }
+.ev-more-btn:hover { transform: translateY(-2px); background: #e2dffb; }
+.ev-more-btn span { font-weight: 500; color: var(--text-muted); }
