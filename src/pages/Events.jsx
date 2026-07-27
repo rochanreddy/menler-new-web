@@ -39,6 +39,19 @@ const toEvent = (c) => ({
 // Join always goes to the campaign's own registration page.
 const joinTarget = (ev) => (ev.campaignSlug ? `/campaign/${ev.campaignSlug}` : '');
 
+// A PDF uploaded to Sanity is cross-origin, so a normal download link would just
+// open it in a tab. Sanity's ?dl= flag sends it as an attachment (forces the
+// download) and names the file. Repo-hosted /pdfs/ paths are same-origin and
+// download fine as-is.
+const downloadUrl = (pdf, title) => {
+  if (!pdf) return pdf;
+  if (pdf.includes('cdn.sanity.io/files')) {
+    const name = `${String(title || 'Menler-resource').replace(/[^\w-]+/g, '-')}.pdf`;
+    return `${pdf}${pdf.includes('?') ? '&' : '?'}dl=${name}`;
+  }
+  return pdf;
+};
+
 /* ── Fallback (used until Sanity is populated) — shaped like campaign docs ── */
 const FALLBACK = [
   {
@@ -69,7 +82,8 @@ const EVENTS_QUERY = `*[_type == "campaignPage" && hideFromEvents != true] | ord
   date, time, themeAccent, highlightBg,
   mentorName, mentorRole, "mentorPhoto": mentorPhoto.asset->url,
   "eventImage": eventImage.asset->url,
-  isLiveEvent, eventTags, eventAttendees, eventResources[]{ title, pdf }
+  isLiveEvent, eventTags, eventAttendees,
+  eventResources[]{ title, "pdf": coalesce(file.asset->url, pdfPath) }
 }`;
 
 /* ── Auto-generated card art (no image upload needed) ────────────────────── */
@@ -194,7 +208,7 @@ export default function Events() {
                           title: ev.resources[0].title || `${ev.title} — resources`,
                           desc: `Free resources from "${ev.title}".`,
                           badge: 'Event resource',
-                          pdf: ev.resources[0].pdf,
+                          pdf: downloadUrl(ev.resources[0].pdf, ev.resources[0].title || ev.title),
                           source: 'event-resource',
                           section: `Event · ${ev.title}`,
                         })}

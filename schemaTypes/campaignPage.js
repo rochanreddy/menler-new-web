@@ -154,14 +154,15 @@ export default defineType({
     }),
     defineField({
       name: 'eventResources', title: 'Downloadable resources (past events)', type: 'array', group: 'events',
-      description: 'PDFs offered via "Download resources". Add the PDF under /pdfs/ in the site, then reference its path.',
+      description: 'Offered via the "Download resources" button (name/email gate). Upload the PDF here — no code needed.',
       of: [{
         type: 'object',
         fields: [
-          { name: 'title', title: 'Title', type: 'string' },
-          { name: 'pdf', title: 'PDF path (e.g. /pdfs/Name.pdf)', type: 'string' },
+          { name: 'title', title: 'Title', type: 'string', validation: (r) => r.required() },
+          { name: 'file', title: 'PDF file (upload)', type: 'file', options: { accept: '.pdf,application/pdf' } },
+          { name: 'pdfPath', title: '…or PDF path already in the site (e.g. /pdfs/Name.pdf)', type: 'string', description: 'Only if you prefer to link a PDF already deployed under /pdfs/. Leave blank when you upload a file above.' },
         ],
-        preview: { select: { title: 'title', subtitle: 'pdf' } },
+        preview: { select: { title: 'title', file: 'file.asset.originalFilename', path: 'pdfPath' }, prepare: ({ title, file, path }) => ({ title, subtitle: file || path || 'no file yet' }) },
       }],
     }),
 
