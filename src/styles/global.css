@@ -3534,13 +3534,19 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .ev-art-dots { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.09) 1px, transparent 1.4px); background-size: 15px 15px; opacity: 0.55; pointer-events: none; }
 .ev-art-glow { position: absolute; width: 60%; aspect-ratio: 1; right: -12%; top: -26%; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--ev-accent) 85%, #fff) 0%, transparent 68%); opacity: 0.5; filter: blur(6px); pointer-events: none; }
 .ev-art > * { position: relative; z-index: 1; }
+/* Re-assert the decorative layers as absolute: the rule above (equal specificity,
+   but later in source) was overriding their position, turning the glow into an
+   in-flow flex item ~180px tall that pushed the logo + title down and out. */
+.ev-art-dots, .ev-art-glow { position: absolute; z-index: 0; }
 .ev-art-top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .ev-art-badge { font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: rgba(255,255,255,0.13); border: 1px solid rgba(255,255,255,0.22); padding: 5px 11px; border-radius: 999px; backdrop-filter: blur(4px); }
-.ev-art-title { font-family: 'DM Serif Display', serif; font-size: clamp(20px, 3vw, 27px); line-height: 1.14; color: #fff; margin-top: 12px; max-width: 88%; text-shadow: 0 2px 12px rgba(0,0,0,0.25);
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ev-art-title { font-family: 'DM Serif Display', serif; font-size: clamp(20px, 3vw, 27px); line-height: 1.14; color: #fff; margin-top: 12px; max-width: 88%; text-shadow: 0 2px 12px rgba(0,0,0,0.25); overflow: hidden; }
+/* Clamp on the inner span — -webkit-line-clamp is ignored when the element is a
+   flex item (its display is blockified), so the title must clamp one level in. */
+.ev-art-title > span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .ev-art--face .ev-art-title, .ev-art--face .ev-art-foot { max-width: 52%; }
 /* The horizontal live card has a taller art panel — allow a 3rd line there. */
-.ev-card--live .ev-art--gen .ev-art-title { -webkit-line-clamp: 3; }
+.ev-card--live .ev-art--gen .ev-art-title > span { -webkit-line-clamp: 3; }
 .ev-art-foot { margin-top: 12px; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.62); max-width: 70%; }
 .ev-art--face .ev-art-foot { max-width: 52%; }
 /* Mentor photo fills the right column edge-to-edge — no gap above/below. */

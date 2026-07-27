@@ -104,7 +104,7 @@ function EventArt({ ev }) {
         <MenlerWordmark size={17} theme="dark" rule="#8E82F5" />
         <span className="ev-art-badge">✦ Masterclass</span>
       </div>
-      <span className="ev-art-title">{ev.title}</span>
+      <span className="ev-art-title"><span>{ev.title}</span></span>
       {ev.tags?.[0] && <span className="ev-art-foot">{ev.tags[0]}</span>}
       {ev.mentorPhoto && (
         <img className="ev-art-face" src={optImg(ev.mentorPhoto, 300)} alt={ev.mentorName || ''} loading="lazy" decoding="async" />
