@@ -8,13 +8,6 @@ import { submitLead } from '../services/leadService';
 import { useContentState } from '../lib/useContent';
 import { verifyWhatsappOtp } from '../lib/amplifeedOtp';
 
-// A campaign's price is a free-text Sanity field. Treat 0 / blank / "free" as a
-// free seat so the page reads "Free" (not "₹0" or "₹Free").
-const isFreePrice = (p) => {
-  const s = String(p ?? '').trim().toLowerCase().replace(/[₹,\s]/g, '');
-  return s === '' || s === '0' || s === 'free' || s === 'nil';
-};
-
 // ── Single-mentor workshop registration landing page (/ai-kickstarter) ──
 // Left column scrolls (mentor + workshop details); right column is a STATIC
 // (sticky) registration form. Chrome-free (no global nav/footer). Lead → admin
@@ -416,7 +409,7 @@ export default function KickstarterLanding() {
           {/* Mobile-only: registration CTA directly under the banner thumbnail. */}
           <a className="lp2-mobile-cta" href="#register">
             Reserve your seat
-            <span className="lp2-mobile-cta-price">{isFreePrice(d.price) ? 'Free' : <>₹{d.price}{d.origPrice ? <s> ₹{d.origPrice}</s> : null}</>}</span>
+            <span className="lp2-mobile-cta-price">₹{d.price}{d.origPrice ? <s> ₹{d.origPrice}</s> : null}</span>
           </a>
 
           <p className="lp2-subtitle" style={{ marginTop: 26 }}>{d.subtitle}</p>
@@ -538,14 +531,8 @@ export default function KickstarterLanding() {
               <>
                 <p className="lp2-form-h">Reserve your seat</p>
                 <div className="lp2-price-row">
-                  {isFreePrice(d.price) ? (
-                    <span className="lp2-price">Free</span>
-                  ) : (
-                    <>
-                      <span className="lp2-price">₹{d.price}</span>
-                      {d.origPrice && <span className="lp2-price-orig">₹{d.origPrice}</span>}
-                    </>
-                  )}
+                  <span className="lp2-price">₹{d.price}</span>
+                  {d.origPrice && <span className="lp2-price-orig">₹{d.origPrice}</span>}
                 </div>
 
                 {/* Our own form — real email OTP via Amplifeed/MSG91, lead saved to our
@@ -628,7 +615,7 @@ export default function KickstarterLanding() {
 
       {/* Mobile sticky CTA → jumps to the form */}
       <a className="lp2-stickybar" href="#register">
-        <span><b>{isFreePrice(d.price) ? 'Free' : <>₹{d.price}</>}</b> · {d.seatsNote}</span>
+        <span><b>₹{d.price}</b> · {d.seatsNote}</span>
         <span className="lp2-stickybar-btn">Register</span>
       </a>
 
