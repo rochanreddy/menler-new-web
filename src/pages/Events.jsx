@@ -144,10 +144,8 @@ export default function Events() {
         path="/events"
       />
 
-      {/* ── HERO — ticket style ── */}
+      {/* ── HERO ── */}
       <section className="ev-hero">
-        <span className="ev-ticket ev-ticket--l" aria-hidden="true" />
-        <span className="ev-ticket ev-ticket--r" aria-hidden="true" />
         <div className="ev-hero-in">
           <span className="ev-hero-eyebrow">✦ Menler Events</span>
           <h1 className="ev-hero-h1">Expert AI Masterclasses<br /><em>on Claude, Careers & Building</em></h1>
