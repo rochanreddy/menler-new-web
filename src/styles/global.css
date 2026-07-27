@@ -2301,15 +2301,15 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .cox-addon-action { font-size: 11px; font-weight: 700; letter-spacing: .02em; color: var(--lavender); white-space: nowrap; }
 .cox-addon--on .cox-addon-action { color: #9FE1CB; }
 
-/* Paid resource pack (pack-mode campaigns): the rows above list what's inside
-   and are display-only — a single CTA below adds or removes the whole bundle. */
+/* Paid resource pack (pack-mode campaigns): a single CTA at the top adds or
+   removes the whole bundle; the rows under it list what's inside, display-only. */
 .cox-addon--static { cursor: default; }
 .cox-addon--static:hover { border-color: rgba(255,255,255,0.18); transform: none; }
 .cox-addon--static .cox-addon-check { color: rgba(238,237,254,0.45); border-color: rgba(255,255,255,0.22); }
 .cox-addon--static.cox-addon--on .cox-addon-check { background: var(--lavender); border-color: var(--lavender); color: var(--ink); }
 .cox-addon--static.cox-addon--on:hover { border-color: var(--lavender); }
 
-.cox-packcta { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; margin-top: 14px; background: rgba(122,108,245,0.16); border: 1px solid var(--lavender); border-radius: 13px; padding: 15px 16px; cursor: pointer; font-family: inherit; transition: border-color .15s, box-shadow .15s, transform .15s, background .15s; }
+.cox-packcta { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; margin-bottom: 14px; background: rgba(122,108,245,0.16); border: 1px solid var(--lavender); border-radius: 13px; padding: 15px 16px; cursor: pointer; font-family: inherit; transition: border-color .15s, box-shadow .15s, transform .15s, background .15s; }
 .cox-packcta:hover { background: rgba(122,108,245,0.26); transform: translateY(-1px); }
 .cox-packcta--on { background: rgba(159,225,203,0.12); border-color: #9FE1CB; box-shadow: 0 0 0 1px #9FE1CB; }
 .cox-packcta--on:hover { background: rgba(159,225,203,0.18); }
@@ -2433,7 +2433,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .cox-addon-price { font-size: 11px; }
   .cox-cart { width: 38px; height: 38px; }
   .cox-cart svg { width: 17px; height: 17px; }
-  .cox-packcta { padding: 13px 14px; gap: 10px; margin-top: 12px; }
+  .cox-packcta { padding: 13px 14px; gap: 10px; margin-bottom: 12px; }
   .cox-packcta-t { font-size: 13px; }
   .cox-packcta-d { font-size: 10.5px; }
   .cox-packcta-price { font-size: 17px; }

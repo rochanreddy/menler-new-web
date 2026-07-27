@@ -214,22 +214,8 @@ export default function Checkout() {
               <span className="cox-cart-count">{packOn ? pack.items.length : 0}</span>
             </div>
           </div>
-          {/* The pack is all-or-nothing: the rows below just show what's inside,
-              and the single CTA underneath adds or removes the whole bundle. */}
-          <div className="cox-addons">
-            {pack.items.map((i) => (
-              <div key={i.id} className={`cox-addon cox-addon--static${packOn ? ' cox-addon--on' : ''}`}>
-                <span className="cox-addon-check">✓</span>
-                <span className="cox-addon-info">
-                  <span className="cox-addon-t">{i.title}</span>
-                  <span className="cox-addon-d">{i.desc}</span>
-                </span>
-                <span className="cox-addon-right">
-                  <span className="cox-addon-price"><s>₹{i.price}</s> Included</span>
-                </span>
-              </div>
-            ))}
-          </div>
+          {/* The pack is all-or-nothing: this single CTA adds or removes the
+              whole bundle, and the rows below it just show what's inside. */}
           <button
             type="button"
             className={`cox-packcta${packOn ? ' cox-packcta--on' : ''}`}
@@ -245,6 +231,20 @@ export default function Checkout() {
               <span className="cox-packcta-action">{packOn ? '✓ Pack added · Remove' : '+ Add all'}</span>
             </span>
           </button>
+          <div className="cox-addons">
+            {pack.items.map((i) => (
+              <div key={i.id} className={`cox-addon cox-addon--static${packOn ? ' cox-addon--on' : ''}`}>
+                <span className="cox-addon-check">✓</span>
+                <span className="cox-addon-info">
+                  <span className="cox-addon-t">{i.title}</span>
+                  <span className="cox-addon-d">{i.desc}</span>
+                </span>
+                <span className="cox-addon-right">
+                  <span className="cox-addon-price"><s>₹{i.price}</s> Included</span>
+                </span>
+              </div>
+            ))}
+          </div>
           </div>
           ) : (
           <div className="cox-resources">
