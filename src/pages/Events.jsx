@@ -205,10 +205,14 @@ export default function Events() {
                   {ev.tags?.length > 0 && (
                     <div className="ev-tags">{ev.tags.map((t) => <span key={t}>{t}</span>)}</div>
                   )}
-                  <div className="ev-meta">
-                    {(ev.date || ev.time) && <span>{[ev.date, ev.time].filter(Boolean).join(' · ')}</span>}
-                    {ev.attendees && <span className="ev-attend">{ev.attendees} attendees</span>}
-                  </div>
+                  {(ev.date || ev.time || ev.attendees) && (
+                    <p className="ev-when">
+                      {[ev.date, ev.time].filter(Boolean).join(' · ')}
+                      {ev.attendees && (
+                        <span className="ev-attend">{(ev.date || ev.time) ? ' · ' : ''}{ev.attendees} attendees</span>
+                      )}
+                    </p>
+                  )}
                   <div className="ev-foot">
                     {ev.resources?.length > 0 && (
                       <button
