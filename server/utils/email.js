@@ -9,12 +9,17 @@ const require = createRequire(import.meta.url);
 const MailComposer = require('nodemailer/lib/mail-composer');
 
 const {
+  ZEPTOMAIL_TOKEN, ZEPTOMAIL_API_URL,
   BREVO_API_KEY,
   RESEND_API_KEY,
   SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS,
   GOOGLE_SA_KEY, GMAIL_SENDER,
   MAIL_FROM, MAIL_REPLY_TO,
 } = process.env;
+
+// ZeptoMail HTTPS API endpoint. Defaults to the India (.in) data centre to match
+// smtp.zeptomail.in; override with ZEPTOMAIL_API_URL for the global (.com) one.
+const ZEPTO_URL = ZEPTOMAIL_API_URL || 'https://api.zeptomail.in/v1.1/email';
 
 const GMAIL_SCOPE = 'https://www.googleapis.com/auth/gmail.send';
 const FROM = MAIL_FROM || (GMAIL_SENDER ? `Menler <${GMAIL_SENDER}>` : 'Menler <no-reply@menler.in>');
@@ -24,23 +29,26 @@ const REPLY_TO = MAIL_REPLY_TO || '';
  * All preferred transports are HTTPS APIs because platforms like Render block
  * outbound SMTP — HTTPS on 443 is never blocked. Priority (first one configured
  * wins), so switching providers is just a matter of which key is set:
- *   1. Brevo   (HTTPS API — 300 emails/day free)
- *   2. Resend  (HTTPS API — 100 emails/day free)
- *   3. Gmail API (HTTPS)   4. SMTP        else → console log (dev)
+ *   1. ZeptoMail (HTTPS API — no watermark)
+ *   2. Brevo     (HTTPS API — 300 emails/day free, adds a Brevo footer)
+ *   3. Resend    (HTTPS API — 100 emails/day free, no watermark)
+ *   4. Gmail API (HTTPS)   5. SMTP        else → console log (dev)
  * ─────────────────────────────────────────────────────────────────────────── */
 
+const zeptoConfigured = Boolean(ZEPTOMAIL_TOKEN);
 const brevoConfigured = Boolean(BREVO_API_KEY);
 const resendConfigured = Boolean(RESEND_API_KEY);
 const gmailConfigured = Boolean(GOOGLE_SA_KEY && GMAIL_SENDER);
 const smtpConfigured = Boolean(SMTP_HOST && SMTP_USER && SMTP_PASS);
 
 export function isMailConfigured() {
-  return brevoConfigured || resendConfigured || gmailConfigured || smtpConfigured;
+  return zeptoConfigured || brevoConfigured || resendConfigured || gmailConfigured || smtpConfigured;
 }
 // Back-compat name used elsewhere.
 export const isSmtpConfigured = isMailConfigured;
 
 function mailMode() {
+  if (zeptoConfigured) return 'zeptomail';
   if (brevoConfigured) return 'brevo';
   if (resendConfigured) return 'resend';
   if (gmailConfigured) return 'gmail-api';
@@ -100,6 +108,57 @@ async function resendSend(message) {
   if (!res.ok) {
     const body = await res.text().catch(() => '');
     throw new Error(`Resend ${res.status}: ${body.slice(0, 300)}`);
+  }
+}
+
+/* ── ZeptoMail (HTTPS API) ─────────────────────────────────────────────────── */
+
+function mimeFor(filename) {
+  const ext = String(filename || '').toLowerCase().split('.').pop();
+  if (ext === 'pdf') return 'application/pdf';
+  if (ext === 'png') return 'image/png';
+  if (ext === 'jpg' || ext === 'jpeg') return 'image/jpeg';
+  return 'application/octet-stream';
+}
+
+// ZeptoMail attachments: base64 `content` + `name` + `mime_type`. Path-based
+// attachments (brochures/certificates) are read into a buffer, as with Resend.
+async function toZeptoAttachment(a) {
+  let buf;
+  if (a.content != null) buf = Buffer.isBuffer(a.content) ? a.content : Buffer.from(a.content);
+  else if (a.path) buf = await fs.readFile(a.path);
+  else return null;
+  return { content: buf.toString('base64'), mime_type: mimeFor(a.filename), name: a.filename };
+}
+
+async function zeptoSend(message) {
+  const from = parseAddress(message.from);
+  const attachments = (await Promise.all((message.attachments || []).map(toZeptoAttachment))).filter(Boolean);
+  // The token may be pasted raw or already prefixed with "Zoho-enczapikey ".
+  const auth = ZEPTOMAIL_TOKEN.startsWith('Zoho-enczapikey') ? ZEPTOMAIL_TOKEN : `Zoho-enczapikey ${ZEPTOMAIL_TOKEN}`;
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 20000);
+  try {
+    const res = await fetch(ZEPTO_URL, {
+      method: 'POST',
+      headers: { Authorization: auth, 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        from: { address: from.email, ...(from.name ? { name: from.name } : {}) },
+        to: [{ email_address: { address: message.to } }],
+        subject: message.subject,
+        ...(message.html ? { htmlbody: message.html } : {}),
+        ...(message.text ? { textbody: message.text } : {}),
+        ...(REPLY_TO ? { reply_to: [{ address: REPLY_TO }] } : {}),
+        ...(attachments.length ? { attachments } : {}),
+      }),
+      signal: ctrl.signal,
+    });
+    if (!res.ok) {
+      const body = await res.text().catch(() => '');
+      throw new Error(`ZeptoMail ${res.status}: ${body.slice(0, 300)}`);
+    }
+  } finally {
+    clearTimeout(timer);
   }
 }
 
@@ -224,7 +283,12 @@ if (smtpConfigured) {
 export async function verifyMailer() {
   const mode = mailMode();
   if (mode === 'console') {
-    return { ok: false, mode, error: 'No email transport is configured (set BREVO_API_KEY or RESEND_API_KEY, or Gmail/SMTP credentials).' };
+    return { ok: false, mode, error: 'No email transport is configured (set ZEPTOMAIL_TOKEN, BREVO_API_KEY or RESEND_API_KEY, or Gmail/SMTP credentials).' };
+  }
+  if (mode === 'zeptomail') {
+    // ZeptoMail has no cheap auth-check GET — the token is validated on the first
+    // send. Report configured; sending a test email is the real confirmation.
+    return { ok: true, mode, note: 'Configured — send a test email to confirm the token and sender domain.' };
   }
   if (mode === 'brevo') {
     try {
@@ -290,6 +354,7 @@ export async function sendMail({ to, subject, text, html, attachments = [] }) {
     ...(REPLY_TO ? { replyTo: REPLY_TO } : {}),
     attachments,
   };
+  if (mode === 'zeptomail') return zeptoSend(message);
   if (mode === 'brevo') return brevoSend(message);
   if (mode === 'resend') return resendSend(message);
   if (mode === 'gmail-api') return gmailSend(message);
