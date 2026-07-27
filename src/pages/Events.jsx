@@ -216,28 +216,22 @@ export default function Events() {
                     </div>
                   )}
                   <div className="ev-foot">
-                    {ev.resources?.length > 0 ? (
-                      <button
-                        className="ev-download"
-                        onClick={() => setResource({
-                          title: ev.resources[0].title || `${ev.title} — resources`,
+                    <button
+                      className="ev-download"
+                      onClick={() => {
+                        const r = ev.resources?.[0];
+                        setResource({
+                          title: r?.title || `${ev.title} — resources`,
                           desc: `Free resources from "${ev.title}".`,
                           badge: 'Event resource',
-                          pdf: downloadUrl(ev.resources[0].pdf, ev.resources[0].title || ev.title),
+                          pdf: r?.pdf ? downloadUrl(r.pdf, r.title || ev.title) : '',
                           source: 'event-resource',
                           section: `Event · ${ev.title}`,
-                        })}
-                      >
-                        ↓ Download resources
-                      </button>
-                    ) : (
-                      <button
-                        className="ev-download ev-download--alt"
-                        onClick={() => ev.campaignSlug && navigate(`/campaign/${ev.campaignSlug}`)}
-                      >
-                        View event →
-                      </button>
-                    )}
+                        });
+                      }}
+                    >
+                      ↓ Download resources
+                    </button>
                   </div>
                 </div>
               </article>

@@ -3630,8 +3630,6 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .ev-card--past .ev-when { display: flex; flex-direction: column; gap: 3px; margin-top: auto; }
 .ev-card--past .ev-when span { font-size: 13px; font-weight: 600; color: var(--ink); }
 .ev-card--past .ev-foot { margin-top: 12px; }
-.ev-download--alt { background: transparent; color: var(--specialist); border: 1px solid var(--border); }
-.ev-download--alt:hover { background: var(--cloud); }
 
 /* Mentor photo composited on the right of the generated art (16:9 cards).
    Hidden in the horizontal live card, where it would dominate the tall panel. */
