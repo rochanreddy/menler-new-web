@@ -325,8 +325,8 @@ export function buildCertificateEmail({
   const text = `${headingText}
 
 ${plain(messageText)}
-${deck ? `\n→ Download the session slides: ${deck}\n` : ''}
 ${feedback ? `\n→ Share your feedback here: ${feedback}\n` : ''}
+${deck ? `\n→ Download the session slides: ${deck}\n` : ''}
 ${plain(closingText)}
 
 → Explore program and enroll: https://menler.in/generalist
@@ -395,21 +395,21 @@ menler.in`;
           <p style="margin:0 0 22px; font-size:16px; line-height:1.8; color:#1F2430;">${esc(headingText)}</p>
           ${paras.map((p) => `<p style="margin:0 0 22px; font-size:16px; line-height:1.8; color:#1F2430;">${rich(p)}</p>`).join('\n          ')}
         </td></tr>
-${deck ? `
-        <!-- ── SESSION DECK CTA ── -->
-        <tr><td align="center" class="px" style="padding:8px 40px 6px;">
-          <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
-            <td bgcolor="#534AB7" style="border-radius:6px;">
-              <a href="${esc(deck)}" style="display:inline-block; padding:15px 42px; font-family:'DM Sans',Arial,sans-serif; font-size:15px; font-weight:700; color:#ffffff; text-decoration:none; border-radius:6px;">&#8595; Download the session slides</a>
-            </td>
-          </tr></table>
-        </td></tr>` : ''}
 ${feedback ? `
         <!-- ── FEEDBACK CTA ── -->
         <tr><td align="center" class="px" style="padding:8px 40px 6px;">
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
             <td bgcolor="#534AB7" style="border-radius:6px;">
               <a href="${esc(feedback)}" style="display:inline-block; padding:15px 42px; font-family:'DM Sans',Arial,sans-serif; font-size:15px; font-weight:700; color:#ffffff; text-decoration:none; border-radius:6px;">Share your feedback</a>
+            </td>
+          </tr></table>
+        </td></tr>` : ''}
+${deck ? `
+        <!-- ── SESSION DECK CTA ── -->
+        <tr><td align="center" class="px" style="padding:8px 40px 6px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+            <td bgcolor="#534AB7" style="border-radius:6px;">
+              <a href="${esc(deck)}" style="display:inline-block; padding:15px 42px; font-family:'DM Sans',Arial,sans-serif; font-size:15px; font-weight:700; color:#ffffff; text-decoration:none; border-radius:6px;">&#8595; Download the session slides</a>
             </td>
           </tr></table>
         </td></tr>` : ''}
