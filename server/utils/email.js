@@ -9,6 +9,7 @@ const require = createRequire(import.meta.url);
 const MailComposer = require('nodemailer/lib/mail-composer');
 
 const {
+  BREVO_API_KEY,
   RESEND_API_KEY,
   SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS,
   GOOGLE_SA_KEY, GMAIL_SENDER,
@@ -20,27 +21,38 @@ const FROM = MAIL_FROM || (GMAIL_SENDER ? `Menler <${GMAIL_SENDER}>` : 'Menler <
 const REPLY_TO = MAIL_REPLY_TO || '';
 
 /* ── Transport selection ──────────────────────────────────────────────────────
- * Resend (HTTPS API) is preferred because platforms like Render block outbound
- * SMTP — HTTPS on 443 is never blocked, and it needs no Google org access.
- * Gmail API (also HTTPS) and SMTP remain as alternates; with none configured,
- * mail logs to the console (dev).
+ * All preferred transports are HTTPS APIs because platforms like Render block
+ * outbound SMTP — HTTPS on 443 is never blocked. Priority (first one configured
+ * wins), so switching providers is just a matter of which key is set:
+ *   1. Brevo   (HTTPS API — 300 emails/day free)
+ *   2. Resend  (HTTPS API — 100 emails/day free)
+ *   3. Gmail API (HTTPS)   4. SMTP        else → console log (dev)
  * ─────────────────────────────────────────────────────────────────────────── */
 
+const brevoConfigured = Boolean(BREVO_API_KEY);
 const resendConfigured = Boolean(RESEND_API_KEY);
 const gmailConfigured = Boolean(GOOGLE_SA_KEY && GMAIL_SENDER);
 const smtpConfigured = Boolean(SMTP_HOST && SMTP_USER && SMTP_PASS);
 
 export function isMailConfigured() {
-  return resendConfigured || gmailConfigured || smtpConfigured;
+  return brevoConfigured || resendConfigured || gmailConfigured || smtpConfigured;
 }
 // Back-compat name used elsewhere.
 export const isSmtpConfigured = isMailConfigured;
 
 function mailMode() {
+  if (brevoConfigured) return 'brevo';
   if (resendConfigured) return 'resend';
   if (gmailConfigured) return 'gmail-api';
   if (smtpConfigured) return 'smtp';
   return 'console';
+}
+
+// Split a "Name <email>" from-header into Brevo's { name, email } shape.
+function parseAddress(str) {
+  const m = /^\s*(.*?)\s*<([^>]+)>\s*$/.exec(String(str || ''));
+  if (m) return { ...(m[1] ? { name: m[1] } : {}), email: m[2].trim() };
+  return { email: String(str || '').trim() };
 }
 
 /* ── Resend (HTTPS API) ────────────────────────────────────────────────────── */
@@ -88,6 +100,48 @@ async function resendSend(message) {
   if (!res.ok) {
     const body = await res.text().catch(() => '');
     throw new Error(`Resend ${res.status}: ${body.slice(0, 300)}`);
+  }
+}
+
+/* ── Brevo (HTTPS API) ─────────────────────────────────────────────────────── */
+
+function brevoFetch(path, init = {}) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 20000);
+  return fetch(`https://api.brevo.com${path}`, {
+    ...init,
+    headers: { 'api-key': BREVO_API_KEY, accept: 'application/json', 'Content-Type': 'application/json', ...(init.headers || {}) },
+    signal: ctrl.signal,
+  }).finally(() => clearTimeout(timer));
+}
+
+// Brevo takes attachments as base64 `content` + `name` — same as Resend. The
+// resource/brochure/certificate emails pass a `path`, so read it into a Buffer.
+async function toBrevoAttachment(a) {
+  let buf;
+  if (a.content != null) buf = Buffer.isBuffer(a.content) ? a.content : Buffer.from(a.content);
+  else if (a.path) buf = await fs.readFile(a.path);
+  else return null;
+  return { name: a.filename, content: buf.toString('base64') };
+}
+
+async function brevoSend(message) {
+  const attachment = (await Promise.all((message.attachments || []).map(toBrevoAttachment))).filter(Boolean);
+  const res = await brevoFetch('/v3/smtp/email', {
+    method: 'POST',
+    body: JSON.stringify({
+      sender: parseAddress(message.from),
+      to: [{ email: message.to }],
+      subject: message.subject,
+      ...(message.text ? { textContent: message.text } : {}),
+      ...(message.html ? { htmlContent: message.html } : {}),
+      ...(REPLY_TO ? { replyTo: { email: REPLY_TO } } : {}),
+      ...(attachment.length ? { attachment } : {}),
+    }),
+  });
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    throw new Error(`Brevo ${res.status}: ${body.slice(0, 300)}`);
   }
 }
 
@@ -170,7 +224,18 @@ if (smtpConfigured) {
 export async function verifyMailer() {
   const mode = mailMode();
   if (mode === 'console') {
-    return { ok: false, mode, error: 'No email transport is configured (set RESEND_API_KEY, or Gmail/SMTP credentials).' };
+    return { ok: false, mode, error: 'No email transport is configured (set BREVO_API_KEY or RESEND_API_KEY, or Gmail/SMTP credentials).' };
+  }
+  if (mode === 'brevo') {
+    try {
+      // /v3/account is a cheap authenticated call that validates the API key.
+      const res = await brevoFetch('/v3/account');
+      if (res.ok) return { ok: true, mode };
+      const body = await res.text().catch(() => '');
+      return { ok: false, mode, error: `Brevo rejected the API key (${res.status}). ${body.slice(0, 200)}` };
+    } catch (err) {
+      return { ok: false, mode, error: err?.message || 'Could not reach Brevo.' };
+    }
   }
   if (mode === 'resend') {
     try {
@@ -225,6 +290,7 @@ export async function sendMail({ to, subject, text, html, attachments = [] }) {
     ...(REPLY_TO ? { replyTo: REPLY_TO } : {}),
     attachments,
   };
+  if (mode === 'brevo') return brevoSend(message);
   if (mode === 'resend') return resendSend(message);
   if (mode === 'gmail-api') return gmailSend(message);
   return transporter.sendMail(message);
