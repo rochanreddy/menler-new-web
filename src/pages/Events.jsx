@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Seo from '../components/common/Seo';
 import Footer from '../components/layout/Footer';
+import MenlerWordmark from '../components/common/MenlerWordmark';
 import PlaybookModal from '../components/common/PlaybookModal';
 import { useContentState } from '../lib/useContent';
 import { MENLER_WHATSAPP_URL } from '../data/communityLinks';
@@ -96,12 +97,15 @@ function EventArt({ ev }) {
     return <img className="ev-art-img" src={optImg(ev.thumbnail, 1000)} alt={ev.title} loading="lazy" decoding="async" />;
   }
   return (
-    <div className={`ev-art ev-art--gen${ev.mentorPhoto ? ' ev-art--face' : ''}`} style={{ '--ev-accent': accent }}>
-      <span className="ev-art-brand">menler<i /></span>
+    <div className="ev-art ev-art--gen" style={{ '--ev-accent': accent }}>
+      <span className="ev-art-dots" aria-hidden="true" />
+      <span className="ev-art-glow" aria-hidden="true" />
+      <div className="ev-art-top">
+        <MenlerWordmark size={17} theme="dark" rule="#8E82F5" />
+        <span className="ev-art-badge">✦ Masterclass</span>
+      </div>
       <span className="ev-art-title">{ev.title}</span>
-      {ev.mentorPhoto && (
-        <img className="ev-art-face" src={optImg(ev.mentorPhoto, 240)} alt={ev.mentorName || ''} loading="lazy" decoding="async" />
-      )}
+      {ev.tags?.[0] && <span className="ev-art-foot">{ev.tags[0]}</span>}
     </div>
   );
 }
