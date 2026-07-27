@@ -30,6 +30,7 @@ export default function Checkout() {
   const [placing, setPlacing] = useState(false);
   const [placed, setPlaced] = useState(false);
   const [err, setErr] = useState('');
+  const [confirmLeave, setConfirmLeave] = useState(false); // "Leave checkout?" guard
 
   // Guard: /checkout is only valid after registering on a campaign, which passes
   // the verified registrant in router state. A direct URL visit has no state, so
@@ -179,14 +180,14 @@ export default function Checkout() {
 
       {/* Mobile-only topbar: back button + wordmark, pinned to the top. */}
       <div className="cox-mtop">
-        <button className="cox-back-mobile" onClick={() => navigate(-1)}>← Back</button>
+        <button className="cox-back-mobile" onClick={() => setConfirmLeave(true)}>← Back</button>
         <MenlerWordmark size={22} theme="dark" />
       </div>
 
       {/* ── LEFT: blue — contact (read-only) + add-ons ── */}
       <div className="cox-form">
         <div className="cox-form-inner">
-          <button className="cox-back-btn cox-back-btn--top" onClick={() => navigate(-1)}>Back</button>
+          <button className="cox-back-btn cox-back-btn--top" onClick={() => setConfirmLeave(true)}>Back</button>
 
           <div className="cox-contact">
           <h3 className="cox-h3" style={{ marginTop: 0 }}>Contact information</h3>
@@ -318,6 +319,20 @@ export default function Checkout() {
           {isPaid && <p className="cox-pay-fine">Secured by Cashfree · UPI · Cards · Netbanking</p>}
         </div>
       </div>
+
+      {/* Guard against accidentally leaving mid-registration. */}
+      {confirmLeave && (
+        <div className="cox-leave-overlay" onClick={() => setConfirmLeave(false)}>
+          <div className="cox-leave" role="dialog" aria-modal="true" aria-label="Leave checkout?" onClick={(e) => e.stopPropagation()}>
+            <h3 className="cox-leave-h">Leave checkout?</h3>
+            <p className="cox-leave-p">You're almost done — your registration isn't complete yet. Are you sure you want to go back?</p>
+            <div className="cox-leave-actions">
+              <button type="button" className="cox-leave-stay" onClick={() => setConfirmLeave(false)}>Stay on checkout</button>
+              <button type="button" className="cox-leave-go" onClick={() => { setConfirmLeave(false); navigate(-1); }}>Yes, go back</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
