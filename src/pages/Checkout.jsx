@@ -293,7 +293,7 @@ export default function Checkout() {
             <div className="cox-order-head-main">
               <p className="cox-eyebrow">Register for</p>
               <p className="cox-name">{workshopTitle}</p>
-              <p className="cox-price">{total > 0 ? formatINR(total) : <>Free<span> · free seat</span></>}</p>
+              <p className="cox-price">{total > 0 ? formatINR(total) : 'Free'}</p>
             </div>
             {/* Mobile-only: contact details tucked into the header (top-right). */}
             <div className="cox-order-contact">
