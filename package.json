@@ -36,6 +36,7 @@
     "react-dom": "^19.2.6",
     "react-router-dom": "^7.15.1",
     "sanity": "^6.0.0",
+    "styled-components": "^6.4.4",
     "three": "^0.184.0"
   },
   "devDependencies": {
