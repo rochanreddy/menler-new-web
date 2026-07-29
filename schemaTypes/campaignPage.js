@@ -175,9 +175,16 @@ export default defineType({
       }],
     }),
 
-    // ── WhatsApp community ──
-    defineField({ name: 'whatsappUrl', title: 'WhatsApp community invite link', type: 'url', group: 'sections', description: 'The WhatsApp group/community join link.' }),
-    defineField({ name: 'whatsappText', title: 'WhatsApp bar text', type: 'string', group: 'sections' }),
+    // ── Community section ──
+    defineField({
+      name: 'communityPlatform', title: 'Community button', type: 'string', group: 'sections',
+      options: { list: [{ title: 'WhatsApp — “Join on WhatsApp”', value: 'whatsapp' }, { title: 'Instagram — “Follow on Instagram”', value: 'instagram' }], layout: 'radio' },
+      initialValue: 'whatsapp',
+      description: 'Which button the “Join our Menler community” section shows. (Turn the section on with “Show community section”.)',
+    }),
+    defineField({ name: 'whatsappUrl', title: 'WhatsApp community invite link', type: 'url', group: 'sections', description: 'Used when the button is WhatsApp.' }),
+    defineField({ name: 'instagramUrl', title: 'Instagram link', type: 'url', group: 'sections', description: 'Used when the button is Instagram. Leave blank to use the default Menler Instagram.' }),
+    defineField({ name: 'whatsappText', title: 'Community text (under the heading)', type: 'string', group: 'sections' }),
 
     // ── Section visibility ──
     // Turn a whole block off for this campaign. Everything is on by default

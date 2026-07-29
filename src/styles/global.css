@@ -1962,6 +1962,9 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 @media (max-width: 480px) {
   .lp2-cert-mock-kicker { font-size: 10px; letter-spacing: .1em; }
   .lp2-cert-mock-kicker::before, .lp2-cert-mock-kicker::after { width: 14px; margin: 0 7px; }
+  /* Smaller menler logo on the certificate (the size prop sets font-size inline,
+     so this needs !important to win on mobile). */
+  .lp2-cert-mock-top .menler-wm { font-size: 22px !important; }
 }
 .lp2-cert-mock-to { margin-top: 16px; font-size: 12px; color: var(--text-muted); font-style: italic; }
 .lp2-cert-mock-name { font-family: 'DM Serif Display', serif; font-size: clamp(26px, 5vw, 34px); color: var(--ink); margin: 6px 0 0; }
