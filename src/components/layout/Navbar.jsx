@@ -112,8 +112,8 @@ export default function Navbar() {
         
         
 
-        {import.meta.env.DEV && <button className={`nav-link${isActive('/events') ? ' active' : ''}`} onClick={() => go('/events')}>Events</button>}
         <button className={`nav-link${isActive('/aptitude') ? ' active' : ''}`} onClick={() => go('/aptitude')}>AI Aptitude Test</button>
+        <button className={`nav-link${isActive('/events') ? ' active' : ''}`} onClick={() => go('/events')}>Events</button>
         <button className={`nav-link${isActive('/resources') ? ' active' : ''}`} onClick={() => go('/resources')}>Library</button>
         <button className={`nav-link${isActive('/about') ? ' active' : ''}`} onClick={() => go('/about')}>About</button>
         <button className="nav-cta" onClick={apply}>Apply Now</button>
@@ -129,8 +129,8 @@ export default function Navbar() {
         <div className="mm-divider" />
         <button className="mm-link" onClick={() => go('/kickstarter')}>AI Kickstarter</button>
         <div className="mm-divider" />
-        {import.meta.env.DEV && <button className={`mm-link${isActive('/events') ? ' active' : ''}`} onClick={() => go('/events')}>Events</button>}
         <button className={`mm-link${isActive('/aptitude') ? ' active' : ''}`} onClick={() => go('/aptitude')}>AI Aptitude Test</button>
+        <button className={`mm-link${isActive('/events') ? ' active' : ''}`} onClick={() => go('/events')}>Events</button>
         <button className={`mm-link${isActive('/resources') ? ' active' : ''}`} onClick={() => go('/resources')}>Library</button>
         <button className={`mm-link${isActive('/about') ? ' active' : ''}`} onClick={() => go('/about')}>About</button>
         <div className="mm-divider" />
