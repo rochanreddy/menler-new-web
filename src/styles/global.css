@@ -1964,12 +1964,12 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .lp2-cert-mock-kicker::before, .lp2-cert-mock-kicker::after { width: 14px; margin: 0 7px; }
   /* Smaller menler logo on the certificate (the size prop sets font-size inline,
      so this needs !important to win on mobile). */
-  .lp2-cert-mock-top .menler-wm { font-size: 22px !important; }
+  .lp2-cert-mock-top .menler-wm { font-size: 17px !important; }
 }
 .lp2-cert-mock-to { margin-top: 16px; font-size: 12px; color: var(--text-muted); font-style: italic; }
 .lp2-cert-mock-name { font-family: 'DM Serif Display', serif; font-size: clamp(26px, 5vw, 34px); color: var(--ink); margin: 6px 0 0; }
 .lp2-cert-rule { display: block; width: 190px; height: 1px; margin: 12px auto 0; background: linear-gradient(90deg, transparent, var(--a), transparent); }
-.lp2-cert-mock-for { margin-top: 14px; font-size: 13.5px; line-height: 1.6; color: var(--ink); }
+.lp2-cert-mock-for { margin-top: 14px; font-size: 12px; line-height: 1.6; color: var(--ink); }
 .lp2-cert-mock-for b { color: var(--ink); font-weight: 700; }
 .lp2-cert-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 28px; gap: 16px; }
 .lp2-cert-seal { flex-shrink: 0; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; width: 66px; height: 66px; border-radius: 50%; background: radial-gradient(circle at 50% 24%, rgba(255,255,255,0.6), rgba(255,255,255,0) 56%), linear-gradient(155deg, #F6C457 0%, #BA7517 100%); color: #fff; box-shadow: 0 8px 20px rgba(186,117,23,0.42), inset 0 1px 2px rgba(255,255,255,0.5); border: 2px solid rgba(255,255,255,0.9); }
@@ -1978,7 +1978,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-cert-sign { display: inline-flex; flex-direction: column; align-items: flex-end; text-align: right; }
 .lp2-cert-sign--left { align-items: flex-start; text-align: left; }
 .lp2-cert-sign-name { font-family: 'DM Serif Display', serif; font-size: 17px; color: var(--ink); border-bottom: 1px solid rgba(38,33,92,0.3); padding: 0 6px 4px; }
-.lp2-cert-sign-role { font-size: 11px; color: var(--text-muted); margin-top: 5px; }
+.lp2-cert-sign-role { font-size: 9.5px; color: var(--text-muted); margin-top: 5px; }
 .lp2-cert-note { font-size: 12.5px; color: var(--text-muted); }
 @media (max-width: 560px) {
   /* Compact the certificate into a shorter, wider (landscape) card on mobile —
@@ -1994,13 +1994,13 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .lp2-cert-mock-to { margin-top: 8px; font-size: 10px; }
   .lp2-cert-mock-name { font-size: clamp(19px, 6vw, 26px); }
   .lp2-cert-rule { width: 130px; margin-top: 8px; }
-  .lp2-cert-mock-for { margin-top: 9px; font-size: 11px; line-height: 1.45; }
+  .lp2-cert-mock-for { margin-top: 9px; font-size: 10px; line-height: 1.45; }
   .lp2-cert-foot { flex-direction: row; align-items: flex-end; justify-content: space-between; gap: 10px; margin-top: 14px; }
   .lp2-cert-sign { align-items: flex-end; text-align: right; }
   .lp2-cert-sign--left { align-items: flex-start; text-align: left; }
   .lp2-cert-sign-name { font-size: 12px; padding: 0 4px 3px; }
-  .lp2-cert-sign-role { font-size: 8.5px; margin-top: 3px; }
-  .lp2-cert-mock-top .menler-wm { font-size: 22px !important; }
+  .lp2-cert-sign-role { font-size: 8px; margin-top: 3px; }
+  .lp2-cert-mock-top .menler-wm { font-size: 17px !important; }
   .lp2-cert-mock-top .menler-wm__tagline { font-size: 0.32em; white-space: normal; max-width: 140px; }
 }
 
