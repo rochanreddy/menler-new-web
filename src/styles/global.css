@@ -3480,11 +3480,12 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .ev-hero-h1 { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: clamp(26px, 4.6vw, 40px); line-height: 1.12; color: #fff; margin: 16px 0 0; }
 .ev-hero-h1 em { font-style: italic; color: var(--lavender); }
 .ev-hero-sub { max-width: 560px; margin: 14px auto 0; font-size: clamp(14px, 1.7vw, 16px); line-height: 1.6; color: rgba(238,237,254,0.72); }
-/* Same treatment as the site's existing .lp2-wa-join button: WhatsApp-brand
-   green pill, white mark + label, soft green lift. */
-.ev-hero-cta { display: inline-flex; align-items: center; gap: 10px; margin-top: 22px; padding: 13px 26px; border-radius: 999px; background: #25D366; color: #fff; font-weight: 700; font-size: 14px; text-decoration: none; box-shadow: 0 8px 22px rgba(37,211,102,0.3); transition: transform .15s ease, box-shadow .15s ease; }
+/* Same shape as the site's existing .lp2-wa-join button (green pill, white mark
+   + label), toned DOWN from the #25D366 brand green — a deeper, less luminous
+   green with only a faint lift, so it doesn't glare against the dark hero. */
+.ev-hero-cta { display: inline-flex; align-items: center; gap: 10px; margin-top: 22px; padding: 13px 26px; border-radius: 999px; background: #1FA95C; color: #fff; font-weight: 700; font-size: 14px; text-decoration: none; box-shadow: 0 6px 16px rgba(31,169,92,0.18); transition: transform .15s ease, box-shadow .15s ease, background .15s ease; }
 .ev-hero-cta svg { width: 20px; height: 20px; }
-.ev-hero-cta:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(37,211,102,0.42); }
+.ev-hero-cta:hover { transform: translateY(-2px); background: #1B9752; box-shadow: 0 10px 22px rgba(31,169,92,0.26); }
 /* Ticket perforation notches on the hero edges */
 
 /* ── Sections + grid ── */
@@ -3558,11 +3559,16 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .ev-host span { display: flex; flex-direction: column; min-width: 0; }
 .ev-host b { font-size: 13px; color: var(--ink); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ev-host i { font-size: 11.5px; font-style: normal; color: var(--text-muted); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ev-join, .ev-download { flex-shrink: 0; border: 0; cursor: pointer; font-family: inherit; font-weight: 500; font-size: 13px; padding: 11px 22px; border-radius: 22px; transition: background .2s ease; }
+.ev-join, .ev-download { flex-shrink: 0; display: inline-flex; align-items: center; gap: 9px; border: 0; cursor: pointer; font-family: inherit; font-weight: 500; font-size: 13px; padding: 9px 10px 9px 22px; border-radius: 22px; transition: background .2s ease; }
 .ev-join { background: var(--specialist); color: #fff; }
 .ev-join:hover { background: #6B62CC; }
 .ev-download { background: var(--cloud); color: var(--specialist); }
 .ev-download:hover { background: #e2dffb; }
+/* Arrow sits in its own circle at the end of the pill. */
+.ev-arrow { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; font-size: 12px; line-height: 1; flex-shrink: 0; transition: transform .2s ease; }
+.ev-join .ev-arrow { background: rgba(255,255,255,0.22); color: #fff; }
+.ev-download .ev-arrow { background: rgba(83,74,183,0.16); color: var(--specialist); }
+.ev-join:hover .ev-arrow, .ev-download:hover .ev-arrow { transform: translate(1px, -1px); }
 @media (max-width: 380px) { .ev-foot { flex-direction: column; align-items: stretch; } .ev-join, .ev-download { text-align: center; } }
 
 /* ── Live events: full-width HORIZONTAL card (art left · details right) ── */

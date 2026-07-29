@@ -171,6 +171,9 @@ export default function Events() {
   const [pastShown, setPastShown] = useState(PAST_INITIAL);
   const pastVisible = past.slice(0, pastShown);
 
+  // Programs block links out to the other pages — land at the top, not mid-page.
+  const go = (path) => { navigate(path); window.scrollTo(0, 0); };
+
   const join = (ev) => {
     const t = joinTarget(ev);
     if (!t) return;
@@ -226,7 +229,9 @@ export default function Events() {
                   )}
                   <div className="ev-foot">
                     {joinTarget(ev) && (
-                      <button className="ev-join" onClick={() => join(ev)}>Join masterclass ↗</button>
+                      <button className="ev-join" onClick={() => join(ev)}>
+                        Join masterclass<span className="ev-arrow" aria-hidden="true">↗</span>
+                      </button>
                     )}
                   </div>
                 </div>
@@ -253,8 +258,8 @@ export default function Events() {
                   )}
                   {(ev.date || ev.time || ev.attendees) && (
                     <div className="ev-when">
-                      {ev.date && <span>{ev.date}</span>}
-                      {ev.time && <span>{ev.time}</span>}
+                      {ev.date && <span className="ev-when-item"><CalendarIcon />{ev.date}</span>}
+                      {ev.time && <span className="ev-when-item"><ClockIcon />{ev.time}</span>}
                       {ev.attendees && <span className="ev-attend">{ev.attendees} attendees</span>}
                     </div>
                   )}
@@ -273,7 +278,7 @@ export default function Events() {
                         });
                       }}
                     >
-                      ↓ Access Now 
+                      Access Now<span className="ev-arrow" aria-hidden="true">↗</span>
                     </button>
                   </div>
                 </div>
@@ -289,6 +294,33 @@ export default function Events() {
           )}
         </section>
       )}
+
+      {/* ── EXPLORE MENLER PROGRAMS (same block as /aptitude) ── */}
+      <section className="section" style={{ background: 'white', paddingTop: 48, paddingBottom: 32 }}>
+        <p className="section-label" style={{ textAlign: 'center' }}>Explore More Programs</p>
+        <h2 className="section-h2" style={{ textAlign: 'center' }}>Continue your <em>AI journey.</em></h2>
+        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto' }}>Ready to go beyond a single session? Explore the Menler programs designed to help you<br />build capability, portfolio, and career momentum.</p>
+        <div className="cluster-grid" style={{ marginTop: 28 }}>
+          <div className="cluster-card cluster-card--kick">
+            <p className="cluster-num">For beginners &amp; explorers</p>
+            <p className="cluster-name">Menler Gen AI Kickstarter</p>
+            <p className="cluster-sets">Learn AI fundamentals, build your first portfolio, and become AI fluent in just 14 days.</p>
+            <button className="cluster-btn" onClick={() => go('/kickstarter')}>Explore Kickstarter</button>
+          </div>
+          <div className="cluster-card cluster-card--gen">
+            <p className="cluster-num">College students &amp; professionals</p>
+            <p className="cluster-name">Menler Claude AI Generalist Fellowship</p>
+            <p className="cluster-sets">Apply AI across business functions. Drive real-world impact through smarter execution.</p>
+            <button className="cluster-btn" onClick={() => go('/generalist')}>Explore Fellowship</button>
+          </div>
+          <div className="cluster-card cluster-card--eng">
+            <p className="cluster-num">Engineers &amp; technical builders</p>
+            <p className="cluster-name">Menler AI Engineering Fellowship</p>
+            <p className="cluster-sets">Build production-grade AI systems, agents, RAG applications, MCP integrations, and AI infrastructure.</p>
+            <button className="cluster-btn" onClick={() => go('/engineering')}>Explore Engineering</button>
+          </div>
+        </div>
+      </section>
 
       <Footer />
 
