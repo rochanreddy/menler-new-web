@@ -71,6 +71,14 @@ export default defineType({
       initialValue: false,
       description: 'When on, the same credential logos also appear under the mentor credit in the hero banner.',
     }),
+    defineField({
+      name: 'credLogoSize',
+      title: 'Logo size (px)',
+      type: 'number',
+      group: 'banner',
+      description: 'Height of the credential logos. Leave blank for the default (26). Increase to make all the logos bigger, decrease to make them smaller — they scale together in both the banner and the under-form strip.',
+      validation: (r) => r.min(12).max(64),
+    }),
     defineField({ name: 'bannerTagline', title: 'Tagline (under title)', type: 'string', group: 'banner' }),
     defineField({ name: 'subtitle', title: 'Intro paragraph (below banner)', type: 'text', rows: 3, group: 'banner' }),
 

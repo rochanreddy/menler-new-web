@@ -123,7 +123,7 @@ const CAMPAIGN_QUERY = `*[_type == "campaignPage" && slug.current == $slug][0]{
   date, time, eventStart, eventEnd, format, price, origPrice, seatsNote,
   themeAccent, themeAccentDark, bannerFrom, bannerTo, highlightBg, highlightText,
   mentorName, mentorRole, "mentorPhoto": mentorPhoto.asset->url, mentorBio, mentorCreds,
-  credLogos[]{ name, logoPath, "image": image.asset->url }, showCredLogosInBanner,
+  credLogos[]{ name, logoPath, "image": image.asset->url }, showCredLogosInBanner, credLogoSize,
   founderName, founderRole,
   learn[]{title, detail}, forYou, get[]{title, detail},
   "certificateImage": certificateImage.asset->url, certificateTitle, certificateNote,
@@ -181,12 +181,12 @@ const CERT_TITLES = {
 
 // One chip in the strip under the form. If the logo file is missing the chip
 // removes itself rather than leaving a broken-image icon on a live campaign.
-function LogoChip({ name, logo }) {
+function LogoChip({ name, logo, size }) {
   const [failed, setFailed] = useState(false);
   if (failed) return null;
   return (
     <span className="lp2-logochip">
-      <img src={logo} alt={name} loading="lazy" onError={() => setFailed(true)} />
+      <img src={logo} alt={name} loading="lazy" onError={() => setFailed(true)} style={size ? { height: `${size}px` } : undefined} />
     </span>
   );
 }
@@ -286,6 +286,10 @@ export default function KickstarterLanding() {
     ? d.credLogos.map((l) => ({ name: l.name, logo: optImg(l.image, 260) || l.logoPath })).filter((l) => l.logo)
     : null;
   const campaignLogos = sanityLogos || CAMPAIGN_LOGOS[activeSlug];
+  // Optional per-campaign logo size (px). Sets the banner height directly and
+  // scales the under-form strip by the same ratio so both move together.
+  const bannerLogoH = Number(d.credLogoSize) > 0 ? Number(d.credLogoSize) : null;
+  const stripLogoH = bannerLogoH ? Math.round(bannerLogoH * 46 / 26) : null;
   // Extra "College / University" field — only on the career-advantage campaign.
   const showCollege = activeSlug === 'turn-ai-into-your-career-advantage';
   const bannerCredLogos = (d.showCredLogosInBanner && sanityLogos) || BANNER_CRED_LOGOS[activeSlug];
@@ -390,7 +394,7 @@ export default function KickstarterLanding() {
               {!contentLoading && bannerCredLogos && (
                 <div className="lp2-banner-creds" aria-label={bannerCredLogos.map((l) => l.name).join(', ')}>
                   {bannerCredLogos.map((l) => (
-                    <img key={l.name} src={l.logo} alt={l.name} decoding="async" />
+                    <img key={l.name} src={l.logo} alt={l.name} decoding="async" style={bannerLogoH ? { height: `${bannerLogoH}px` } : undefined} />
                   ))}
                 </div>
               )}
@@ -595,7 +599,7 @@ export default function KickstarterLanding() {
           {campaignLogos && (
             <div className="lp2-logostrip" aria-label={campaignLogos.map((l) => l.name).join(', ')}>
               {campaignLogos.map((l) => (
-                <LogoChip key={l.name} name={l.name} logo={l.logo} />
+                <LogoChip key={l.name} name={l.name} logo={l.logo} size={stripLogoH} />
               ))}
             </div>
           )}
