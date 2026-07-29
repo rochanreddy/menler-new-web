@@ -3466,12 +3466,12 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .ev { background: #fff; color: var(--ink); }
 
 /* ── Hero (ticket style) ── */
+/* Same flat --ink fill + orbit rings as the /resources ("Menler library") hero,
+   so the two pages read as one system. Padding stays compact so the first live
+   event still lands in the opening scroll. */
 .ev-hero {
   position: relative; overflow: hidden;
-  background:
-    radial-gradient(120% 140% at 12% 0%, rgba(83,74,183,0.45), transparent 55%),
-    radial-gradient(120% 140% at 100% 100%, rgba(29,158,117,0.28), transparent 55%),
-    linear-gradient(135deg, #1A1647 0%, #26215C 55%, #2E2769 100%);
+  background: var(--ink);
   padding: clamp(36px, 5vw, 56px) var(--gutter) clamp(24px, 3.5vw, 36px);
   text-align: center;
 }
@@ -3486,7 +3486,6 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .ev-hero-cta { display: inline-flex; align-items: center; gap: 10px; margin-top: 22px; padding: 13px 26px; border-radius: 999px; background: #1FA95C; color: #fff; font-weight: 700; font-size: 14px; text-decoration: none; box-shadow: 0 6px 16px rgba(31,169,92,0.18); transition: transform .15s ease, box-shadow .15s ease, background .15s ease; }
 .ev-hero-cta svg { width: 20px; height: 20px; }
 .ev-hero-cta:hover { transform: translateY(-2px); background: #1B9752; box-shadow: 0 10px 22px rgba(31,169,92,0.26); }
-/* Ticket perforation notches on the hero edges */
 
 /* ── Sections + grid ── */
 .ev-section { padding-top: clamp(18px, 3vw, 30px); padding-bottom: 0; }
