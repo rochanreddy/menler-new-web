@@ -1964,7 +1964,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .lp2-cert-mock-kicker::before, .lp2-cert-mock-kicker::after { width: 14px; margin: 0 7px; }
   /* Smaller menler logo on the certificate (the size prop sets font-size inline,
      so this needs !important to win on mobile). */
-  .lp2-cert-mock-top .menler-wm { font-size: 17px !important; }
+  .lp2-cert-mock-top .menler-wm { font-size: 15px !important; }
 }
 .lp2-cert-mock-to { margin-top: 16px; font-size: 12px; color: var(--text-muted); font-style: italic; }
 .lp2-cert-mock-name { font-family: 'DM Serif Display', serif; font-size: clamp(26px, 5vw, 34px); color: var(--ink); margin: 6px 0 0; }
@@ -1989,18 +1989,18 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .lp2-cert-seal { width: 44px; height: 44px; border-width: 1.5px; }
   .lp2-cert-seal-star { font-size: 13px; }
   .lp2-cert-seal-txt { font-size: 5px; margin-top: 2px; }
-  .lp2-cert-mock-kicker { margin-top: 12px; font-size: 9px; letter-spacing: .1em; }
+  .lp2-cert-mock-kicker { margin-top: 12px; font-size: 8px; letter-spacing: .1em; }
   .lp2-cert-mock-kicker::before, .lp2-cert-mock-kicker::after { width: 12px; margin: 0 6px; }
   .lp2-cert-mock-to { margin-top: 8px; font-size: 10px; }
-  .lp2-cert-mock-name { font-size: clamp(19px, 6vw, 26px); }
+  .lp2-cert-mock-name { font-size: clamp(16px, 5vw, 21px); }
   .lp2-cert-rule { width: 130px; margin-top: 8px; }
   .lp2-cert-mock-for { margin-top: 9px; font-size: 10px; line-height: 1.45; }
   .lp2-cert-foot { flex-direction: row; align-items: flex-end; justify-content: space-between; gap: 10px; margin-top: 14px; }
   .lp2-cert-sign { align-items: flex-end; text-align: right; }
   .lp2-cert-sign--left { align-items: flex-start; text-align: left; }
-  .lp2-cert-sign-name { font-size: 12px; padding: 0 4px 3px; }
+  .lp2-cert-sign-name { font-size: 10.5px; padding: 0 4px 3px; }
   .lp2-cert-sign-role { font-size: 8px; margin-top: 3px; }
-  .lp2-cert-mock-top .menler-wm { font-size: 17px !important; }
+  .lp2-cert-mock-top .menler-wm { font-size: 15px !important; }
   .lp2-cert-mock-top .menler-wm__tagline { font-size: 0.32em; white-space: normal; max-width: 140px; }
 }
 
