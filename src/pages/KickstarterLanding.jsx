@@ -123,7 +123,7 @@ const CAMPAIGN_QUERY = `*[_type == "campaignPage" && slug.current == $slug][0]{
   date, time, eventStart, eventEnd, format, price, origPrice, seatsNote,
   themeAccent, themeAccentDark, bannerFrom, bannerTo, highlightBg, highlightText,
   mentorName, mentorRole, "mentorPhoto": mentorPhoto.asset->url, mentorBio, mentorCreds,
-  credLogos[]{ name, logoPath }, showCredLogosInBanner,
+  credLogos[]{ name, logoPath, "image": image.asset->url }, showCredLogosInBanner,
   founderName, founderRole,
   learn[]{title, detail}, forYou, get[]{title, detail},
   "certificateImage": certificateImage.asset->url, certificateTitle, certificateNote,
@@ -281,8 +281,9 @@ export default function KickstarterLanding() {
 
   // Auto-shrink the title so each line fits its box (below the Sanity cap).
   const titleRef = useAutoFitTitle([d.bannerLine1, d.bannerLine2, d.bannerTitleSize, showClaudeLogo, contentLoading]);
+  // Each credential logo is an uploaded image (preferred) or a path under public/.
   const sanityLogos = has(d.credLogos)
-    ? d.credLogos.map((l) => ({ name: l.name, logo: l.logoPath }))
+    ? d.credLogos.map((l) => ({ name: l.name, logo: optImg(l.image, 260) || l.logoPath })).filter((l) => l.logo)
     : null;
   const campaignLogos = sanityLogos || CAMPAIGN_LOGOS[activeSlug];
   // Extra "College / University" field — only on the career-advantage campaign.
