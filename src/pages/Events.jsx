@@ -162,7 +162,7 @@ export default function Events() {
 
       {/* ── LIVE EVENTS ── */}
       {live.length > 0 && (
-        <section className="section ev-section">
+        <section className="section ev-section ev-section--live">
           <p className="section-label">Happening now</p>
           <h2 className="section-h2">Live <em>events</em></h2>
           <div className="ev-grid ev-grid--live">
