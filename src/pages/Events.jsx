@@ -20,6 +20,29 @@ import { MENLER_WHATSAPP_URL } from '../data/communityLinks';
 const optImg = (url, w) =>
   (url && url.includes('cdn.sanity.io') ? `${url}${url.includes('?') ? '&' : '?'}w=${w}&auto=format&q=72&fit=max` : url);
 
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'];
+const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+// `date` is a free-text field in Sanity, so each campaign arrives in whatever
+// shape its editor typed — "19th Jul, 2026", "01 August 2026, Saturday",
+// "Saturday, 25 July 2026" — which is why the cards disagreed with each other.
+// Pull the day/month/year out however they're ordered and re-emit one format,
+// deriving the weekday from the date itself (so a mistyped day is corrected
+// rather than repeated). Anything unparseable is passed through untouched.
+const formatEventDate = (raw) => {
+  if (!raw) return '';
+  const s = String(raw).replace(/(\d{1,2})(st|nd|rd|th)/gi, '$1');
+  const year = (s.match(/\b(20\d{2})\b/) || [])[1];
+  const month = s.match(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b/i);
+  const day = s.match(/\b(\d{1,2})\b/);
+  if (!year || !month || !day) return raw;
+  const mi = MONTHS.findIndex((m) => m.toLowerCase().startsWith(month[1].toLowerCase()));
+  const d = new Date(Number(year), mi, Number(day[1]));
+  if (mi < 0 || Number.isNaN(d.getTime())) return raw;
+  return `${String(day[1]).padStart(2, '0')} ${MONTHS[mi]} ${year}, ${WEEKDAYS[d.getDay()]}`;
+};
+
 // Map a raw campaign doc → the shape the cards render. One place, so the query,
 // the fallback and the cards never drift.
 const toEvent = (c) => ({
@@ -28,7 +51,7 @@ const toEvent = (c) => ({
   title: [c.bannerLine1, c.bannerLine2].filter(Boolean).join(' ') || c.title,
   subtitle: c.bannerTagline || c.subtitle || '',
   tags: c.eventTags || [],
-  date: c.date || '', time: c.time || '',
+  date: formatEventDate(c.date), time: c.time || '',
   campaignSlug: c.slug || '',
   accent: c.themeAccent || c.highlightBg || '#534AB7',
   thumbnail: c.eventImage || '',
@@ -87,6 +110,23 @@ const EVENTS_QUERY = `*[_type == "campaignPage" && hideFromEvents != true] | ord
   eventResources[]{ title, "pdf": coalesce(file.asset->url, pdfPath) }
 }`;
 
+/* Line icons for the schedule row — same 24px grid / 2px stroke as the rest of
+   the site's inline SVGs, inheriting colour via currentColor. */
+const CalendarIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+    strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="3" y="5" width="18" height="16" rx="2" />
+    <path d="M8 3v4M16 3v4M3 10h18" />
+  </svg>
+);
+const ClockIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+    strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 7.5V12l3 2" />
+  </svg>
+);
+
 /* ── Auto-generated card art (no image upload needed) ────────────────────── */
 function EventArt({ ev }) {
   const accent = ev.accent || '#534AB7';
@@ -124,9 +164,11 @@ export default function Events() {
   const live = events.filter((e) => e.status !== 'past');
   const past = events.filter((e) => e.status === 'past');
 
-  // Past events grow over time — show a few, reveal the rest in place.
+  // Past events grow over time — show two full rows, then reveal a row at a
+  // time in place (the grid is 3-up on desktop, so these stay flush).
+  const PAST_INITIAL = 6;
   const PAST_STEP = 3;
-  const [pastShown, setPastShown] = useState(PAST_STEP);
+  const [pastShown, setPastShown] = useState(PAST_INITIAL);
   const pastVisible = past.slice(0, pastShown);
 
   const join = (ev) => {
@@ -177,11 +219,14 @@ export default function Events() {
                     <div className="ev-tags">{ev.tags.map((t) => <span key={t}>{t}</span>)}</div>
                   )}
                   {(ev.date || ev.time) && (
-                    <p className="ev-when">{[ev.date, ev.time].filter(Boolean).join(' · ')}</p>
+                    <p className="ev-when">
+                      {ev.date && <span className="ev-when-item"><CalendarIcon />{ev.date}</span>}
+                      {ev.time && <span className="ev-when-item"><ClockIcon />{ev.time}</span>}
+                    </p>
                   )}
                   <div className="ev-foot">
                     {joinTarget(ev) && (
-                      <button className="ev-join" onClick={() => join(ev)}>Join masterclass →</button>
+                      <button className="ev-join" onClick={() => join(ev)}>Join masterclass ↗</button>
                     )}
                   </div>
                 </div>
@@ -228,7 +273,7 @@ export default function Events() {
                         });
                       }}
                     >
-                      ↓ Download resources
+                      ↓ Access Now 
                     </button>
                   </div>
                 </div>

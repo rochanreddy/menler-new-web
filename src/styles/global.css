@@ -3477,27 +3477,32 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .ev-hero-h1 { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: clamp(26px, 4.6vw, 40px); line-height: 1.12; color: #fff; margin: 16px 0 0; }
 .ev-hero-h1 em { font-style: italic; color: var(--lavender); }
 .ev-hero-sub { max-width: 560px; margin: 14px auto 0; font-size: clamp(14px, 1.7vw, 16px); line-height: 1.6; color: rgba(238,237,254,0.72); }
-/* Matches the site's .btn-white language (white pill, restrained type) rather
-   than a saturated green slab, which fought the purple hero. The WhatsApp green
-   lives in the icon only, so the brand cue survives without the visual noise. */
-.ev-hero-cta { display: inline-flex; align-items: center; gap: 9px; margin-top: 22px; padding: 12px 24px; border-radius: 22px; background: #fff; color: var(--ink); font-weight: 600; font-size: 13.5px; text-decoration: none; transition: background .2s ease, transform .2s ease; }
-.ev-hero-cta svg { color: #25D366; }
-.ev-hero-cta:hover { background: var(--cloud); transform: translateY(-1px); }
+/* Same treatment as the site's existing .lp2-wa-join button: WhatsApp-brand
+   green pill, white mark + label, soft green lift. */
+.ev-hero-cta { display: inline-flex; align-items: center; gap: 10px; margin-top: 22px; padding: 13px 26px; border-radius: 999px; background: #25D366; color: #fff; font-weight: 700; font-size: 14px; text-decoration: none; box-shadow: 0 8px 22px rgba(37,211,102,0.3); transition: transform .15s ease, box-shadow .15s ease; }
+.ev-hero-cta svg { width: 20px; height: 20px; }
+.ev-hero-cta:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(37,211,102,0.42); }
 /* Ticket perforation notches on the hero edges */
 
 /* ── Sections + grid ── */
 .ev-section { padding-top: clamp(18px, 3vw, 30px); padding-bottom: 0; }
-.ev-section--past { padding-bottom: clamp(56px, 9vw, 96px); }
 /* Beige band (matches the Resources "Knowledge Layer" treatment) so the white
-   card reads as a distinct card instead of blending into the page background. */
-.ev-section--live { background: var(--parchment); padding-bottom: clamp(28px, 5vw, 44px); }
+   cards read as distinct cards instead of blending into the page background.
+   Past sits below the fold, so it gets its own roomier top padding. */
+.ev-section--past { background: var(--parchment); padding-top: clamp(40px, 6vw, 72px); padding-bottom: clamp(56px, 9vw, 96px); }
+.ev-section--live { background: #fff; padding-bottom: clamp(28px, 5vw, 44px); }
 .ev-grid { max-width: 1120px; margin: 32px auto 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 366px)); justify-content: center; gap: 22px; }
 .ev-grid--live { margin-top: 18px; }
 @media (max-width: 560px) { .ev-grid { grid-template-columns: 1fr; gap: 16px; } }
 
 /* ── Card ── */
-.ev-card { background: #fff; border: 1px solid var(--border); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(38,33,92,0.06); transition: transform .18s ease, box-shadow .18s ease; }
-.ev-card:hover { transform: translateY(-3px); box-shadow: 0 18px 44px rgba(38,33,92,0.12); }
+/* A pure-white card on a white band can't be separated by border and shadow
+   alone — the fill itself has to differ. Same fix the site already uses on
+   .res-card: a faint lavender gradient so the card sits *on* the page rather
+   than merging with it, plus a hairline ring and a layered shadow (tight
+   contact shadow for the edge, wide soft one for lift). */
+.ev-card { background: linear-gradient(165deg, #ffffff 0%, #F5F4FD 100%); border: 1px solid rgba(83,74,183,0.16); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 0 0 1px rgba(83,74,183,0.04), 0 2px 4px rgba(38,33,92,0.05), 0 18px 44px rgba(38,33,92,0.11); transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+.ev-card:hover { transform: translateY(-3px); border-color: rgba(83,74,183,0.34); box-shadow: 0 0 0 1px rgba(83,74,183,0.06), 0 2px 4px rgba(38,33,92,0.06), 0 26px 58px rgba(38,33,92,0.17); }
 
 /* Card art — uploaded image OR auto-generated from event fields */
 .ev-art { aspect-ratio: 16 / 8.4; background-size: cover; background-position: center; background-color: #26215C; }
@@ -3537,6 +3542,10 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .ev-tags { display: flex; flex-wrap: wrap; gap: 7px; }
 .ev-tags span { font-size: 11.5px; font-weight: 600; color: var(--specialist); background: var(--cloud); border-radius: 999px; padding: 5px 11px; }
 .ev-when { font-size: 13px; font-weight: 600; color: var(--ink); margin: 0; }
+/* Schedule row: calendar + clock icons sit inline with their value. */
+.ev-when-item { display: inline-flex; align-items: center; gap: 7px; }
+.ev-when-item svg { width: 15px; height: 15px; flex-shrink: 0; color: var(--specialist); }
+.ev-card--live .ev-when { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; }
 .ev-meta { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--text-muted); }
 .ev-attend { font-weight: 700; color: var(--ink); }
 .ev-foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
