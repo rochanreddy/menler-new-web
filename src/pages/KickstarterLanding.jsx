@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import MenlerWordmark from '../components/common/MenlerWordmark';
 import Seo from '../components/common/Seo';
 import MenlerCommunitySection from '../components/common/MenlerCommunitySection';
-import { MENLER_WHATSAPP_URL } from '../data/communityLinks';
+import { MENLER_WHATSAPP_URL, MENLER_INSTAGRAM_URL, CAMPAIGN_INSTAGRAM_SLUGS } from '../data/communityLinks';
 import { submitLead } from '../services/leadService';
 import { useContentState } from '../lib/useContent';
 import { verifyWhatsappOtp } from '../lib/amplifeedOtp';
@@ -90,18 +90,31 @@ const FALLBACK = {
   mentorPhoto: WORKSHOP.mentor.img,
   mentorBio: WORKSHOP.mentor.bio,
   mentorCreds: WORKSHOP.mentor.creds,
+  credLogos: [],
+  showCredLogosInBanner: false,
   founderName: 'Sachin Roy',
   founderRole: 'Founder, Menler',
   learn: LEARN.map((l) => ({ title: l.t, detail: l.d })),
   forYou: FORYOU,
   get: GET.map((g) => ({ title: g.t, detail: g.d })),
   certificateImage: '',
+  // Blank means "reuse the banner headline" — the certificate only needs its own
+  // wording when the course name differs from the campaign's marketing title.
+  certificateTitle: '',
   certificateNote: 'A Menler Certificate of Participation — shareable on LinkedIn.',
   whatsappUrl: MENLER_WHATSAPP_URL,
   discordUrl: '',
   facebookUrl: '',
   whatsappText: 'Join our WhatsApp community for updates, resources & support.',
   communityText: 'Updates, resources & support across all our channels.',
+
+  // Section visibility (toggled per campaign in Sanity). Everything is on by
+  // default except the community block, which is opt-in.
+  showLearn: true,
+  showGet: true,
+  showCertificate: true,
+  showMentor: true,
+  showCommunity: false,
 };
 
 // Load the campaign matching the URL slug (defaults to 'ai-kickstarter').
@@ -110,22 +123,73 @@ const CAMPAIGN_QUERY = `*[_type == "campaignPage" && slug.current == $slug][0]{
   date, time, eventStart, eventEnd, format, price, origPrice, seatsNote,
   themeAccent, themeAccentDark, bannerFrom, bannerTo, highlightBg, highlightText,
   mentorName, mentorRole, "mentorPhoto": mentorPhoto.asset->url, mentorBio, mentorCreds,
+  credLogos[]{ name, logoPath }, showCredLogosInBanner,
   founderName, founderRole,
   learn[]{title, detail}, forYou, get[]{title, detail},
-  "certificateImage": certificateImage.asset->url, certificateNote, whatsappUrl, discordUrl, facebookUrl, whatsappText, communityText
+  "certificateImage": certificateImage.asset->url, certificateTitle, certificateNote,
+  whatsappUrl, discordUrl, facebookUrl, whatsappText, communityText,
+  showLearn, showGet, showCertificate, showMentor, showCommunity
 }`;
 
 const has = (v) => v != null && v !== '' && !(Array.isArray(v) && v.length === 0);
 
+// Serve right-sized, auto-format (WebP/AVIF) images from Sanity's CDN instead of
+// the full-res originals — a big LCP + bandwidth win, especially on mobile.
+const optImg = (url, w) => (url && url.includes('cdn.sanity.io') ? `${url}${url.includes('?') ? '&' : '?'}w=${w}&auto=format&q=72&fit=max` : url);
+
 // Company logos shown under the registration form, per campaign (loaded by
 // domain via BrandLogo — no local asset needed).
+// Sridevi Edupuganti's credentials: Ex-Microsoft · IIT-G · ISB. Shown both in
+// the banner (small, under the mentor credit) and in the strip under the form.
+const SRIDEVI_CREDS = [
+  { name: 'Microsoft', logo: '/logos/microsoft.png' },
+  { name: 'IIT Guwahati', logo: '/logos/iitg.png' },
+  { name: 'ISB', logo: '/logos/isb.png' },
+];
+
+// Logos shown in the strip UNDER the registration form (see .lp2-logostrip).
 const CAMPAIGN_LOGOS = {
   'turn-messy-data-into-clear-decisions-with-claude': [
     { name: 'Zendesk', logo: '/logos/Zendesk.webp' },
     { name: 'Nutanix', logo: '/logos/nutanix.webp' },
     { name: 'LeadSquared', logo: '/logos/lead_squared_new.webp' },
   ],
+  'build-your-portfolio-with-claude': SRIDEVI_CREDS,
+  // The three brands this campaign's mentor operates growth for. Colour marks,
+  // so they need the white chip background (not the navy trust bar, which is
+  // for white/monochrome wordmarks only).
+  'turn-ai-into-your-career-advantage': [
+    { name: 'Alkemmy', logo: '/logos/alkemmy.png' },
+    { name: 'Brand For You', logo: '/logos/brand_for_you.png' },
+    { name: 'AstroNext', logo: '/logos/AstroNext.png' },
+  ],
 };
+
+// Small credential marks shown IN THE BANNER under the mentor credit. Sized
+// separately (see .lp2-banner-creds) from the form strip, which is why this
+// is its own map — turn-messy shows its logos only under the form, not here.
+const BANNER_CRED_LOGOS = {
+  'build-your-portfolio-with-claude': SRIDEVI_CREDS,
+};
+
+// Certificate wording per campaign, for when the certificate names the course
+// rather than the campaign's marketing headline. Sanity's `certificateTitle`
+// wins over this; both fall back to the banner headline.
+const CERT_TITLES = {
+  'turn-ai-into-your-career-advantage': 'AI Landscape & Foundation',
+};
+
+// One chip in the strip under the form. If the logo file is missing the chip
+// removes itself rather than leaving a broken-image icon on a live campaign.
+function LogoChip({ name, logo }) {
+  const [failed, setFailed] = useState(false);
+  if (failed) return null;
+  return (
+    <span className="lp2-logochip">
+      <img src={logo} alt={name} loading="lazy" onError={() => setFailed(true)} />
+    </span>
+  );
+}
 
 // Auto-fit the big banner title: shrink the font until each highlighted line
 // fits on a single line within its box. The CSS size (incl. any Sanity cap)
@@ -169,7 +233,7 @@ const COUNTRY_CODES = [
 
 export default function KickstarterLanding() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: '', email: '', countryCode: '+91', phone: '', city: '', background: '', otp: '' });
+  const [form, setForm] = useState({ name: '', email: '', countryCode: '+91', phone: '', city: '', college: '', background: '', otp: '' });
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState(null);
   const [done, setDone] = useState(false);
@@ -188,6 +252,7 @@ export default function KickstarterLanding() {
   // Sanity-editable content for this slug, merged per-field over the fallback.
   const { slug } = useParams();
   const activeSlug = slug || 'ai-kickstarter';
+  const useInstagramCommunity = CAMPAIGN_INSTAGRAM_SLUGS.has(activeSlug);
   const { data: c, loading: contentLoading } = useContentState(CAMPAIGN_QUERY, FALLBACK, { slug: activeSlug });
   const d = {};
   for (const k of Object.keys(FALLBACK)) d[k] = has(c?.[k]) ? c[k] : FALLBACK[k];
@@ -216,7 +281,14 @@ export default function KickstarterLanding() {
 
   // Auto-shrink the title so each line fits its box (below the Sanity cap).
   const titleRef = useAutoFitTitle([d.bannerLine1, d.bannerLine2, d.bannerTitleSize, showClaudeLogo, contentLoading]);
-  const campaignLogos = CAMPAIGN_LOGOS[activeSlug];
+  const sanityLogos = has(d.credLogos)
+    ? d.credLogos.map((l) => ({ name: l.name, logo: l.logoPath }))
+    : null;
+  const campaignLogos = sanityLogos || CAMPAIGN_LOGOS[activeSlug];
+  // Extra "College / University" field — only on the career-advantage campaign.
+  const showCollege = activeSlug === 'turn-ai-into-your-career-advantage';
+  const bannerCredLogos = (d.showCredLogosInBanner && sanityLogos) || BANNER_CRED_LOGOS[activeSlug];
+  const certTitle = has(d.certificateTitle) ? d.certificateTitle : (CERT_TITLES[activeSlug] || heading);
 
   // Validate → verify the phone via WhatsApp OTP (Amplifeed/MSG91 shows its own
   // code-entry UI) → submit the lead → go straight to checkout.
@@ -224,6 +296,10 @@ export default function KickstarterLanding() {
     e.preventDefault();
     if (!form.name.trim() || !form.email.trim() || !form.city.trim() || !form.background) {
       setErr('Please fill in all fields before verifying.');
+      return;
+    }
+    if (showCollege && !form.college.trim()) {
+      setErr('Please enter your college / university.');
       return;
     }
     if (form.phone.length < phoneMinLen) {
@@ -242,6 +318,7 @@ export default function KickstarterLanding() {
       const created = await submitLead({
         name: form.name, email: form.email, phone,
         city: form.city, background: form.background,
+        ...(showCollege ? { college: form.college.trim() } : {}),
         ...otp,
         source: 'campaign-workshop', campaign: activeSlug, workshop: heading,
         cta_label: `Register: ${heading}`, section: `Campaign · ${activeSlug}`,
@@ -261,9 +338,10 @@ export default function KickstarterLanding() {
           city: form.city,
           background: form.background,
           campaign: activeSlug,
-          whatsappUrl: d.whatsappUrl,
+          whatsappUrl: d.whatsappUrl || MENLER_WHATSAPP_URL,
           whatsappText: d.whatsappText,
           communityText: d.communityText,
+          showCommunity: d.showCommunity,
         },
       });
     } catch (e2) {
@@ -308,11 +386,18 @@ export default function KickstarterLanding() {
               <div className="lp2-banner-brand">
                 {!contentLoading && <span className="lp2-banner-credit">By <b>{d.mentorName}</b> — {d.mentorRole}</span>}
               </div>
+              {!contentLoading && bannerCredLogos && (
+                <div className="lp2-banner-creds" aria-label={bannerCredLogos.map((l) => l.name).join(', ')}>
+                  {bannerCredLogos.map((l) => (
+                    <img key={l.name} src={l.logo} alt={l.name} decoding="async" />
+                  ))}
+                </div>
+              )}
             </div>
             <div className="lp2-banner-photo">
               {contentLoading
                 ? <div className="lp2-skel lp2-banner-photo-skel" aria-hidden="true" />
-                : <img src={d.mentorPhoto} alt={d.mentorName} fetchpriority="high" />}
+                : <img src={optImg(d.mentorPhoto, 820)} alt={d.mentorName} fetchpriority="high" decoding="async" />}
             </div>
             <div className="lp2-banner-strip">
               <span><b>{d.date}</b></span>
@@ -330,6 +415,7 @@ export default function KickstarterLanding() {
           <p className="lp2-subtitle" style={{ marginTop: 26 }}>{d.subtitle}</p>
 
           {/* What you'll learn */}
+          {d.showLearn && (
           <section className="lp2-block">
             <h2 className="lp2-h2">What you'll <em>learn &amp; build</em></h2>
             <div className="lp2-learn">
@@ -344,8 +430,10 @@ export default function KickstarterLanding() {
               ))}
             </div>
           </section>
+          )}
 
           {/* What you get */}
+          {d.showGet && (
           <section className="lp2-block">
             <h2 className="lp2-h2">What you <em>get</em></h2>
             <div className="lp2-get">
@@ -357,17 +445,19 @@ export default function KickstarterLanding() {
               ))}
             </div>
           </section>
+          )}
 
           {/* Sample certificate */}
+          {d.showCertificate && (
           <section className="lp2-block">
             <h2 className="lp2-h2">Sample <em>certificate</em></h2>
             <div className="lp2-cert">
               {d.certificateImage ? (
-                <img className="lp2-cert-img" src={d.certificateImage} alt="Sample Menler certificate" loading="lazy" />
+                <img className="lp2-cert-img" src={optImg(d.certificateImage, 960)} alt="Sample Menler certificate" loading="lazy" decoding="async" />
               ) : (
                 <div className="lp2-cert-mock">
                   <div className="lp2-cert-mock-top">
-                    <MenlerWordmark size={24} theme="light" />
+                    <MenlerWordmark size={28} theme="light" tagline />
                     <span className="lp2-cert-seal">
                       <span className="lp2-cert-seal-star">★</span>
                       <span className="lp2-cert-seal-txt">MENLER<br />VERIFIED</span>
@@ -377,7 +467,7 @@ export default function KickstarterLanding() {
                   <p className="lp2-cert-mock-to">This is proudly presented to</p>
                   <p className="lp2-cert-mock-name">Your Name</p>
                   <span className="lp2-cert-rule" />
-                  <p className="lp2-cert-mock-for">for successfully completing<br /><b>{heading}</b></p>
+                  <p className="lp2-cert-mock-for">for successfully completing<br /><b>{certTitle}</b></p>
                   <div className="lp2-cert-foot">
                     <span className="lp2-cert-sign lp2-cert-sign--left">
                       <span className="lp2-cert-sign-name">{d.mentorName}</span>
@@ -395,14 +485,16 @@ export default function KickstarterLanding() {
               {d.certificateNote && <p className="lp2-cert-note">{d.certificateNote}</p>}
             </div>
           </section>
+          )}
 
           {/* About your mentor */}
+          {d.showMentor && (
           <section className="lp2-block">
             <h2 className="lp2-h2">About your <em>mentor</em></h2>
             <div className="lp2-mentor">
               {contentLoading
                 ? <div className="lp2-skel lp2-mentor-img lp2-mentor-img-skel" aria-hidden="true" />
-                : <div className={`lp2-mentor-img mentor-${activeSlug}`} role="img" aria-label={d.mentorName} style={{ backgroundImage: `url("${d.mentorPhoto}")` }} />}
+                : <div className={`lp2-mentor-img mentor-${activeSlug}`} role="img" aria-label={d.mentorName} style={{ backgroundImage: `url("${optImg(d.mentorPhoto, 440)}")` }} />}
               <div className="lp2-mentor-info">
                 <p className="lp2-mentor-name">{d.mentorName}</p>
                 <p className="lp2-mentor-role">{d.mentorRole}</p>
@@ -413,12 +505,16 @@ export default function KickstarterLanding() {
               </div>
             </div>
           </section>
+          )}
 
-          <MenlerCommunitySection
-            className="lp2-community-wrap"
-            whatsappUrl={d.whatsappUrl || MENLER_WHATSAPP_URL}
-            communityText={d.communityText}
-          />
+          {d.showCommunity && (
+            <MenlerCommunitySection
+              className="lp2-community-wrap"
+              whatsappUrl={useInstagramCommunity ? undefined : (d.whatsappUrl || MENLER_WHATSAPP_URL)}
+              instagramUrl={useInstagramCommunity ? MENLER_INSTAGRAM_URL : undefined}
+              communityText={d.communityText}
+            />
+          )}
 
         </div>
 
@@ -468,6 +564,9 @@ export default function KickstarterLanding() {
                     />
                   </div>
                   <input className="lp2-input" type="text" required placeholder="City" value={form.city} onChange={(e) => set('city', e.target.value)} disabled={busy || otpBusy} />
+                  {showCollege && (
+                    <input className="lp2-input" type="text" required placeholder="College / University" value={form.college} onChange={(e) => set('college', e.target.value)} disabled={busy || otpBusy} />
+                  )}
                   <select
                     className="lp2-input"
                     required
@@ -493,9 +592,9 @@ export default function KickstarterLanding() {
           </div>
 
           {campaignLogos && (
-            <div className="lp2-logostrip" aria-label="Trusted by teams at Zendesk, Nutanix and LeadSquared">
+            <div className="lp2-logostrip" aria-label={campaignLogos.map((l) => l.name).join(', ')}>
               {campaignLogos.map((l) => (
-                <span className="lp2-logochip" key={l.name}><img src={l.logo} alt={l.name} loading="lazy" /></span>
+                <LogoChip key={l.name} name={l.name} logo={l.logo} />
               ))}
             </div>
           )}

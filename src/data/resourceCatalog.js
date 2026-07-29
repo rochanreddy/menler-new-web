@@ -23,3 +23,25 @@ export const CHECKOUT_CATALOG = [
   { id: 'claude-design', title: 'Claude Design Playbook', desc: 'Generate visuals, mockups, and on-brand design assets with Claude.', price: 499, pdf: '/pdfs/Menler_Claude_Design_Playbook.pdf' },
   { id: 'claude-ms', title: 'Claude in MS', desc: 'Use Claude across Microsoft 365 — Word, Excel, PowerPoint, and Teams.', price: 499, pdf: '/pdfs/Menler_Claude_Microsoft_Playbook.pdf' },
 ];
+
+// Campaigns that sell their resources as a single paid PACK at checkout, instead
+// of the free individual-resource add-ons. Keyed by Sanity campaign slug.
+//
+// The pack is charged server-side via the SAME slug key in
+// server/config/pricing.js — the client never sends the amount, so keep `price`
+// here (display only) in sync with the server amount for that slug.
+// Registration itself stays free; the pack is an optional paid upsell, and its
+// PDFs are only emailed after the payment succeeds.
+export const RESOURCE_PACKS = {
+  'build-ai-automation-with-claude': {
+    price: 99,
+    title: 'Complete Claude Playbook Pack',
+    desc: 'All 6 Menler Claude playbooks — delivered straight to your inbox.',
+    items: CHECKOUT_CATALOG,
+  },
+};
+
+/** The paid resource pack for a campaign slug, or null if it has none. */
+export function resourcePackFor(campaign) {
+  return campaign ? RESOURCE_PACKS[String(campaign).toLowerCase()] || null : null;
+}

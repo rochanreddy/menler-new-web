@@ -26,6 +26,24 @@ async function api(path, { method = 'GET', body } = {}) {
   return data;
 }
 
+/** POSTs a body and opens the returned document (PDF or HTML) in a new tab. */
+async function openPreview(path, body) {
+  const res = await fetch(`${API_URL}${path}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    let msg = 'Preview failed';
+    try { msg = (await res.json())?.error || msg; } catch { /* not JSON */ }
+    throw new Error(msg);
+  }
+  const url = URL.createObjectURL(await res.blob());
+  window.open(url, '_blank', 'noopener');
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
+}
+
 const qs = (params = {}) => {
   const sp = new URLSearchParams();
   for (const [k, v] of Object.entries(params)) {
@@ -57,6 +75,17 @@ export const adminApi = {
     api(`/admin/shortlinks/${encodeURIComponent(code)}`, { method: 'PUT', body }),
   deleteShortLink: (code) =>
     api(`/admin/shortlinks/${encodeURIComponent(code)}`, { method: 'DELETE' }),
+
+  sendCertificates: (body) =>
+    api('/admin/certificates/send', { method: 'POST', body }),
+
+  mailStatus: () => api('/admin/certificates/mail-status'),
+
+  /** Renders one sample certificate and opens it in a new tab for checking. */
+  previewCertificate: (body) => openPreview('/admin/certificates/preview', body),
+
+  /** Renders the covering email (with custom copy) in a new tab. */
+  previewCertificateEmail: (body) => openPreview('/admin/certificates/email-preview', body),
 
   /** Fetches a CSV with credentials and triggers a browser download. */
   async downloadCsv(kind, params = {}) {

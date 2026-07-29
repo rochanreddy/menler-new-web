@@ -83,9 +83,20 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Load the font CSS without render-blocking: preload as style, then flip to
-         a stylesheet on load. <noscript> keeps it working with JS disabled. -->
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital,wght@0,400;1,400&family=DM+Sans:wght@300;400;500;600;700;900&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
+    <link rel="dns-prefetch" href="https://cdn.sanity.io" />
+    <!-- Instant branded loading screen — shown immediately (no JS needed) so a
+         phone never sees a blank white screen while the app boots; main.jsx
+         removes it once React has painted. -->
+    <style>
+      #app-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#faf8f3;transition:opacity .35s ease}
+      #app-loader.hide{opacity:0;pointer-events:none}
+      #app-loader .spin{width:38px;height:38px;border-radius:50%;border:3px solid #e3dff2;border-top-color:#534AB7;animation:mlspin .7s linear infinite}
+      @keyframes mlspin{to{transform:rotate(360deg)}}
+    </style>
+    <!-- Load fonts without blocking the first paint (media=print → all onload). -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital,wght@0,400;1,400&family=DM+Sans:wght@300;400;500;600;700;900&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital,wght@0,400;1,400&family=DM+Sans:wght@300;400;500;600;700;900&display=swap" media="print" onload="this.media='all'" />
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital,wght@0,400;1,400&family=DM+Sans:wght@300;400;500;600;700;900&display=swap" /></noscript>
     <title>Menler — AI Learning India · Claude AI Fellowship & Courses</title>
 
@@ -139,6 +150,7 @@
   <body>
     <!-- Meta Pixel <noscript> fallback (must be in <body>, not <head>) -->
     <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1038055815854731&ev=PageView&noscript=1" alt="" /></noscript>
+    <div id="app-loader"><div class="spin"></div></div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
 

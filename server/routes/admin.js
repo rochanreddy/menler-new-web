@@ -7,6 +7,8 @@ import { Profile } from '../models/Profile.js';
 import { CampaignSetting } from '../models/CampaignSetting.js';
 import { ShortLink } from '../models/ShortLink.js';
 import { requireAdmin } from '../middleware/adminAuth.js';
+import { buildCertificatePdf, buildCertificateEmail } from '../utils/certificate.js';
+import { sendMail, isMailConfigured, verifyMailer } from '../utils/email.js';
 import {
   ADMIN_COOKIE_NAME,
   signAdmin,
@@ -514,6 +516,158 @@ router.delete('/shortlinks/:code', requireAdmin, async (req, res) => {
   } catch (err) {
     console.error('admin shortlink delete error', err);
     res.status(500).json({ error: 'Could not delete the short link.' });
+  }
+});
+
+/* ──────────────────────────  Participation certificates  ──────────────────────── */
+
+const MAX_RECIPIENTS = 500;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/** Filename-safe slug of a participant name, e.g. "Aarav Sharma" → "Aarav-Sharma" */
+const slugName = (name) =>
+  String(name).trim().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').slice(0, 60) || 'participant';
+
+/** Only forwards signature overrides that were actually filled in, so the
+ *  certificate keeps its built-in defaults otherwise. */
+const signatories = (body = {}) =>
+  ['mentorName', 'mentorRole', 'founderName', 'founderRole'].reduce((acc, k) => {
+    const v = String(body[k] ?? '').trim();
+    if (v) acc[k] = v;
+    return acc;
+  }, {});
+
+// Checks whether the mail server is configured and reachable, without sending
+// anything — lets an admin diagnose "stuck sending" from the panel itself.
+router.get('/certificates/mail-status', requireAdmin, async (_req, res) => {
+  if (!isMailConfigured()) {
+    return res.json({ ok: false, configured: false, error: 'No email transport is configured on the server (Gmail API or SMTP).' });
+  }
+  const conn = await verifyMailer();
+  res.json({ ok: conn.ok, configured: true, mode: conn.mode, error: conn.error || null });
+});
+
+// Render a single sample certificate so the design can be checked before any send.
+router.post('/certificates/preview', requireAdmin, async (req, res) => {
+  try {
+    const { name, programName } = req.body || {};
+    if (!name || !programName) {
+      return res.status(400).json({ error: 'A name and program name are required.' });
+    }
+    const { buffer } = await buildCertificatePdf({
+      name: String(name).trim(),
+      programName: String(programName).trim(),
+      ...signatories(req.body),
+    });
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'inline; filename="certificate-preview.pdf"');
+    res.send(buffer);
+  } catch (err) {
+    console.error('[admin] certificate preview failed:', err);
+    res.status(500).json({ error: 'Could not generate the preview.' });
+  }
+});
+
+// Renders the covering email (with the admin's custom heading/message) so it
+// can be checked before sending.
+router.post('/certificates/email-preview', requireAdmin, (req, res) => {
+  const { name, programName, emailHeading, emailMessage, emailClosing, feedbackUrl, deckUrl } = req.body || {};
+  const { html } = buildCertificateEmail({
+    name: String(name || '').trim() || 'Your Name',
+    programName: String(programName || '').trim() || 'the program',
+    certId: 'MNLR-PREVIEW',
+    heading: String(emailHeading || '').trim() || undefined,
+    message: String(emailMessage || '').trim() || undefined,
+    closing: typeof emailClosing === 'string' ? emailClosing : undefined,
+    feedbackUrl: String(feedbackUrl || '').trim() || undefined,
+    deckUrl: String(deckUrl || '').trim() || undefined,
+  });
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.send(html);
+});
+
+// Generate a certificate per recipient and email it as a PDF attachment.
+router.post('/certificates/send', requireAdmin, async (req, res) => {
+  try {
+    const { recipients, programName, subject, emailHeading, emailMessage, emailClosing, feedbackUrl, deckUrl } = req.body || {};
+
+    if (!Array.isArray(recipients) || recipients.length === 0) {
+      return res.status(400).json({ error: 'No recipients were provided.' });
+    }
+    if (recipients.length > MAX_RECIPIENTS) {
+      return res.status(400).json({ error: `Too many recipients — the limit is ${MAX_RECIPIENTS} per batch.` });
+    }
+    if (!programName || !String(programName).trim()) {
+      return res.status(400).json({ error: 'A program name is required.' });
+    }
+    if (!isMailConfigured()) {
+      return res.status(503).json({ error: 'Email is not configured on this server, so nothing was sent.' });
+    }
+
+    // Confirm the transport actually works before generating and looping —
+    // otherwise a bad key/connection would fail on every recipient.
+    const conn = await verifyMailer();
+    if (!conn.ok) {
+      return res.status(502).json({ error: `Couldn't connect to the email service, so nothing was sent. ${conn.error}` });
+    }
+
+    const program = String(programName).trim();
+    const signs = signatories(req.body);
+    const results = [];
+
+    for (const raw of recipients) {
+      const name = String(raw?.name || '').trim();
+      const email = String(raw?.email || '').trim().toLowerCase();
+
+      if (!name || !EMAIL_RE.test(email)) {
+        results.push({ name, email, ok: false, error: 'Missing or invalid name/email' });
+        continue;
+      }
+
+      try {
+        const { buffer, certId } = await buildCertificatePdf({
+          name,
+          programName: program,
+          ...signs,
+        });
+        const { text, html } = buildCertificateEmail({
+          name,
+          programName: program,
+          certId,
+          heading: String(emailHeading || '').trim() || undefined,
+          message: String(emailMessage || '').trim() || undefined,
+          closing: typeof emailClosing === 'string' ? emailClosing : undefined,
+          feedbackUrl: String(feedbackUrl || '').trim() || undefined,
+          deckUrl: String(deckUrl || '').trim() || undefined,
+        });
+
+        await sendMail({
+          to: email,
+          subject: String(subject || '').trim() || `Your certificate from Menler — ${program}`,
+          text,
+          html,
+          attachments: [{
+            filename: `Menler-Certificate-${slugName(name)}.pdf`,
+            content: buffer,
+            contentType: 'application/pdf',
+          }],
+        });
+
+        results.push({ name, email, ok: true, certId });
+      } catch (err) {
+        // Surface the provider's actual reason (e.g. Resend "domain not
+        // verified" / "can only send to your own address") so it can be fixed.
+        const reason = (err?.message || 'Send failed').replace(/\s+/g, ' ').trim().slice(0, 200);
+        console.error(`[admin] certificate send failed for ${email}:`, reason);
+        results.push({ name, email, ok: false, error: reason });
+      }
+    }
+
+    const sent = results.filter((r) => r.ok).length;
+    res.json({ sent, failed: results.length - sent, results });
+  } catch (err) {
+    console.error('[admin] certificate batch failed:', err);
+    res.status(500).json({ error: 'Could not send the certificates.' });
   }
 });
 

@@ -1,0 +1,119 @@
+================================================================
+AMPLIFEED OTP LEAD CAPTURE — DEVELOPER INTEGRATION GUIDE
+================================================================
+
+
+OVERVIEW
+--------
+Build your own form UI. Our system handles OTP verification and lead
+storage. Three steps: load OTP library → verify → submit lead.
+
+
+----------------------------------------------------------------
+STEP 1 — LOAD THE OTP LIBRARY
+----------------------------------------------------------------
+
+Add this script to your page (before your form JS):
+
+  <script
+    src="https://verify.amplifeed.tech/otp-provider.js"
+    onerror="this.src='https://verify2.amplifeed.tech/otp-provider.js'">
+  </script>
+
+
+----------------------------------------------------------------
+STEP 2 — TRIGGER OTP VERIFICATION
+----------------------------------------------------------------
+
+Call this when the user clicks "Send OTP":
+
+  window.initSendOTP({
+    widgetId:   "YOUR_WIDGET_ID",
+    tokenAuth:  "YOUR_TOKEN_AUTH",
+    identifier: "+91" + phoneNumber,   // full number with country code, no spaces
+    success: function(token) {
+      // OTP verified — store token, enable submit button
+      window._otpToken = token;
+    },
+    failure: function(err) {
+      console.error("OTP failed", err);
+    }
+  });
+
+The library renders its own OTP input UI. On success it returns a
+short-lived token — store it in memory for Step 3.
+
+
+----------------------------------------------------------------
+STEP 3 — SUBMIT THE LEAD
+----------------------------------------------------------------
+
+  fetch("https://api.amplifeed.tech/api/lead-sources/inbound/YOUR_SOURCE_KEY", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Webhook-Secret": "YOUR_SECRET"
+    },
+    body: JSON.stringify({
+      name:           formData.name,
+      email:          formData.email,
+      phone:          "+91" + formData.phone,
+      otp_token:      window._otpToken,
+      otp_channel:    "sms",                   // or "email" / "whatsapp"
+      otp_identifier: "+91" + formData.phone
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      // redirect to checkout or show success
+    } else {
+      // show data.error to user
+    }
+  });
+
+Add any extra fields (company, message, etc.) directly to the POST
+body — they will be captured as-is.
+
+
+----------------------------------------------------------------
+YOUR CREDENTIALS
+----------------------------------------------------------------
+
+  Source Key       :  S0-1VbVfoh_ydsCFUsu1MXld
+  Webhook Secret   :  AYnA2j75Izjd7arD_AiKIDy2
+  Widget ID        :  3666786e5151323537333631
+  Token Auth       :  517767Ts6KDsui6a3bef4eP1
+
+
+----------------------------------------------------------------
+RULES
+----------------------------------------------------------------
+
+1. Always call initSendOTP BEFORE enabling the submit button.
+   Submissions without a valid OTP token will be rejected (401).
+
+2. otp_token expires in ~5 minutes — submit promptly after
+   verification.
+
+3. Phone must include country code (919876543210 or +919876543210).
+
+4. Rate limits:
+     - 5 OTP sends per IP per minute
+     - 40 lead submissions per IP per minute
+
+
+----------------------------------------------------------------
+RESPONSE CODES
+----------------------------------------------------------------
+
+  200  { "success": true }   Lead saved successfully
+  401  Unauthorized          Wrong or missing secret / invalid OTP token
+  403  Forbidden             Domain not allowed
+  400  Bad Request           Missing fields or invalid JSON
+  429  Too Many Requests     Rate limited — back off and retry
+
+
+================================================================
+END OF DOCUMENT
+================================================================

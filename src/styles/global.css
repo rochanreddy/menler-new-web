@@ -1749,12 +1749,28 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-logochip img[alt="Zendesk"]     { height: 48px; }
 .lp2-logochip img[alt="Nutanix"]     { height: 48px; }
 .lp2-logochip img[alt="LeadSquared"] { height: 88px; }
+/* Square marks sit a little shorter than wordmarks so they read the same size. */
+.lp2-logochip img[alt="Microsoft"]     { height: 40px; }
+.lp2-logochip img[alt="IIT Guwahati"]  { height: 64px; }
+.lp2-logochip img[alt="ISB"]           { height: 42px; }
+/* These three are solid-colour square tiles, not transparent wordmarks, so they
+   get rounded corners to sit on the white chip instead of reading as pasted-on
+   squares. All 200x200, so a single height keeps them visually even. */
+.lp2-logochip img[alt="Alkemmy"],
+.lp2-logochip img[alt="Brand For You"],
+.lp2-logochip img[alt="AstroNext"]     { height: 56px; border-radius: 10px; }
 @media (max-width: 560px) {
   .lp2-logostrip { gap: 8px; padding: 10px; border-radius: 14px; }
   .lp2-logochip { padding: 10px 6px; border-radius: 10px; }
   .lp2-logochip img[alt="Zendesk"]     { height: 38px; }
   .lp2-logochip img[alt="Nutanix"]     { height: 38px; }
   .lp2-logochip img[alt="LeadSquared"] { height: 68px; }
+  .lp2-logochip img[alt="Microsoft"]     { height: 30px; }
+  .lp2-logochip img[alt="IIT Guwahati"]  { height: 48px; }
+  .lp2-logochip img[alt="ISB"]           { height: 32px; }
+  .lp2-logochip img[alt="Alkemmy"],
+  .lp2-logochip img[alt="Brand For You"],
+  .lp2-logochip img[alt="AstroNext"]     { height: 42px; border-radius: 8px; }
 }
 
 .lp2-trustbar { margin-top: 16px; display: flex; align-items: center; background: #0d1430; border: 1px solid rgba(255,255,255,0.14); border-radius: 18px; padding: 22px 8px; }
@@ -1788,6 +1804,16 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-banner-mc { font-family: 'DM Sans', sans-serif; font-weight: 800; font-size: 12px; letter-spacing: 0.06em; color: var(--ink); }
 .lp2-banner-credit { font-size: 12.5px; line-height: 1.45; color: var(--ink); }
 .lp2-banner-credit b { font-weight: 700; }
+/* Small credential marks under the mentor credit (per-campaign, see
+   CAMPAIGN_LOGOS). Sized individually so square marks and wordmarks read at
+   the same visual weight. */
+.lp2-banner-creds { display: flex; align-items: center; gap: 16px; margin-top: 10px; }
+/* Default height caps EVERY logo so an un-tuned one can never render at its
+   natural size and blow out the banner. Per-logo rules only fine-tune. */
+.lp2-banner-creds img { display: block; height: 20px; width: auto; max-width: 120px; opacity: 0.92; }
+.lp2-banner-creds img[alt="Microsoft"]    { height: 18px; }
+.lp2-banner-creds img[alt="IIT Guwahati"] { height: 26px; }
+.lp2-banner-creds img[alt="ISB"]          { height: 19px; }
 .lp2-banner-free { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--a-dark); border: 1px solid var(--a); border-radius: 5px; padding: 2px 7px; margin-right: 8px; }
 .lp2-banner-photo { position: absolute; right: 0; bottom: 0; top: 0; width: 42%; z-index: 1; }
 .lp2-banner-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 22%); mask-image: linear-gradient(90deg, transparent 0%, #000 22%); }
@@ -1814,6 +1840,11 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .lp2-banner-tag { font-size: 10.5px; margin-top: 7px; }
   .lp2-banner-brand { margin-top: 8px; }
   .lp2-banner-credit { font-size: 9px; line-height: 1.35; }
+  .lp2-banner-creds { gap: 10px; margin-top: 7px; }
+  .lp2-banner-creds img { height: 14px; }
+  .lp2-banner-creds img[alt="Microsoft"]    { height: 13px; }
+  .lp2-banner-creds img[alt="IIT Guwahati"] { height: 18px; }
+  .lp2-banner-creds img[alt="ISB"]          { height: 13px; }
   .lp2-banner-photo { width: 44%; }
   .lp2-banner-strip { padding: 7px 12px; font-size: 9.5px; gap: 7px; }
   .lp2-banner-strip span:first-child::before { margin-right: 5px; }
@@ -1849,9 +1880,16 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
      full-width below — so the bio reads across the card instead of a narrow
      column beside the photo. */
   .lp2-mentor { flex-direction: column; gap: 14px; padding: 16px; margin-top: 26px; }
-  .lp2-mentor-img { width: 100%; height: 178px; min-height: 0; align-self: stretch; background-position: center 20%; border-radius: 12px; }
-  /* Nudge this campaign's mentor photo up a little (per-campaign crop). */
-  .lp2-mentor-img.mentor-turn-messy-data-into-clear-decisions-with-claude { background-position: center 22%; }
+  /* A fixed 178px band cropped headshots tight to the face and cut the
+     shoulders off. A 4:3 box scales with the screen and frames head *and*
+     shoulders; the max-height stops it getting oversized near the breakpoint. */
+  .lp2-mentor-img {
+    width: 100%; height: auto; aspect-ratio: 4 / 3; max-height: 300px;
+    min-height: 0; align-self: stretch;
+    background-position: center 12%; border-radius: 12px;
+  }
+  /* Nudge this campaign's mentor photo down a little (per-campaign crop). */
+  .lp2-mentor-img.mentor-turn-messy-data-into-clear-decisions-with-claude { background-position: center 14%; }
   .lp2-mentor-name { font-size: 20px; }
   .lp2-mentor-role { font-size: 12.5px; margin-bottom: 6px; }
   .lp2-mentor-bio { font-size: 13px; line-height: 1.55; }
@@ -1913,7 +1951,8 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-cert-mock::before { content: ''; position: absolute; inset: 11px; border: 1.5px solid var(--a); border-radius: 11px; pointer-events: none; }
 .lp2-cert-mock::after { content: ''; position: absolute; inset: 15px; border: 1px solid rgba(186,117,23,0.3); border-radius: 8px; pointer-events: none; }
 .lp2-cert-mock > * { position: relative; z-index: 1; }
-.lp2-cert-mock-top { display: flex; align-items: center; justify-content: space-between; }
+.lp2-cert-mock-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.lp2-cert-mock-top .menler-wm__tagline { font-size: 0.34em; margin-top: 0.1em; line-height: 1.25; white-space: nowrap; }
 .lp2-cert-mock-issued { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--a-dark); }
 .lp2-cert-mock-kicker { margin-top: 22px; display: flex; align-items: center; justify-content: center; flex-wrap: nowrap; font-size: 12px; font-weight: 800; letter-spacing: .22em; text-transform: uppercase; color: var(--a-dark); }
 .lp2-cert-mock-kicker::before, .lp2-cert-mock-kicker::after { content: ''; flex: 0 0 auto; width: 22px; height: 1px; margin: 0 10px; background: var(--a); opacity: .55; }
@@ -1955,6 +1994,8 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .lp2-cert-sign--left { align-items: flex-start; text-align: left; }
   .lp2-cert-sign-name { font-size: 12px; padding: 0 4px 3px; }
   .lp2-cert-sign-role { font-size: 8.5px; margin-top: 3px; }
+  .lp2-cert-mock-top .menler-wm { font-size: 22px !important; }
+  .lp2-cert-mock-top .menler-wm__tagline { font-size: 0.32em; white-space: normal; max-width: 140px; }
 }
 
 /* Join WhatsApp community — narrow bar */
@@ -2010,6 +2051,9 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-wa-join { display: inline-flex; align-items: center; gap: 10px; flex: 0 0 auto; background: #25D366; color: #fff; font-weight: 700; font-size: 14px; padding: 13px 24px; border-radius: 999px; text-decoration: none; box-shadow: 0 8px 22px rgba(37,211,102,0.3); transition: transform .15s, box-shadow .15s; }
 .lp2-wa-join:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(37,211,102,0.42); }
 .lp2-wa-join svg { width: 20px; height: 20px; }
+.lp2-ig-join { display: inline-flex; align-items: center; gap: 10px; flex: 0 0 auto; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: #fff; font-weight: 700; font-size: 14px; padding: 13px 24px; border-radius: 999px; text-decoration: none; box-shadow: 0 8px 22px rgba(188,24,136,0.28); transition: transform .15s, box-shadow .15s; }
+.lp2-ig-join:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(188,24,136,0.38); }
+.lp2-ig-join svg { width: 20px; height: 20px; }
 
 /* Campaign variant: heading outside the card, horizontal layout */
 .lp2-community-wrap,
@@ -2021,6 +2065,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .menler-community-card { border-radius: 18px; }
 .menler-community .mini-lead-inner { gap: 14px; }
 .menler-community .lp2-wa-join { gap: 6px; }
+.menler-community .lp2-ig-join { gap: 6px; }
 
 /* Full-width cloud band on home, about, aptitude */
 .menler-community--page {
@@ -2075,9 +2120,16 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   white-space: nowrap;
 }
 .menler-community--confirm .lp2-wa-join svg { width: 18px; height: 18px; }
+.menler-community--confirm .lp2-ig-join {
+  font-size: 14px;
+  padding: 12px 20px;
+  white-space: nowrap;
+}
+.menler-community--confirm .lp2-ig-join svg { width: 18px; height: 18px; }
 @media (max-width: 520px) {
   .menler-community--confirm .mini-lead-inner { flex-direction: column; align-items: stretch; }
   .menler-community--confirm .lp2-wa-join { justify-content: center; }
+  .menler-community--confirm .lp2-ig-join { justify-content: center; }
 }
 .lp2-comm-h-out { font-size: clamp(22px, 3vw, 30px); font-weight: 800; color: var(--ink); margin: 0 0 16px; letter-spacing: -0.02em; }
 .lp2-comm-h-out em { font-style: italic; color: var(--specialist, #5a3fd6); }
@@ -2199,7 +2251,10 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .lp2-stickybar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px; background: var(--ink); color: #fff; text-decoration: none; box-shadow: 0 -8px 24px rgba(0,0,0,0.18); }
   .lp2-stickybar span { font-size: 13px; }
   .lp2-stickybar b { color: #FFF6E1; }
-  .lp2-stickybar-btn { background: var(--a); padding: 9px 18px; border-radius: 9px; font-weight: 600; font-size: 13.5px; }
+  /* The border keeps the button readable even when a campaign's accent is
+     close to (or identical to) the bar colour, which would otherwise render
+     it invisible. */
+  .lp2-stickybar-btn { background: var(--a); border: 1px solid rgba(255,255,255,0.45); box-shadow: 0 1px 0 rgba(0,0,0,0.15); padding: 9px 18px; border-radius: 9px; font-weight: 700; font-size: 13.5px; }
   .lp2-foot { padding-bottom: 76px; }
 }
 
@@ -2255,6 +2310,40 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .cox-addon-action { font-size: 11px; font-weight: 700; letter-spacing: .02em; color: var(--lavender); white-space: nowrap; }
 .cox-addon--on .cox-addon-action { color: #9FE1CB; }
 
+/* Paid resource pack (pack-mode campaigns): a single CTA at the top adds or
+   removes the whole bundle; the rows under it list what's inside, display-only. */
+.cox-addon--static { cursor: default; }
+.cox-addon--static:hover { border-color: rgba(255,255,255,0.18); transform: none; }
+.cox-addon--static .cox-addon-check { color: rgba(238,237,254,0.45); border-color: rgba(255,255,255,0.22); }
+.cox-addon--static.cox-addon--on .cox-addon-check { background: var(--lavender); border-color: var(--lavender); color: var(--ink); }
+.cox-addon--static.cox-addon--on:hover { border-color: var(--lavender); }
+
+.cox-packcta { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; margin-bottom: 14px; background: rgba(122,108,245,0.16); border: 1px solid var(--lavender); border-radius: 13px; padding: 15px 16px; cursor: pointer; font-family: inherit; transition: border-color .15s, box-shadow .15s, transform .15s, background .15s; }
+.cox-packcta:hover { background: rgba(122,108,245,0.26); transform: translateY(-1px); }
+.cox-packcta--on { background: rgba(159,225,203,0.12); border-color: #9FE1CB; box-shadow: 0 0 0 1px #9FE1CB; }
+.cox-packcta--on:hover { background: rgba(159,225,203,0.18); }
+.cox-packcta-info { flex: 1; min-width: 0; }
+.cox-packcta-t { display: block; font-size: 14.5px; font-weight: 700; color: #fff; }
+.cox-packcta-d { display: block; font-size: 11.5px; line-height: 1.45; color: rgba(238,237,254,0.7); margin-top: 3px; }
+.cox-packcta-right { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+.cox-packcta-price { font-size: 20px; font-weight: 800; color: #fff; line-height: 1; white-space: nowrap; }
+.cox-packcta-action { font-size: 11px; font-weight: 700; letter-spacing: .02em; color: var(--lavender); white-space: nowrap; }
+.cox-packcta--on .cox-packcta-action { color: #9FE1CB; }
+
+/* "Leave checkout?" confirmation — guards accidental exits mid-registration */
+.cox-leave-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(20,17,46,0.55); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; padding: 20px; animation: coxLeaveFade .15s ease; }
+@keyframes coxLeaveFade { from { opacity: 0; } to { opacity: 1; } }
+.cox-leave { background: #fff; border-radius: 16px; max-width: 400px; width: 100%; padding: 28px 26px; box-shadow: 0 24px 60px rgba(20,17,46,0.32); text-align: center; }
+.cox-leave-h { margin: 0 0 8px; font-family: 'DM Serif Display', serif; font-size: 23px; color: var(--ink); }
+.cox-leave-p { margin: 0 0 22px; font-size: 14px; line-height: 1.55; color: var(--text-muted); }
+.cox-leave-actions { display: flex; gap: 10px; }
+.cox-leave-stay, .cox-leave-go { flex: 1; padding: 12px 14px; border-radius: 10px; font-family: inherit; font-weight: 700; font-size: 14px; cursor: pointer; border: 0; transition: transform .15s, background .15s; }
+.cox-leave-stay { background: var(--ink); color: #fff; }
+.cox-leave-stay:hover { transform: translateY(-1px); }
+.cox-leave-go { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+.cox-leave-go:hover { background: #f4f4f8; }
+@media (max-width: 380px) { .cox-leave-actions { flex-direction: column-reverse; } }
+
 /* Back button (top of the left panel). */
 .cox-back-btn { background: transparent; border: 1px solid rgba(255,255,255,0.3); color: #fff; font-family: inherit; font-size: 13.5px; font-weight: 600; padding: 10px 18px; border-radius: 10px; cursor: pointer; transition: background .15s, border-color .15s; }
 .cox-back-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.5); }
@@ -2284,6 +2373,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .cox-complete--inline { width: auto; max-width: 240px; margin: 0 auto; }
 .cox-note { margin-top: 12px; font-size: 12px; line-height: 1.5; color: var(--text-muted); text-align: center; }
 .cox-err { margin-top: 10px; font-size: 12.5px; color: #A32D2D; }
+.cox-pay-fine { margin-top: 10px; font-size: 11.5px; color: var(--text-muted); text-align: center; }
 
 /* ── Checkout, MOBILE ONLY: single blue column of cards. Desktop keeps the
    original two-column view above; this block comes last so it wins on mobile. ── */
@@ -2352,6 +2442,10 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .cox-addon-price { font-size: 11px; }
   .cox-cart { width: 38px; height: 38px; }
   .cox-cart svg { width: 17px; height: 17px; }
+  .cox-packcta { padding: 13px 14px; gap: 10px; margin-bottom: 12px; }
+  .cox-packcta-t { font-size: 13px; }
+  .cox-packcta-d { font-size: 10.5px; }
+  .cox-packcta-price { font-size: 17px; }
 }
 
 /* ── Confirmation page ── */
@@ -3361,3 +3455,153 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 /* Labels / hint / error text */
 .amplifeed-form label { font-family: inherit !important; font-size: 13px !important; color: var(--ink) !important; font-weight: 600 !important; }
 .amplifeed-form p, .amplifeed-form small, .amplifeed-form span { font-family: inherit !important; }
+
+/* ═══════════════════════ /events — masterclasses & events ═══════════════════════ */
+.ev { background: #fff; color: var(--ink); }
+
+/* ── Hero (ticket style) ── */
+.ev-hero {
+  position: relative; overflow: hidden;
+  background:
+    radial-gradient(120% 140% at 12% 0%, rgba(83,74,183,0.45), transparent 55%),
+    radial-gradient(120% 140% at 100% 100%, rgba(29,158,117,0.28), transparent 55%),
+    linear-gradient(135deg, #1A1647 0%, #26215C 55%, #2E2769 100%);
+  padding: clamp(64px, 12vw, 120px) var(--gutter) clamp(56px, 10vw, 104px);
+  text-align: center;
+}
+.ev-hero-in { max-width: 760px; margin: 0 auto; position: relative; z-index: 2; }
+.ev-hero-eyebrow { display: inline-block; font-size: 12.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--lavender); background: rgba(175,169,236,0.12); border: 1px solid rgba(175,169,236,0.28); padding: 7px 16px; border-radius: 999px; }
+.ev-hero-h1 { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: clamp(30px, 6vw, 52px); line-height: 1.1; color: #fff; margin: 20px 0 0; }
+.ev-hero-h1 em { font-style: italic; color: var(--lavender); }
+.ev-hero-sub { max-width: 560px; margin: 20px auto 0; font-size: clamp(15px, 2vw, 17px); line-height: 1.7; color: rgba(238,237,254,0.72); }
+.ev-hero-cta { display: inline-flex; align-items: center; gap: 10px; margin-top: 30px; padding: 14px 26px; border-radius: 12px; background: var(--placed); color: #fff; font-weight: 700; font-size: 15px; text-decoration: none; box-shadow: 0 10px 28px rgba(29,158,117,0.32); transition: transform .15s ease, box-shadow .15s ease; }
+.ev-hero-cta:hover { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(29,158,117,0.42); }
+/* Ticket perforation notches on the hero edges */
+
+/* ── Sections + grid ── */
+.ev-section { padding-top: clamp(48px, 8vw, 84px); padding-bottom: 0; }
+.ev-section--past { padding-bottom: clamp(56px, 9vw, 96px); }
+.ev-grid { max-width: 1120px; margin: 32px auto 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 366px)); justify-content: center; gap: 22px; }
+@media (max-width: 560px) { .ev-grid { grid-template-columns: 1fr; gap: 16px; } }
+
+/* ── Card ── */
+.ev-card { background: #fff; border: 1px solid var(--border); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(38,33,92,0.06); transition: transform .18s ease, box-shadow .18s ease; }
+.ev-card:hover { transform: translateY(-3px); box-shadow: 0 18px 44px rgba(38,33,92,0.12); }
+
+/* Card art — uploaded image OR auto-generated from event fields */
+.ev-art { aspect-ratio: 16 / 8.4; background-size: cover; background-position: center; background-color: #26215C; }
+.ev-art--gen { position: relative; display: flex; flex-direction: column; justify-content: center; padding: 24px 26px; overflow: hidden;
+  aspect-ratio: auto; min-height: 208px;
+  background:
+    radial-gradient(90% 90% at 88% 8%, color-mix(in srgb, var(--ev-accent) 55%, transparent), transparent 62%),
+    linear-gradient(145deg, #0F0D24 0%, #1C1746 55%, #2A2270 105%);
+}
+/* Subtle dotted texture + soft accent glow for depth */
+.ev-art-dots { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.09) 1px, transparent 1.4px); background-size: 15px 15px; opacity: 0.55; pointer-events: none; }
+.ev-art-glow { position: absolute; width: 60%; aspect-ratio: 1; right: -12%; top: -26%; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--ev-accent) 85%, #fff) 0%, transparent 68%); opacity: 0.5; filter: blur(6px); pointer-events: none; }
+.ev-art > * { position: relative; z-index: 1; }
+/* Re-assert the decorative layers as absolute: the rule above (equal specificity,
+   but later in source) was overriding their position, turning the glow into an
+   in-flow flex item ~180px tall that pushed the logo + title down and out. */
+.ev-art-dots, .ev-art-glow { position: absolute; z-index: 0; }
+.ev-art-top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.ev-art-badge { font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: rgba(255,255,255,0.13); border: 1px solid rgba(255,255,255,0.22); padding: 5px 11px; border-radius: 999px; backdrop-filter: blur(4px); }
+.ev-art-title { font-family: 'DM Serif Display', serif; font-size: clamp(20px, 3vw, 27px); line-height: 1.14; color: #fff; margin-top: 12px; max-width: 88%; text-shadow: 0 2px 12px rgba(0,0,0,0.25); overflow: hidden; }
+/* Clamp on the inner span — -webkit-line-clamp is ignored when the element is a
+   flex item (its display is blockified), so the title must clamp one level in. */
+.ev-art-title > span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ev-art--face .ev-art-title, .ev-art--face .ev-art-foot { max-width: 52%; }
+/* The horizontal live card has a taller art panel — allow a 3rd line there. */
+.ev-card--live .ev-art--gen .ev-art-title > span { -webkit-line-clamp: 3; }
+.ev-art-foot { margin-top: 12px; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.62); max-width: 70%; }
+.ev-art--face .ev-art-foot { max-width: 52%; }
+/* Mentor photo fills the right column edge-to-edge — no gap above/below. */
+.ev-art-face { position: absolute; top: 0; right: 0; bottom: 0; width: 44%; height: 100%; object-fit: cover; object-position: center top; z-index: 1; }
+
+/* Card body */
+.ev-body { padding: 20px 22px 22px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.ev-live-dot { font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--placed); }
+.ev-title { font-family: 'DM Serif Display', serif; font-size: 21px; line-height: 1.2; color: var(--ink); margin: 0; }
+.ev-sub { font-size: 14px; line-height: 1.55; color: var(--text-muted); margin: 0; }
+.ev-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+.ev-tags span { font-size: 11.5px; font-weight: 600; color: var(--specialist); background: var(--cloud); border-radius: 999px; padding: 5px 11px; }
+.ev-when { font-size: 13px; font-weight: 600; color: var(--ink); margin: 0; }
+.ev-meta { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--text-muted); }
+.ev-attend { font-weight: 700; color: var(--ink); }
+.ev-foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.ev-host { display: inline-flex; align-items: center; gap: 9px; min-width: 0; }
+.ev-host-face { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.ev-host-face--ph { display: inline-flex; align-items: center; justify-content: center; background: var(--cloud); color: var(--specialist); font-weight: 800; font-size: 15px; }
+.ev-host span { display: flex; flex-direction: column; min-width: 0; }
+.ev-host b { font-size: 13px; color: var(--ink); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ev-host i { font-size: 11.5px; font-style: normal; color: var(--text-muted); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ev-join, .ev-download { flex-shrink: 0; border: 0; cursor: pointer; font-family: inherit; font-weight: 700; font-size: 13.5px; padding: 10px 16px; border-radius: 10px; transition: transform .15s ease, background .15s ease; }
+.ev-join { background: var(--specialist); color: #fff; }
+.ev-join:hover { transform: translateY(-1px); background: #453d9e; }
+.ev-download { background: var(--cloud); color: var(--specialist); }
+.ev-download:hover { transform: translateY(-1px); background: #e2dffb; }
+@media (max-width: 380px) { .ev-foot { flex-direction: column; align-items: stretch; } .ev-join, .ev-download { text-align: center; } }
+
+/* ── Live events: full-width HORIZONTAL card (art left · details right) ── */
+.ev-grid--live { grid-template-columns: 1fr; max-width: 980px; }
+.ev-card--live { flex-direction: row; align-items: center; }
+.ev-card--live .ev-art { width: 46%; flex-shrink: 0; aspect-ratio: auto; align-self: stretch; }
+.ev-card--live .ev-art--gen { justify-content: center; padding: 30px 28px; }
+.ev-card--live .ev-art--gen .ev-art-title { max-width: 82%; }
+.ev-card--live .ev-art--face .ev-art-title { max-width: 62%; }
+.ev-card--live .ev-body { width: 54%; padding: 26px 30px 24px; justify-content: center; gap: 12px; }
+.ev-card--live .ev-title { font-size: 25px; }
+.ev-card--live .ev-sub { font-size: 15px; }
+@media (max-width: 720px) {
+  /* Stack back to vertical on small screens so nothing is squeezed. */
+  .ev-card--live { flex-direction: column; }
+  .ev-card--live .ev-art { width: 100%; aspect-ratio: 16 / 8.4; }
+  .ev-card--live .ev-body { width: 100%; padding: 20px 22px 22px; }
+  .ev-card--live .ev-title { font-size: 21px; }
+}
+
+/* Uploaded banner image. In a PAST card it sits on top at its natural ratio;
+   in the horizontal LIVE card it fills the left panel, fitted (cover) to the
+   panel so the card stays a clean horizontal shape. */
+.ev-art-img { display: block; width: 100%; height: auto; }
+/* Show the whole banner at its own ratio (no crop), filling the left half of
+   the horizontal card. Rounded to match the card's left corners. */
+.ev-card--live .ev-art-img { width: 50%; flex-shrink: 0; height: auto; border-radius: 18px 0 0 18px; }
+@media (max-width: 720px) {
+  .ev-card--live .ev-art-img { width: 100%; border-radius: 18px 18px 0 0; }
+}
+
+/* "Show more" for past events */
+.ev-more { display: flex; justify-content: center; margin-top: 32px; }
+.ev-more-btn { cursor: pointer; font-family: inherit; font-weight: 700; font-size: 14.5px; color: var(--specialist); background: var(--cloud); border: 1px solid var(--border); border-radius: 12px; padding: 13px 28px; transition: transform .15s ease, background .15s ease; }
+.ev-more-btn:hover { transform: translateY(-2px); background: #e2dffb; }
+.ev-more-btn span { font-weight: 500; color: var(--text-muted); }
+
+/* Past events: exactly 3 per row on desktop, 2 on tablet, 1 on mobile */
+.ev-grid--past { grid-template-columns: repeat(3, 1fr); justify-content: stretch; max-width: 1120px; }
+@media (max-width: 880px) { .ev-grid--past { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .ev-grid--past { grid-template-columns: 1fr; } }
+
+/* Uploaded banners show IN FULL at their own aspect ratio — the card adapts to
+   whatever image is uploaded, never cropping it. (Only the auto-generated art
+   keeps a fixed 16:9, since it's drawn to fit that.) */
+.ev-card--past .ev-art-img { width: 100%; height: auto; object-fit: contain; }
+.ev-card--past .ev-art--gen { aspect-ratio: 16 / 9; min-height: 0; }
+.ev-card--past .ev-attend { font-weight: 700; color: var(--ink); }
+
+/* Past cards line up: the date/time block is pinned to the bottom of the body
+   (margin-top:auto) so — cards being equal height in the grid and the footer
+   button always present — the schedule row sits at the same y across all cards.
+   Date and time each get their own line. */
+.ev-card--past .ev-when { display: flex; flex-direction: column; gap: 3px; margin-top: auto; }
+.ev-card--past .ev-when span { font-size: 13px; font-weight: 600; color: var(--ink); }
+.ev-card--past .ev-foot { margin-top: 12px; }
+
+/* Mentor photo composited on the right of the generated art (16:9 cards).
+   Hidden in the horizontal live card, where it would dominate the tall panel. */
+.ev-card--live .ev-art-face { display: none; }
+.ev-card--live .ev-art--gen .ev-art-title,
+.ev-card--live .ev-art--gen .ev-art-foot { max-width: 82%; }
+
+/* On photo cards, drop the badge (matches the reference: logo + title + photo). */
+.ev-art--face .ev-art-badge { display: none; }

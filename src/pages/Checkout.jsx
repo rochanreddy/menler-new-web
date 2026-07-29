@@ -6,7 +6,10 @@ import MenlerCommunitySection from '../components/common/MenlerCommunitySection'
 import AddToCalendar from '../components/common/AddToCalendar';
 import { parseEventDateTime } from '../lib/calendar';
 import { submitLead, deliverResources, completeCheckout } from '../services/leadService';
-import { CHECKOUT_CATALOG } from '../data/resourceCatalog';
+import { CHECKOUT_CATALOG, resourcePackFor } from '../data/resourceCatalog';
+import { PROGRAM_PRICES, formatINR } from '../data/pricing';
+import { createEnrolOrder, getPaymentStatus } from '../services/paymentService';
+import { openCashfreeCheckout } from '../lib/cashfree';
 
 import { MENLER_WHATSAPP_URL } from '../data/communityLinks';
 
@@ -17,11 +20,17 @@ export default function Checkout() {
   const workshopTitle = reg.workshop || 'Menler Masterclass';
 
   const catalog = CHECKOUT_CATALOG;
+  // Some campaigns sell all their resources as a single paid PACK instead of the
+  // free individual add-ons. When a pack exists, registration is free and the
+  // pack is an optional paid upsell (Cashfree only opens once it's selected).
+  const pack = resourcePackFor(reg.campaign);
 
-  const [cart, setCart] = useState(() => new Set());
+  const [cart, setCart] = useState(() => new Set()); // add-on mode: per-item selection
+  const [packOn, setPackOn] = useState(false);       // pack mode: is the pack selected
   const [placing, setPlacing] = useState(false);
   const [placed, setPlaced] = useState(false);
-  const [err, setErr] = useState(false);
+  const [err, setErr] = useState('');
+  const [confirmLeave, setConfirmLeave] = useState(false); // "Leave checkout?" guard
 
   // Guard: /checkout is only valid after registering on a campaign, which passes
   // the verified registrant in router state. A direct URL visit has no state, so
@@ -36,47 +45,78 @@ export default function Checkout() {
     n.has(id) ? n.delete(id) : n.add(id);
     return n;
   });
-  const addedItems = catalog.filter((i) => cart.has(i.id));
-  const total = 0; // launch offer — everything free
+  // Resources being taken: the whole pack (if selected) in pack mode, otherwise
+  // the individually-ticked add-ons.
+  const addedItems = pack ? (packOn ? pack.items : []) : catalog.filter((i) => cart.has(i.id));
+  // Registration seat fee (0 = free). Campaigns with a resource pack have no
+  // seat fee — the only charge is the optional pack.
+  const campaignPrice = reg.campaign ? PROGRAM_PRICES[reg.campaign] : null;
+  const workshopFee = campaignPrice?.amount ?? 0;
+  const packFee = pack && packOn ? pack.price : 0;
+  const total = workshopFee + packFee;
+  const isPaid = total > 0;
+
+  const finishRegistration = async () => {
+    const order = {
+      section: `Checkout · ${workshopTitle}`,
+      cta_label: `Checkout: ${workshopTitle}`,
+      items: ['Workshop: ' + workshopTitle, ...addedItems.map((i) => i.title)].join(' | '),
+      amount: total,
+    };
+    if (reg.leadId) {
+      await completeCheckout(reg.leadId, order);
+    } else {
+      await submitLead({
+        name: reg.name, email: reg.email, phone: reg.phone,
+        background: reg.background,
+        source: 'checkout-order', campaign: reg.campaign, workshop: workshopTitle,
+        checkout_completed: true,
+        ...order,
+      });
+    }
+    if (addedItems.length && reg.email) {
+      await deliverResources({
+        leadId: reg.leadId,
+        name: reg.name,
+        email: reg.email,
+        phone: reg.phone,
+        source: 'checkout-resources',
+        section: `Checkout · ${workshopTitle}`,
+        resources: addedItems.map((i) => ({ title: i.title, pdf: i.pdf, resource: i.title })),
+      });
+    }
+    setPlaced(true);
+    window.scrollTo(0, 0);
+  };
 
   const pay = async () => {
-    setErr(false); setPlacing(true);
+    setErr(''); setPlacing(true);
     try {
-      const order = {
-        section: `Checkout · ${workshopTitle}`,
-        cta_label: `Checkout: ${workshopTitle}`,
-        items: ['Workshop: ' + workshopTitle, ...addedItems.map((i) => i.title)].join(' | '),
-        amount: total,
-      };
-      if (reg.leadId) {
-        // Update the same registration lead → one lead per registrant, flagged done.
-        await completeCheckout(reg.leadId, order);
-      } else {
-        // Fallback (no registration id in state): create a checked-out lead,
-        // carrying the background so it's still captured.
-        await submitLead({
-          name: reg.name, email: reg.email, phone: reg.phone,
-          background: reg.background,
-          source: 'checkout-order', campaign: reg.campaign, workshop: workshopTitle,
-          checkout_completed: true,
-          ...order,
-        });
-      }
-      if (addedItems.length && reg.email) {
-        await deliverResources({
-          leadId: reg.leadId, // attach to the SAME registration lead (no duplicate row)
+      if (isPaid) {
+        const phoneDigits = String(reg.phone || '').replace(/\D/g, '').slice(-10);
+        const order = await createEnrolOrder({
+          program: reg.campaign,
+          leadId: reg.leadId,
           name: reg.name,
           email: reg.email,
-          phone: reg.phone,
-          source: 'checkout-resources', // only used if there's no leadId (standalone batch)
-          section: `Checkout · ${workshopTitle}`,
-          resources: addedItems.map((i) => ({ title: i.title, pdf: i.pdf, resource: i.title })),
+          phone: phoneDigits,
+          city: reg.city,
+          background: reg.background,
         });
+        const result = await openCashfreeCheckout(order.payment_session_id, order.mode);
+        if (result && result.error) {
+          setErr(result.error.message || 'Payment was cancelled.');
+          return;
+        }
+        const status = await getPaymentStatus(order.order_id);
+        if (status.status !== 'PAID') {
+          setErr('Payment not completed. If you were charged, it will confirm shortly — check your email.');
+          return;
+        }
       }
-      setPlaced(true);
-      window.scrollTo(0, 0);
-    } catch {
-      setErr(true);
+      await finishRegistration();
+    } catch (e) {
+      setErr(e?.message || 'Something went wrong — please try again.');
     } finally {
       setPlacing(false);
     }
@@ -119,11 +159,14 @@ export default function Checkout() {
             );
           })()}
 
-          <MenlerCommunitySection
-            className="menler-community--confirm"
-            whatsappUrl={reg.whatsappUrl || MENLER_WHATSAPP_URL}
-            communityText={reg.whatsappText || reg.communityText}
-          />
+          {/* Follows the campaign's "Show community section" toggle in Sanity. */}
+          {reg.showCommunity && (
+            <MenlerCommunitySection
+              className="menler-community--confirm"
+              whatsappUrl={reg.whatsappUrl || MENLER_WHATSAPP_URL}
+              communityText={reg.whatsappText || reg.communityText}
+            />
+          )}
 
           <button type="button" className="cox-confirm-back" onClick={() => navigate('/')}>Back to Home</button>
         </div>
@@ -137,14 +180,14 @@ export default function Checkout() {
 
       {/* Mobile-only topbar: back button + wordmark, pinned to the top. */}
       <div className="cox-mtop">
-        <button className="cox-back-mobile" onClick={() => navigate(-1)}>← Back</button>
+        <button className="cox-back-mobile" onClick={() => setConfirmLeave(true)}>← Back</button>
         <MenlerWordmark size={22} theme="dark" />
       </div>
 
       {/* ── LEFT: blue — contact (read-only) + add-ons ── */}
       <div className="cox-form">
         <div className="cox-form-inner">
-          <button className="cox-back-btn cox-back-btn--top" onClick={() => navigate(-1)}>Back</button>
+          <button className="cox-back-btn cox-back-btn--top" onClick={() => setConfirmLeave(true)}>Back</button>
 
           <div className="cox-contact">
           <h3 className="cox-h3" style={{ marginTop: 0 }}>Contact information</h3>
@@ -155,6 +198,55 @@ export default function Checkout() {
           </div>
           </div>
 
+          {pack ? (
+          <div className="cox-resources">
+          <div className="cox-addons-head">
+            <div className="cox-addons-head-text">
+              <h3 className="cox-h3">Add the resource pack</h3>
+              <p className="cox-addons-sub">Optional — all {pack.items.length} playbooks in one bundle, emailed to you.</p>
+            </div>
+            <div className={`cox-cart${packOn ? ' cox-cart--active' : ''}`} aria-label={`${packOn ? pack.items.length : 0} item${packOn && pack.items.length !== 1 ? 's' : ''} added`} title={`${packOn ? pack.items.length : 0} added`}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+              </svg>
+              <span className="cox-cart-count">{packOn ? pack.items.length : 0}</span>
+            </div>
+          </div>
+          {/* The pack is all-or-nothing: this single CTA adds or removes the
+              whole bundle, and the rows below it just show what's inside. */}
+          <button
+            type="button"
+            className={`cox-packcta${packOn ? ' cox-packcta--on' : ''}`}
+            onClick={() => setPackOn((v) => !v)}
+            aria-pressed={packOn}
+          >
+            <span className="cox-packcta-info">
+              <span className="cox-packcta-t">{pack.title}</span>
+              <span className="cox-packcta-d">All {pack.items.length} playbooks · one payment · emailed to you</span>
+            </span>
+            <span className="cox-packcta-right">
+              <span className="cox-packcta-price">₹{pack.price}</span>
+              <span className="cox-packcta-action">{packOn ? '✓ Pack added · Remove' : '+ Add all'}</span>
+            </span>
+          </button>
+          <div className="cox-addons">
+            {pack.items.map((i) => (
+              <div key={i.id} className={`cox-addon cox-addon--static${packOn ? ' cox-addon--on' : ''}`}>
+                <span className="cox-addon-check">✓</span>
+                <span className="cox-addon-info">
+                  <span className="cox-addon-t">{i.title}</span>
+                  <span className="cox-addon-d">{i.desc}</span>
+                </span>
+                <span className="cox-addon-right">
+                  <span className="cox-addon-price"><s>₹{i.price}</s> Included</span>
+                </span>
+              </div>
+            ))}
+          </div>
+          </div>
+          ) : (
           <div className="cox-resources">
           <div className="cox-addons-head">
             <div className="cox-addons-head-text">
@@ -189,6 +281,7 @@ export default function Checkout() {
             })}
           </div>
           </div>
+          )}
         </div>
       </div>
 
@@ -200,7 +293,7 @@ export default function Checkout() {
             <div className="cox-order-head-main">
               <p className="cox-eyebrow">Register for</p>
               <p className="cox-name">{workshopTitle}</p>
-              <p className="cox-price">₹{total}<span> · free seat</span></p>
+              <p className="cox-price">{total > 0 ? formatINR(total) : 'Free'}</p>
             </div>
             {/* Mobile-only: contact details tucked into the header (top-right). */}
             <div className="cox-order-contact">
@@ -216,26 +309,50 @@ export default function Checkout() {
           <div className="cox-items">
             <div className="cox-row">
               <div><p className="cox-row-t">{workshopTitle}</p><p className="cox-row-d">Live masterclass seat</p></div>
-              <span className="cox-row-amt">Free</span>
+              <span className="cox-row-amt">{workshopFee > 0 ? formatINR(workshopFee) : 'Free'}</span>
             </div>
-            {addedItems.map((i) => (
-              <div className="cox-row" key={i.id}>
-                <div><p className="cox-row-t">{i.title}</p><p className="cox-row-d">Resource pack</p></div>
-                <span className="cox-row-amt"><s>₹{i.price}</s> Free</span>
-              </div>
-            ))}
+            {pack ? (
+              packOn && (
+                <div className="cox-row">
+                  <div><p className="cox-row-t">{pack.title}</p><p className="cox-row-d">{pack.items.length} playbooks · emailed to you</p></div>
+                  <span className="cox-row-amt">{formatINR(pack.price)}</span>
+                </div>
+              )
+            ) : (
+              addedItems.map((i) => (
+                <div className="cox-row" key={i.id}>
+                  <div><p className="cox-row-t">{i.title}</p><p className="cox-row-d">Resource pack</p></div>
+                  <span className="cox-row-amt"><s>₹{i.price}</s> Free</span>
+                </div>
+              ))
+            )}
           </div>
 
-          <div className="cox-sub-line"><span>Subtotal</span><span>₹{total}</span></div>
+          <div className="cox-sub-line"><span>Subtotal</span><span>{formatINR(total)}</span></div>
           <div className="cox-sub-line cox-sub-line--muted"><span>Taxes</span><span>₹0</span></div>
-          <div className="cox-total"><span>Total</span><span>₹{total}</span></div>
+          <div className="cox-total"><span>Total</span><span>{formatINR(total)}</span></div>
 
           <button className="cox-complete" onClick={pay} disabled={placing}>
-            {placing ? 'Processing…' : 'Complete Registration'}
+            {placing ? 'Processing…' : isPaid ? `Pay ${formatINR(total)} & Register` : 'Complete Registration'}
           </button>
-          {err && <p className="cox-err">Something went wrong — please try again.</p>}
+          {err && <p className="cox-err">{err}</p>}
+          {isPaid && <p className="cox-pay-fine">Secured by Cashfree · UPI · Cards · Netbanking</p>}
         </div>
       </div>
+
+      {/* Guard against accidentally leaving mid-registration. */}
+      {confirmLeave && (
+        <div className="cox-leave-overlay" onClick={() => setConfirmLeave(false)}>
+          <div className="cox-leave" role="dialog" aria-modal="true" aria-label="Leave checkout?" onClick={(e) => e.stopPropagation()}>
+            <h3 className="cox-leave-h">Leave checkout?</h3>
+            <p className="cox-leave-p">You're almost done — your registration isn't complete yet. Are you sure you want to go back?</p>
+            <div className="cox-leave-actions">
+              <button type="button" className="cox-leave-stay" onClick={() => setConfirmLeave(false)}>Stay on checkout</button>
+              <button type="button" className="cox-leave-go" onClick={() => { setConfirmLeave(false); navigate(-1); }}>Yes, go back</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

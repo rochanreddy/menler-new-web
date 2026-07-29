@@ -7,13 +7,14 @@ async function readError(res, fallback) {
   return fallback;
 }
 
-// Create a Cashfree order for a paid program (kickstarter | generalist).
+// Create a Cashfree order for a paid program or paid campaign.
+// Pass leadId when the registrant already exists (campaign checkout).
 // Returns { order_id, payment_session_id, mode }.
-export async function createEnrolOrder({ program, name, email, phone, city, background, track }) {
+export async function createEnrolOrder({ program, leadId, name, email, phone, city, background, track }) {
   const res = await fetch(`${API_URL}/payments/cashfree/order`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ program, name, email, phone, city, background, track }),
+    body: JSON.stringify({ program, leadId, name, email, phone, city, background, track }),
   });
   if (!res.ok) throw new Error(await readError(res, 'Could not start the payment.'));
   return res.json();

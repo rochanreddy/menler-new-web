@@ -14,7 +14,9 @@ export default defineType({
     { name: 'schedule', title: 'Schedule & Price' },
     { name: 'mentor', title: 'Mentor' },
     { name: 'sections', title: 'Sections' },
+    { name: 'visibility', title: 'Show / hide sections' },
     { name: 'certificate', title: 'Certificate' },
+    { name: 'events', title: 'Events page' },
   ],
   fields: [
     // ── Setup: internal title + the page URL ──
@@ -45,6 +47,29 @@ export default defineType({
     }),
     defineField({ name: 'showClaudeLogo', title: 'Show Claude logo next to the title', type: 'boolean', group: 'banner', initialValue: false }),
     defineField({ name: 'showTrustBar', title: 'Show trust bar (McKinsey · MIT · UT Austin) under the form', type: 'boolean', group: 'banner', initialValue: false }),
+    defineField({
+      name: 'credLogos',
+      title: 'Credential logos (under registration form)',
+      type: 'array',
+      of: [{
+        type: 'object',
+        fields: [
+          { name: 'name', title: 'Name (alt text)', type: 'string', validation: (r) => r.required() },
+          { name: 'logoPath', title: 'Logo file path', type: 'string', description: 'Path under public/, e.g. /logos/microsoft.png', validation: (r) => r.required() },
+        ],
+        preview: { select: { title: 'name', subtitle: 'logoPath' } },
+      }],
+      group: 'banner',
+      description: 'Company / institution logos shown in the strip under the registration form — e.g. Microsoft, IIT-G, ISB.',
+    }),
+    defineField({
+      name: 'showCredLogosInBanner',
+      title: 'Also show credential logos in the banner',
+      type: 'boolean',
+      group: 'banner',
+      initialValue: false,
+      description: 'When on, the same credential logos also appear under the mentor credit in the hero banner.',
+    }),
     defineField({ name: 'bannerTagline', title: 'Tagline (under title)', type: 'string', group: 'banner' }),
     defineField({ name: 'subtitle', title: 'Intro paragraph (below banner)', type: 'text', rows: 3, group: 'banner' }),
 
@@ -98,11 +123,64 @@ export default defineType({
     defineField({ name: 'certificateImage', title: 'Sample certificate image', type: 'image', options: { hotspot: true }, group: 'certificate', description: 'Upload a sample certificate. If empty, a default certificate mock-up is shown.' }),
     defineField({ name: 'founderName', title: 'Founder name (signature — bottom right)', type: 'string', group: 'certificate', description: 'Shown on the default mock-up. Leave blank to hide the founder signature.' }),
     defineField({ name: 'founderRole', title: 'Founder role / title', type: 'string', group: 'certificate', description: 'e.g. Founder, Menler' }),
+    defineField({ name: 'certificateTitle', title: 'Course name on the certificate', type: 'string', group: 'certificate', description: 'Shown after "for successfully completing". Leave blank to reuse the banner headline.' }),
     defineField({ name: 'certificateNote', title: 'Certificate caption', type: 'string', group: 'certificate' }),
+
+    // ── Events page ──
+    // The /events page is built FROM these campaigns:
+    //   • PAST events  — every campaign appears here automatically.
+    //   • LIVE events  — only campaigns with "Show as a Live event" turned on.
+    // So you only ever manage the Live section; Past fills itself.
+    defineField({
+      name: 'isLiveEvent', title: 'Show as a Live event', type: 'boolean', group: 'events', initialValue: false,
+      description: 'On = shown in the LIVE events section (with a Join button). Off = it sits in Past events with everything else. Turn it off once the class is over.',
+    }),
+    defineField({
+      name: 'hideFromEvents', title: 'Hide from the Events page', type: 'boolean', group: 'events', initialValue: false,
+      description: 'Escape hatch: keep this campaign OUT of the Events page entirely (e.g. a test or internal campaign).',
+    }),
+    defineField({
+      name: 'eventImage', title: 'Event card image (optional)', type: 'image', options: { hotspot: true }, group: 'events',
+      description: 'Upload to override the auto-generated card art. Leave blank and the card is built automatically from the title, mentor photo and accent colour. Recommended ~1200×630.',
+    }),
+    defineField({
+      name: 'eventTags', title: 'Event card tags (pills)', type: 'array', of: [{ type: 'string' }], group: 'events',
+      options: { layout: 'tags' }, description: 'Optional. Small pills on the card, e.g. "Portfolio Projects".',
+    }),
+    defineField({ name: 'eventAttendees', title: 'Attendees (past events, e.g. "500+")', type: 'string', group: 'events' }),
+    defineField({
+      name: 'eventOrder', title: 'Order on the Events page', type: 'number', group: 'events', initialValue: 0,
+      description: 'Lower shows first within its section.',
+    }),
+    defineField({
+      name: 'eventResources', title: 'Downloadable resources (past events)', type: 'array', group: 'events',
+      description: 'Offered via the "Download resources" button (name/email gate). Upload the PDF here — no code needed.',
+      of: [{
+        type: 'object',
+        fields: [
+          { name: 'title', title: 'Title', type: 'string', validation: (r) => r.required() },
+          { name: 'file', title: 'PDF file (upload)', type: 'file', options: { accept: '.pdf,application/pdf' } },
+          { name: 'pdfPath', title: '…or PDF path already in the site (e.g. /pdfs/Name.pdf)', type: 'string', description: 'Only if you prefer to link a PDF already deployed under /pdfs/. Leave blank when you upload a file above.' },
+        ],
+        preview: { select: { title: 'title', file: 'file.asset.originalFilename', path: 'pdfPath' }, prepare: ({ title, file, path }) => ({ title, subtitle: file || path || 'no file yet' }) },
+      }],
+    }),
 
     // ── WhatsApp community ──
     defineField({ name: 'whatsappUrl', title: 'WhatsApp community invite link', type: 'url', group: 'sections', description: 'The WhatsApp group/community join link.' }),
     defineField({ name: 'whatsappText', title: 'WhatsApp bar text', type: 'string', group: 'sections' }),
+
+    // ── Section visibility ──
+    // Turn a whole block off for this campaign. Everything is on by default
+    // except the community block, which is opt-in.
+    defineField({ name: 'showLearn', title: "Show “What you'll learn & build”", type: 'boolean', group: 'visibility', initialValue: true }),
+    defineField({ name: 'showGet', title: 'Show “What you get”', type: 'boolean', group: 'visibility', initialValue: true }),
+    defineField({ name: 'showCertificate', title: 'Show “Sample certificate”', type: 'boolean', group: 'visibility', initialValue: true }),
+    defineField({ name: 'showMentor', title: 'Show “About your mentor”', type: 'boolean', group: 'visibility', initialValue: true }),
+    defineField({
+      name: 'showCommunity', title: 'Show community section', type: 'boolean', group: 'visibility', initialValue: false,
+      description: 'The “Join our Menler community” block — appears on the landing page and the checkout confirmation. Off by default.',
+    }),
   ],
   preview: { select: { title: 'title', subtitle: 'slug.current' } },
 });

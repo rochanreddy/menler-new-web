@@ -20,6 +20,7 @@ const Join = lazy(() => import('./pages/Join'));
 const Resources = lazy(() => import('./pages/Resources'));
 const Blog = lazy(() => import('./pages/Blog'));
 const Community = lazy(() => import('./pages/Community'));
+const Events = lazy(() => import('./pages/Events'));
 const BlogArticle = lazy(() => import('./pages/BlogArticle'));
 const About = lazy(() => import('./pages/About'));
 const Admin = lazy(() => import('./pages/Admin'));
@@ -98,6 +99,10 @@ export default function App() {
             <Route path="/join" element={<Join />} />
             <Route path="/resources" element={<Resources />} />
             <Route path="/community" element={<Community />} />
+            {/* Events page — live by direct URL (menler.in/events) but kept OUT
+                of the navbar for now: the nav links stay dev-gated in
+                Navbar.jsx, so they show locally but not on the public nav. */}
+            <Route path="/events" element={<Events />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/earnings-agent" element={<BlogArticle />} />
             <Route path="/about" element={<About />} />
