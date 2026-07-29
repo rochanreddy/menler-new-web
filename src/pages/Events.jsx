@@ -4,6 +4,8 @@ import Seo from '../components/common/Seo';
 import Footer from '../components/layout/Footer';
 import MenlerWordmark from '../components/common/MenlerWordmark';
 import PlaybookModal from '../components/common/PlaybookModal';
+import CtaBanner from '../components/common/CtaBanner';
+import { useApply } from '../components/common/ApplyContext';
 import { useContentState } from '../lib/useContent';
 import { MENLER_WHATSAPP_URL } from '../data/communityLinks';
 
@@ -41,6 +43,35 @@ const formatEventDate = (raw) => {
   const d = new Date(Number(year), mi, Number(day[1]));
   if (mi < 0 || Number.isNaN(d.getTime())) return raw;
   return `${String(day[1]).padStart(2, '0')} ${MONTHS[mi]} ${year}, ${WEEKDAYS[d.getDay()]}`;
+};
+
+// Sort key for an event: its start, as a timestamp. Both `date` and `time` are
+// free text in Sanity, so parse defensively — anything unparseable returns 0 and
+// falls to the end of the list rather than scrambling the order around it.
+const eventStartMs = (ev) => {
+  const s = String(ev.date || '').replace(/(\d{1,2})(st|nd|rd|th)/gi, '$1');
+  const year = (s.match(/\b(20\d{2})\b/) || [])[1];
+  const month = s.match(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b/i);
+  const day = s.match(/\b(\d{1,2})\b/);
+  if (!year || !month || !day) return 0;
+  const mi = MONTHS.findIndex((m) => m.toLowerCase().startsWith(month[1].toLowerCase()));
+  if (mi < 0) return 0;
+  // The START of the range: "7:00 PM – 9:00 PM IST" → 19:00. Two same-day events
+  // are only separable by time, which is what puts the 7 PM session above the
+  // 11 AM one. A start with no am/pm of its own ("5:00 – 7:00 PM IST") borrows
+  // the meridiem from the end of the range.
+  const t = String(ev.time || '');
+  const start = t.match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/i);
+  let h = 0;
+  let min = 0;
+  if (start) {
+    h = Number(start[1]);
+    min = Number(start[2] || 0);
+    const mer = (start[3] || (t.match(/(am|pm)/i) || [])[1] || '').toLowerCase();
+    if (mer === 'pm' && h < 12) h += 12;
+    if (mer === 'am' && h === 12) h = 0;
+  }
+  return new Date(Number(year), mi, Number(day[1]), h, min).getTime();
 };
 
 // Map a raw campaign doc → the shape the cards render. One place, so the query,
@@ -194,6 +225,7 @@ function EventArt({ ev }) {
 
 export default function Events() {
   const navigate = useNavigate();
+  const openApply = useApply();
   const { data } = useContentState(EVENTS_QUERY, FALLBACK);
   const [resource, setResource] = useState(null); // PlaybookModal item
 
@@ -201,7 +233,12 @@ export default function Events() {
   // by running anything that still looks like a campaign doc through toEvent.
   const events = (data || []).map((e) => (e && e.status ? e : toEvent(e)));
   const live = events.filter((e) => e.status !== 'past');
-  const past = events.filter((e) => e.status === 'past');
+  // Past events read newest-first, so the most recent masterclass leads the grid
+  // and same-day sessions fall in reverse time order. Array.sort is stable, so
+  // anything with no parseable date keeps the CMS order from EVENTS_QUERY.
+  const past = events
+    .filter((e) => e.status === 'past')
+    .sort((a, b) => eventStartMs(b) - eventStartMs(a));
 
   // Past events grow over time — show two full rows, then reveal a row at a
   // time in place (the grid is 3-up on desktop, so these stay flush).
@@ -361,6 +398,21 @@ export default function Events() {
           </div>
         </div>
       </section>
+
+      {/* Same banner as /generalist. ctaLabel marks it as the Events placement so
+          the lead is attributable; source/section stay identical so it routes
+          exactly like the Generalist page's own Apply. */}
+      <CtaBanner
+        badge="Applications open · 30 seats"
+        title="Ready to become a Claude AI Generalist?"
+        subtitle={<><span style={{ whiteSpace: 'nowrap' }}>No coding experience.</span> <span style={{ whiteSpace: 'nowrap' }}>Just 10 weeks and real ambition.</span></>}
+        buttonText="Apply Now"
+        onButtonClick={() => openApply({
+          ctaLabel: 'Apply · Events',
+          source: 'generalist-lead',
+          section: 'Claude AI Generalist Fellowship',
+        })}
+      />
 
       <Footer />
 
