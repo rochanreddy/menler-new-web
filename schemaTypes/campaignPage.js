@@ -55,12 +55,13 @@ export default defineType({
         type: 'object',
         fields: [
           { name: 'name', title: 'Name (alt text)', type: 'string', validation: (r) => r.required() },
-          { name: 'logoPath', title: 'Logo file path', type: 'string', description: 'Path under public/, e.g. /logos/microsoft.png', validation: (r) => r.required() },
+          { name: 'image', title: 'Logo image (upload)', type: 'image', description: 'Upload the logo — a transparent PNG or SVG works best, trimmed close to the logo edges. All logos are shown at the same height, so trimmed transparent logos line up cleanly.' },
+          { name: 'logoPath', title: '…or logo file path (optional)', type: 'string', description: 'Only if the logo already lives under public/, e.g. /logos/microsoft.png. Leave blank when you upload an image above.' },
         ],
-        preview: { select: { title: 'name', subtitle: 'logoPath' } },
+        preview: { select: { title: 'name', subtitle: 'logoPath', media: 'image' } },
       }],
       group: 'banner',
-      description: 'Company / institution logos shown in the strip under the registration form — e.g. Microsoft, IIT-G, ISB.',
+      description: 'Company / institution logos shown under the mentor credit / registration form — e.g. Microsoft, IIT-G, ISB. Upload the images and they render at a uniform size.',
     }),
     defineField({
       name: 'showCredLogosInBanner',
