@@ -163,7 +163,8 @@ export default function Checkout() {
           {reg.showCommunity && (
             <MenlerCommunitySection
               className="menler-community--confirm"
-              whatsappUrl={reg.whatsappUrl || MENLER_WHATSAPP_URL}
+              whatsappUrl={reg.communityInstagramUrl ? undefined : (reg.whatsappUrl || MENLER_WHATSAPP_URL)}
+              instagramUrl={reg.communityInstagramUrl}
               communityText={reg.whatsappText || reg.communityText}
             />
           )}

@@ -103,6 +103,8 @@ const FALLBACK = {
   certificateTitle: '',
   certificateNote: 'A Menler Certificate of Participation — shareable on LinkedIn.',
   whatsappUrl: MENLER_WHATSAPP_URL,
+  instagramUrl: '',
+  communityPlatform: 'whatsapp',
   discordUrl: '',
   facebookUrl: '',
   whatsappText: 'Join our WhatsApp community for updates, resources & support.',
@@ -127,7 +129,7 @@ const CAMPAIGN_QUERY = `*[_type == "campaignPage" && slug.current == $slug][0]{
   founderName, founderRole,
   learn[]{title, detail}, forYou, get[]{title, detail},
   "certificateImage": certificateImage.asset->url, certificateTitle, certificateNote,
-  whatsappUrl, discordUrl, facebookUrl, whatsappText, communityText,
+  whatsappUrl, instagramUrl, communityPlatform, discordUrl, facebookUrl, whatsappText, communityText,
   showLearn, showGet, showCertificate, showMentor, showCommunity
 }`;
 
@@ -252,10 +254,12 @@ export default function KickstarterLanding() {
   // Sanity-editable content for this slug, merged per-field over the fallback.
   const { slug } = useParams();
   const activeSlug = slug || 'ai-kickstarter';
-  const useInstagramCommunity = CAMPAIGN_INSTAGRAM_SLUGS.has(activeSlug);
   const { data: c, loading: contentLoading } = useContentState(CAMPAIGN_QUERY, FALLBACK, { slug: activeSlug });
   const d = {};
   for (const k of Object.keys(FALLBACK)) d[k] = has(c?.[k]) ? c[k] : FALLBACK[k];
+  // Community button: Sanity "Community button" choice wins; otherwise fall back
+  // to the hardcoded Instagram slug list (for campaigns set up before the toggle).
+  const useInstagramCommunity = d.communityPlatform ? d.communityPlatform === 'instagram' : CAMPAIGN_INSTAGRAM_SLUGS.has(activeSlug);
   const heading = `${d.bannerLine1} ${d.bannerLine2}`.trim();
   const num = (i) => String(i + 1).padStart(2, '0');
 
@@ -347,6 +351,7 @@ export default function KickstarterLanding() {
           whatsappText: d.whatsappText,
           communityText: d.communityText,
           showCommunity: d.showCommunity,
+          communityInstagramUrl: useInstagramCommunity ? (d.instagramUrl || MENLER_INSTAGRAM_URL) : undefined,
         },
       });
     } catch (e2) {
@@ -516,7 +521,7 @@ export default function KickstarterLanding() {
             <MenlerCommunitySection
               className="lp2-community-wrap"
               whatsappUrl={useInstagramCommunity ? undefined : (d.whatsappUrl || MENLER_WHATSAPP_URL)}
-              instagramUrl={useInstagramCommunity ? MENLER_INSTAGRAM_URL : undefined}
+              instagramUrl={useInstagramCommunity ? (d.instagramUrl || MENLER_INSTAGRAM_URL) : undefined}
               communityText={d.communityText}
             />
           )}
