@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useLayoutEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Seo from '../components/common/Seo';
 import Footer from '../components/layout/Footer';
@@ -127,6 +127,45 @@ const ClockIcon = () => (
   </svg>
 );
 
+/* A title that spills a single word onto a second line ("…Career / Advantage")
+   reads as broken, so the card title always stays on ONE line. CSS can't size
+   text to its container, so measure it: step the font down from `max` until the
+   title fits. TITLE_MIN is the floor — the CSS ellipsis catches anything still
+   too long rather than wrapping. Re-runs on resize, since card width drives it. */
+const TITLE_MAX = 21;       // past cards
+const LIVE_TITLE_MAX = 25;  // live cards start larger (see .ev-card--live .ev-title)
+const TITLE_MIN = 13;
+function FitTitle({ text, max = TITLE_MAX }) {
+  const ref = useRef(null);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return undefined;
+    let alive = true;
+    const fit = () => {
+      if (!alive) return;
+      let size = max;
+      el.style.fontSize = `${size}px`;
+      // scrollWidth only exceeds clientWidth while the text is nowrap, which is
+      // the element's permanent state (see the .ev-title rules in global.css).
+      while (size > TITLE_MIN && el.scrollWidth > el.clientWidth) {
+        size -= 0.5;
+        el.style.fontSize = `${size}px`;
+      }
+    };
+    fit();
+    // DM Serif Display is WIDER than the fallback face it swaps in for, so a
+    // title measured before the webfont arrives reads as fitting and then
+    // overflows once it lands. Measure again once the fonts are actually ready.
+    if (document.fonts?.ready) document.fonts.ready.then(fit).catch(() => {});
+    // Watch the parent, not the title: re-fitting changes the title's own size,
+    // so observing it would feed back into itself. The card width is what matters.
+    const ro = el.parentElement ? new ResizeObserver(fit) : null;
+    ro?.observe(el.parentElement);
+    return () => { alive = false; ro?.disconnect(); };
+  }, [text, max]);
+  return <h3 className="ev-title" ref={ref}>{text}</h3>;
+}
+
 /* ── Auto-generated card art (no image upload needed) ────────────────────── */
 function EventArt({ ev }) {
   const accent = ev.accent || '#534AB7';
@@ -217,7 +256,7 @@ export default function Events() {
                 <EventArt ev={ev} />
                 <div className="ev-body">
                   <span className="ev-live-dot">● Live masterclass</span>
-                  <h3 className="ev-title">{ev.title}</h3>
+                  <FitTitle text={ev.title} max={LIVE_TITLE_MAX} />
                   {ev.subtitle && <p className="ev-sub">{ev.subtitle}</p>}
                   {ev.tags?.length > 0 && (
                     <div className="ev-tags">{ev.tags.map((t) => <span key={t}>{t}</span>)}</div>
@@ -252,7 +291,7 @@ export default function Events() {
               <article className="ev-card ev-card--past" key={ev._id}>
                 <EventArt ev={ev} />
                 <div className="ev-body">
-                  <h3 className="ev-title">{ev.title}</h3>
+                  <FitTitle text={ev.title} />
                   {ev.subtitle && <p className="ev-sub">{ev.subtitle}</p>}
                   {ev.tags?.length > 0 && (
                     <div className="ev-tags">{ev.tags.map((t) => <span key={t}>{t}</span>)}</div>

@@ -3540,7 +3540,17 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 /* Card body */
 .ev-body { padding: 20px 22px 22px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
 .ev-live-dot { display: inline-flex; align-self: flex-start; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--placed); background: rgba(29,158,117,0.1); border: 1px solid rgba(29,158,117,0.22); border-radius: 999px; padding: 5px 12px; }
-.ev-title { font-family: 'DM Serif Display', serif; font-size: 21px; line-height: 1.2; color: var(--ink); margin: 0; }
+/* Always ONE line. FitTitle shrinks the type until the title fits, so a single
+   orphan word never spills onto a second line; the ellipsis catches anything
+   still too long at TITLE_MIN. nowrap is load-bearing, not cosmetic — FitTitle
+   measures scrollWidth > clientWidth, which only overflows while text is nowrap.
+   The font-size here is the pre-JS first paint; FitTitle then sets it inline. */
+.ev-title {
+  font-family: 'DM Serif Display', serif; font-size: 21px; line-height: 1.2;
+  color: var(--ink); margin: 0;
+  display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  min-width: 0;
+}
 .ev-sub { font-size: 14px; line-height: 1.55; color: var(--text-muted); margin: 0; }
 .ev-tags { display: flex; flex-wrap: wrap; gap: 7px; }
 .ev-tags span { font-size: 11.5px; font-weight: 600; color: var(--specialist); background: var(--cloud); border-radius: 999px; padding: 5px 11px; }
