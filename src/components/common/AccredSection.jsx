@@ -1,11 +1,14 @@
 import { BrandLogo } from './PartnersMarquee';
-import skillIndiaLogo from '../../assets/logos/skill-india.webp';
 import msmeLogo from '../../assets/logos/msme.webp';
 import googleEduLogo from '../../assets/logos/google-education.webp';
 import anthropicLogo from '../../assets/logos/anthropic.webp';
+// To use the exact #startupindia wordmark, save it to
+// src/assets/logos/startup-india.webp, `import startupIndiaLogo from
+// '../../assets/logos/startup-india.webp'`, and add `logo: startupIndiaLogo`
+// below. Until then BrandLogo fetches one by domain.
 
 const ACCREDITORS = [
-  { name: 'Skill India', domain: 'skillindia.gov.in', logo: skillIndiaLogo },
+  { name: 'Startup India', domain: 'startupindia.gov.in' },
   { name: 'MSME India', domain: 'msme.gov.in', logo: msmeLogo },
   { name: 'Google for Education', domain: 'edu.google.com', logo: googleEduLogo },
   { name: 'Anthropic', domain: 'anthropic.com', logo: anthropicLogo },
