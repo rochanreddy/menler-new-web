@@ -106,7 +106,7 @@ export default function Resources() {
       <section className="hero hero-centered" style={{ paddingTop: 56 }}>
         <div className="hero-ring r1" /><div className="hero-ring r2" /><div className="hero-ring rl1" />
         <div className="hero-inner">
-          <h1 className="hero-h1">The Menler library.<br /><em>₹49 each.</em></h1>
+          <h1 className="hero-h1">The Menler library.<br /><em>Built to ship.</em></h1>
           <p className="hero-sub" style={{ maxWidth: 'none' }}>The knowledge layer for the AI-native workforce.<br />Guides, prompts, templates, and frameworks designed for real-world execution.</p>
         </div>
       </section>
@@ -145,7 +145,7 @@ export default function Resources() {
       <section className="res-preview" style={{ background: 'var(--parchment)', paddingBottom: 32 }}>
         <div className="preview-shell">
           <p className="section-label">The Menler library</p>
-          <h2 className="section-h2">Knowledge Layer.<br /><em>₹49 each</em></h2>
+          <h2 className="section-h2">Knowledge Layer.<br /><em>Ready to use</em></h2>
           <div className="res-grid res-grid--4">
             {LIBRARY_CARDS.map((r, i) => {
               const open = () => setPbItem({ badge: 'Menler Library', title: r.name, desc: r.desc, pdf: r.pdf, price: 49, source: 'library-resource' });
