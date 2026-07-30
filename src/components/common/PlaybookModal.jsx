@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { submitLead } from '../../services/leadService';
+import { submitLead, deliverLibraryResource } from '../../services/leadService';
 import { verifyEmailOtp } from '../../lib/amplifeedOtp';
 import { getVerifiedLead, saveVerifiedLead } from '../../lib/verifiedSession';
 import { downloadFile } from '../../lib/download';
@@ -111,8 +111,10 @@ export default function PlaybookModal({ item, onClose }) {
         setErr('Payment not completed. If you were charged, it will confirm shortly — check your email or contact us.');
         return;
       }
+      // Email the PDF to the buyer (per-resource template) — the primary delivery.
+      deliverLibraryResource({ orderId: order.order_id, pdf: item.pdf, name: form.name.trim(), email: form.email.trim() }).catch(() => {});
+      // And download on-site for instant access.
       downloadFile(item.pdf, `${item.title}.pdf`);
-      submitLead({ name: form.name.trim(), email: form.email.trim(), phone: form.phone, resource: item.title, pdf: item.pdf, amount: item.price, source: 'library-purchase', cta_label: `Purchased: ${item.title} (₹${item.price})`, section: 'Library' }).catch(() => {});
       setDone(true);
     } catch (e2) {
       setErr(e2?.message || 'Something went wrong — please try again.');
@@ -168,7 +170,7 @@ export default function PlaybookModal({ item, onClose }) {
             <div className="pb-modal-done">
               <div className="pb-done-icon">✓</div>
               <h3 className="pb-modal-title">{isPaid ? 'Payment successful' : 'Your download has started'}</h3>
-              <p className="pb-modal-sub"><b>{item.title}</b> {isPaid ? 'is downloading.' : 'has been downloaded.'} Didn’t start?{' '}
+              <p className="pb-modal-sub"><b>{item.title}</b> {isPaid ? 'is downloading — and we’ve emailed it to you too.' : 'has been downloaded.'} Didn’t start?{' '}
                 <button type="button" onClick={() => downloadFile(item.pdf, `${item.title}.pdf`)} style={{ background: 'none', border: 'none', padding: 0, color: 'var(--specialist, #5a3fd6)', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>Download Again</button>.
               </p>
             </div>

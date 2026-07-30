@@ -144,3 +144,17 @@ export async function deliverResources(payload) {
   if (!res.ok) throw new Error(await errorMessage(res, 'Resource delivery failed'));
   return res.json();
 }
+
+/**
+ * Email a paid Library resource to the buyer after a confirmed Cashfree payment.
+ * Server verifies the order is PAID and sends the per-resource template + PDF.
+ */
+export async function deliverLibraryResource({ orderId, pdf, name, email }) {
+  const res = await fetch(`${API_URL}/leads/library-deliver`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ orderId, pdf, name, email }),
+  });
+  if (!res.ok) throw new Error(await errorMessage(res, 'Could not email the resource'));
+  return res.json();
+}
