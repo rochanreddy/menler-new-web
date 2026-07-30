@@ -688,6 +688,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .accred-by-row .partner-logo-img { max-height: 64px; max-width: 100%; width: auto; height: auto; object-fit: contain; }
 .accred-by-row .partner-logo-img[alt="Anthropic"] { max-height: 100px; }
 .accred-by-row .partner-logo-img[alt="Google for Education"] { max-height: 92px; }
+.accred-by-row .partner-logo-img[alt="Startup India"] { max-height: 52px; }
 .accred-by-row .partner-name { font-size: 16px; font-weight: 600; color: var(--ink); }
 .accred-tile { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--parchment); border-radius: 10px; border: 0.5px solid rgba(175,169,236,0.2); }
 .accred-icon { width: 36px; height: 36px; flex-shrink: 0; border-radius: 8px; background: var(--cloud); display: flex; align-items: center; justify-content: center; color: var(--specialist); }
