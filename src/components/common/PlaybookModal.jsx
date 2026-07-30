@@ -148,10 +148,9 @@ export default function PlaybookModal({ item, onClose }) {
         {/* ── LEFT: preview (free) or locked teaser (paid) ── */}
         <div className="pb-modal-left">
           {isPaid ? (
-            <div className="pb-modal-placeholder pb-locked">
-              <span className="pb-ph-icon" aria-hidden="true">🔒</span>
-              <p className="pb-ph-title">{item.title}</p>
-              <p className="pb-ph-sub">Unlock this for <b>₹{item.price}</b> — pay securely and it downloads instantly.</p>
+            <div className="pb-modal-frame pb-cover-frame">
+              <PdfView url={item.pdf} coverOnly />
+              <span className="pb-cover-lock" aria-hidden="true">🔒 Cover preview — full playbook unlocks after payment</span>
             </div>
           ) : pdfReady === true ? (
             <div className="pb-modal-frame"><PdfView url={item.pdf} /></div>

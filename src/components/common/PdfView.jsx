@@ -12,7 +12,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
  * instead bounce the user to a full-screen native viewer). The container
  * scrolls through the pages within the page itself.
  */
-export default function PdfView({ url, className = '' }) {
+export default function PdfView({ url, className = '', coverOnly = false }) {
   const pagesRef = useRef(null);
   const [status, setStatus] = useState('loading'); // loading | ready | error
   const [errMsg, setErrMsg] = useState('');
@@ -30,7 +30,9 @@ export default function PdfView({ url, className = '' }) {
         if (cancelled) return;
         const cssWidth = (container && container.clientWidth) || 600;
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        for (let i = 1; i <= pdf.numPages; i++) {
+        // coverOnly → render just the first page (a locked cover teaser).
+        const lastPage = coverOnly ? 1 : pdf.numPages;
+        for (let i = 1; i <= lastPage; i++) {
           const page = await pdf.getPage(i);
           if (cancelled) return;
           const base = page.getViewport({ scale: 1 });
@@ -51,7 +53,7 @@ export default function PdfView({ url, className = '' }) {
     })();
 
     return () => { cancelled = true; };
-  }, [url]);
+  }, [url, coverOnly]);
 
   return (
     <div className={`pdfview ${className}`} data-lenis-prevent>

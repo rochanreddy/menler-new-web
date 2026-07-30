@@ -2779,6 +2779,13 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .pb-modal--split { display: flex; width: 100%; max-width: 900px; max-height: 92vh; overflow: hidden; }
 .pb-modal-left { flex: 1 1 45%; min-width: 0; background: var(--parchment); border-right: 1px solid rgba(83,74,183,0.12); }
 .pb-modal-frame { display: block; width: 100%; height: 100%; min-height: 480px; border: 0; }
+/* Paid items: the left pane shows the PDF's cover page (page 1) as a locked
+   teaser — the rest is behind the paywall, hinted by the fade + caption. */
+.pb-cover-frame { position: relative; overflow: hidden; }
+.pb-cover-frame .pdfview { overflow: hidden; height: 100%; }
+.pb-cover-frame .pdfview-pages { padding: 18px 18px 0; }
+.pb-cover-frame .pdfview-page { border-radius: 8px; box-shadow: 0 12px 34px rgba(38,33,92,0.2); }
+.pb-cover-lock { position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 16px 14px; font-size: 11.5px; font-weight: 600; color: #fff; text-align: center; background: linear-gradient(to top, rgba(20,17,46,0.9), rgba(20,17,46,0)); pointer-events: none; }
 .pb-modal-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; height: 100%; min-height: 480px; padding: 24px; }
 .pb-ph-icon { font-size: 44px; opacity: 0.5; margin-bottom: 14px; }
 .pb-ph-title { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--ink); margin: 0 0 6px; }
