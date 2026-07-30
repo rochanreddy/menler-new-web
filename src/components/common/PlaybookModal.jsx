@@ -192,7 +192,7 @@ export default function PlaybookModal({ item, onClose }) {
                   <label>Phone</label>
                   <input type="tel" required value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+91 98765 43210" autoComplete="tel" />
                 </div>
-                <button className="pb-modal-btn" type="submit" disabled={submitting || !item.pdf}>{submitting ? 'Processing…' : item.pdf ? `Pay ₹${item.price} & Download` : 'Coming soon'}</button>
+                <button className="pb-modal-btn" type="submit" disabled={submitting || !item.pdf}>{submitting ? 'Processing…' : item.pdf ? 'Pay & Download' : 'Coming soon'}</button>
                 {err && <p className="lf-fineprint" style={{ color: '#c0392b' }}>{errText}</p>}
                 <p className="lf-fineprint">Secured by Cashfree · UPI · Cards · Netbanking. The moment your payment is confirmed, the PDF is emailed to you — and downloads here too.</p>
               </form>
