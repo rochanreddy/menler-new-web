@@ -195,7 +195,7 @@ export default function PlaybookModal({ item, onClose }) {
                 </div>
                 <button className="pb-modal-btn" type="submit" disabled={submitting || !item.pdf}>{submitting ? 'Processing…' : item.pdf ? `Pay ₹${item.price} & Download` : 'Coming soon'}</button>
                 {err && <p className="lf-fineprint" style={{ color: '#c0392b' }}>{errText}</p>}
-                <p className="lf-fineprint">Secured by Cashfree · UPI · Cards · Netbanking. The PDF downloads here the moment your payment is confirmed.</p>
+                <p className="lf-fineprint">Secured by Cashfree · UPI · Cards · Netbanking. The moment your payment is confirmed, the PDF is emailed to you — and downloads here too.</p>
               </form>
             </>
           ) : verified ? (
