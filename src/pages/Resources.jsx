@@ -106,7 +106,7 @@ export default function Resources() {
       <section className="hero hero-centered" style={{ paddingTop: 56 }}>
         <div className="hero-ring r1" /><div className="hero-ring r2" /><div className="hero-ring rl1" />
         <div className="hero-inner">
-          <h1 className="hero-h1">The Menler library.<br /><em>Free. Forever.</em></h1>
+          <h1 className="hero-h1">The Menler library.<br /><em>₹49 each.</em></h1>
           <p className="hero-sub" style={{ maxWidth: 'none' }}>The knowledge layer for the AI-native workforce.<br />Guides, prompts, templates, and frameworks designed for real-world execution.</p>
         </div>
       </section>
@@ -116,9 +116,11 @@ export default function Resources() {
           <p className="section-label">Claude Playbook</p>
           <h2 className="section-h2">Master every<br /><em>Claude surface.</em></h2>
           <div className="playbook-grid">
-            {PLAYBOOK.map((p, i) => (
-              <div key={i} className="pb-card" role="button" tabIndex={0} onClick={() => setPbItem(p)}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setPbItem(p); } }}>
+            {PLAYBOOK.map((p, i) => {
+              const openP = () => setPbItem({ ...p, price: 49, source: 'library-playbook' });
+              return (
+              <div key={i} className="pb-card" role="button" tabIndex={0} onClick={openP}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openP(); } }}>
                 <div className="pb-thumb">
                   <span className="pb-badge">{p.badge}</span>
                   <h3 className="pb-thumb-title">{p.thumb}</h3>
@@ -131,10 +133,11 @@ export default function Resources() {
                   <span className="pb-cat">{p.cat}</span>
                   <p className="pb-title">{p.title}</p>
                   <p className="pb-sub">{p.desc}</p>
-                  <button className="pb-btn" onClick={(e) => { e.stopPropagation(); setPbItem(p); }}>Access Now</button>
+                  <button className="pb-btn" onClick={(e) => { e.stopPropagation(); openP(); }}>Get for ₹49</button>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -142,10 +145,10 @@ export default function Resources() {
       <section className="res-preview" style={{ background: 'var(--parchment)', paddingBottom: 32 }}>
         <div className="preview-shell">
           <p className="section-label">The Menler library</p>
-          <h2 className="section-h2">Knowledge Layer.<br /><em>Learn free</em></h2>
+          <h2 className="section-h2">Knowledge Layer.<br /><em>₹49 each</em></h2>
           <div className="res-grid res-grid--4">
             {LIBRARY_CARDS.map((r, i) => {
-              const open = () => setPbItem({ badge: 'Free resource', title: r.name, desc: r.desc, pdf: r.pdf });
+              const open = () => setPbItem({ badge: 'Menler Library', title: r.name, desc: r.desc, pdf: r.pdf, price: 49, source: 'library-resource' });
               return (
                 <div key={i} className="res-card" role="button" tabIndex={0} onClick={open}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } }}>
@@ -153,7 +156,7 @@ export default function Resources() {
                   <p className="res-name">{r.name}</p>
                   <p className="res-desc">{r.desc}</p>
                   <div className={`res-tags${r.tagsNowrap ? ' res-tags--nowrap' : ''}`}>{r.tags.map((t, j) => <span key={j} className="res-tag">{t}</span>)}</div>
-                  <button className="res-btn" onClick={(e) => { e.stopPropagation(); open(); }}>Access Now</button>
+                  <button className="res-btn" onClick={(e) => { e.stopPropagation(); open(); }}>Get for ₹49</button>
                 </div>
               );
             })}

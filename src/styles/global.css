@@ -2787,6 +2787,8 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .pb-modal-badge { display: inline-block; align-self: flex-start; font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--specialist); background: var(--cloud); padding: 4px 10px; border-radius: 8px; margin-bottom: 12px; }
 .pb-modal-title { font-family: 'DM Serif Display', serif; font-size: 23px; font-weight: 400; color: var(--ink); margin: 0 0 6px; line-height: 1.2; }
 .pb-modal-sub { font-size: 13px; color: var(--text-muted); line-height: 1.55; margin: 0; }
+.pb-modal-price { margin: 14px 0 4px; font-family: 'DM Serif Display', serif; font-size: 30px; line-height: 1; color: var(--ink); }
+.pb-modal-price span { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .02em; color: var(--text-muted); margin-left: 8px; }
 .pb-form { margin-top: 18px; }
 .pb-form .lf-field { margin-bottom: 12px; }
 /* Desktop: form is inline, no gate button. (Mobile turns this into a gated flow.) */

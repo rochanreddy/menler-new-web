@@ -3,22 +3,30 @@ import { submitLead } from '../../services/leadService';
 import { verifyEmailOtp } from '../../lib/amplifeedOtp';
 import { getVerifiedLead, saveVerifiedLead } from '../../lib/verifiedSession';
 import { downloadFile } from '../../lib/download';
+import { createEnrolOrder, getPaymentStatus } from '../../services/paymentService';
+import { openCashfreeCheckout } from '../../lib/cashfree';
 import PdfView from './PdfView';
 
 /**
- * Claude Playbook resource popup — split layout:
- *   left  → in-modal PDF preview
+ * Resource popup — split layout:
+ *   left  → in-modal PDF preview (or a locked teaser for paid items)
  *   right → lead-capture form with the download button underneath
- * On submit the lead is stored and the PDF download triggers.
- * Pass the clicked playbook item (or null) and an onClose handler.
+ *
+ * Two modes, chosen by whether the item carries a `price`:
+ *   • FREE  → email-OTP verify, then the PDF downloads.
+ *   • PAID  → ₹<price> via Cashfree; the preview is locked and the PDF only
+ *             downloads after the payment is confirmed PAID. (Used by the Library.)
+ * Pass the clicked item (or null) and an onClose handler.
  */
 export default function PlaybookModal({ item, onClose }) {
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
-  const [err, setErr] = useState(false);
+  const [err, setErr] = useState(false); // false | true | string
   const [pdfReady, setPdfReady] = useState(null); // null = checking, true/false
   const [formOpen, setFormOpen] = useState(false); // mobile: reveal form after tapping Download
+
+  const isPaid = Boolean(item?.price);
 
   useEffect(() => {
     if (!item) return;
@@ -32,10 +40,10 @@ export default function PlaybookModal({ item, onClose }) {
     return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = ''; };
   }, [item, onClose]);
 
-  // Verify the PDF actually exists (a missing file falls back to index.html on
-  // the SPA, which would otherwise render the website inside the preview frame).
+  // Verify the PDF exists — but never preview a PAID item (that would give the
+  // paid PDF away for free), so only HEAD-check free ones.
   useEffect(() => {
-    if (!item) return;
+    if (!item || isPaid) return;
     let cancelled = false;
     setPdfReady(null);
     if (!item.pdf) {
@@ -49,29 +57,28 @@ export default function PlaybookModal({ item, onClose }) {
       })
       .catch(() => { if (!cancelled) setPdfReady(false); });
     return () => { cancelled = true; };
-  }, [item]);
+  }, [item, isPaid]);
 
   if (!item) return null;
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   // Already verified earlier this session → skip the form + OTP entirely.
-  const verified = getVerifiedLead();
+  // Never applies to paid items — each paid download is its own ₹price payment.
+  const verified = !isPaid && getVerifiedLead();
 
   const recordAndDownload = (lead) => {
     downloadFile(item.pdf, `${item.title}.pdf`);
     submitLead({ ...lead, resource: item.title, pdf: item.pdf, source: item.source || 'playbook-download', cta_label: `Download: ${item.title}`, section: item.section || item.badge || item.cat || 'Playbook' }).catch(() => {});
   };
 
-  // Verify the email via OTP, then download the PDF on-site. The lead is
-  // recorded in the background so the download always happens once verified.
+  // FREE flow: verify the email via OTP, then download the PDF on-site.
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErr(false);
     setSubmitting(true);
     try {
       const otp = await verifyEmailOtp(form.email.trim());
-      // Remember the verified visitor so later PDFs skip verification.
       saveVerifiedLead({ name: form.name, email: form.email.trim(), phone: form.phone });
       recordAndDownload({ ...form, ...otp });
       setDone(true);
@@ -82,7 +89,39 @@ export default function PlaybookModal({ item, onClose }) {
     }
   };
 
-  // One-click download for an already-verified visitor (no form, no OTP).
+  // PAID flow: charge ₹price via Cashfree, then download only once confirmed PAID.
+  const handlePaidSubmit = async (e) => {
+    e.preventDefault();
+    setErr(false);
+    const phoneDigits = String(form.phone || '').replace(/\D/g, '').slice(-10);
+    if (!form.name.trim() || !form.email.trim() || phoneDigits.length !== 10) {
+      setErr('Enter your name, email and a 10-digit phone number.');
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const order = await createEnrolOrder({ program: 'library', name: form.name.trim(), email: form.email.trim(), phone: phoneDigits });
+      const result = await openCashfreeCheckout(order.payment_session_id, order.mode);
+      if (result && result.error) {
+        setErr(result.error.message || 'Payment was cancelled.');
+        return;
+      }
+      const status = await getPaymentStatus(order.order_id);
+      if (status.status !== 'PAID') {
+        setErr('Payment not completed. If you were charged, it will confirm shortly — check your email or contact us.');
+        return;
+      }
+      downloadFile(item.pdf, `${item.title}.pdf`);
+      submitLead({ name: form.name.trim(), email: form.email.trim(), phone: form.phone, resource: item.title, pdf: item.pdf, amount: item.price, source: 'library-purchase', cta_label: `Purchased: ${item.title} (₹${item.price})`, section: 'Library' }).catch(() => {});
+      setDone(true);
+    } catch (e2) {
+      setErr(e2?.message || 'Something went wrong — please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // One-click download for an already-verified visitor (free items only).
   const directDownload = () => {
     setSubmitting(true);
     recordAndDownload({
@@ -97,14 +136,22 @@ export default function PlaybookModal({ item, onClose }) {
     setDone(true);
   };
 
+  const errText = typeof err === 'string' ? err : "Couldn’t verify — please check your connection and try again.";
+
   return (
     <div className="pb-modal-overlay" onClick={onClose}>
       <div className="pb-modal pb-modal--split" role="dialog" aria-modal="true" aria-label={item.title} onClick={(e) => e.stopPropagation()}>
         <button className="apply-modal-close" onClick={onClose} aria-label="Close">×</button>
 
-        {/* ── LEFT: preview ── */}
+        {/* ── LEFT: preview (free) or locked teaser (paid) ── */}
         <div className="pb-modal-left">
-          {pdfReady === true ? (
+          {isPaid ? (
+            <div className="pb-modal-placeholder pb-locked">
+              <span className="pb-ph-icon" aria-hidden="true">🔒</span>
+              <p className="pb-ph-title">{item.title}</p>
+              <p className="pb-ph-sub">Unlock this for <b>₹{item.price}</b> — pay securely and it downloads instantly.</p>
+            </div>
+          ) : pdfReady === true ? (
             <div className="pb-modal-frame"><PdfView url={item.pdf} /></div>
           ) : (
             <div className="pb-modal-placeholder">
@@ -115,16 +162,40 @@ export default function PlaybookModal({ item, onClose }) {
           )}
         </div>
 
-        {/* ── RIGHT: form + download ── */}
+        {/* ── RIGHT: form + download / pay ── */}
         <div className="pb-modal-right">
           {done ? (
             <div className="pb-modal-done">
               <div className="pb-done-icon">✓</div>
-              <h3 className="pb-modal-title">Your download has started</h3>
-              <p className="pb-modal-sub"><b>{item.title}</b> has been downloaded. Didn’t start?{' '}
+              <h3 className="pb-modal-title">{isPaid ? 'Payment successful' : 'Your download has started'}</h3>
+              <p className="pb-modal-sub"><b>{item.title}</b> {isPaid ? 'is downloading.' : 'has been downloaded.'} Didn’t start?{' '}
                 <button type="button" onClick={() => downloadFile(item.pdf, `${item.title}.pdf`)} style={{ background: 'none', border: 'none', padding: 0, color: 'var(--specialist, #5a3fd6)', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>Download Again</button>.
               </p>
             </div>
+          ) : isPaid ? (
+            <>
+              <span className="pb-modal-badge">{item.badge || 'Menler Library'}</span>
+              <h3 className="pb-modal-title">{item.title}</h3>
+              <p className="pb-modal-sub">{item.desc}</p>
+              <p className="pb-modal-price">₹{item.price} <span>one-time</span></p>
+              <form className="pb-form open" onSubmit={handlePaidSubmit}>
+                <div className="lf-field full">
+                  <label>Full name</label>
+                  <input type="text" required value={form.name} onChange={(e) => set('name', e.target.value)} placeholder="Your name" autoComplete="name" />
+                </div>
+                <div className="lf-field full">
+                  <label>Email</label>
+                  <input type="email" required value={form.email} onChange={(e) => set('email', e.target.value)} placeholder="you@domain.com" autoComplete="email" />
+                </div>
+                <div className="lf-field full">
+                  <label>Phone</label>
+                  <input type="tel" required value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+91 98765 43210" autoComplete="tel" />
+                </div>
+                <button className="pb-modal-btn" type="submit" disabled={submitting || !item.pdf}>{submitting ? 'Processing…' : item.pdf ? `Pay ₹${item.price} & Download` : 'Coming soon'}</button>
+                {err && <p className="lf-fineprint" style={{ color: '#c0392b' }}>{errText}</p>}
+                <p className="lf-fineprint">Secured by Cashfree · UPI · Cards · Netbanking. The PDF downloads here the moment your payment is confirmed.</p>
+              </form>
+            </>
           ) : verified ? (
             <>
               <span className="pb-modal-badge">{item.badge}</span>
@@ -159,7 +230,7 @@ export default function PlaybookModal({ item, onClose }) {
                   <input type="tel" required value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+91 98765 43210" autoComplete="tel" />
                 </div>
                 <button className="pb-modal-btn" type="submit" disabled={submitting || !item.pdf}>{submitting ? 'Verifying…' : item.pdf ? 'Verify & Download' : 'Coming soon'}</button>
-                {err && <p className="lf-fineprint" style={{ color: '#c0392b' }}>Couldn’t verify — please check your connection and try again.</p>}
+                {err && <p className="lf-fineprint" style={{ color: '#c0392b' }}>{errText}</p>}
                 <p className="lf-fineprint">Verify your email and the PDF downloads here. We may send occasional Menler updates — unsubscribe anytime.</p>
               </form>
             </>
