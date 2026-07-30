@@ -2813,7 +2813,11 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .pb-modal--split { flex-direction: column; max-width: 520px; max-height: 92vh; overflow-y: auto; }
   .pb-modal-left { flex: none; border-right: 0; border-bottom: 1px solid rgba(83,74,183,0.12); }
   .pb-modal-frame, .pb-modal-placeholder { min-height: 52vh; height: 52vh; }
-  .pb-modal-right { padding: 24px 22px; }
+  /* Paid cover teaser is shorter on mobile so the form below stays reachable. */
+  .pb-cover-frame { min-height: 38vh; height: 38vh; }
+  /* Top-align the form: centring cuts the title off when the form is taller
+     than the pane (the pane can't scroll up past a centred overflow). */
+  .pb-modal-right { padding: 22px 22px 26px; justify-content: flex-start; }
   .pb-gate-btn { display: block; }
   .pb-form { display: none; }
   .pb-form.open { display: block; }
