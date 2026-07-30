@@ -1,29 +1,26 @@
-// Amplifeed OTP helper (per Amplifeed's developer integration guide).
+// Amplifeed / MSG91 OTP helper (per Amplifeed's developer integration guide).
 //
 // Flow: load the OTP provider library → initSendOTP() shows its own code-entry UI
-// and verifies the code → resolves with a short-lived access token. We then submit
-// the lead through OUR backend (which saves to Mongo/admin AND forwards to
-// Amplifeed with the webhook secret server-side), passing the token along.
+// and verifies the code → resolves with a short-lived token. We then submit the
+// lead through OUR backend (which saves to Mongo/admin AND forwards to Amplifeed
+// with the webhook secret server-side), passing the token along for the CRM.
 //
-// ONE widget handles both channels (SMS + Email); we force the channel per call
-// with `channel: "sms" | "email"`. widgetId + tokenAuth are PUBLIC client keys
-// (safe to expose in front-end code — the webhook SECRET stays on the server).
+// widgetId + tokenAuth are client-side OTP widget keys (safe to expose, required
+// in the browser). The webhook SECRET is NOT here — it stays on the server.
 
 import { getVerifiedLead, saveVerifiedLead } from './verifiedSession';
 
-// New Amplifeed keys start with wgt_ / otpta_. The retired MSG91 widget ids were
-// bare hex with no prefix. Ignore a stale (old-format) env value so production
-// can't get stuck on the widget Amplifeed is decommissioning — the new default
-// is used whenever the env var is missing or still points at the old widget.
-const envWidget = import.meta.env.VITE_AMPLIFEED_WIDGET_ID;
-const envToken = import.meta.env.VITE_AMPLIFEED_TOKEN_AUTH;
-// Exported so every Amplifeed surface (this helper AND the hosted /join form)
-// shares one source of truth for the widget keys.
-export const WIDGET_ID = envWidget && envWidget.startsWith('wgt_') ? envWidget : 'wgt_wSs5xDXuN29LToxM2F7pGdTM';
-export const TOKEN_AUTH = envToken && envToken.startsWith('otpta_') ? envToken : 'otpta_1juDK90sM71bSmXNY011--pZzgeMiLvf';
+const WIDGET_ID = import.meta.env.VITE_AMPLIFEED_WIDGET_ID || '3666786e5151323537333631';
+// MSG91 WhatsApp OTP widget (delivers the code over WhatsApp to the phone).
+const WA_WIDGET_ID = import.meta.env.VITE_AMPLIFEED_WA_WIDGET_ID || '366761674d78303532383739';
+const TOKEN_AUTH = import.meta.env.VITE_AMPLIFEED_TOKEN_AUTH || '517767Ts6KDsui6a3bef4eP1';
 
-// Amplifeed's embed loader. Exposes window.initSendOTP.
-const OTP_HOSTS = ['https://www.amplifeed.tech/embed/otp/v1/otp-provider.js'];
+// The OTP provider is MSG91 (Amplifeed's documented verify.amplifeed.tech host
+// 404s, so we load MSG91 directly — same script the Amplifeed embed widget uses).
+const OTP_HOSTS = [
+  'https://verify.msg91.com/otp-provider.js',
+  'https://verify.phone91.com/otp-provider.js',
+];
 
 const getInit = () =>
   (typeof window !== 'undefined' && (window.initSendOTP || window.initSendOtp)) || null;
@@ -53,43 +50,13 @@ export function loadOtpProvider() {
   return loadPromise;
 }
 
-// success callback: the new widget passes an object whose `.message` is the
-// access token; older builds passed the token string directly — accept both.
-const tokenFrom = (data) =>
-  (data && typeof data === 'object' && data.message) ? data.message : data;
-
-// Send an OTP to `identifier` over `channel` ("sms" | "email"). Resolves with the
-// verified access token once the user enters the correct code; rejects on
-// failure/cancel.
-export function sendOtp(identifier, channel) {
-  return new Promise((resolve, reject) => {
-    const init = getInit();
-    if (!init) {
-      reject(new Error('Verification service is not ready. Please try again.'));
-      return;
-    }
-    init({
-      widgetId: WIDGET_ID,
-      tokenAuth: TOKEN_AUTH,
-      identifier,
-      ...(channel ? { channel } : {}),
-      success: (data) => resolve(tokenFrom(data)),
-      failure: (err) => {
-        // Surface Amplifeed's real reason instead of a generic message.
-        // eslint-disable-next-line no-console
-        console.error('OTP failure:', err);
-        const msg =
-          (err && (err.message || err.msg || err.error || err.code || err.type ||
-            (typeof err === 'string' ? err : ''))) || 'OTP verification failed.';
-        reject(new Error(typeof msg === 'string' ? msg : 'OTP verification failed.'));
-      },
-    });
-  });
-}
-
-// Verify an EMAIL via OTP and return the CRM fields to spread onto the lead
-// payload. "Verify once" — if this email was already verified earlier in the
-// session, reuse the stored token instead of prompting for a code again.
+// Convenience: verify an EMAIL via OTP and return the CRM fields to spread onto
+// the lead payload. The site uses email verification only — there is no SMS /
+// mobile OTP path.
+//
+// "Verify once" — if this email was already verified earlier in the session,
+// reuse the stored token instead of prompting for a code again (so downloading
+// more PDFs / submitting other forms doesn't re-ask for verification).
 export async function verifyEmailOtp(email) {
   const clean = String(email || '').trim();
   const prev = getVerifiedLead();
@@ -97,20 +64,44 @@ export async function verifyEmailOtp(email) {
     return { otp_token: prev.otp_token, otp_channel: prev.otp_channel || 'email', otp_identifier: prev.otp_identifier || clean };
   }
   await loadOtpProvider();
-  const token = await sendOtp(clean, 'email');
+  const token = await sendOtp(email);
   saveVerifiedLead({ email: clean, otp_token: token, otp_channel: 'email', otp_identifier: clean });
-  return { otp_token: token, otp_channel: 'email', otp_identifier: clean };
+  return { otp_token: token, otp_channel: 'email', otp_identifier: email };
 }
 
-// Verify a PHONE via SMS OTP (replaces the old WhatsApp channel). The identifier
-// must be digits only — country code, NO "+" — per the widget (e.g. the +91
-// number +91 99999 99999 becomes "919999999999").
-export async function verifySmsOtp(phone) {
-  const digits = String(phone || '').replace(/\D/g, '');
+// Convenience: verify a PHONE via WhatsApp OTP (code delivered over WhatsApp).
+// `phone` must include the country code, e.g. "+919876543210" or "919876543210".
+export async function verifyWhatsappOtp(phone) {
+  const clean = String(phone || '').trim();
   await loadOtpProvider();
-  const token = await sendOtp(digits, 'sms');
-  return { otp_token: token, otp_channel: 'sms', otp_identifier: digits };
+  const token = await sendOtp(clean, WA_WIDGET_ID);
+  return { otp_token: token, otp_channel: 'whatsapp', otp_identifier: clean };
 }
 
-// Back-compat alias: any caller still importing verifyWhatsappOtp now gets SMS.
-export const verifyWhatsappOtp = verifySmsOtp;
+// Send an OTP to `identifier` (an email for the email widget, or a phone with
+// country code for the WhatsApp widget). Resolves with the verified token once
+// the user enters the correct code in the provider's UI; rejects on failure/cancel.
+export function sendOtp(identifier, widgetId = WIDGET_ID) {
+  return new Promise((resolve, reject) => {
+    const init = getInit();
+    if (!init) {
+      reject(new Error('Verification service is not ready. Please try again.'));
+      return;
+    }
+    init({
+      widgetId,
+      tokenAuth: TOKEN_AUTH,
+      identifier,
+      success: (token) => resolve(token),
+      failure: (err) => {
+        // Surface MSG91's real reason instead of a generic message.
+        // eslint-disable-next-line no-console
+        console.error('OTP failure:', err);
+        const msg =
+          (err && (err.message || err.msg || err.error || err.type ||
+            (typeof err === 'string' ? err : ''))) || 'OTP verification failed.';
+        reject(new Error(typeof msg === 'string' ? msg : 'OTP verification failed.'));
+      },
+    });
+  });
+}

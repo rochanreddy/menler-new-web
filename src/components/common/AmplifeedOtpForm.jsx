@@ -1,19 +1,18 @@
 import { useEffect, useRef } from 'react';
-import { WIDGET_ID, TOKEN_AUTH } from '../../lib/amplifeedOtp';
 
 // Amplifeed OTP lead form — embeds Amplifeed's hosted widget (collects details,
 // emails an OTP, verifies, and pushes a verified lead straight to the Amplifeed
 // CRM — no backend on our side).
 //
-// widgetId / tokenAuth come from the shared helper (the new SMS+Email widget,
-// with a safety net against a stale old-format env value). sourceKey / secret
-// are the CRM push keys. All are client-side embed keys, visible in the bundle
-// by design.
+// Amplifeed public embed keys. Baked in so the form always works (Vercel wasn't
+// injecting the env vars into the build, leaving the widget with no auth →
+// "network error"). Env vars still override if present. NOTE: these are
+// client-side embed keys and are visible in the browser bundle by design.
 const AF = {
   sourceKey: import.meta.env.VITE_AMPLIFEED_SOURCE_KEY || 'S0-1VbVfoh_ydsCFUsu1MXld',
   secret: import.meta.env.VITE_AMPLIFEED_SECRET || 'AYnA2j75Izjd7arD_AiKIDy2',
-  widgetId: WIDGET_ID,
-  tokenAuth: TOKEN_AUTH,
+  widgetId: import.meta.env.VITE_AMPLIFEED_WIDGET_ID || '3666786e5151323537333631',
+  tokenAuth: import.meta.env.VITE_AMPLIFEED_TOKEN_AUTH || '517767Ts6KDsui6a3bef4eP1',
 };
 
 // Email verification only — the widget is always loaded with the email channel.
