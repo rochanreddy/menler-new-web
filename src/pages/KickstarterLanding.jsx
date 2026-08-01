@@ -6,7 +6,7 @@ import MenlerCommunitySection from '../components/common/MenlerCommunitySection'
 import { MENLER_WHATSAPP_URL, MENLER_INSTAGRAM_URL, CAMPAIGN_INSTAGRAM_SLUGS } from '../data/communityLinks';
 import { submitLead } from '../services/leadService';
 import { useContentState } from '../lib/useContent';
-import { verifyWhatsappOtp } from '../lib/amplifeedOtp';
+import { verifySmsOtp } from '../lib/amplifeedOtp';
 
 // ── Single-mentor workshop registration landing page (/ai-kickstarter) ──
 // Left column scrolls (mentor + workshop details); right column is a STATIC
@@ -299,8 +299,8 @@ export default function KickstarterLanding() {
   const bannerCredLogos = (d.showCredLogosInBanner && sanityLogos) || BANNER_CRED_LOGOS[activeSlug];
   const certTitle = has(d.certificateTitle) ? d.certificateTitle : (CERT_TITLES[activeSlug] || heading);
 
-  // Validate → verify the phone via WhatsApp OTP (Amplifeed/MSG91 shows its own
-  // code-entry UI) → submit the lead → go straight to checkout.
+  // Validate → verify the phone via SMS OTP (Amplifeed shows its own code-entry
+  // UI) → submit the lead → go straight to checkout.
   const register = async (e) => {
     e.preventDefault();
     if (!form.name.trim() || !form.email.trim() || !form.city.trim() || !form.background) {
@@ -319,9 +319,9 @@ export default function KickstarterLanding() {
     setOtpBusy(true);
     try {
       const phone = `${form.countryCode} ${form.phone}`;
-      // WhatsApp OTP identifier: country code + number in E.164 (no spaces).
-      const phoneE164 = `${form.countryCode}${form.phone}`.replace(/[^\d+]/g, '');
-      const otp = await verifyWhatsappOtp(phoneE164);
+      // SMS OTP identifier: country code + number, digits only (no "+"/spaces).
+      const phoneDigits = `${form.countryCode}${form.phone}`.replace(/\D/g, '');
+      const otp = await verifySmsOtp(phoneDigits);
       setOtpBusy(false);
       setBusy(true);
       const created = await submitLead({
