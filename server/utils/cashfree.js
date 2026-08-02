@@ -73,6 +73,21 @@ export async function getCashfreeOrder(orderId) {
   return data;
 }
 
+// Payments made against an order → each has cf_payment_id (Cashfree's
+// transaction id, the one shown in the Cashfree dashboard) + payment_status.
+export async function getCashfreePayments(orderId) {
+  const resp = await fetch(`${BASE}/orders/${encodeURIComponent(orderId)}/payments`, {
+    headers: authHeaders(),
+  });
+  const data = await resp.json().catch(() => ([]));
+  if (!resp.ok) {
+    const err = new Error(data?.message || `Cashfree payments fetch failed (${resp.status})`);
+    err.status = resp.status;
+    throw err;
+  }
+  return Array.isArray(data) ? data : [];
+}
+
 // Verify a webhook: Cashfree signs base64(HMAC-SHA256(timestamp + rawBody, secret)).
 // Pass the RAW request body (Buffer/string), not the parsed JSON.
 export function verifyWebhookSignature(signature, rawBody, timestamp) {

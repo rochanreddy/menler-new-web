@@ -111,10 +111,12 @@ router.post('/cashfree/order', async (req, res) => {
 });
 
 /* Mark a paid order + its lead. Called from webhook and status check. */
-async function markPaid(order) {
+async function markPaid(order, cfPaymentId) {
   if (!order || order.status === 'PAID') return;
   order.status = 'PAID';
   order.paid_at = new Date();
+  // Cashfree's transaction id (from the webhook) — shown in the admin panel.
+  if (cfPaymentId) order.extra = { ...(order.extra || {}), cf_payment_id: String(cfPaymentId) };
   await order.save();
   if (order.leadId) {
     const lead = await Lead.findById(order.leadId);
@@ -144,7 +146,7 @@ router.post('/cashfree/webhook', async (req, res) => {
       const order = await Order.findOne({ order_id: orderId });
       if (order) {
         if (status === 'SUCCESS' || status === 'PAID') {
-          await markPaid(order);
+          await markPaid(order, data.payment?.cf_payment_id);
         } else if ((status === 'FAILED' || status === 'USER_DROPPED') && order.status === 'CREATED') {
           order.status = 'FAILED';
           await order.save();

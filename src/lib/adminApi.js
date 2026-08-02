@@ -62,9 +62,27 @@ export const adminApi = {
 
   /** Leads count for one calendar day (IST). date = "YYYY-MM-DD". */
   getDayLeads: (date) => api(`/admin/stats/day?date=${encodeURIComponent(date)}`),
+
+  /** Leads count for a rolling period of N days. */
+  getPeriodLeads: (days) => api(`/admin/stats/period?days=${encodeURIComponent(days)}`),
+
+  /** Distinct pages leads were captured on (for the Pages filter). */
+  getLeadPages: () => api('/admin/leads/pages'),
+
+  /** Sections seen on one page (for the per-page section filter). */
+  getLeadSections: (page) => api(`/admin/leads/sections?page=${encodeURIComponent(page)}`),
+
+  /** UTM sources seen on one page (for the per-campaign UTM filter). */
+  getLeadUtms: (page) => api(`/admin/leads/utms?page=${encodeURIComponent(page)}`),
   getLeads: (params) => api(`/admin/leads${qs(params)}`),
   deleteLead: (id) => api(`/admin/leads/${encodeURIComponent(id)}`, { method: 'DELETE' }),
   getUsers: (params) => api(`/admin/users${qs(params)}`),
+
+  // Paid users — everyone with a confirmed PAID order (site-wide), plus
+  // manually recorded Cashfree-payment-link payments.
+  getPaidUsers: (params) => api(`/admin/paid-users${qs(params)}`),
+  addPaidUser: (body) => api('/admin/paid-users', { method: 'POST', body }),
+  deletePaidUser: (id) => api(`/admin/paid-users/${encodeURIComponent(id)}`, { method: 'DELETE' }),
 
   // Per-campaign Zoom links (admin-only; never shown on the public site).
   getCampaigns: () => api('/admin/campaigns'),
@@ -92,7 +110,9 @@ export const adminApi = {
 
   /** Fetches a CSV with credentials and triggers a browser download. */
   async downloadCsv(kind, params = {}) {
-    const path = kind === 'users' ? '/admin/users/export.csv' : '/admin/leads/export.csv';
+    const path = kind === 'users' ? '/admin/users/export.csv'
+      : kind === 'paid' ? '/admin/paid-users/export.csv'
+        : '/admin/leads/export.csv';
     const res = await fetch(`${API_URL}${path}${qs(params)}`, { credentials: 'include' });
     if (!res.ok) throw new Error('Export failed');
     const blob = await res.blob();

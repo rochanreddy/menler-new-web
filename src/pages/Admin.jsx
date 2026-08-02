@@ -159,6 +159,46 @@ function DayStatCard() {
   );
 }
 
+// One stat card for "leads in the last N" with a built-in period picker —
+// replaces the separate today / 7-day / 30-day cards.
+const LEAD_PERIODS = [
+  { days: 1, label: 'Last 24 hours' },
+  { days: 7, label: 'Last 7 days' },
+  { days: 30, label: 'Last 1 month' },
+  { days: 90, label: 'Last 3 months' },
+  { days: 180, label: 'Last 6 months' },
+  { days: 365, label: 'Last 12 months' },
+];
+
+function PeriodStatCard() {
+  const [days, setDays] = useState(7);
+  const [count, setCount] = useState(null);
+
+  useEffect(() => {
+    let stale = false;
+    setCount(null);
+    adminApi.getPeriodLeads(days)
+      .then((r) => { if (!stale) setCount(r.count); })
+      .catch(() => { if (!stale) setCount('—'); });
+    return () => { stale = true; };
+  }, [days]);
+
+  return (
+    <div className="admin-stat" style={{ borderTopColor: 'var(--specialist)' }}>
+      <div className="admin-stat-value">{count === null ? '…' : count}</div>
+      <div className="admin-stat-label">Leads in</div>
+      <select
+        className="admin-stat-date"
+        value={days}
+        onChange={(e) => setDays(Number(e.target.value))}
+        aria-label="Pick a period to see its leads count"
+      >
+        {LEAD_PERIODS.map((p) => <option key={p.days} value={p.days}>{p.label}</option>)}
+      </select>
+    </div>
+  );
+}
+
 function BreakdownList({ title, rows }) {
   const max = Math.max(1, ...rows.map((r) => r.count));
   const hasUnique = rows.some((r) => r.unique != null);
@@ -188,6 +228,42 @@ function BreakdownList({ title, rows }) {
   );
 }
 
+// Campaign-page leads with a per-campaign filter — pick a campaign to see just
+// its count, or "All campaigns" for the full breakdown.
+function CampaignBreakdown({ rows }) {
+  const [picked, setPicked] = useState('');
+  const shown = picked ? rows.filter((r) => r.label === picked) : rows;
+  const max = Math.max(1, ...rows.map((r) => r.count));
+  return (
+    <div className="admin-panel-card">
+      <div className="admin-card-head">
+        <p className="admin-card-title" style={{ margin: 0 }}>
+          Campaign page leads
+          <span style={{ fontWeight: 400, color: 'var(--text-muted)', fontSize: 12 }}> · unique / total</span>
+        </p>
+        <select className="admin-card-filter" value={picked} onChange={(e) => setPicked(e.target.value)} aria-label="Filter by campaign">
+          <option value="">All campaigns</option>
+          {rows.map((r) => <option key={r.label} value={r.label}>{r.label}</option>)}
+        </select>
+      </div>
+      {shown.length === 0 && <p className="admin-empty">No campaign leads yet.</p>}
+      <ul className="admin-breakdown">
+        {shown.map((r) => (
+          <li key={r.label}>
+            <span className="admin-breakdown-label">{r.label}</span>
+            <span className="admin-breakdown-bar">
+              <span style={{ width: `${(r.count / max) * 100}%` }} />
+            </span>
+            <span className="admin-breakdown-count">
+              {r.unique}<span style={{ opacity: 0.45, fontWeight: 400 }}> / {r.count}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 function Overview() {
   const [stats, setStats] = useState(null);
   const [error, setError] = useState('');
@@ -208,8 +284,7 @@ function Overview() {
         <StatCard label="Total leads" value={t.leads} accent="var(--specialist)" />
         <StatCard label="Unique leads" value={t.uniqueLeads} accent="var(--specialist)" />
         <DayStatCard />
-        <StatCard label="Leads · today" value={t.leadsToday} accent="var(--placed)" />
-        <StatCard label="Leads · last 7 days" value={t.leads7} accent="var(--ink)" />
+        <PeriodStatCard />
         <StatCard label="Registrations completed" value={t.checkoutDone} accent="var(--ink)" />
         <StatCard label="Verified leads" value={t.verifiedLeads} accent="var(--lavender)" />
       </div>
@@ -229,8 +304,8 @@ function Overview() {
       </div>
 
       <div className="admin-two-col">
-        <BreakdownList title="Leads by program" rows={stats.byProgram} />
-        <BreakdownList title="Leads by source" rows={stats.bySource} />
+        <BreakdownList title="Website leads · by page" rows={stats.websiteByPage || stats.bySource} />
+        <CampaignBreakdown rows={stats.byCampaign || []} />
       </div>
 
       <div className="admin-panel-card">
@@ -278,11 +353,28 @@ const LEAD_SORTS = [
   { value: 'program', label: 'Program A–Z' },
 ];
 
+// Friendly label for a lead-capture page path, e.g. "/resources" → "Library".
+const PAGE_LABELS = {
+  '/': 'Home', '/resources': 'Library', '/aptitude': 'Aptitude Test',
+  '/generalist': 'Generalist', '/engineering': 'Engineering', '/kickstarter': 'Kickstarter',
+  '/checkout': 'Checkout', '/join': 'Join', '/events': 'Events', '/community': 'Community',
+};
+const pageLabel = (p) => {
+  if (PAGE_LABELS[p]) return PAGE_LABELS[p];
+  if (p.startsWith('/campaign/')) return `Campaign · ${p.slice('/campaign/'.length)}`;
+  return p.replace(/^\//, '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) || p;
+};
+
 function LeadsTab() {
   const [search, setSearch] = useState('');
-  const [program, setProgram] = useState('');
+  const [pagePath, setPagePath] = useState('');
+  const [section, setSection] = useState('');
+  const [sections, setSections] = useState([]);
+  const [campaignPath, setCampaignPath] = useState('');
+  const [campUtms, setCampUtms] = useState([]);
   const [source, setSource] = useState('');
   const [utmSource, setUtmSource] = useState('');
+  const [checkout, setCheckout] = useState('');
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [sort, setSort] = useState('-createdAt');
@@ -290,17 +382,40 @@ function LeadsTab() {
   const [data, setData] = useState({ rows: [], total: 0, page: 1, limit: 25 });
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
-  const [facets, setFacets] = useState({ programs: [], sources: [], utmSources: [] });
+  const [facets, setFacets] = useState({ pages: [], sources: [], utmSources: [] });
+
+  // Pages and campaigns are two dropdowns over the same underlying `page`
+  // filter — whichever is picked wins (choosing one clears the other).
+  const effectivePage = pagePath || campaignPath;
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const d = await adminApi.getLeads({ search, program, source, utm_source: utmSource, from, to, sort, page, limit: 25 });
+      const d = await adminApi.getLeads({ search, page_path: effectivePage, section, source, utm_source: utmSource, checkout, from, to, sort, page, limit: 25 });
       setData(d);
     } finally {
       setLoading(false);
     }
-  }, [search, program, source, utmSource, from, to, sort, page]);
+  }, [search, effectivePage, section, source, utmSource, checkout, from, to, sort, page]);
+
+  // Picking a page loads that page's sections for the drill-down dropdown.
+  useEffect(() => {
+    setSection('');
+    setSections([]);
+    if (!pagePath) return;
+    adminApi.getLeadSections(pagePath)
+      .then((r) => setSections(r.sections || []))
+      .catch(() => {});
+  }, [pagePath]);
+
+  // Picking a campaign loads that campaign's UTM sources for its drill-down.
+  useEffect(() => {
+    setCampUtms([]);
+    if (!campaignPath) return;
+    adminApi.getLeadUtms(campaignPath)
+      .then((r) => setCampUtms(r.utms || []))
+      .catch(() => {});
+  }, [campaignPath]);
 
   // Delete a lead (with confirm). Stops the row click so the drawer doesn't open.
   const onDelete = async (e, l) => {
@@ -317,11 +432,12 @@ function LeadsTab() {
 
   useEffect(() => { load(); }, [load]);
 
-  // Build filter dropdown options once from the overview stats.
+  // Build filter dropdown options once — pages from the leads themselves,
+  // sources/UTMs from the overview stats.
   useEffect(() => {
-    adminApi.getStats()
-      .then((s) => setFacets({
-        programs: s.byProgram.map((x) => x.label).filter((x) => x && x !== '—'),
+    Promise.all([adminApi.getLeadPages(), adminApi.getStats()])
+      .then(([p, s]) => setFacets({
+        pages: p.pages || [],
         sources: s.bySource.map((x) => x.label).filter((x) => x && x !== '—'),
         utmSources: (s.byUtmSource || []).map((x) => x.label).filter(Boolean),
       }))
@@ -340,10 +456,31 @@ function LeadsTab() {
           value={search}
           onChange={onSearch}
         />
-        <select value={program} onChange={(e) => { setPage(1); setProgram(e.target.value); }}>
-          <option value="">All programs</option>
-          {facets.programs.map((p) => <option key={p} value={p}>{p}</option>)}
+        <select value={pagePath} onChange={(e) => { setPage(1); setPagePath(e.target.value); setCampaignPath(''); setUtmSource(''); }}>
+          <option value="">All pages</option>
+          {facets.pages.filter((p) => !p.page.startsWith('/campaign/') && p.page !== '/checkout').map((p) => (
+            <option key={p.page} value={p.page}>{pageLabel(p.page)} ({p.count})</option>
+          ))}
         </select>
+        {pagePath && (
+          <select value={section} onChange={(e) => { setPage(1); setSection(e.target.value); }}>
+            <option value="">All sections</option>
+            {sections.map((s) => <option key={s.section} value={s.section}>{s.section} ({s.count})</option>)}
+          </select>
+        )}
+        <select value={campaignPath} onChange={(e) => { setPage(1); setCampaignPath(e.target.value); setPagePath(''); setSection(''); setUtmSource(''); }}>
+          <option value="">All campaigns</option>
+          {facets.pages.filter((p) => p.page.startsWith('/campaign/')).map((p) => (
+            <option key={p.page} value={p.page}>{p.page.slice('/campaign/'.length)} ({p.count})</option>
+          ))}
+        </select>
+        {campaignPath && (
+          <select value={utmSource} onChange={(e) => { setPage(1); setUtmSource(e.target.value); }}>
+            <option value="">All UTM sources</option>
+            <option value="__none__">(No UTM source)</option>
+            {campUtms.map((u) => <option key={u.utm} value={u.utm}>{u.utm} ({u.count})</option>)}
+          </select>
+        )}
         <select value={source} onChange={(e) => { setPage(1); setSource(e.target.value); }}>
           <option value="">All sources</option>
           {facets.sources.map((s) => <option key={s} value={s}>{s}</option>)}
@@ -352,6 +489,12 @@ function LeadsTab() {
           <option value="">All UTM sources</option>
           <option value="__none__">(No UTM source)</option>
           {facets.utmSources.map((u) => <option key={u} value={u}>{u}</option>)}
+        </select>
+        <select value={checkout} onChange={(e) => { setPage(1); setCheckout(e.target.value); }}>
+          <option value="">All checkout</option>
+          <option value="paid">Paid</option>
+          <option value="done">Done</option>
+          <option value="pending">Pending</option>
         </select>
         <select value={sort} onChange={(e) => { setPage(1); setSort(e.target.value); }}>
           {LEAD_SORTS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
@@ -367,7 +510,7 @@ function LeadsTab() {
         )}
         <button
           className="admin-btn"
-          onClick={() => adminApi.downloadCsv('leads', { search, program, source, utm_source: utmSource, from, to })}
+          onClick={() => adminApi.downloadCsv('leads', { search, page_path: effectivePage, section, source, utm_source: utmSource, checkout, from, to })}
         >
           ⭳ Export CSV
         </button>
@@ -394,9 +537,11 @@ function LeadsTab() {
                 <td className="admin-muted">{dash(l.background)}</td>
                 <td>{dash(l.source)}</td>
                 <td>
-                  {l.checkout_completed
-                    ? <span className="admin-badge admin-badge--ok">Done</span>
-                    : (l.source === 'campaign-workshop' ? <span className="admin-badge">Pending</span> : '—')}
+                  {l.extra?.paid_amount
+                    ? <span className="admin-badge admin-badge--paid">Paid ₹{l.extra.paid_amount}</span>
+                    : l.checkout_completed
+                      ? <span className="admin-badge admin-badge--ok">Done</span>
+                      : (l.source === 'campaign-workshop' ? <span className="admin-badge">Pending</span> : '—')}
                 </td>
                 <td className="admin-muted">{dash(l.section)}</td>
                 <td className="admin-muted">{dash(l.cta_label || l.resource)}</td>
@@ -430,6 +575,7 @@ function LeadsTab() {
             ['Background', selected.background],
             ['Message', selected.message],
             ['Checkout completed', selected.checkout_completed ? `Yes${selected.checkout_at ? ' · ' + fmtDate(selected.checkout_at) : ''}` : 'No'],
+            ['Paid', selected.extra?.paid_amount ? `₹${selected.extra.paid_amount}${selected.extra.order_id ? ' · ' + selected.extra.order_id : ''}` : 'No'],
             ['Source', selected.source],
             ['Section', selected.section],
             ['CTA / button', selected.cta_label],
@@ -465,11 +611,15 @@ function UsersTab() {
   const [data, setData] = useState({ rows: [], total: 0, page: 1, limit: 25 });
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
+  const [adding, setAdding] = useState(false);
+  const [addForm, setAddForm] = useState({ name: '', email: '', phone: '', amount: '', program: '', paid_at: '', note: '' });
+  const [addErr, setAddErr] = useState('');
+  const [saving, setSaving] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      setData(await adminApi.getUsers({ search, page, limit: 25 }));
+      setData(await adminApi.getPaidUsers({ search, page, limit: 25 }));
     } finally {
       setLoading(false);
     }
@@ -477,17 +627,43 @@ function UsersTab() {
 
   useEffect(() => { load(); }, [load]);
 
+  const setF = (k, v) => setAddForm((f) => ({ ...f, [k]: v }));
+
+  const saveManual = async (e) => {
+    e.preventDefault();
+    setAddErr('');
+    setSaving(true);
+    try {
+      await adminApi.addPaidUser({ ...addForm, amount: Number(addForm.amount) });
+      setAdding(false);
+      setAddForm({ name: '', email: '', phone: '', amount: '', program: '', paid_at: '', note: '' });
+      load();
+    } catch (err) {
+      setAddErr(err.message || 'Could not add the payment.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const onDelete = async (e, r) => {
+    e.stopPropagation();
+    if (!window.confirm(`Delete the manual entry for "${r.customer_name || r.customer_email}"?`)) return;
+    try { await adminApi.deletePaidUser(r._id); load(); }
+    catch (err) { window.alert(err.message || 'Could not delete.'); }
+  };
+
   return (
     <div>
       <div className="admin-toolbar">
         <input
           className="admin-search"
           type="search"
-          placeholder="Search name, email, phone…"
+          placeholder="Search name, email, phone, program, order id…"
           value={search}
           onChange={(e) => { setPage(1); setSearch(e.target.value); }}
         />
-        <button className="admin-btn" onClick={() => adminApi.downloadCsv('users', { search })}>
+        <button className="admin-btn" onClick={() => { setAddErr(''); setAdding(true); }}>+ Add payment</button>
+        <button className="admin-btn" onClick={() => adminApi.downloadCsv('paid', { search })}>
           ⭳ Export CSV
         </button>
       </div>
@@ -497,26 +673,32 @@ function UsersTab() {
           <thead>
             <tr>
               <th>Name</th><th>Email</th><th>Phone</th>
-              <th>Provider</th><th>Verified</th><th>Created</th>
+              <th>Program</th><th>Amount</th><th>Via</th><th>Paid on</th><th />
             </tr>
           </thead>
           <tbody>
-            {loading && <tr><td colSpan={6} className="admin-empty">Loading…</td></tr>}
+            {loading && <tr><td colSpan={8} className="admin-empty">Loading…</td></tr>}
             {!loading && data.rows.length === 0 && (
-              <tr><td colSpan={6} className="admin-empty">No users found.</td></tr>
+              <tr><td colSpan={8} className="admin-empty">No paid users yet.</td></tr>
             )}
-            {!loading && data.rows.map((u) => (
-              <tr key={u._id} onClick={() => setSelected(u)}>
-                <td>{dash(u.fullName)}</td>
-                <td>{dash(u.email)}</td>
-                <td>{dash(u.phone)}</td>
-                <td><span className="admin-pill">{dash(u.provider)}</span></td>
+            {!loading && data.rows.map((r) => (
+              <tr key={r._id} onClick={() => setSelected(r)}>
+                <td>{dash(r.customer_name)}</td>
+                <td>{dash(r.customer_email)}</td>
+                <td>{dash(r.customer_phone)}</td>
+                <td><span className="admin-pill">{dash(r.program)}</span></td>
+                <td><b>₹{r.amount}</b></td>
                 <td>
-                  {u.emailVerified
-                    ? <span className="admin-badge admin-badge--ok">Verified</span>
-                    : <span className="admin-badge">Pending</span>}
+                  {r.extra?.manual
+                    ? <span className="admin-badge">Manual</span>
+                    : <span className="admin-badge admin-badge--ok">Cashfree</span>}
                 </td>
-                <td className="admin-muted">{fmtDate(u.createdAt)}</td>
+                <td className="admin-muted">{fmtDate(r.paid_at || r.createdAt)}</td>
+                <td>
+                  {r.extra?.manual && (
+                    <button className="admin-del" title="Delete manual entry" aria-label="Delete manual entry" onClick={(e) => onDelete(e, r)}>🗑</button>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -527,30 +709,47 @@ function UsersTab() {
 
       {selected && (
         <Drawer
-          title="User detail"
+          title="Payment detail"
           onClose={() => setSelected(null)}
           fields={[
-            ['Name', selected.fullName],
-            ['Email', selected.email],
-            ['Phone', selected.phone],
-            ['Provider', selected.provider],
-            ['Email verified', selected.emailVerified ? 'Yes' : 'No'],
-            ['Created', fmtDate(selected.createdAt)],
-            ['Updated', fmtDate(selected.updatedAt)],
-            ['User ID', selected._id],
-            ['— Profile —', selected.profile ? '' : 'No profile saved'],
-            ...(selected.profile ? [
-              ['Degree', selected.profile.degree],
-              ['Field of study', selected.profile.fieldOfStudy],
-              ['Passout year', selected.profile.passoutYear],
-              ['College', selected.profile.collegeName],
-              ['Currently studying', selected.profile.currentlyStudying ? 'Yes' : 'No'],
-              ['Designation', selected.profile.designation],
-              ['Company', selected.profile.companyName],
-              ['Location', selected.profile.location],
-            ] : []),
+            ['Name', selected.customer_name],
+            ['Email', selected.customer_email],
+            ['Phone', selected.customer_phone],
+            ['Program', selected.program],
+            ['Amount', `₹${selected.amount}`],
+            ['Status', selected.status],
+            ['Via', selected.extra?.manual ? 'Manual (Cashfree payment link)' : 'Cashfree (website)'],
+            ['Order ID', selected.order_id],
+            ['Transaction ID', selected.extra?.cf_payment_id || selected.extra?.txn_id || '—'],
+            ['Paid at', fmtDate(selected.paid_at || selected.createdAt)],
+            ...(selected.extra?.note ? [['Note', selected.extra.note]] : []),
           ]}
         />
+      )}
+
+      {adding && (
+        <div className="admin-drawer-backdrop" onClick={() => setAdding(false)}>
+          <aside className="admin-drawer" onClick={(e) => e.stopPropagation()}>
+            <div className="admin-drawer-head">
+              <h2>Add a payment (Cashfree link)</h2>
+              <button className="admin-drawer-close" onClick={() => setAdding(false)} aria-label="Close">×</button>
+            </div>
+            <form onSubmit={saveManual} className="admin-drawer-body admin-addpay">
+              <input className="admin-search" required placeholder="Full name *" value={addForm.name} onChange={(e) => setF('name', e.target.value)} />
+              <input className="admin-search" type="email" placeholder="Email" value={addForm.email} onChange={(e) => setF('email', e.target.value)} />
+              <input className="admin-search" placeholder="Phone" value={addForm.phone} onChange={(e) => setF('phone', e.target.value)} />
+              <input className="admin-search" required type="number" min="1" placeholder="Amount paid (₹) *" value={addForm.amount} onChange={(e) => setF('amount', e.target.value)} />
+              <input className="admin-search" placeholder="Program / what they paid for" value={addForm.program} onChange={(e) => setF('program', e.target.value)} />
+              <input className="admin-search" placeholder="Cashfree transaction ID (optional)" value={addForm.txn_id || ''} onChange={(e) => setF('txn_id', e.target.value)} />
+              <label className="admin-date" style={{ width: '100%' }}><span>Paid on</span>
+                <input type="date" value={addForm.paid_at} onChange={(e) => setF('paid_at', e.target.value)} />
+              </label>
+              <input className="admin-search" placeholder="Note (optional)" value={addForm.note} onChange={(e) => setF('note', e.target.value)} />
+              <button className="admin-btn admin-btn--primary" type="submit" disabled={saving}>{saving ? 'Saving…' : 'Save payment'}</button>
+              {addErr && <p className="admin-empty" style={{ color: '#c0392b' }}>{addErr}</p>}
+            </form>
+          </aside>
+        </div>
       )}
     </div>
   );
@@ -1217,7 +1416,7 @@ function CertificatesTab() {
 const TABS = [
   { key: 'overview', label: 'Overview' },
   { key: 'leads', label: 'Leads' },
-  { key: 'users', label: 'Users' },
+  { key: 'users', label: 'Paid users' },
   { key: 'campaigns', label: 'Campaigns' },
   { key: 'shortlinks', label: 'Short links' },
   { key: 'certificates', label: 'Certificates' },

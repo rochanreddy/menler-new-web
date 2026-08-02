@@ -2,6 +2,7 @@ import { Router } from 'express';
 import crypto from 'crypto';
 
 import { Lead } from '../models/Lead.js';
+import { Order } from '../models/Order.js';
 import { User } from '../models/User.js';
 import { Profile } from '../models/Profile.js';
 import { CampaignSetting } from '../models/CampaignSetting.js';
@@ -9,6 +10,7 @@ import { ShortLink } from '../models/ShortLink.js';
 import { requireAdmin } from '../middleware/adminAuth.js';
 import { buildCertificatePdf, buildCertificateEmail } from '../utils/certificate.js';
 import { sendMail, isMailConfigured, verifyMailer } from '../utils/email.js';
+import { cashfreeConfigured, getCashfreePayments } from '../utils/cashfree.js';
 import {
   ADMIN_COOKIE_NAME,
   signAdmin,
@@ -72,6 +74,23 @@ function leadFilter(query) {
   }
   if (query.program) filter.program = query.program;
   if (query.source) filter.source = query.source;
+  // Page the lead was captured on (e.g. /generalist) + the section within it.
+  // Section matches the same derived key the sections facet groups by
+  // (section → cta_label → source), so picking a dropdown entry always works.
+  if (query.page_path) filter.page = query.page_path;
+  if (query.section) filter.$expr = { $eq: [SECTION_KEY, query.section] };
+  // Checkout status, mirroring the table badges: paid = money confirmed via
+  // Cashfree; done = completed checkout without paying; pending = campaign
+  // registrant who never finished checkout.
+  if (query.checkout === 'paid') {
+    filter['extra.paid_amount'] = { $gt: 0 };
+  } else if (query.checkout === 'done') {
+    filter.checkout_completed = true;
+    filter['extra.paid_amount'] = { $not: { $gt: 0 } };
+  } else if (query.checkout === 'pending') {
+    filter.checkout_completed = { $ne: true };
+    filter.source = query.source || 'campaign-workshop';
+  }
   if (query.utm_source === '__none__') filter.utm_source = { $in: [null, ''] };
   else if (query.utm_source) filter.utm_source = query.utm_source;
   // Date range on createdAt (YYYY-MM-DD; `to` is inclusive to end of day).
@@ -148,6 +167,8 @@ router.get('/stats', requireAdmin, async (_req, res) => {
       byDayRaw,
       uniqueAgg,
       recentLeads,
+      websiteByPage,
+      byCampaign,
     ] = await Promise.all([
       Lead.countDocuments({}),
       Lead.countDocuments({ createdAt: { $gte: since7 } }),
@@ -186,6 +207,24 @@ router.get('/stats', requireAdmin, async (_req, res) => {
         { $count: 'n' },
       ]),
       Lead.find({}).sort({ createdAt: -1 }).limit(5).lean(),
+      // Campaign-page leads carry their campaign slug in extra.campaign (and
+      // register with source 'campaign-workshop'); everything else is an
+      // organic menler.in website lead, grouped by the PAGE it came from so the
+      // admin can see which pages pull the most leads.
+      Lead.aggregate([
+        { $match: { $nor: [{ 'extra.campaign': { $nin: [null, ''] } }, { source: 'campaign-workshop' }] } },
+        { $group: { _id: { g: { $ifNull: ['$page', ''] }, person: CONTACT_KEY }, n: { $sum: 1 } } },
+        { $group: { _id: '$_id.g', count: { $sum: '$n' }, unique: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+        { $limit: 15 },
+      ]),
+      Lead.aggregate([
+        { $match: { $or: [{ 'extra.campaign': { $nin: [null, ''] } }, { source: 'campaign-workshop' }] } },
+        { $group: { _id: { g: { $ifNull: ['$extra.campaign', '—'] }, person: CONTACT_KEY }, n: { $sum: 1 } } },
+        { $group: { _id: '$_id.g', count: { $sum: '$n' }, unique: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+        { $limit: 30 },
+      ]),
     ]);
 
     // Fill the 14-day series so every day has a bar (zero when no leads).
@@ -211,6 +250,8 @@ router.get('/stats', requireAdmin, async (_req, res) => {
       },
       byProgram: tidy(byProgram),
       bySource: tidy(bySource),
+      websiteByPage: tidy(websiteByPage),
+      byCampaign: tidy(byCampaign),
       byUtmSource: byUtmSource.map((x) => ({ label: x._id, count: x.count })),
       byDay,
       recentLeads,
@@ -218,6 +259,19 @@ router.get('/stats', requireAdmin, async (_req, res) => {
   } catch (err) {
     console.error('admin stats error', err);
     res.status(500).json({ error: 'Could not load stats.' });
+  }
+});
+
+// Leads count for a rolling period — powers the "Leads · last N" stat card.
+router.get('/stats/period', requireAdmin, async (req, res) => {
+  try {
+    const days = clampInt(req.query.days, 7, 1, 730);
+    const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+    const count = await Lead.countDocuments({ createdAt: { $gte: since } });
+    res.json({ days, count });
+  } catch (err) {
+    console.error('admin stats/period error', err);
+    res.status(500).json({ error: 'Could not load the period count.' });
   }
 });
 
@@ -235,6 +289,198 @@ router.get('/stats/day', requireAdmin, async (req, res) => {
   } catch (err) {
     console.error('admin stats/day error', err);
     res.status(500).json({ error: 'Could not load the day count.' });
+  }
+});
+
+// Distinct pages leads were captured on (with counts) — powers the Pages filter.
+router.get('/leads/pages', requireAdmin, async (_req, res) => {
+  try {
+    const rows = await Lead.aggregate([
+      { $match: { page: { $nin: [null, ''] } } },
+      { $group: { _id: '$page', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 60 },
+    ]);
+    res.json({ pages: rows.map((r) => ({ page: r._id, count: r.count })) });
+  } catch (err) {
+    console.error('admin leads/pages error', err);
+    res.status(500).json({ error: 'Could not load pages.' });
+  }
+});
+
+// UTM sources seen on one page (with counts) — the drill-down after picking a
+// campaign, so the admin can see which ad/traffic source filled it.
+router.get('/leads/utms', requireAdmin, async (req, res) => {
+  try {
+    const page = String(req.query.page || '').trim();
+    if (!page) return res.status(400).json({ error: 'Pass ?page=/path.' });
+    const rows = await Lead.aggregate([
+      { $match: { page, utm_source: { $nin: [null, ''] } } },
+      { $group: { _id: '$utm_source', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 60 },
+    ]);
+    res.json({ utms: rows.map((r) => ({ utm: r._id, count: r.count })) });
+  } catch (err) {
+    console.error('admin leads/utms error', err);
+    res.status(500).json({ error: 'Could not load UTM sources.' });
+  }
+});
+
+// A lead's "section within the page": the explicit section label when set,
+// else the CTA/button it came from, else its source — so every lead lands in a
+// meaningful bucket and the per-page drill-down is never empty.
+const SECTION_KEY = {
+  $switch: {
+    branches: [
+      { case: { $gt: [{ $strLenCP: { $ifNull: ['$section', ''] } }, 0] }, then: '$section' },
+      { case: { $gt: [{ $strLenCP: { $ifNull: ['$cta_label', ''] } }, 0] }, then: '$cta_label' },
+    ],
+    default: { $ifNull: ['$source', '—'] },
+  },
+};
+
+// Sections seen on one page (with counts) — the drill-down after picking a page.
+router.get('/leads/sections', requireAdmin, async (req, res) => {
+  try {
+    const page = String(req.query.page || '').trim();
+    if (!page) return res.status(400).json({ error: 'Pass ?page=/path.' });
+    const rows = await Lead.aggregate([
+      { $match: { page } },
+      { $group: { _id: SECTION_KEY, count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 60 },
+    ]);
+    res.json({ sections: rows.map((r) => ({ section: r._id || '—', count: r.count })) });
+  } catch (err) {
+    console.error('admin leads/sections error', err);
+    res.status(500).json({ error: 'Could not load sections.' });
+  }
+});
+
+/* ── Paid users ──────────────────────────────────────────────────────────────
+ * Everyone who has PAID — site-wide (campaign packs, library, programs), from
+ * the Orders collection (only webhook/status-confirmed PAID orders). Manual
+ * entries cover people who paid through a direct Cashfree payment link instead
+ * of the website; they're stored as PAID orders flagged extra.manual. */
+
+function paidFilter(query) {
+  const filter = { status: 'PAID' };
+  const search = (query.search || '').trim();
+  if (search) {
+    const rx = new RegExp(esc(search), 'i');
+    filter.$or = [
+      { customer_name: rx }, { customer_email: rx }, { customer_phone: rx },
+      { program: rx }, { order_id: rx },
+      { 'extra.cf_payment_id': rx }, { 'extra.txn_id': rx },
+    ];
+  }
+  return filter;
+}
+
+router.get('/paid-users', requireAdmin, async (req, res) => {
+  try {
+    const limit = clampInt(req.query.limit, 25, 1, 100);
+    const page = clampInt(req.query.page, 1, 1, 10000);
+    const filter = paidFilter(req.query);
+    const [rows, total] = await Promise.all([
+      Order.find(filter).sort({ paid_at: -1, createdAt: -1 }).skip((page - 1) * limit).limit(limit).lean(),
+      Order.countDocuments(filter),
+    ]);
+
+    // Backfill Cashfree's real transaction id (cf_payment_id) for rows that
+    // predate the webhook storing it. One API call per missing row, saved back,
+    // so each order is only ever fetched once.
+    if (cashfreeConfigured()) {
+      await Promise.all(rows.map(async (r) => {
+        if (r.extra?.manual || r.extra?.cf_payment_id) return;
+        try {
+          const payments = await getCashfreePayments(r.order_id);
+          const paid = payments.find((p) => (p.payment_status || '').toUpperCase() === 'SUCCESS') || payments[0];
+          if (paid?.cf_payment_id) {
+            r.extra = { ...(r.extra || {}), cf_payment_id: String(paid.cf_payment_id) };
+            await Order.updateOne({ _id: r._id }, { $set: { 'extra.cf_payment_id': String(paid.cf_payment_id) } });
+          }
+        } catch { /* leave blank; the order id still cross-references */ }
+      }));
+    }
+
+    res.json({ rows, total, page, limit });
+  } catch (err) {
+    console.error('admin paid-users error', err);
+    res.status(500).json({ error: 'Could not load paid users.' });
+  }
+});
+
+// Manually record an off-site payment (direct Cashfree payment link).
+router.post('/paid-users', requireAdmin, async (req, res) => {
+  try {
+    const b = req.body || {};
+    const name = String(b.name || '').trim();
+    const email = String(b.email || '').trim().toLowerCase();
+    const phone = String(b.phone || '').trim();
+    const amount = Number(b.amount);
+    const program = String(b.program || '').trim();
+    if (!name || !Number.isFinite(amount) || amount <= 0) {
+      return res.status(400).json({ error: 'A name and a positive amount are required.' });
+    }
+    const order = await Order.create({
+      order_id: `MANUAL_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+      program: program || 'manual',
+      amount,
+      status: 'PAID',
+      paid_at: b.paid_at ? new Date(`${b.paid_at}T12:00:00+05:30`) : new Date(),
+      customer_name: name,
+      customer_email: email,
+      customer_phone: phone,
+      extra: {
+        manual: true,
+        ...(b.txn_id ? { txn_id: String(b.txn_id).trim() } : {}),
+        ...(b.note ? { note: String(b.note).trim() } : {}),
+      },
+    });
+    res.status(201).json({ ok: true, id: order._id });
+  } catch (err) {
+    console.error('admin paid-users add error', err);
+    res.status(500).json({ error: 'Could not add the payment.' });
+  }
+});
+
+// Remove a MANUAL entry (typo fix). Gateway-confirmed orders can't be deleted.
+router.delete('/paid-users/:id', requireAdmin, async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ error: 'Not found.' });
+    if (!order.extra?.manual) {
+      return res.status(403).json({ error: 'Only manually added entries can be deleted.' });
+    }
+    await order.deleteOne();
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('admin paid-users delete error', err);
+    res.status(500).json({ error: 'Could not delete the entry.' });
+  }
+});
+
+router.get('/paid-users/export.csv', requireAdmin, async (req, res) => {
+  try {
+    const rows = await Order.find(paidFilter(req.query)).sort({ paid_at: -1 }).lean();
+    const csv = toCsv([
+      { key: 'customer_name', label: 'Name' },
+      { key: 'customer_email', label: 'Email' },
+      { key: 'customer_phone', label: 'Phone' },
+      { key: 'program', label: 'Program' },
+      { key: 'amount', label: 'Amount' },
+      { key: 'order_id', label: 'Order ID' },
+      { label: 'Transaction ID', get: (r) => r.extra?.cf_payment_id || r.extra?.txn_id || '' },
+      { label: 'Paid at', get: (r) => (r.paid_at ? new Date(r.paid_at).toISOString() : '') },
+      { label: 'Manual', get: (r) => (r.extra?.manual ? 'yes' : '') },
+      { label: 'Note', get: (r) => r.extra?.note || '' },
+    ], rows);
+    sendCsv(res, 'menler-paid-users.csv', csv);
+  } catch (err) {
+    console.error('admin paid-users export error', err);
+    res.status(500).json({ error: 'Export failed.' });
   }
 });
 
