@@ -212,8 +212,8 @@ router.get('/stats', requireAdmin, async (_req, res) => {
       // organic menler.in website lead, grouped by the PAGE it came from so the
       // admin can see which pages pull the most leads.
       Lead.aggregate([
-        { $match: { $nor: [{ 'extra.campaign': { $nin: [null, ''] } }, { source: 'campaign-workshop' }] } },
-        { $group: { _id: { g: { $ifNull: ['$page', ''] }, person: CONTACT_KEY }, n: { $sum: 1 } } },
+        { $match: { page: { $nin: [null, ''] }, $nor: [{ 'extra.campaign': { $nin: [null, ''] } }, { source: 'campaign-workshop' }] } },
+        { $group: { _id: { g: '$page', person: CONTACT_KEY }, n: { $sum: 1 } } },
         { $group: { _id: '$_id.g', count: { $sum: '$n' }, unique: { $sum: 1 } } },
         { $sort: { count: -1 } },
         { $limit: 15 },
