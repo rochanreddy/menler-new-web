@@ -3214,6 +3214,9 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 }
 .admin-stat-value { font-size: 30px; font-weight: 800; line-height: 1; color: var(--ink); }
 .admin-stat-label { font-size: 12.5px; color: var(--text-muted); margin-top: 8px; }
+/* Date picker inside the "Leads on <date>" stat card */
+.admin-stat-date { margin-top: 6px; width: 100%; padding: 5px 8px; font-family: inherit; font-size: 12.5px; font-weight: 600; color: var(--ink); background: var(--cloud); border: 1px solid rgba(83,74,183,0.2); border-radius: 8px; cursor: pointer; }
+.admin-stat-date:focus { outline: 2px solid var(--specialist); outline-offset: 1px; }
 
 .admin-panel-card { background: var(--white); border: 0.5px solid var(--border); border-radius: 14px; padding: 20px 22px; }
 .admin-card-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--specialist); margin: 0 0 16px; }

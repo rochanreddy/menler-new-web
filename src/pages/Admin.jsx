@@ -128,6 +128,37 @@ function StatCard({ label, value, accent }) {
   );
 }
 
+// Stat card with a date picker — shows the leads count for the chosen day (IST).
+function DayStatCard() {
+  const today = new Date(Date.now() + 5.5 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  const [date, setDate] = useState(today);
+  const [count, setCount] = useState(null);
+
+  useEffect(() => {
+    let stale = false;
+    setCount(null);
+    adminApi.getDayLeads(date)
+      .then((r) => { if (!stale) setCount(r.count); })
+      .catch(() => { if (!stale) setCount('—'); });
+    return () => { stale = true; };
+  }, [date]);
+
+  return (
+    <div className="admin-stat" style={{ borderTopColor: 'var(--placed)' }}>
+      <div className="admin-stat-value">{count === null ? '…' : count}</div>
+      <div className="admin-stat-label">Leads on</div>
+      <input
+        className="admin-stat-date"
+        type="date"
+        value={date}
+        max={today}
+        onChange={(e) => e.target.value && setDate(e.target.value)}
+        aria-label="Pick a date to see that day's leads"
+      />
+    </div>
+  );
+}
+
 function BreakdownList({ title, rows }) {
   const max = Math.max(1, ...rows.map((r) => r.count));
   const hasUnique = rows.some((r) => r.unique != null);
@@ -176,11 +207,11 @@ function Overview() {
       <div className="admin-stat-grid">
         <StatCard label="Total leads" value={t.leads} accent="var(--specialist)" />
         <StatCard label="Unique leads" value={t.uniqueLeads} accent="var(--specialist)" />
-        <StatCard label="Leads · last 7 days" value={t.leads7} accent="var(--placed)" />
-        <StatCard label="Leads · last 30 days" value={t.leads30} accent="var(--placed)" />
-        <StatCard label="Registered users" value={t.users} accent="var(--ink)" />
-        <StatCard label="Verified users" value={t.verifiedUsers} accent="var(--ink)" />
-        <StatCard label="Profiles" value={t.profiles} accent="var(--lavender)" />
+        <DayStatCard />
+        <StatCard label="Leads · today" value={t.leadsToday} accent="var(--placed)" />
+        <StatCard label="Leads · last 7 days" value={t.leads7} accent="var(--ink)" />
+        <StatCard label="Registrations completed" value={t.checkoutDone} accent="var(--ink)" />
+        <StatCard label="Verified leads" value={t.verifiedLeads} accent="var(--lavender)" />
       </div>
 
       <div className="admin-panel-card">

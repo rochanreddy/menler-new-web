@@ -59,6 +59,9 @@ export const adminApi = {
   logout: () => api('/admin/logout', { method: 'POST' }),
   getSession: () => api('/admin/session'),
   getStats: () => api('/admin/stats'),
+
+  /** Leads count for one calendar day (IST). date = "YYYY-MM-DD". */
+  getDayLeads: (date) => api(`/admin/stats/day?date=${encodeURIComponent(date)}`),
   getLeads: (params) => api(`/admin/leads${qs(params)}`),
   deleteLead: (id) => api(`/admin/leads/${encodeURIComponent(id)}`, { method: 'DELETE' }),
   getUsers: (params) => api(`/admin/users${qs(params)}`),

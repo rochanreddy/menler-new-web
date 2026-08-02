@@ -128,17 +128,20 @@ router.get('/stats', requireAdmin, async (_req, res) => {
   try {
     const now = Date.now();
     const since7 = new Date(now - 7 * 24 * 60 * 60 * 1000);
-    const since30 = new Date(now - 30 * 24 * 60 * 60 * 1000);
     const since14 = new Date(now - 13 * 24 * 60 * 60 * 1000);
     since14.setHours(0, 0, 0, 0);
+
+    // "Today" in IST — the admin team's day, not the server's UTC day.
+    const istNow = new Date(now + 5.5 * 60 * 60 * 1000);
+    const istDay = istNow.toISOString().slice(0, 10);
+    const todayStart = new Date(`${istDay}T00:00:00+05:30`);
 
     const [
       totalLeads,
       leads7,
-      leads30,
-      totalUsers,
-      verifiedUsers,
-      totalProfiles,
+      leadsToday,
+      checkoutDone,
+      verifiedLeads,
       byProgram,
       bySource,
       byUtmSource,
@@ -148,10 +151,9 @@ router.get('/stats', requireAdmin, async (_req, res) => {
     ] = await Promise.all([
       Lead.countDocuments({}),
       Lead.countDocuments({ createdAt: { $gte: since7 } }),
-      Lead.countDocuments({ createdAt: { $gte: since30 } }),
-      User.countDocuments({}),
-      User.countDocuments({ emailVerified: true }),
-      Profile.countDocuments({}),
+      Lead.countDocuments({ createdAt: { $gte: todayStart } }),
+      Lead.countDocuments({ checkout_completed: true }),
+      Lead.countDocuments({ verified: true }),
       Lead.aggregate([
         { $group: { _id: { g: { $ifNull: ['$program', ''] }, person: CONTACT_KEY }, n: { $sum: 1 } } },
         { $group: { _id: '$_id.g', count: { $sum: '$n' }, unique: { $sum: 1 } } },
@@ -203,10 +205,9 @@ router.get('/stats', requireAdmin, async (_req, res) => {
         leads: totalLeads,
         uniqueLeads: uniqueAgg[0]?.n || 0,
         leads7,
-        leads30,
-        users: totalUsers,
-        verifiedUsers,
-        profiles: totalProfiles,
+        leadsToday,
+        checkoutDone,
+        verifiedLeads,
       },
       byProgram: tidy(byProgram),
       bySource: tidy(bySource),
@@ -217,6 +218,23 @@ router.get('/stats', requireAdmin, async (_req, res) => {
   } catch (err) {
     console.error('admin stats error', err);
     res.status(500).json({ error: 'Could not load stats.' });
+  }
+});
+
+// Leads count for one calendar day (IST) — powers the date-picker stat card.
+router.get('/stats/day', requireAdmin, async (req, res) => {
+  try {
+    const date = String(req.query.date || '').trim();
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      return res.status(400).json({ error: 'Pass ?date=YYYY-MM-DD.' });
+    }
+    const start = new Date(`${date}T00:00:00+05:30`);
+    const end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
+    const count = await Lead.countDocuments({ createdAt: { $gte: start, $lt: end } });
+    res.json({ date, count });
+  } catch (err) {
+    console.error('admin stats/day error', err);
+    res.status(500).json({ error: 'Could not load the day count.' });
   }
 });
 
