@@ -14,10 +14,13 @@ import { MENLER_WHATSAPP_URL } from '../data/communityLinks';
 //
 // Events are the CAMPAIGN PAGES themselves:
 //   • PAST — every campaign shows here automatically (unless "Hide from Events").
-//   • LIVE — only campaigns with "Show as a Live event" turned on.
+//   • LIVE — only campaigns with "Show as a Live event" turned on, and only
+//     until their date has passed: a stale Live toggle self-corrects, the event
+//     slides down into Past on its own the day after it runs.
 // So a new campaign becomes a past event with no action; you only ever flip the
 // Live toggle. The card's title, date, mentor, accent and Join link all come
-// from the campaign itself.
+// from the campaign itself. With nothing live, the Live section shows a
+// "coming soon" poster instead of disappearing.
 
 const optImg = (url, w) =>
   (url && url.includes('cdn.sanity.io') ? `${url}${url.includes('?') ? '&' : '?'}w=${w}&auto=format&q=72&fit=max` : url);
@@ -72,6 +75,17 @@ const eventStartMs = (ev) => {
     if (mer === 'am' && h === 12) h = 0;
   }
   return new Date(Number(year), mi, Number(day[1]), h, min).getTime();
+};
+
+// A "live" event stops being live once its day is over — kept live through the
+// whole day (a 7 PM session is still upcoming at noon), demoted from midnight
+// after. An unparseable date can't be judged, so the Live toggle stands.
+const eventIsOver = (ev) => {
+  const start = eventStartMs(ev);
+  if (!start) return false;
+  const dayEnd = new Date(start);
+  dayEnd.setHours(24, 0, 0, 0);
+  return dayEnd.getTime() <= Date.now();
 };
 
 // Map a raw campaign doc → the shape the cards render. One place, so the query,
@@ -223,6 +237,39 @@ function EventArt({ ev }) {
   );
 }
 
+/* Shown in the Live section when nothing is live: the same horizontal card and
+   generated dark-art panel as a real live event, recast as a "coming soon"
+   poster, with the WhatsApp community as the notify channel. */
+function ComingSoonCard() {
+  return (
+    <article className="ev-card ev-card--live ev-card--soon">
+      <div className="ev-art ev-art--gen" style={{ '--ev-accent': '#534AB7' }}>
+        <span className="ev-art-dots" aria-hidden="true" />
+        <span className="ev-art-glow" aria-hidden="true" />
+        <div className="ev-art-top">
+          <MenlerWordmark size={17} theme="dark" rule="#8E82F5" />
+          <span className="ev-art-badge">✦ Masterclass</span>
+        </div>
+        <span className="ev-art-title"><span>Coming Soon</span></span>
+        <span className="ev-art-foot">The next live session is in the works</span>
+      </div>
+      <div className="ev-body">
+        <span className="ev-soon-dot">Coming soon</span>
+        <FitTitle text="Our next masterclass is brewing" max={LIVE_TITLE_MAX} />
+        <p className="ev-sub">
+          We&rsquo;re lining up the next live session with someone shipping real AI work.
+          Join the community and you&rsquo;ll be the first to know when seats open.
+        </p>
+        <div className="ev-foot">
+          <a className="ev-join" href={MENLER_WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+            Get notified first<span className="ev-arrow" aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </div>
+    </article>
+  );
+}
+
 export default function Events() {
   const navigate = useNavigate();
   const openApply = useApply();
@@ -232,12 +279,13 @@ export default function Events() {
   // Sanity returns raw campaign docs; the fallback is already mapped. Normalise
   // by running anything that still looks like a campaign doc through toEvent.
   const events = (data || []).map((e) => (e && e.status ? e : toEvent(e)));
-  const live = events.filter((e) => e.status !== 'past');
+  // A finished event is Past regardless of its Live toggle (see eventIsOver).
+  const live = events.filter((e) => e.status !== 'past' && !eventIsOver(e));
   // Past events read newest-first, so the most recent masterclass leads the grid
   // and same-day sessions fall in reverse time order. Array.sort is stable, so
   // anything with no parseable date keeps the CMS order from EVENTS_QUERY.
   const past = events
-    .filter((e) => e.status === 'past')
+    .filter((e) => e.status === 'past' || eventIsOver(e))
     .sort((a, b) => eventStartMs(b) - eventStartMs(a));
 
   // Past events grow over time — show two full rows, then reveal a row at a
@@ -282,41 +330,40 @@ export default function Events() {
         </div>
       </section>
 
-      {/* ── LIVE EVENTS ── */}
-      {live.length > 0 && (
-        <section className="section ev-section ev-section--live">
-          <p className="section-label">Happening now</p>
-          <h2 className="section-h2">Live <em>events</em></h2>
-          <div className="ev-grid ev-grid--live">
-            {live.map((ev) => (
-              <article className="ev-card ev-card--live" key={ev._id}>
-                <EventArt ev={ev} />
-                <div className="ev-body">
-                  <span className="ev-live-dot">● Live masterclass</span>
-                  <FitTitle text={ev.title} max={LIVE_TITLE_MAX} />
-                  {ev.subtitle && <p className="ev-sub">{ev.subtitle}</p>}
-                  {ev.tags?.length > 0 && (
-                    <div className="ev-tags">{ev.tags.map((t) => <span key={t}>{t}</span>)}</div>
+      {/* ── LIVE EVENTS (coming-soon poster when nothing is live) ── */}
+      <section className="section ev-section ev-section--live">
+        <p className="section-label">{live.length > 0 ? 'Happening now' : 'Up next'}</p>
+        <h2 className="section-h2">Live <em>events</em></h2>
+        <div className="ev-grid ev-grid--live">
+          {live.length === 0 && <ComingSoonCard />}
+          {live.map((ev) => (
+            <article className="ev-card ev-card--live" key={ev._id}>
+              <EventArt ev={ev} />
+              <div className="ev-body">
+                <span className="ev-live-dot">● Live masterclass</span>
+                <FitTitle text={ev.title} max={LIVE_TITLE_MAX} />
+                {ev.subtitle && <p className="ev-sub">{ev.subtitle}</p>}
+                {ev.tags?.length > 0 && (
+                  <div className="ev-tags">{ev.tags.map((t) => <span key={t}>{t}</span>)}</div>
+                )}
+                {(ev.date || ev.time) && (
+                  <p className="ev-when">
+                    {ev.date && <span className="ev-when-item"><CalendarIcon />{ev.date}</span>}
+                    {ev.time && <span className="ev-when-item"><ClockIcon />{ev.time}</span>}
+                  </p>
+                )}
+                <div className="ev-foot">
+                  {joinTarget(ev) && (
+                    <button className="ev-join" onClick={() => join(ev)}>
+                      Join masterclass<span className="ev-arrow" aria-hidden="true">↗</span>
+                    </button>
                   )}
-                  {(ev.date || ev.time) && (
-                    <p className="ev-when">
-                      {ev.date && <span className="ev-when-item"><CalendarIcon />{ev.date}</span>}
-                      {ev.time && <span className="ev-when-item"><ClockIcon />{ev.time}</span>}
-                    </p>
-                  )}
-                  <div className="ev-foot">
-                    {joinTarget(ev) && (
-                      <button className="ev-join" onClick={() => join(ev)}>
-                        Join masterclass<span className="ev-arrow" aria-hidden="true">↗</span>
-                      </button>
-                    )}
-                  </div>
                 </div>
-              </article>
-            ))}
-          </div>
-        </section>
-      )}
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
 
       {/* ── PAST EVENTS ── */}
       {past.length > 0 && (

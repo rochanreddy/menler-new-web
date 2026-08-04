@@ -3594,7 +3594,7 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .ev-host span { display: flex; flex-direction: column; min-width: 0; }
 .ev-host b { font-size: 13px; color: var(--ink); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ev-host i { font-size: 11.5px; font-style: normal; color: var(--text-muted); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ev-join, .ev-download { flex-shrink: 0; display: inline-flex; align-items: center; gap: 9px; border: 0; cursor: pointer; font-family: inherit; font-weight: 500; font-size: 13px; padding: 9px 10px 9px 22px; border-radius: 22px; transition: background .2s ease; }
+.ev-join, .ev-download { flex-shrink: 0; display: inline-flex; align-items: center; gap: 9px; border: 0; cursor: pointer; font-family: inherit; font-weight: 500; font-size: 13px; padding: 9px 10px 9px 22px; border-radius: 22px; text-decoration: none; transition: background .2s ease; }
 .ev-join { background: var(--specialist); color: #fff; }
 .ev-join:hover { background: #6B62CC; }
 .ev-download { background: var(--cloud); color: var(--specialist); }
@@ -3643,6 +3643,14 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
   .ev-card--live .ev-art,
   .ev-card--live .ev-art-img { width: calc(100% - 32px); margin: 16px 16px 0; }
 }
+
+/* ── "Coming soon" poster (Live section, nothing live) ── */
+/* Same pill as .ev-live-dot, recoloured to the site purple, with a slow-pulsing
+   dot in place of the live ●: waiting, not broadcasting. */
+.ev-soon-dot { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--specialist); background: rgba(83,74,183,0.08); border: 1px solid rgba(83,74,183,0.22); border-radius: 999px; padding: 5px 12px; }
+.ev-soon-dot::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--specialist); animation: ev-soon-pulse 1.8s ease-in-out infinite; }
+@keyframes ev-soon-pulse { 0%, 100% { opacity: .3; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .ev-soon-dot::before { animation: none; } }
 
 /* "Show more" for past events */
 .ev-more { display: flex; justify-content: center; margin-top: 32px; }
