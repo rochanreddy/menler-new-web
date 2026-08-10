@@ -144,7 +144,9 @@ const optImg = (url, w) => (url && url.includes('cdn.sanity.io') ? `${url}${url.
 // Sridevi Edupuganti's credentials: Ex-Microsoft · IIT-G · ISB. Shown both in
 // the banner (small, under the mentor credit) and in the strip under the form.
 const SRIDEVI_CREDS = [
-  { name: 'Microsoft', logo: '/logos/microsoft.png' },
+  // NB: the repo file is .webp — a .png path here 404s and the chip silently
+  // removes itself (LogoChip onError), which is how Microsoft went missing.
+  { name: 'Microsoft', logo: '/logos/microsoft.webp' },
   { name: 'IIT Guwahati', logo: '/logos/iitg.png' },
   { name: 'ISB', logo: '/logos/isb.png' },
 ];
