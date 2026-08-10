@@ -676,6 +676,11 @@ function UsersTab() {
   };
 
   const sum = data.summary || {};
+  // Reuse the programme names already in use, so the same thing doesn't end up
+  // recorded three ways ("library", "Library", "libary") and split the reports.
+  const programOptions = [...new Set(
+    data.rows.map((r) => (r.program || '').trim()).filter((p) => p && p !== 'manual'),
+  )].slice(0, 6);
 
   return (
     <div>
@@ -795,77 +800,121 @@ function UsersTab() {
             </div>
 
             <div className="admin-drawer-body admin-addpay">
-              <p className="admin-addpay-lede">
-                For money taken through a direct Cashfree payment link rather than the
-                website. Paste the reference and we’ll pull the real payment from
-                Cashfree — the amount and payer come from them, not from typing.
-              </p>
+              {/* Two steps, always both visible, so it's obvious this is a
+                  find-then-confirm job and not a form to fill in. */}
+              <ol className="admin-steps">
+                <li className={found ? 'is-done' : 'is-now'}><span>1</span>Find the payment</li>
+                <li className={found ? 'is-now' : ''}><span>2</span>Confirm and save</li>
+              </ol>
 
-              {/* Step 1 — find it */}
-              <label className="admin-addpay-label" htmlFor="cf-ref">
-                Cashfree Order ID or payment-link ID
-              </label>
-              <div className="admin-addpay-lookup">
+              <div className="admin-lookup">
                 <input
                   id="cf-ref"
-                  className="admin-search"
-                  placeholder="e.g. order_1739… or the link ID"
+                  className="admin-lookup-input"
+                  placeholder="Paste Cashfree Order ID"
                   value={ref}
                   autoFocus
+                  spellCheck="false"
+                  autoComplete="off"
                   onChange={(e) => { setRef(e.target.value); setFound(null); setAddErr(''); }}
                   onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); doVerify(); } }}
                 />
-                <button className="admin-btn" type="button" onClick={doVerify} disabled={!ref.trim() || verifying}>
+                <button className="admin-btn admin-btn--primary" type="button"
+                  onClick={doVerify} disabled={!ref.trim() || verifying}>
                   {verifying ? 'Checking…' : 'Look up'}
                 </button>
               </div>
-              <p className="admin-addpay-help">
-                Find it in Cashfree → Payments (or Payment Links). A bare transaction ID
-                can’t be searched on its own — Cashfree only stores payments under their order.
-              </p>
+
+              <details className="admin-where">
+                <summary>Where do I find this?</summary>
+                <p>
+                  Cashfree dashboard → <b>Payments</b> (or <b>Payment Links</b>) → open the
+                  payment → copy the <b>Order ID</b>. It’s the long one starting{' '}
+                  <code>order_</code> — not the short numeric transaction ID, which Cashfree
+                  can’t search on its own.
+                </p>
+              </details>
 
               {addErr && <div className="admin-note admin-note--bad">{addErr}</div>}
 
-              {/* Step 2 — confirm what came back */}
+              {/* Nothing looked up yet — say what will appear, so the empty
+                  space below the input isn't just dead. */}
+              {!found && !addErr && !verifying && (
+                <div className="admin-await">
+                  <span className="admin-await-icon" aria-hidden="true">⌕</span>
+                  <b>The payment will appear here</b>
+                  <p>
+                    Amount, who paid, when, and the transaction ID — read straight from
+                    Cashfree. You’ll only need to add what they paid for.
+                  </p>
+                </div>
+              )}
+
+              {verifying && <div className="admin-await"><b>Checking with Cashfree…</b></div>}
+
               {found && (
                 <>
-                  <div className="admin-note admin-note--ok">
-                    <b>Found in Cashfree</b> — verified as a successful payment
-                    {found.via === 'link' ? ' against that payment link' : ''}.
-                  </div>
+                  {/* A receipt, not a form. These are Cashfree's numbers and
+                      nothing here is editable — that's the entire point. */}
+                  <div className="admin-receipt">
+                    <div className="admin-receipt-top">
+                      <div>
+                        <span className="admin-receipt-label">Amount received</span>
+                        <b className="admin-receipt-amt">₹{found.payment.amount.toLocaleString('en-IN')}</b>
+                      </div>
+                      <span className="admin-verified-tag">✓ Verified by Cashfree</span>
+                    </div>
 
-                  <dl className="admin-verified">
-                    <div><dt>Amount</dt><dd className="admin-verified-amt">₹{found.payment.amount.toLocaleString('en-IN')}</dd></div>
-                    <div><dt>Paid by</dt><dd>{found.payment.customer.name || <span className="admin-muted">not given</span>}</dd></div>
-                    <div><dt>Email</dt><dd>{found.payment.customer.email || <span className="admin-muted">not given</span>}</dd></div>
-                    <div><dt>Phone</dt><dd>{found.payment.customer.phone || <span className="admin-muted">not given</span>}</dd></div>
-                    <div><dt>Paid at</dt><dd>{fmtDate(found.payment.paid_at)}</dd></div>
-                    <div><dt>Method</dt><dd>{found.payment.method || '—'}</dd></div>
-                    <div><dt>Order ID</dt><dd className="admin-mono">{found.payment.order_id}</dd></div>
-                    <div><dt>Transaction ID</dt><dd className="admin-mono">{found.payment.cf_payment_id || '—'}</dd></div>
-                  </dl>
+                    <dl className="admin-receipt-rows">
+                      <div><dt>Paid by</dt><dd>{found.payment.customer.name || <em>not given</em>}</dd></div>
+                      <div><dt>Email</dt><dd>{found.payment.customer.email || <em>not given</em>}</dd></div>
+                      <div><dt>Phone</dt><dd>{found.payment.customer.phone || <em>not given</em>}</dd></div>
+                      <div><dt>Paid at</dt><dd>{fmtDate(found.payment.paid_at)}</dd></div>
+                      <div><dt>Method</dt><dd>{found.payment.method || '—'}</dd></div>
+                      <div><dt>Order ID</dt><dd className="admin-mono">{found.payment.order_id}</dd></div>
+                      <div><dt>Transaction ID</dt><dd className="admin-mono">{found.payment.cf_payment_id || '—'}</dd></div>
+                    </dl>
+                  </div>
 
                   {found.duplicate ? (
                     <div className="admin-note admin-note--bad">
                       <b>Already recorded.</b> This payment is in the list under{' '}
                       {found.duplicate.name || 'an existing entry'}. Adding it again would
-                      double-count the revenue.
+                      double-count your revenue.
                     </div>
                   ) : (
-                    <form onSubmit={saveManual}>
+                    <form onSubmit={saveManual} className="admin-addpay-form">
                       <label className="admin-addpay-label" htmlFor="cf-prog">
-                        What did they pay for? <span className="admin-muted">— the only thing Cashfree doesn’t tell us</span>
+                        What did they pay for?
                       </label>
-                      <input id="cf-prog" className="admin-search" required placeholder="e.g. kickstarter, library, resource pack"
+                      <p className="admin-addpay-help">The one thing Cashfree can’t tell us.</p>
+                      {programOptions.length > 0 && (
+                        <div className="admin-chips">
+                          {programOptions.map((p) => (
+                            <button type="button" key={p}
+                              className={`admin-chip ${addForm.program === p ? 'is-on' : ''}`}
+                              onClick={() => setF('program', p)}>{p}</button>
+                          ))}
+                        </div>
+                      )}
+                      <input id="cf-prog" className="admin-search" required
+                        placeholder="or type a new one"
                         value={addForm.program} onChange={(e) => setF('program', e.target.value)} />
 
-                      <label className="admin-addpay-label" htmlFor="cf-note">Note <span className="admin-muted">— optional</span></label>
-                      <input id="cf-note" className="admin-search" placeholder="Anything worth remembering about this one"
+                      <label className="admin-addpay-label" htmlFor="cf-note">
+                        Note <span className="admin-muted">— optional</span>
+                      </label>
+                      <input id="cf-note" className="admin-search"
+                        placeholder="Anything worth remembering"
                         value={addForm.note} onChange={(e) => setF('note', e.target.value)} />
 
-                      <button className="admin-btn admin-btn--primary admin-addpay-save" type="submit" disabled={saving}>
-                        {saving ? 'Saving…' : `Record ₹${found.payment.amount.toLocaleString('en-IN')} from ${found.payment.customer.name || 'this payer'}`}
-                      </button>
+                      <div className="admin-addpay-foot">
+                        <button className="admin-btn admin-btn--primary admin-addpay-save"
+                          type="submit" disabled={saving || !addForm.program.trim()}>
+                          {saving ? 'Saving…' : `Record ₹${found.payment.amount.toLocaleString('en-IN')}`}
+                        </button>
+                        <button className="admin-btn" type="button" onClick={closeAdd}>Cancel</button>
+                      </div>
                     </form>
                   )}
                 </>

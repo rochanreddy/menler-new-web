@@ -3312,28 +3312,93 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .admin-note--warn { background: rgba(186,117,23,0.09); border-color: rgba(186,117,23,0.3); color: #7a4c07; }
 .admin-note--bad { background: rgba(192,57,43,0.07); border-color: rgba(192,57,43,0.26); color: #8f2c1f; }
 
-/* "Record a payment" form inside the drawer */
-.admin-addpay { display: flex; flex-direction: column; gap: 10px; }
+/* ── "Record a payment" drawer ── */
+.admin-addpay { display: flex; flex-direction: column; gap: 14px; }
 .admin-addpay .admin-search { width: 100%; }
-.admin-addpay-lede { font-size: 13px; line-height: 1.6; color: var(--text-muted); margin: 0 0 4px; }
-.admin-addpay-label { font-size: 12.5px; font-weight: 700; color: var(--ink); margin-top: 4px; }
-.admin-addpay-help { font-size: 12px; line-height: 1.55; color: var(--text-muted); margin: -4px 0 0; }
-.admin-addpay-lookup { display: flex; gap: 8px; align-items: center; }
-.admin-addpay-lookup .admin-search { flex: 1; min-width: 0; }
-.admin-addpay-save { width: 100%; margin-top: 12px; justify-content: center; }
 
-/* What Cashfree returned — read-only on purpose: these are their numbers. */
-.admin-verified {
-  margin: 0; background: var(--cloud); border-radius: 12px; padding: 6px 14px;
+/* Two steps, both always shown: this is find-then-confirm, not a form. */
+.admin-steps { display: flex; gap: 8px; list-style: none; margin: 0; padding: 0; }
+.admin-steps li {
+  flex: 1; display: flex; align-items: center; gap: 8px;
+  font-size: 12.5px; font-weight: 600; color: var(--text-muted);
+  padding: 9px 12px; border-radius: 10px; background: var(--cloud);
+  border: 1px solid transparent;
 }
-.admin-verified > div {
+.admin-steps li span {
+  display: grid; place-items: center; width: 20px; height: 20px; flex: none;
+  border-radius: 999px; background: var(--white); color: var(--text-muted);
+  font-size: 11px; font-weight: 700;
+}
+.admin-steps li.is-now { color: var(--ink); border-color: rgba(83,74,183,0.35); background: rgba(83,74,183,0.09); }
+.admin-steps li.is-now span { background: var(--specialist); color: #fff; }
+.admin-steps li.is-done span { background: var(--placed); color: #fff; }
+
+.admin-lookup { display: flex; gap: 8px; }
+.admin-lookup-input {
+  flex: 1; min-width: 0; padding: 13px 15px; font-size: 14.5px;
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  border: 1.5px solid var(--border); border-radius: 12px;
+  background: var(--white); color: var(--ink);
+}
+.admin-lookup-input::placeholder { font-family: inherit; color: var(--text-muted); }
+.admin-lookup-input:focus { outline: none; border-color: var(--specialist); box-shadow: 0 0 0 3px rgba(83,74,183,0.16); }
+.admin-lookup .admin-btn { padding-inline: 20px; }
+
+.admin-where { font-size: 12.5px; color: var(--text-muted); margin-top: -6px; }
+.admin-where summary { cursor: pointer; font-weight: 600; color: var(--specialist); }
+.admin-where p { margin: 8px 0 0; line-height: 1.65; }
+
+/* Waiting state — the space under the input says what's coming. */
+.admin-await {
+  text-align: center; padding: 30px 22px; border-radius: 14px;
+  border: 1px dashed var(--border); background: var(--white);
+}
+.admin-await-icon { display: block; font-size: 26px; color: var(--specialist); opacity: .55; margin-bottom: 8px; }
+.admin-await b { display: block; font-size: 14px; color: var(--ink); }
+.admin-await p { margin: 6px auto 0; font-size: 12.5px; color: var(--text-muted); line-height: 1.6; max-width: 34ch; }
+
+/* A receipt, not a form — nothing here is editable, which is the point. */
+.admin-receipt { border: 1px solid rgba(29,158,117,0.3); border-radius: 14px; overflow: hidden; background: var(--white); }
+.admin-receipt-top {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+  padding: 16px 18px; background: rgba(29,158,117,0.07);
+  border-bottom: 1px solid rgba(29,158,117,0.2);
+}
+.admin-receipt-label {
+  display: block; font-size: 10.5px; font-weight: 700; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px;
+}
+.admin-receipt-amt { font-size: 30px; font-weight: 700; letter-spacing: -0.03em; color: var(--ink); line-height: 1.05; }
+.admin-verified-tag {
+  flex: none; font-size: 11px; font-weight: 700; padding: 5px 11px; border-radius: 999px;
+  background: rgba(29,158,117,0.15); color: var(--placed); white-space: nowrap;
+}
+.admin-receipt-rows { margin: 0; padding: 4px 18px 10px; }
+.admin-receipt-rows > div {
   display: flex; justify-content: space-between; align-items: baseline; gap: 14px;
-  padding: 9px 0; border-bottom: 1px solid rgba(175,169,236,0.28);
+  padding: 10px 0; border-bottom: 1px solid rgba(175,169,236,0.2);
 }
-.admin-verified > div:last-child { border-bottom: 0; }
-.admin-verified dt { font-size: 12px; color: var(--text-muted); font-weight: 600; flex: none; }
-.admin-verified dd { margin: 0; font-size: 13px; text-align: right; word-break: break-word; }
-.admin-verified-amt { font-size: 19px; font-weight: 700; letter-spacing: -0.02em; }
+.admin-receipt-rows > div:last-child { border-bottom: 0; }
+.admin-receipt-rows dt { font-size: 12px; color: var(--text-muted); font-weight: 600; flex: none; }
+.admin-receipt-rows dd { margin: 0; font-size: 13px; text-align: right; word-break: break-word; }
+.admin-receipt-rows em { color: var(--text-muted); font-style: normal; }
+
+.admin-addpay-form { display: flex; flex-direction: column; gap: 8px; }
+.admin-addpay-label { font-size: 13px; font-weight: 700; color: var(--ink); margin-top: 4px; }
+.admin-addpay-help { font-size: 12px; line-height: 1.55; color: var(--text-muted); margin: -4px 0 2px; }
+
+/* Reuse existing programme names so reports don't fragment on spelling. */
+.admin-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 2px; }
+.admin-chip {
+  font: inherit; font-size: 12px; font-weight: 600; cursor: pointer;
+  padding: 5px 11px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--white); color: var(--text-muted);
+}
+.admin-chip:hover { border-color: var(--specialist); color: var(--specialist); }
+.admin-chip.is-on { background: var(--specialist); border-color: var(--specialist); color: #fff; }
+
+.admin-addpay-foot { display: flex; gap: 8px; margin-top: 14px; }
+.admin-addpay-save { flex: 1; justify-content: center; }
 .admin-date { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--text-muted); }
 .admin-date input { font: inherit; padding: 7px 9px; border: 1px solid var(--border); border-radius: 8px; color: var(--ink); background: var(--white); }
 .admin-del { display: inline-grid; place-items: center; width: 30px; height: 30px; padding: 0; background: none; border: 1px solid transparent; border-radius: 8px; cursor: pointer; color: var(--text-muted); transition: color .12s, background .12s, border-color .12s; }
