@@ -942,10 +942,12 @@ function UsersTab() {
 
               {manualMode && (
                 <div className="admin-note admin-note--warn">
-                  <b>This entry won’t be verified.</b> The amount will be whatever you type
-                  rather than what Cashfree received, and the row is flagged{' '}
-                  <b>unverified</b> in the list. Fine for a payment you can’t find the ID for
-                  — but verify it later if you can.
+                  <b>Recording without verification.</b> Fill everything in yourself, including
+                  the Transaction ID at the bottom — that’s required here, since it’s the only
+                  reference tying the row to a real payment. On save it goes into the list like
+                  any other, counts towards your revenue, and is marked{' '}
+                  <b>Link · unverified</b> so everyone can see the amount was typed rather than
+                  read from Cashfree.
                 </div>
               )}
 
@@ -1005,16 +1007,16 @@ function UsersTab() {
                 <span>
                   Cashfree Transaction ID
                   {found ? <em className="admin-field-ok"> — filled in from Cashfree</em>
-                    : <span className="admin-muted"> — optional</span>}
+                    : <span className="admin-req"> *</span>}
                 </span>
                 <input className="admin-search admin-mono-input" placeholder="e.g. 5114772211"
-                  value={addForm.txn_id} readOnly={Boolean(found)}
+                  value={addForm.txn_id} readOnly={Boolean(found)} required={manualMode}
                   onChange={(e) => setF('txn_id', e.target.value)} />
                 {!found && (
                   <em className="admin-field-hint">
-                    Copy it from the Cashfree dashboard so this row can be matched against a
-                    settlement later. To actually <b>verify</b> the payment, use the Order ID
-                    box above — Cashfree can’t look a payment up from this number alone.
+                    Required when you’re recording without verification — it’s the only thing
+                    tying this row back to a real payment, so you can match it against a
+                    settlement later. Copy it from the Cashfree dashboard.
                   </em>
                 )}
               </label>

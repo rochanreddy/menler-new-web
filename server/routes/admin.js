@@ -510,6 +510,11 @@ router.post('/paid-users', requireAdmin, async (req, res) => {
     if (!ref && b.unverified !== true) {
       return res.status(400).json({ error: 'A Cashfree Order ID is required, or tick the option to record it unverified.' });
     }
+    // An unverified row with no reference at all is unauditable — there'd be
+    // nothing to reconcile it against a settlement with, ever.
+    if (!ref && !String(b.txn_id || '').trim()) {
+      return res.status(400).json({ error: 'A Cashfree Transaction ID is required when recording without verification.' });
+    }
 
     // A reference is optional. When there is one, Cashfree decides the money and
     // the payment id — a hand-typed amount must never silently outrank the
