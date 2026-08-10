@@ -3400,6 +3400,17 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .admin-lookup-box .admin-addpay-label { margin-top: 0; margin-bottom: 8px; display: block; }
 .admin-lookup-box .admin-addpay-help { margin: 8px 0 0; }
 .admin-lookup-ok { margin: 8px 0 0; font-size: 12.5px; font-weight: 600; color: var(--placed); }
+.admin-lookup-box.is-ok { background: rgba(29,158,117,0.09); }
+.admin-req { color: #c0392b; }
+.admin-linkbtn {
+  background: none; border: 0; padding: 0; font: inherit; cursor: pointer;
+  color: var(--specialist); font-weight: 600; text-decoration: underline;
+}
+.admin-linkbtn:hover { color: var(--ink); }
+.admin-foot-hint { margin-right: auto; font-size: 12px; color: var(--text-muted); align-self: center; }
+/* Verified values are display-only: editing them would desync the row from the
+   gateway, and the server reads Cashfree again on save regardless. */
+.admin-field .admin-search[readonly] { background: var(--cloud); cursor: default; }
 
 .admin-grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 @media (max-width: 520px) { .admin-grid2 { grid-template-columns: 1fr; } }

@@ -504,6 +504,13 @@ router.post('/paid-users', requireAdmin, async (req, res) => {
     if (!name) return res.status(400).json({ error: 'A name is required.' });
     if (!program) return res.status(400).json({ error: 'Pick what they paid for.' });
 
+    // Skipping verification has to be asked for explicitly. Without this the
+    // gate is only in the browser, and anything posting to this route directly
+    // would land an unverified row that looks exactly like a verified one.
+    if (!ref && b.unverified !== true) {
+      return res.status(400).json({ error: 'A Cashfree Order ID is required, or tick the option to record it unverified.' });
+    }
+
     // A reference is optional. When there is one, Cashfree decides the money and
     // the payment id — a hand-typed amount must never silently outrank the
     // gateway. Without one the entry is saved as-is and flagged unverified, so

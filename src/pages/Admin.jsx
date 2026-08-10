@@ -642,6 +642,7 @@ function UsersTab() {
   const [ref, setRef] = useState('');
   const [found, setFound] = useState(null);
   const [verifying, setVerifying] = useState(false);
+  const [manualMode, setManualMode] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -658,7 +659,7 @@ function UsersTab() {
 
   const closeAdd = () => {
     setAdding(false);
-    setRef(''); setFound(null); setAddErr('');
+    setRef(''); setFound(null); setAddErr(''); setManualMode(false);
     setAddForm({ name: '', email: '', phone: '', amount: '', program: '', otherProgram: '', paid_at: '', txn_id: '', note: '', });
   };
 
@@ -682,11 +683,12 @@ function UsersTab() {
     };
   }, [adding]);
 
-  const doVerify = async () => {
-    if (!ref.trim()) return;
+  const doVerify = async (raw) => {
+    const value = String(raw ?? ref).trim();
+    if (!value) return;
     setVerifying(true); setAddErr(''); setFound(null);
     try {
-      const res = await adminApi.verifyPayment(ref.trim());
+      const res = await adminApi.verifyPayment(value);
       if (res.duplicate) {
         setAddErr(`Already recorded — ${res.duplicate.name || 'an existing entry'} has this payment. Adding it again would double-count your revenue.`);
         return;
@@ -722,7 +724,8 @@ function UsersTab() {
         ...addForm,
         program,
         amount: Number(addForm.amount),
-        reference: ref.trim(),   // blank is fine — the entry just isn't marked verified
+        reference: manualMode ? '' : ref.trim(),
+        unverified: manualMode,   // the server refuses a blank reference without this
       });
       closeAdd();
       load();
@@ -869,12 +872,15 @@ function UsersTab() {
             </div>
 
             <form onSubmit={saveManual} className="admin-modal-body admin-addpay">
-              {/* Optional Cashfree lookup. It fills the form in for you and marks
-                  the entry verified — but it's a shortcut, not a gate, so a
-                  payment can still be recorded from what you have to hand. */}
-              <div className="admin-lookup-box">
+              {/* Verification is the default path, not a shortcut. Pasting is
+                  enough — there's nothing to press. The unverified route stays
+                  reachable, because a payment you can't find an ID for still
+                  happened, but it has to be chosen deliberately. */}
+              <div className={`admin-lookup-box ${found ? 'is-ok' : ''}`}>
                 <label className="admin-addpay-label" htmlFor="cf-ref">
-                  Cashfree Order ID <span className="admin-muted">— optional, fills the form for you</span>
+                  Cashfree Order ID {manualMode
+                    ? <span className="admin-muted">— skipped</span>
+                    : <span className="admin-req">*</span>}
                 </label>
                 <div className="admin-lookup">
                   <input
@@ -882,44 +888,82 @@ function UsersTab() {
                     className="admin-lookup-input"
                     placeholder="order_1739…"
                     value={ref}
+                    disabled={manualMode}
                     spellCheck="false"
                     autoComplete="off"
                     onChange={(e) => { setRef(e.target.value); setFound(null); setAddErr(''); }}
+                    onPaste={(e) => {
+                      // Verify straight off the paste — waiting for a button press
+                      // is a step that exists only because the code needed it to.
+                      const pasted = (e.clipboardData || window.clipboardData)?.getData('text') || '';
+                      if (pasted.trim()) { e.preventDefault(); setRef(pasted.trim()); doVerify(pasted.trim()); }
+                    }}
+                    onBlur={() => { if (ref.trim() && !found && !verifying) doVerify(); }}
                     onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); doVerify(); } }}
                   />
                   <button className="admin-btn" type="button"
-                    onClick={doVerify} disabled={!ref.trim() || verifying}>
-                    {verifying ? 'Checking…' : 'Look up'}
+                    onClick={() => doVerify()} disabled={!ref.trim() || verifying || manualMode}>
+                    {verifying ? 'Checking…' : found ? 'Re-check' : 'Verify'}
                   </button>
                 </div>
+
                 {found ? (
                   <p className="admin-lookup-ok">
-                    ✓ Verified with Cashfree — ₹{found.payment.amount.toLocaleString('en-IN')}
-                    {found.payment.cf_payment_id ? ` · txn ${found.payment.cf_payment_id}` : ''}. Details filled in below.
+                    ✓ Verified with Cashfree — ₹{found.payment.amount.toLocaleString('en-IN')} received
+                    {found.payment.cf_payment_id ? ` · txn ${found.payment.cf_payment_id}` : ''}.
+                    The details below came from Cashfree.
+                  </p>
+                ) : manualMode ? (
+                  <p className="admin-addpay-help">
+                    Recording without verification.{' '}
+                    <button type="button" className="admin-linkbtn"
+                      onClick={() => { setManualMode(false); setAddErr(''); }}>
+                      Verify with an Order ID instead
+                    </button>
                   </p>
                 ) : (
                   <p className="admin-addpay-help">
-                    Leave it blank and fill the form in by hand if you don’t have the ID.
+                    Paste it and it checks itself — no need to press anything. Cashfree
+                    dashboard → Payments → open the payment → copy the <b>Order ID</b>.
                   </p>
                 )}
+
                 {addErr && <div className="admin-note admin-note--bad" style={{ marginTop: 10, marginBottom: 0 }}>{addErr}</div>}
+
+                {!found && !manualMode && (
+                  <p className="admin-addpay-help" style={{ marginTop: 8 }}>
+                    <button type="button" className="admin-linkbtn"
+                      onClick={() => { setManualMode(true); setRef(''); setFound(null); setAddErr(''); }}>
+                      Can’t find the Order ID? Record it unverified
+                    </button>
+                  </p>
+                )}
               </div>
+
+              {manualMode && (
+                <div className="admin-note admin-note--warn">
+                  <b>This entry won’t be verified.</b> The amount will be whatever you type
+                  rather than what Cashfree received, and the row is flagged{' '}
+                  <b>unverified</b> in the list. Fine for a payment you can’t find the ID for
+                  — but verify it later if you can.
+                </div>
+              )}
 
               <div className="admin-grid2">
                 <label className="admin-field"><span>Full name *</span>
-                  <input className="admin-search" required value={addForm.name}
+                  <input className="admin-search" required value={addForm.name} readOnly={Boolean(found)}
                     onChange={(e) => setF('name', e.target.value)} />
                 </label>
                 <label className="admin-field"><span>Email</span>
-                  <input className="admin-search" type="email" value={addForm.email}
+                  <input className="admin-search" type="email" value={addForm.email} readOnly={Boolean(found)}
                     onChange={(e) => setF('email', e.target.value)} />
                 </label>
                 <label className="admin-field"><span>Phone</span>
-                  <input className="admin-search" value={addForm.phone}
+                  <input className="admin-search" value={addForm.phone} readOnly={Boolean(found)}
                     onChange={(e) => setF('phone', e.target.value)} />
                 </label>
                 <label className="admin-field"><span>Paid on</span>
-                  <input className="admin-search" type="date" value={addForm.paid_at}
+                  <input className="admin-search" type="date" value={addForm.paid_at} readOnly={Boolean(found)}
                     onChange={(e) => setF('paid_at', e.target.value)} />
                 </label>
               </div>
@@ -951,14 +995,10 @@ function UsersTab() {
                 </label>
               )}
 
-              <label className="admin-field"><span>Amount paid (₹) *</span>
+              <label className="admin-field">
+                <span>Amount paid (₹) *{found && <em className="admin-field-ok"> — from Cashfree</em>}</span>
                 <input className="admin-search" required type="number" min="1" value={addForm.amount}
-                  onChange={(e) => setF('amount', e.target.value)} />
-                {found && Number(addForm.amount) !== found.payment.amount && (
-                  <em className="admin-field-warn">
-                    Cashfree says ₹{found.payment.amount.toLocaleString('en-IN')} was received.
-                  </em>
-                )}
+                  readOnly={Boolean(found)} onChange={(e) => setF('amount', e.target.value)} />
               </label>
 
               <label className="admin-field">
@@ -985,9 +1025,13 @@ function UsersTab() {
               </label>
 
               <div className="admin-modal-foot">
+                {!found && !manualMode && (
+                  <span className="admin-foot-hint">Verify the Order ID above to save.</span>
+                )}
                 <button className="admin-btn" type="button" onClick={closeAdd}>Cancel</button>
-                <button className="admin-btn admin-btn--primary admin-addpay-save" type="submit" disabled={saving}>
-                  {saving ? 'Saving…' : 'Save payment'}
+                <button className="admin-btn admin-btn--primary admin-addpay-save" type="submit"
+                  disabled={saving || (!found && !manualMode)}>
+                  {saving ? 'Saving…' : found ? `Save verified ₹${found.payment.amount.toLocaleString('en-IN')}` : 'Save payment'}
                 </button>
               </div>
             </form>
