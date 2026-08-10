@@ -82,6 +82,8 @@ export const adminApi = {
   // manually recorded Cashfree-payment-link payments.
   getPaidUsers: (params) => api(`/admin/paid-users${qs(params)}`),
   verifyPayment: (reference) => api('/admin/paid-users/verify', { method: 'POST', body: { reference } }),
+  verifyExisting: (id, reference) =>
+    api(`/admin/paid-users/${encodeURIComponent(id)}/verify`, { method: 'POST', body: { reference } }),
   addPaidUser: (body) => api('/admin/paid-users', { method: 'POST', body }),
   deletePaidUser: (id) => api(`/admin/paid-users/${encodeURIComponent(id)}`, { method: 'DELETE' }),
 

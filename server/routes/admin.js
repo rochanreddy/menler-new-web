@@ -580,6 +580,82 @@ router.post('/paid-users', requireAdmin, async (req, res) => {
   }
 });
 
+/* Verify a row that's already in the list.
+ *
+ * An unverified entry isn't meant to stay that way — once the Order ID turns
+ * up, this checks it and promotes the row in place, keeping its id so nothing
+ * that references it breaks. Cashfree's amount and payer overwrite what was
+ * typed, since the point of verifying is to replace a guess with a fact. */
+router.post('/paid-users/:id/verify', requireAdmin, async (req, res) => {
+  try {
+    if (!cashfreeConfigured()) {
+      return res.status(503).json({ error: 'Cashfree keys are not configured on this server.' });
+    }
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ error: 'Not found.' });
+    if (order.extra?.verified) return res.status(400).json({ error: 'This one is already verified.' });
+
+    // Use the reference given, else the row's own order_id when it looks like a
+    // real Cashfree one rather than a placeholder we minted.
+    const ref = String(req.body?.reference || '').trim()
+      || (/^MANUAL_/.test(order.order_id) ? '' : order.order_id);
+    if (!ref) {
+      return res.status(400).json({ error: 'Give the Cashfree Order ID for this payment.', needsReference: true });
+    }
+
+    const found = await findCashfreePayment(ref);
+    if (!found.found) {
+      return res.status(400).json({ error: found.detail || 'No successful payment in Cashfree for that reference.' });
+    }
+    const p = found.payment;
+
+    // That Cashfree payment must not already belong to a different row.
+    const clash = await Order.findOne({
+      _id: { $ne: order._id },
+      $or: [
+        { order_id: p.order_id },
+        ...(p.cf_payment_id ? [{ 'extra.cf_payment_id': p.cf_payment_id }] : []),
+      ],
+    }).lean();
+    if (clash) {
+      return res.status(409).json({
+        error: `That payment is already recorded under ${clash.customer_name || clash.customer_email || clash.order_id}.`,
+      });
+    }
+
+    const before = { amount: order.amount, name: order.customer_name };
+    order.order_id = p.order_id;
+    order.amount = p.amount;
+    if (p.customer.name) order.customer_name = p.customer.name;
+    if (p.customer.email) order.customer_email = p.customer.email.toLowerCase();
+    if (p.customer.phone) order.customer_phone = p.customer.phone;
+    if (p.paid_at) order.paid_at = new Date(p.paid_at);
+    order.extra = {
+      ...(order.extra || {}),
+      verified: true,
+      verified_at: new Date(),
+      verified_via: found.via,
+      cf_payment_id: p.cf_payment_id,
+      payment_method: p.method,
+    };
+    order.markModified('extra');
+    await order.save();
+
+    res.json({
+      ok: true,
+      changed: {
+        // Surfaced so a corrected figure is noticed rather than silently applied.
+        amount: before.amount !== p.amount ? { from: before.amount, to: p.amount } : null,
+        name: before.name !== order.customer_name ? { from: before.name, to: order.customer_name } : null,
+      },
+      payment: p,
+    });
+  } catch (err) {
+    console.error('admin paid-users verify-existing error', err);
+    res.status(502).json({ error: err?.message || 'Could not reach Cashfree.' });
+  }
+});
+
 // Remove a MANUAL entry (typo fix). Gateway-confirmed orders can't be deleted.
 router.delete('/paid-users/:id', requireAdmin, async (req, res) => {
   try {

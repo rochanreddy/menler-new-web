@@ -643,6 +643,11 @@ function UsersTab() {
   const [found, setFound] = useState(null);
   const [verifying, setVerifying] = useState(false);
   const [manualMode, setManualMode] = useState(false);
+  const [verifyRow, setVerifyRow] = useState(null);
+  const [verifyRef, setVerifyRef] = useState('');
+  const [verifyBusy, setVerifyBusy] = useState(false);
+  const [verifyErr, setVerifyErr] = useState('');
+  const [verifyDone, setVerifyDone] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -682,6 +687,27 @@ function UsersTab() {
       window.__lenis?.start();
     };
   }, [adding]);
+
+  const openVerify = (row) => {
+    setVerifyRow(row);
+    // A real Cashfree order id already on the row can be checked with no typing.
+    setVerifyRef(/^MANUAL_/.test(row.order_id) ? '' : row.order_id);
+    setVerifyErr(''); setVerifyDone(null);
+  };
+
+  const runExistingVerify = async () => {
+    if (!verifyRow) return;
+    setVerifyBusy(true); setVerifyErr(''); setVerifyDone(null);
+    try {
+      const res = await adminApi.verifyExisting(verifyRow._id, verifyRef.trim());
+      setVerifyDone(res);
+      load();
+    } catch (err) {
+      setVerifyErr(err.message || 'Could not verify that payment.');
+    } finally {
+      setVerifyBusy(false);
+    }
+  };
 
   const doVerify = async (raw) => {
     const value = String(raw ?? ref).trim();
@@ -819,7 +845,15 @@ function UsersTab() {
                     ? <span className="admin-badge admin-badge--ok">Website</span>
                     : r.extra?.verified
                       ? <span className="admin-badge admin-badge--ok" title={`Checked against Cashfree${r.extra.verified_at ? ' on ' + fmtDate(r.extra.verified_at) : ''}`}>Link · verified</span>
-                      : <span className="admin-badge admin-badge--warn" title="Added by hand before Cashfree checking existed — the amount here has never been confirmed against Cashfree.">Link · unverified</span>}
+                      : (
+                        // The badge is also the fix: check the row against
+                        // Cashfree from here rather than deleting and re-adding.
+                        <button type="button" className="admin-badge admin-badge--warn admin-badge--btn"
+                          title="Never checked against Cashfree — click to verify it now"
+                          onClick={(e) => { e.stopPropagation(); openVerify(r); }}>
+                          Link · unverified ↻
+                        </button>
+                      )}
                 </td>
                 <td className="admin-muted">{fmtDate(r.paid_at || r.createdAt)}</td>
                 <td>
@@ -857,6 +891,78 @@ function UsersTab() {
             ...(selected.extra?.note ? [['Note', selected.extra.note]] : []),
           ]}
         />
+      )}
+
+      {verifyRow && (
+        <div className="admin-modal-backdrop" onClick={() => setVerifyRow(null)} role="presentation" data-lenis-prevent>
+          <div className="admin-modal admin-modal--sm" onClick={(e) => e.stopPropagation()}
+            role="dialog" aria-modal="true" aria-labelledby="cf-verify-title">
+            <div className="admin-modal-head">
+              <div>
+                <h2 id="cf-verify-title">Verify against Cashfree</h2>
+                <p>{verifyRow.customer_name || verifyRow.customer_email || 'This entry'} · ₹{verifyRow.amount}</p>
+              </div>
+              <button className="admin-modal-close" onClick={() => setVerifyRow(null)} aria-label="Close">×</button>
+            </div>
+
+            <div className="admin-modal-body admin-addpay">
+              {verifyDone ? (
+                <>
+                  <div className="admin-note admin-note--ok">
+                    <b>Verified.</b> This row is now marked <b>Link · verified</b>.
+                  </div>
+                  {(verifyDone.changed?.amount || verifyDone.changed?.name) ? (
+                    <div className="admin-note admin-note--warn">
+                      <b>Cashfree disagreed with what was typed, and Cashfree wins:</b>
+                      <ul style={{ margin: '6px 0 0', paddingLeft: 18 }}>
+                        {verifyDone.changed.amount && (
+                          <li>Amount ₹{verifyDone.changed.amount.from.toLocaleString('en-IN')} → <b>₹{verifyDone.changed.amount.to.toLocaleString('en-IN')}</b></li>
+                        )}
+                        {verifyDone.changed.name && (
+                          <li>Name “{verifyDone.changed.name.from}” → <b>“{verifyDone.changed.name.to}”</b></li>
+                        )}
+                      </ul>
+                    </div>
+                  ) : (
+                    <p className="admin-addpay-help">Everything on the row matched what Cashfree holds.</p>
+                  )}
+                  <div className="admin-modal-foot">
+                    <button className="admin-btn admin-btn--primary" type="button"
+                      onClick={() => setVerifyRow(null)}>Done</button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p className="admin-addpay-help" style={{ marginTop: 0 }}>
+                    This entry was typed in by hand, so its amount has never been checked.
+                    Paste the Cashfree <b>Order ID</b> and it’ll be confirmed against the real
+                    payment — the amount and payer are replaced with Cashfree’s.
+                  </p>
+                  <label className="admin-field"><span>Cashfree Order ID</span>
+                    <input className="admin-search admin-mono-input" placeholder="order_1739…"
+                      value={verifyRef} autoFocus spellCheck="false"
+                      onChange={(e) => { setVerifyRef(e.target.value); setVerifyErr(''); }}
+                      onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); runExistingVerify(); } }} />
+                    {verifyRow.extra?.txn_id && (
+                      <em className="admin-field-hint">
+                        Recorded transaction ID: <b>{verifyRow.extra.txn_id}</b> — find it in
+                        Cashfree and copy the Order ID from that same row.
+                      </em>
+                    )}
+                  </label>
+                  {verifyErr && <div className="admin-note admin-note--bad">{verifyErr}</div>}
+                  <div className="admin-modal-foot">
+                    <button className="admin-btn" type="button" onClick={() => setVerifyRow(null)}>Cancel</button>
+                    <button className="admin-btn admin-btn--primary" type="button"
+                      onClick={runExistingVerify} disabled={verifyBusy || !verifyRef.trim()}>
+                      {verifyBusy ? 'Checking…' : 'Verify'}
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
       )}
 
       {adding && (

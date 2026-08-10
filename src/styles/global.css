@@ -3402,6 +3402,13 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .admin-lookup-ok { margin: 8px 0 0; font-size: 12.5px; font-weight: 600; color: var(--placed); }
 .admin-lookup-box.is-ok { background: rgba(29,158,117,0.09); }
 .admin-req { color: #c0392b; }
+.admin-modal--sm { width: min(460px, 100%); }
+/* An unverified badge is clickable — it's the entry point to fixing it. */
+.admin-badge--btn {
+  font: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer;
+  border: 1px solid rgba(186,117,23,0.4); padding: 3px 10px; border-radius: 999px;
+}
+.admin-badge--btn:hover { background: rgba(186,117,23,0.24); }
 .admin-linkbtn {
   background: none; border: 0; padding: 0; font: inherit; cursor: pointer;
   color: var(--specialist); font-weight: 600; text-decoration: underline;
