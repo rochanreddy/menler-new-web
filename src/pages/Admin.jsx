@@ -635,7 +635,7 @@ function UsersTab() {
   const [selected, setSelected] = useState(null);
   const [adding, setAdding] = useState(false);
   const [addForm, setAddForm] = useState({
-    name: '', email: '', phone: '', amount: '', program: '', otherProgram: '', paid_at: '', note: '',
+    name: '', email: '', phone: '', amount: '', program: '', otherProgram: '', paid_at: '', txn_id: '', note: '',
   });
   const [addErr, setAddErr] = useState('');
   const [saving, setSaving] = useState(false);
@@ -659,7 +659,7 @@ function UsersTab() {
   const closeAdd = () => {
     setAdding(false);
     setRef(''); setFound(null); setAddErr('');
-    setAddForm({ name: '', email: '', phone: '', amount: '', program: '', otherProgram: '', paid_at: '', note: '' });
+    setAddForm({ name: '', email: '', phone: '', amount: '', program: '', otherProgram: '', paid_at: '', txn_id: '', note: '', });
   };
 
   // Escape closes it, and the page behind stays put while it's open.
@@ -700,6 +700,7 @@ function UsersTab() {
         email: p.customer.email || f.email,
         phone: p.customer.phone || f.phone,
         amount: String(p.amount),
+        txn_id: p.cf_payment_id || f.txn_id,
         paid_at: p.paid_at ? new Date(p.paid_at).toISOString().slice(0, 10) : f.paid_at,
       }));
     } catch (err) {
@@ -956,6 +957,24 @@ function UsersTab() {
                 {found && Number(addForm.amount) !== found.payment.amount && (
                   <em className="admin-field-warn">
                     Cashfree says ₹{found.payment.amount.toLocaleString('en-IN')} was received.
+                  </em>
+                )}
+              </label>
+
+              <label className="admin-field">
+                <span>
+                  Cashfree Transaction ID
+                  {found ? <em className="admin-field-ok"> — filled in from Cashfree</em>
+                    : <span className="admin-muted"> — optional</span>}
+                </span>
+                <input className="admin-search admin-mono-input" placeholder="e.g. 5114772211"
+                  value={addForm.txn_id} readOnly={Boolean(found)}
+                  onChange={(e) => setF('txn_id', e.target.value)} />
+                {!found && (
+                  <em className="admin-field-hint">
+                    Copy it from the Cashfree dashboard so this row can be matched against a
+                    settlement later. To actually <b>verify</b> the payment, use the Order ID
+                    box above — Cashfree can’t look a payment up from this number alone.
                   </em>
                 )}
               </label>

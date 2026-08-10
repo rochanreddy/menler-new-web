@@ -552,7 +552,12 @@ router.post('/paid-users', requireAdmin, async (req, res) => {
           verified_via: verified.via,      // 'order' | 'link'
           cf_payment_id: p.cf_payment_id,
           payment_method: p.method,
-        } : {}),
+        } : {
+          // Typed by hand off the Cashfree dashboard. Kept separate from
+          // cf_payment_id so a number nobody checked never passes for one the
+          // gateway confirmed — the two are searchable either way.
+          ...(b.txn_id ? { txn_id: String(b.txn_id).trim() } : {}),
+        }),
         ...(b.note ? { note: String(b.note).trim() } : {}),
       },
     });
