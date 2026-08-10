@@ -149,8 +149,8 @@ export default defineType({
       description: 'Escape hatch: keep this campaign OUT of the Events page entirely (e.g. a test or internal campaign).',
     }),
     defineField({
-      name: 'eventImage', title: 'Event card image — no longer used', type: 'image', options: { hotspot: true }, group: 'events',
-      description: 'Not shown any more. Event cards are now drawn by the site from the title, tag, mentor photo and one of the three Menler brand colours, so the whole Events grid stays colour-coordinated. Nothing to do here — edit the title/tags/mentor instead.',
+      name: 'eventImage', title: 'Event card image (landing-page banner)', type: 'image', options: { hotspot: true }, group: 'events',
+      description: 'A capture of this campaign’s landing-page banner — shown as the card art on /events. Upload at EXACTLY 16:9 (e.g. 1408×792) so it fills the card with no bars or cropping. Leave blank and the card is drawn automatically from the title, mentor photo and a Menler brand colour.',
     }),
     defineField({
       name: 'eventTags', title: 'Event card tags (pills)', type: 'array', of: [{ type: 'string' }], group: 'events',

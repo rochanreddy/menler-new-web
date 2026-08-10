@@ -298,6 +298,15 @@ export default function KickstarterLanding() {
   const showCollege = activeSlug === 'turn-ai-into-your-career-advantage';
   const bannerCredLogos = (d.showCredLogosInBanner && sanityLogos) || BANNER_CRED_LOGOS[activeSlug];
   const certTitle = has(d.certificateTitle) ? d.certificateTitle : (CERT_TITLES[activeSlug] || heading);
+  // Signature line on the certificate mock-up: a real signature carries a short
+  // designation, not the full marketing credential ("AI Program & Ops Manager ,
+  // Interview Kickstart" → "AI Program & Ops Manager"). Take the part before
+  // the "|"; if that's still long, stop at the comma too. The full role stays
+  // everywhere else (banner, mentor section).
+  const certRole = (() => {
+    const r = String(d.mentorRole || '').split('|')[0].trim();
+    return r.length > 28 ? r.split(',')[0].trim() : r;
+  })();
 
   // Validate → verify the phone via SMS OTP (Amplifeed shows its own code-entry
   // UI) → submit the lead → go straight to checkout.
@@ -467,7 +476,7 @@ export default function KickstarterLanding() {
               ) : (
                 <div className="lp2-cert-mock">
                   <div className="lp2-cert-mock-top">
-                    <MenlerWordmark size={20} theme="light" tagline />
+                    <MenlerWordmark size={26} theme="light" tagline />
                     <span className="lp2-cert-seal">
                       <span className="lp2-cert-seal-star">★</span>
                       <span className="lp2-cert-seal-txt">MENLER<br />VERIFIED</span>
@@ -481,7 +490,7 @@ export default function KickstarterLanding() {
                   <div className="lp2-cert-foot">
                     <span className="lp2-cert-sign lp2-cert-sign--left">
                       <span className="lp2-cert-sign-name">{d.mentorName}</span>
-                      <span className="lp2-cert-sign-role">{d.mentorRole}</span>
+                      <span className="lp2-cert-sign-role">{certRole}</span>
                     </span>
                     {has(d.founderName) && (
                       <span className="lp2-cert-sign">

@@ -170,6 +170,9 @@ const toEvent = (c) => ({
   // The campaign's own landing-page accent — not painted directly, only used to
   // pick which brand colour the card art snaps to (see nearestBrand).
   accent: c.themeAccent || c.highlightBg || '',
+  // Real banner capture from the campaign's landing page (eventImage in Sanity).
+  // When present it IS the card art; the generated panel is the fallback.
+  thumbnail: c.eventImage || '',
   mentorName: c.mentorName || '', mentorRole: c.mentorRole || '', mentorPhoto: c.mentorPhoto || '',
   attendees: c.eventAttendees || '',
   resources: c.eventResources || [],
@@ -220,6 +223,7 @@ const EVENTS_QUERY = `*[_type == "campaignPage" && hideFromEvents != true] | ord
   bannerLine1, bannerLine2, bannerTagline, subtitle,
   date, time, themeAccent, highlightBg,
   mentorName, mentorRole, "mentorPhoto": mentorPhoto.asset->url,
+  "eventImage": eventImage.asset->url,
   isLiveEvent, eventTags, eventAttendees,
   eventResources[]{ title, "pdf": coalesce(file.asset->url, pdfPath) }
 }`;
@@ -310,6 +314,12 @@ function FitTitle({ text, max = TITLE_MAX, lines = 1 }) {
    sharp, weighs nothing, and picks up a campaign's title/mentor edits on its
    own. `tone` is the card's slot in the palette — see artTone. */
 function EventArt({ ev, tone }) {
+  // A real banner capture from the campaign's landing page beats anything we
+  // can draw — it's the exact visual the Join button lands on. The generated
+  // panel below is the fallback for campaigns with no capture yet.
+  if (ev.thumbnail) {
+    return <img className="ev-art-img" src={optImg(ev.thumbnail, 1000)} alt={ev.title} loading="lazy" decoding="async" />;
+  }
   // Who's teaching it is the strongest thing on the card, so the mentor photo is
   // composited into the art on live and past alike — the live panel just gives
   // it a narrower column (see .ev-card--live .ev-art-face) so the headline keeps

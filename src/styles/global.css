@@ -1956,7 +1956,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-cert-mock::after { content: ''; position: absolute; inset: 15px; border: 1px solid rgba(186,117,23,0.3); border-radius: 8px; pointer-events: none; }
 .lp2-cert-mock > * { position: relative; z-index: 1; }
 .lp2-cert-mock-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-.lp2-cert-mock-top .menler-wm__tagline { font-size: 0.34em; margin-top: 0.1em; line-height: 1.25; white-space: nowrap; }
+.lp2-cert-mock-top .menler-wm__tagline { font-size: 0.3em; margin-top: 0.12em; line-height: 1.25; white-space: nowrap; }
 .lp2-cert-mock-issued { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--a-dark); }
 .lp2-cert-mock-kicker { margin-top: 22px; display: flex; align-items: center; justify-content: center; flex-wrap: nowrap; font-size: 12px; font-weight: 800; letter-spacing: .22em; text-transform: uppercase; color: var(--a-dark); }
 .lp2-cert-mock-kicker::before, .lp2-cert-mock-kicker::after { content: ''; flex: 0 0 auto; width: 22px; height: 1px; margin: 0 10px; background: var(--a); opacity: .55; }
@@ -1965,21 +1965,26 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .lp2-cert-mock-kicker::before, .lp2-cert-mock-kicker::after { width: 14px; margin: 0 7px; }
   /* Smaller menler logo on the certificate (the size prop sets font-size inline,
      so this needs !important to win on mobile). */
-  .lp2-cert-mock-top .menler-wm { font-size: 15px !important; }
+  .lp2-cert-mock-top .menler-wm { font-size: 18px !important; }
 }
 .lp2-cert-mock-to { margin-top: 16px; font-size: 12px; color: var(--text-muted); font-style: italic; }
 .lp2-cert-mock-name { font-family: 'DM Serif Display', serif; font-size: clamp(26px, 5vw, 34px); color: var(--ink); margin: 6px 0 0; }
 .lp2-cert-rule { display: block; width: 190px; height: 1px; margin: 12px auto 0; background: linear-gradient(90deg, transparent, var(--a), transparent); }
 .lp2-cert-mock-for { margin-top: 14px; font-size: 12px; line-height: 1.6; color: var(--ink); }
-.lp2-cert-mock-for b { color: var(--ink); font-weight: 700; }
+/* The course name is the certificate's subject — step it up from the 12px
+   lead-in so the hierarchy reads name → course → everything else. */
+.lp2-cert-mock-for b { color: var(--ink); font-weight: 700; font-size: 15px; display: inline-block; margin-top: 2px; }
 .lp2-cert-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 28px; gap: 16px; }
 .lp2-cert-seal { flex-shrink: 0; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; width: 66px; height: 66px; border-radius: 50%; background: radial-gradient(circle at 50% 24%, rgba(255,255,255,0.6), rgba(255,255,255,0) 56%), linear-gradient(155deg, #F6C457 0%, #BA7517 100%); color: #fff; box-shadow: 0 8px 20px rgba(186,117,23,0.42), inset 0 1px 2px rgba(255,255,255,0.5); border: 2px solid rgba(255,255,255,0.9); }
 .lp2-cert-seal-star { font-size: 18px; line-height: 1; }
 .lp2-cert-seal-txt { font-size: 7px; font-weight: 800; letter-spacing: .08em; line-height: 1.15; margin-top: 3px; }
-.lp2-cert-sign { display: inline-flex; flex-direction: column; align-items: flex-end; text-align: right; }
-.lp2-cert-sign--left { align-items: flex-start; text-align: left; }
-.lp2-cert-sign-name { font-family: 'DM Serif Display', serif; font-size: 17px; color: var(--ink); border-bottom: 1px solid rgba(38,33,92,0.3); padding: 0 6px 4px; }
-.lp2-cert-sign-role { font-size: 9.5px; color: var(--text-muted); margin-top: 5px; }
+/* Each signature is internally CENTRED — the name sits over a rule that spans
+   the whole block (name + role alike), so a role line longer than the name no
+   longer overhangs a too-short underline. The blocks themselves stay pinned
+   left/right by the foot's space-between. */
+.lp2-cert-sign { display: inline-flex; flex-direction: column; align-items: center; text-align: center; max-width: 230px; }
+.lp2-cert-sign-name { font-family: 'DM Serif Display', serif; font-size: 17px; color: var(--ink); border-bottom: 1px solid rgba(38,33,92,0.3); padding: 0 10px 4px; width: 100%; box-sizing: border-box; }
+.lp2-cert-sign-role { font-size: 10.5px; line-height: 1.4; color: var(--text-muted); margin-top: 5px; }
 .lp2-cert-note { font-size: 12.5px; color: var(--text-muted); }
 @media (max-width: 560px) {
   /* Compact the certificate into a shorter, wider (landscape) card on mobile —
@@ -1996,10 +2001,10 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .lp2-cert-mock-name { font-size: clamp(16px, 5vw, 21px); }
   .lp2-cert-rule { width: 130px; margin-top: 8px; }
   .lp2-cert-mock-for { margin-top: 9px; font-size: 10px; line-height: 1.45; }
+  .lp2-cert-mock-for b { font-size: 12px; }
   .lp2-cert-foot { flex-direction: row; align-items: flex-end; justify-content: space-between; gap: 10px; margin-top: 14px; }
-  .lp2-cert-sign { align-items: flex-end; text-align: right; }
-  .lp2-cert-sign--left { align-items: flex-start; text-align: left; }
-  .lp2-cert-sign-name { font-size: 10.5px; padding: 0 4px 3px; }
+  .lp2-cert-sign { max-width: 46%; }
+  .lp2-cert-sign-name { font-size: 10.5px; padding: 0 6px 3px; }
   .lp2-cert-sign-role { font-size: 8px; margin-top: 3px; }
   .lp2-cert-mock-top .menler-wm { font-size: 15px !important; }
   .lp2-cert-mock-top .menler-wm__tagline { font-size: 0.32em; white-space: normal; max-width: 140px; }
@@ -3638,12 +3643,19 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 /* ── Live events: full-width HORIZONTAL card (art left · details right) ── */
 .ev-grid--live { grid-template-columns: 1fr; max-width: 980px; }
 .ev-card--live { flex-direction: row; align-items: center; }
-/* The art is an inset, rounded 16:9 panel on the left of the horizontal card. */
-.ev-card--live .ev-art {
+/* Both art variants — a real banner capture and the generated fallback —
+   render as the SAME inset, rounded 16:9 panel on the left of the horizontal
+   card, so live cards look identical whichever one a campaign has. */
+.ev-card--live .ev-art,
+.ev-card--live .ev-art-img {
   width: 42%; flex-shrink: 0; align-self: center;
   margin: 16px; border-radius: 14px;
   aspect-ratio: 16 / 9; height: auto;
 }
+/* Captures are shot at exactly 16:9 (the banner is forced to 396px at capture
+   time), so cover fills the panel edge-to-edge with nothing cropped — no
+   letterbox bars. The cloud fill only ever shows while the image loads. */
+.ev-card--live .ev-art-img { object-fit: cover; background: var(--cloud); }
 .ev-card--live .ev-art--gen { justify-content: center; padding: 26px 24px; min-height: 0; }
 .ev-card--live .ev-art--gen .ev-art-title { max-width: 82%; }
 .ev-card--live .ev-art--face .ev-art-title { max-width: 62%; }
@@ -3656,8 +3668,10 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
   .ev-card--live { flex-direction: column; align-items: stretch; }
   .ev-card--live .ev-body { width: 100%; padding: 4px 20px 20px; }
   .ev-card--live .ev-title { font-size: 22px; }
-  .ev-card--live .ev-art { width: calc(100% - 32px); margin: 16px 16px 0; }
+  .ev-card--live .ev-art,
+  .ev-card--live .ev-art-img { width: calc(100% - 32px); margin: 16px 16px 0; }
 }
+.ev-art-img { display: block; width: 100%; height: auto; }
 
 /* ── "Coming soon" poster (Live section, nothing live) ── */
 /* Same pill as .ev-live-dot, recoloured to the site purple, with a slow-pulsing
@@ -3678,7 +3692,9 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 @media (max-width: 880px) { .ev-grid--past { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .ev-grid--past { grid-template-columns: 1fr; } }
 
-/* One fixed 16:9 well for every past card, so the row lines up. */
+/* One fixed 16:9 well for every past card, so the row lines up — captures are
+   shot at exactly 16:9 (see the live rule), so cover fills it with no bars. */
+.ev-card--past .ev-art-img { width: 100%; aspect-ratio: 16 / 9; height: auto; object-fit: cover; background: var(--cloud); }
 .ev-card--past .ev-art--gen { aspect-ratio: 16 / 9; min-height: 0; }
 /* The past card's art headline gets barely half the panel (the mentor photo has
    the rest), so it can't share the live card's type size — at 27px it fitted
