@@ -813,10 +813,15 @@ function UsersTab() {
 
       {sum.unverified > 0 && (
         <div className="admin-note admin-note--warn">
-          <b>{sum.unverified} entr{sum.unverified === 1 ? 'y was' : 'ies were'} added by hand before Cashfree
-          checking existed.</b>{' '}
-          Those amounts have never been confirmed against Cashfree, so they may not match what was
-          actually received. They’re marked <b>Link · unverified</b> in the table below.
+          <b>{sum.unverified} payment{sum.unverified === 1 ? '' : 's'} in this list {sum.unverified === 1 ? 'was' : 'were'} typed
+          in by hand and never checked.</b>{' '}
+          Those amounts may not match what Cashfree actually received. In the <b>Via</b> column
+          below, look for the amber{' '}
+          <span className="admin-verifybtn admin-verifybtn--inline">
+            <span className="admin-verifybtn-dot" aria-hidden="true" />Unverified
+            <span className="admin-verifybtn-cta">Verify&nbsp;→</span>
+          </span>{' '}
+          marker and click it — each one checks itself against Cashfree and corrects the row.
         </div>
       )}
 
@@ -860,12 +865,15 @@ function UsersTab() {
                     : r.extra?.verified
                       ? <span className="admin-badge admin-badge--ok" title={`Checked against Cashfree${r.extra.verified_at ? ' on ' + fmtDate(r.extra.verified_at) : ''}`}>Link · verified</span>
                       : (
-                        // The badge is also the fix: check the row against
-                        // Cashfree from here rather than deleting and re-adding.
-                        <button type="button" className="admin-badge admin-badge--warn admin-badge--btn"
-                          title="Never checked against Cashfree — click to verify it now"
+                        // The badge is also the fix, so it has to read as a
+                        // control: a verb, an arrow, and a button's affordances.
+                        // "unverified" alone states a problem and offers nothing.
+                        <button type="button" className="admin-verifybtn"
+                          title="This amount was typed in, not confirmed. Click to check it against Cashfree."
                           onClick={(e) => { e.stopPropagation(); openVerify(r); }}>
-                          Link · unverified ↻
+                          <span className="admin-verifybtn-dot" aria-hidden="true" />
+                          Unverified
+                          <span className="admin-verifybtn-cta">Verify&nbsp;→</span>
                         </button>
                       )}
                 </td>
