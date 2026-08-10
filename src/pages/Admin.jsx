@@ -7,6 +7,19 @@ import Seo from '../components/common/Seo';
  * only the pack is charged), so they're spelled out here with the same slugs
  * the checkout uses — otherwise a hand-added library sale wouldn't group with
  * the ones that came through the website. */
+/* Cohort programmes run month by month, so a batch is meaningful for them.
+ * A ₹49 library download or a ₹99 pack has no cohort, and demanding one would
+ * just get a wrong month picked to clear the form. */
+/** "2026-08" -> "Aug 2026". Falls back to the raw value rather than crashing. */
+const monthLabel = (m) => {
+  if (!/^d{4}-d{2}$/.test(m || '')) return m || '—';
+  const [y, mo] = m.split('-');
+  return new Date(Number(y), Number(mo) - 1, 1)
+    .toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+};
+
+const COHORT_COURSES = new Set(['kickstarter', 'generalist', 'generalist-6w', 'engineering']);
+
 const COURSE_OPTIONS = [
   { key: 'kickstarter', label: 'Gen AI Kickstarter', amount: 4999 },
   { key: 'generalist', label: 'Claude AI Generalist Fellowship', amount: 59999 },
@@ -636,13 +649,14 @@ function LeadsTab() {
 
 function UsersTab() {
   const [search, setSearch] = useState('');
+  const [batch, setBatch] = useState('');
   const [page, setPage] = useState(1);
   const [data, setData] = useState({ rows: [], total: 0, page: 1, limit: 25 });
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
   const [adding, setAdding] = useState(false);
   const [addForm, setAddForm] = useState({
-    name: '', email: '', phone: '', amount: '', program: '', otherProgram: '', paid_at: '', txn_id: '', note: '',
+    name: '', email: '', phone: '', amount: '', program: '', otherProgram: '', paid_at: '', batch: '', txn_id: '', note: '',
   });
   const [addErr, setAddErr] = useState('');
   const [saving, setSaving] = useState(false);
@@ -659,11 +673,11 @@ function UsersTab() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      setData(await adminApi.getPaidUsers({ search, page, limit: 25 }));
+      setData(await adminApi.getPaidUsers({ search, batch, page, limit: 25 }));
     } finally {
       setLoading(false);
     }
-  }, [search, page]);
+  }, [search, batch, page]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -672,7 +686,7 @@ function UsersTab() {
   const closeAdd = () => {
     setAdding(false);
     setRef(''); setFound(null); setAddErr(''); setManualMode(false);
-    setAddForm({ name: '', email: '', phone: '', amount: '', program: '', otherProgram: '', paid_at: '', txn_id: '', note: '', });
+    setAddForm({ name: '', email: '', phone: '', amount: '', program: '', otherProgram: '', paid_at: '', batch: '', txn_id: '', note: '', });
   };
 
   // Escape closes it, and the page behind stays put while it's open.
@@ -784,6 +798,7 @@ function UsersTab() {
   };
 
   const sum = data.summary || {};
+  const cohortCourse = COHORT_COURSES.has(addForm.program);
   // Reuse the programme names already in use, so the same thing doesn't end up
   // recorded three ways ("library", "Library", "libary") and split the reports.
   const programOptions = [...new Set(
@@ -833,8 +848,18 @@ function UsersTab() {
           value={search}
           onChange={(e) => { setPage(1); setSearch(e.target.value); }}
         />
+        <select className="admin-search" style={{ flex: '0 0 210px', minWidth: 170 }}
+          value={batch} onChange={(e) => { setPage(1); setBatch(e.target.value); }}>
+          <option value="">All batches</option>
+          {(data.batches || []).map((b) => (
+            <option key={b.batch} value={b.batch}>
+              {monthLabel(b.batch)} — {b.count} · ₹{b.revenue.toLocaleString('en-IN')}
+            </option>
+          ))}
+          {data.unbatched > 0 && <option value="none">No batch set — {data.unbatched}</option>}
+        </select>
         <button className="admin-btn admin-btn--primary" onClick={() => { setAddErr(''); setAdding(true); }}>+ Record a payment</button>
-        <button className="admin-btn" onClick={() => adminApi.downloadCsv('paid', { search })}>
+        <button className="admin-btn" onClick={() => adminApi.downloadCsv('paid', { search, batch })}>
           ⭳ Export CSV
         </button>
       </div>
@@ -844,13 +869,13 @@ function UsersTab() {
           <thead>
             <tr>
               <th>Name</th><th>Email</th><th>Phone</th>
-              <th>Program</th><th>Amount</th><th>Via</th><th>Paid on</th><th />
+              <th>Program</th><th>Batch</th><th>Amount</th><th>Via</th><th>Paid on</th><th />
             </tr>
           </thead>
           <tbody>
-            {loading && <tr><td colSpan={8} className="admin-empty">Loading…</td></tr>}
+            {loading && <tr><td colSpan={9} className="admin-empty">Loading…</td></tr>}
             {!loading && data.rows.length === 0 && (
-              <tr><td colSpan={8} className="admin-empty">No paid users yet.</td></tr>
+              <tr><td colSpan={9} className="admin-empty">No paid users yet.</td></tr>
             )}
             {!loading && data.rows.map((r) => (
               <tr key={r._id} onClick={() => setSelected(r)}>
@@ -858,6 +883,21 @@ function UsersTab() {
                 <td>{dash(r.customer_email)}</td>
                 <td>{dash(r.customer_phone)}</td>
                 <td><span className="admin-pill">{dash(r.program)}</span></td>
+                <td>
+                  {/* Editable in place: the website never asks which cohort
+                      someone is joining, so gateway rows arrive without one. */}
+                  <input
+                    type="month"
+                    className="admin-batchcell"
+                    value={r.extra?.batch || ''}
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={async (e) => {
+                      e.stopPropagation();
+                      try { await adminApi.setBatch(r._id, e.target.value); load(); }
+                      catch (err) { window.alert(err.message || 'Could not set the batch.'); }
+                    }}
+                  />
+                </td>
                 <td><b>₹{r.amount}</b></td>
                 <td>
                   {!r.extra?.manual
@@ -900,6 +940,7 @@ function UsersTab() {
             ['Email', selected.customer_email],
             ['Phone', selected.customer_phone],
             ['Program', selected.program],
+            ['Batch', selected.extra?.batch ? monthLabel(selected.extra.batch) : 'not set'],
             ['Amount', `₹${selected.amount}`],
             ['Status', selected.status],
             ['Via', selected.extra?.manual
@@ -1100,6 +1141,16 @@ function UsersTab() {
                   <input className="admin-search" type="date" value={addForm.paid_at} readOnly={Boolean(found)}
                     onChange={(e) => setF('paid_at', e.target.value)} />
                 </label>
+                <label className="admin-field">
+                  <span>Batch month {cohortCourse && <span className="admin-req">*</span>}</span>
+                  <input className="admin-search" type="month" value={addForm.batch}
+                    required={cohortCourse}
+                    onChange={(e) => setF('batch', e.target.value)} />
+                  <em className="admin-field-hint">
+                    Which monthly cohort they’re joining. Not the same as when they paid —
+                    someone paying late in August can still start in September.
+                  </em>
+                </label>
               </div>
 
               <label className="admin-field"><span>Course / what they paid for *</span>
@@ -1110,6 +1161,11 @@ function UsersTab() {
                     // Fill the usual price, still editable for part payments.
                     const known = COURSE_OPTIONS.find((c) => c.key === v);
                     if (known && !found) setF('amount', String(known.amount));
+                    // Suggest the month they paid in — right most of the time,
+                    // and a wrong suggestion is easier to correct than a blank.
+                    if (COHORT_COURSES.has(v) && !addForm.batch) {
+                      setF('batch', (addForm.paid_at || new Date().toISOString().slice(0, 10)).slice(0, 7));
+                    }
                   }}>
                   <option value="">Select a course…</option>
                   {COURSE_OPTIONS.map((c) => (

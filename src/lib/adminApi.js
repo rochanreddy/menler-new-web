@@ -84,6 +84,8 @@ export const adminApi = {
   verifyPayment: (reference) => api('/admin/paid-users/verify', { method: 'POST', body: { reference } }),
   verifyExisting: (id, reference) =>
     api(`/admin/paid-users/${encodeURIComponent(id)}/verify`, { method: 'POST', body: { reference } }),
+  setBatch: (id, batch) =>
+    api(`/admin/paid-users/${encodeURIComponent(id)}/batch`, { method: 'PATCH', body: { batch } }),
   addPaidUser: (body) => api('/admin/paid-users', { method: 'POST', body }),
   deletePaidUser: (id) => api(`/admin/paid-users/${encodeURIComponent(id)}`, { method: 'DELETE' }),
 

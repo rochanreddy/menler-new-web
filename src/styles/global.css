@@ -3435,6 +3435,17 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 
 /* The same marker shown inside the banner, so what to look for is the thing
    itself rather than a description of it. Not a control here. */
+/* Batch is editable straight from the row — it reads as text until you go near
+   it, so a column of month pickers doesn't shout over the data beside it. */
+.admin-batchcell {
+  width: 132px; padding: 5px 8px; font-size: 12.5px; font-family: inherit;
+  border: 1px solid transparent; border-radius: 8px;
+  background: transparent; color: var(--ink); cursor: pointer;
+}
+.admin-batchcell:hover { border-color: var(--border); background: var(--white); }
+.admin-batchcell:focus { outline: none; border-color: var(--specialist); background: var(--white); }
+.admin-batchcell:invalid, .admin-batchcell:not(:valid) { color: var(--text-muted); }
+
 .admin-verifybtn--inline { cursor: default; vertical-align: middle; }
 .admin-verifybtn--inline:hover { background: rgba(186,117,23,0.12); border-color: rgba(186,117,23,0.45); }
 .admin-linkbtn {

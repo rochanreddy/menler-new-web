@@ -373,9 +373,21 @@ function paidFilter(query) {
       { customer_name: rx }, { customer_email: rx }, { customer_phone: rx },
       { program: rx }, { order_id: rx },
       { 'extra.cf_payment_id': rx }, { 'extra.txn_id': rx },
+      { 'extra.batch': rx },
     ];
   }
+  // Cohorts run month by month, so "who's in the August batch" is the question
+  // this list gets asked most — it deserves a filter of its own rather than
+  // relying on a date range that a late payment would fall outside.
+  const batch = (query.batch || '').trim();
+  if (batch) filter['extra.batch'] = batch === 'none' ? { $in: [null, ''] } : batch;
   return filter;
+}
+
+/** A YYYY-MM month, or '' — anything else is refused rather than stored. */
+function cleanBatch(value) {
+  const s = String(value || '').trim();
+  return /^\d{4}-(0[1-9]|1[0-2])$/.test(s) ? s : '';
 }
 
 router.get('/paid-users', requireAdmin, async (req, res) => {
@@ -430,11 +442,23 @@ router.get('/paid-users', requireAdmin, async (req, res) => {
       },
     ]);
 
+    // Every batch that exists, ignoring the batch filter itself — otherwise
+    // picking one would empty the dropdown you picked it from.
+    const batchAgg = await Order.aggregate([
+      { $match: { ...paidFilter({ search: req.query.search }) } },
+      { $group: { _id: '$extra.batch', n: { $sum: 1 }, revenue: { $sum: '$amount' } } },
+      { $sort: { _id: -1 } },
+    ]);
+
     res.json({
       rows,
       total,
       page,
       limit,
+      batches: batchAgg
+        .filter((b) => b._id)
+        .map((b) => ({ batch: b._id, count: b.n, revenue: b.revenue })),
+      unbatched: batchAgg.find((b) => !b._id)?.n || 0,
       summary: {
         revenue: agg?.revenue || 0,
         count: agg?.count || 0,
@@ -558,6 +582,9 @@ router.post('/paid-users', requireAdmin, async (req, res) => {
       customer_phone: phone,
       extra: {
         manual: true,
+        // Which monthly cohort this person is in. Free-standing from paid_at,
+        // because someone paying late in August can still belong to September.
+        ...(cleanBatch(b.batch) ? { batch: cleanBatch(b.batch) } : {}),
         ...(verified ? {
           verified: true,
           verified_at: new Date(),
@@ -656,6 +683,27 @@ router.post('/paid-users/:id/verify', requireAdmin, async (req, res) => {
   }
 });
 
+/* Set or clear a row's batch month. Allowed on gateway orders too — the
+ * website never asks which cohort someone is joining, so this is the only
+ * place that information can be attached. */
+router.patch('/paid-users/:id/batch', requireAdmin, async (req, res) => {
+  try {
+    const raw = String(req.body?.batch || '').trim();
+    const batch = cleanBatch(raw);
+    if (raw && !batch) return res.status(400).json({ error: 'Give the batch as a month, e.g. 2026-08.' });
+
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ error: 'Not found.' });
+    order.extra = { ...(order.extra || {}), ...(batch ? { batch } : { batch: '' }) };
+    order.markModified('extra');
+    await order.save();
+    res.json({ ok: true, batch });
+  } catch (err) {
+    console.error('admin paid-users batch error', err);
+    res.status(500).json({ error: 'Could not set the batch.' });
+  }
+});
+
 // Remove a MANUAL entry (typo fix). Gateway-confirmed orders can't be deleted.
 router.delete('/paid-users/:id', requireAdmin, async (req, res) => {
   try {
@@ -680,11 +728,13 @@ router.get('/paid-users/export.csv', requireAdmin, async (req, res) => {
       { key: 'customer_email', label: 'Email' },
       { key: 'customer_phone', label: 'Phone' },
       { key: 'program', label: 'Program' },
+      { label: 'Batch', get: (r) => r.extra?.batch || '' },
       { key: 'amount', label: 'Amount' },
       { key: 'order_id', label: 'Order ID' },
       { label: 'Transaction ID', get: (r) => r.extra?.cf_payment_id || r.extra?.txn_id || '' },
       { label: 'Paid at', get: (r) => (r.paid_at ? new Date(r.paid_at).toISOString() : '') },
       { label: 'Manual', get: (r) => (r.extra?.manual ? 'yes' : '') },
+      { label: 'Verified', get: (r) => (r.extra?.verified ? 'yes' : '') },
       { label: 'Note', get: (r) => r.extra?.note || '' },
     ], rows);
     sendCsv(res, 'menler-paid-users.csv', csv);
