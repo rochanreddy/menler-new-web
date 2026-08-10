@@ -309,6 +309,16 @@ export default function KickstarterLanding() {
     const r = String(d.mentorRole || '').split('|')[0].trim();
     return r.length > 28 ? r.split(',')[0].trim() : r;
   })();
+  // Digital signatures on the certificate mock — the scans in public/sign/,
+  // background-stripped and recoloured to the certificate ink (see the
+  // *-digital.png files). Matched by signer name; unknown names simply sign
+  // with the printed name alone, as before.
+  const CERT_SIGNS = {
+    'deepak kerkar': '/sign/deepak-digital.png',
+    'sridevi edupuganti': '/sign/sridevi-digital.png',
+    'sachin roy': '/sign/sachin-digital.png',
+  };
+  const signImg = (name) => CERT_SIGNS[String(name || '').trim().toLowerCase()] || '';
 
   // Validate → verify the phone via SMS OTP (Amplifeed shows its own code-entry
   // UI) → submit the lead → go straight to checkout.
@@ -490,13 +500,20 @@ export default function KickstarterLanding() {
                   <span className="lp2-cert-rule" />
                   <p className="lp2-cert-mock-for">for successfully completing<br /><b>{certTitle}</b></p>
                   <div className="lp2-cert-foot">
+                    {/* The signature IS the name — the digital sign replaces the
+                        printed name entirely; signers without a scan on file
+                        fall back to the printed name as before. */}
                     <span className="lp2-cert-sign lp2-cert-sign--left">
-                      <span className="lp2-cert-sign-name">{d.mentorName}</span>
+                      {signImg(d.mentorName)
+                        ? <img className="lp2-cert-sign-img" src={signImg(d.mentorName)} alt={d.mentorName} />
+                        : <span className="lp2-cert-sign-name">{d.mentorName}</span>}
                       <span className="lp2-cert-sign-role">{certRole}</span>
                     </span>
                     {has(d.founderName) && (
                       <span className="lp2-cert-sign">
-                        <span className="lp2-cert-sign-name">{d.founderName}</span>
+                        {signImg(d.founderName)
+                          ? <img className="lp2-cert-sign-img" src={signImg(d.founderName)} alt={d.founderName} />
+                          : <span className="lp2-cert-sign-name">{d.founderName}</span>}
                         <span className="lp2-cert-sign-role">{d.founderRole}</span>
                       </span>
                     )}
