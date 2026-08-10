@@ -88,6 +88,75 @@ const eventIsOver = (ev) => {
   return dayEnd.getTime() <= Date.now();
 };
 
+/* ── Card art colour system ───────────────────────────────────────────────────
+   Every event card is drawn by the site (see EventArt) in ONE of Menler's three
+   brand colours — the same trio the programs use: Specialist purple, Menler
+   amber, Placed green. `tint` is the light end of each, for anything sitting ON
+   the dark art (the wordmark rule, the tag line) where the full-strength colour
+   would be too dark to read. */
+const BRAND_ART = [
+  { accent: '#534AB7', tint: '#B7AEFF' }, // Specialist purple
+  { accent: '#BA7517', tint: '#F0C078' }, // Menler amber
+  { accent: '#1D9E75', tint: '#7ADCBB' }, // Placed green
+];
+
+const rgb = (hex) => {
+  const m = /^#?([0-9a-f]{6})$/i.exec(String(hex || '').trim());
+  if (!m) return null;
+  const n = parseInt(m[1], 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+};
+
+// Which brand colour a campaign is closest to. Campaigns choose a free-form
+// themeAccent for their own landing page, so the card can't use it literally —
+// but it CAN be snapped to the nearest brand colour, which is what keeps a card
+// and the page behind its Join button in the same colour family instead of the
+// click throwing you from a purple card onto an amber page. Nearest by plain
+// squared RGB distance; a campaign with no accent set returns null and falls
+// back to position (see toneOrder).
+const nearestBrand = (hex) => {
+  const c = rgb(hex);
+  if (!c) return null;
+  let best = 0;
+  let bestD = Infinity;
+  BRAND_ART.forEach((b, i) => {
+    const t = rgb(b.accent);
+    const d = (c[0] - t[0]) ** 2 + (c[1] - t[1]) ** 2 + (c[2] - t[2]) ** 2;
+    if (d < bestD) { bestD = d; best = i; }
+  });
+  return best;
+};
+
+// LIVE cards colour-MATCH their campaign. "Join masterclass" opens that
+// campaign's landing page, so an arbitrary colour here makes the click read as
+// a jump to a different site — an amber page should be reached from an amber
+// card. Each card asks for its nearest brand colour and only gives it up if the
+// card directly above it in the rail already took it.
+const liveTones = (list) => {
+  const picked = [];
+  list.forEach((ev, i) => {
+    const want = nearestBrand(ev.accent) ?? i % BRAND_ART.length;
+    const above = i > 0 ? picked[i - 1] : -1;
+    picked.push(want === above ? (want + 1) % BRAND_ART.length : want);
+  });
+  return picked.map((t) => BRAND_ART[t]);
+};
+
+// PAST cards rotate instead. Their button opens a download modal — there's no
+// page behind it to match — so what matters is that the grid is evenly spread
+// across the three colours, and matching would NOT do that: four of the current
+// campaigns share one navy accent, which collapsed the whole wall onto two
+// colours with a single green in it.
+//
+// The rotation runs straight down the columns, so on desktop each column is a
+// single colour — purple, green, amber, left to right. Reading a grid one
+// column at a time is easier when the column itself is the constant; the eye
+// gets a fixed lane per colour instead of re-deciding at every card. The same
+// cycle still works when the grid reflows: at 2-up it lands 0,1 / 2,0 / 1,2 and
+// stacked it's 0,1,2 — no two cards of one colour ever touch at any width.
+const PAST_LANES = [BRAND_ART[0], BRAND_ART[2], BRAND_ART[1]]; // purple · green · amber
+const pastTone = (i) => PAST_LANES[i % PAST_LANES.length];
+
 // Map a raw campaign doc → the shape the cards render. One place, so the query,
 // the fallback and the cards never drift.
 const toEvent = (c) => ({
@@ -98,8 +167,9 @@ const toEvent = (c) => ({
   tags: c.eventTags || [],
   date: formatEventDate(c.date), time: c.time || '',
   campaignSlug: c.slug || '',
-  accent: c.themeAccent || c.highlightBg || '#534AB7',
-  thumbnail: c.eventImage || '',
+  // The campaign's own landing-page accent — not painted directly, only used to
+  // pick which brand colour the card art snaps to (see nearestBrand).
+  accent: c.themeAccent || c.highlightBg || '',
   mentorName: c.mentorName || '', mentorRole: c.mentorRole || '', mentorPhoto: c.mentorPhoto || '',
   attendees: c.eventAttendees || '',
   resources: c.eventResources || [],
@@ -128,7 +198,7 @@ const FALLBACK = [
     bannerLine1: 'Build Your', bannerLine2: 'Portfolio with Claude',
     bannerTagline: 'Build projects that recruiters actually notice — live, hands-on.',
     eventTags: ['Portfolio Projects', 'Case Studies', 'Personal Brand'],
-    date: '25th Jul, 2026', time: '7:00 – 9:00 PM IST', themeAccent: '#2563EB',
+    date: '25th Jul, 2026', time: '7:00 – 9:00 PM IST',
     mentorName: 'Sridevi Edupuganti', mentorRole: 'Co-Founder, Zenithworks AI', mentorPhoto: '/mentors/sridevi.png',
   },
   {
@@ -136,7 +206,7 @@ const FALLBACK = [
     bannerLine1: 'Turn Messy Data', bannerLine2: 'Into Clear Decisions',
     bannerTagline: 'How analysts use Claude to turn raw data into decisions leaders trust.',
     eventTags: ['Claude for Analysts'],
-    date: '19th Jul, 2026', time: '2:00 – 3:30 PM IST', themeAccent: '#1D9E75',
+    date: '19th Jul, 2026', time: '2:00 – 3:30 PM IST',
     mentorName: 'Manish Yadav', mentorRole: 'AI Service Business Analyst',
     eventAttendees: '500+',
     eventResources: [{ title: 'Prompt Library', pdf: '/pdfs/Menler_100_Prompts_Playbook.pdf' }],
@@ -150,7 +220,6 @@ const EVENTS_QUERY = `*[_type == "campaignPage" && hideFromEvents != true] | ord
   bannerLine1, bannerLine2, bannerTagline, subtitle,
   date, time, themeAccent, highlightBg,
   mentorName, mentorRole, "mentorPhoto": mentorPhoto.asset->url,
-  "eventImage": eventImage.asset->url,
   isLiveEvent, eventTags, eventAttendees,
   eventResources[]{ title, "pdf": coalesce(file.asset->url, pdfPath) }
 }`;
@@ -173,14 +242,23 @@ const ClockIcon = () => (
 );
 
 /* A title that spills a single word onto a second line ("…Career / Advantage")
-   reads as broken, so the card title always stays on ONE line. CSS can't size
-   text to its container, so measure it: step the font down from `max` until the
-   title fits. TITLE_MIN is the floor — the CSS ellipsis catches anything still
-   too long rather than wrapping. Re-runs on resize, since card width drives it. */
+   reads as broken, so a compact PAST card keeps its title on ONE line. CSS can't
+   size text to its container, so measure it: step the font down from `max` until
+   the title fits. TITLE_MIN is the floor — the CSS ellipsis catches anything
+   still too long rather than wrapping. Re-runs on resize, since card width
+   drives it.
+
+   LIVE cards get `lines={2}` instead. They're the widest card on the page and
+   they carry the longest headlines ("Crack your next High Paying Job with AI"),
+   which on one line would have to shrink past the 15px subtitle below them —
+   the headline ending up smaller than its own supporting copy. Given two
+   balanced lines the same title holds full size, so the live card keeps its
+   type hierarchy. The fit then measures HEIGHT against the line budget rather
+   than width. */
 const TITLE_MAX = 21;       // past cards
-const LIVE_TITLE_MAX = 25;  // live cards start larger (see .ev-card--live .ev-title)
+const LIVE_TITLE_MAX = 27;  // live cards start larger (see .ev-card--live .ev-title)
 const TITLE_MIN = 13;
-function FitTitle({ text, max = TITLE_MAX }) {
+function FitTitle({ text, max = TITLE_MAX, lines = 1 }) {
   const ref = useRef(null);
   useLayoutEffect(() => {
     const el = ref.current;
@@ -190,8 +268,21 @@ function FitTitle({ text, max = TITLE_MAX }) {
       if (!alive) return;
       let size = max;
       el.style.fontSize = `${size}px`;
+      if (lines > 1) {
+        // Wrapped: shrink until the text fits inside `lines` line-boxes. The
+        // cap has to lift before measuring, or scrollHeight would be clipped to
+        // the previous size's budget and every title would look like it fits.
+        const budget = () => (parseFloat(getComputedStyle(el).lineHeight) || size * 1.2) * lines;
+        el.style.maxHeight = 'none';
+        while (size > TITLE_MIN && el.scrollHeight > budget() + 1) {
+          size -= 0.5;
+          el.style.fontSize = `${size}px`;
+        }
+        el.style.maxHeight = `${budget()}px`;
+        return;
+      }
       // scrollWidth only exceeds clientWidth while the text is nowrap, which is
-      // the element's permanent state (see the .ev-title rules in global.css).
+      // a one-line title's permanent state (see .ev-title in global.css).
       while (size > TITLE_MIN && el.scrollWidth > el.clientWidth) {
         size -= 0.5;
         el.style.fontSize = `${size}px`;
@@ -207,30 +298,37 @@ function FitTitle({ text, max = TITLE_MAX }) {
     const ro = el.parentElement ? new ResizeObserver(fit) : null;
     ro?.observe(el.parentElement);
     return () => { alive = false; ro?.disconnect(); };
-  }, [text, max]);
-  return <h3 className="ev-title" ref={ref}>{text}</h3>;
+  }, [text, max, lines]);
+  return <h3 className={`ev-title${lines > 1 ? ' ev-title--wrap' : ''}`} ref={ref}>{text}</h3>;
 }
 
-/* ── Auto-generated card art (no image upload needed) ────────────────────── */
-function EventArt({ ev }) {
-  const accent = ev.accent || '#534AB7';
-  // Uploaded thumbnails are full campaign banners (wide). Render them as a real
-  // <img> at natural aspect — full width, never cropped, responsive — rather
-  // than a fixed-ratio background that would crop the sides.
-  if (ev.thumbnail) {
-    return <img className="ev-art-img" src={optImg(ev.thumbnail, 1000)} alt={ev.title} loading="lazy" decoding="async" />;
-  }
+/* ── Card art — always drawn by the site, in one of the three brand colours ──
+   Every card is generated rather than uploaded, which is what lets the grid be
+   colour-arranged at all: an uploaded banner is whatever it is, so a mix of the
+   two gave a row of dark screenshots (several of them the SAME screenshot,
+   reused across campaigns) next to generated cards. Generated art also stays
+   sharp, weighs nothing, and picks up a campaign's title/mentor edits on its
+   own. `tone` is the card's slot in the palette — see artTone. */
+function EventArt({ ev, tone }) {
+  // Who's teaching it is the strongest thing on the card, so the mentor photo is
+  // composited into the art on live and past alike — the live panel just gives
+  // it a narrower column (see .ev-card--live .ev-art-face) so the headline keeps
+  // room to breathe.
+  const withFace = !!ev.mentorPhoto;
   return (
-    <div className={`ev-art ev-art--gen${ev.mentorPhoto ? ' ev-art--face' : ''}`} style={{ '--ev-accent': accent }}>
+    <div
+      className={`ev-art ev-art--gen${withFace ? ' ev-art--face' : ''}`}
+      style={{ '--ev-accent': tone.accent, '--ev-tint': tone.tint }}
+    >
       <span className="ev-art-dots" aria-hidden="true" />
       <span className="ev-art-glow" aria-hidden="true" />
       <div className="ev-art-top">
-        <MenlerWordmark size={17} theme="dark" rule="#8E82F5" />
+        <MenlerWordmark size={17} theme="dark" rule={tone.tint} />
         <span className="ev-art-badge">✦ Masterclass</span>
       </div>
       <span className="ev-art-title"><span>{ev.title}</span></span>
       {ev.tags?.[0] && <span className="ev-art-foot">{ev.tags[0]}</span>}
-      {ev.mentorPhoto && (
+      {withFace && (
         <img className="ev-art-face" src={optImg(ev.mentorPhoto, 300)} alt={ev.mentorName || ''} loading="lazy" decoding="async" />
       )}
     </div>
@@ -243,11 +341,11 @@ function EventArt({ ev }) {
 function ComingSoonCard() {
   return (
     <article className="ev-card ev-card--live ev-card--soon">
-      <div className="ev-art ev-art--gen" style={{ '--ev-accent': '#534AB7' }}>
+      <div className="ev-art ev-art--gen" style={{ '--ev-accent': BRAND_ART[0].accent, '--ev-tint': BRAND_ART[0].tint }}>
         <span className="ev-art-dots" aria-hidden="true" />
         <span className="ev-art-glow" aria-hidden="true" />
         <div className="ev-art-top">
-          <MenlerWordmark size={17} theme="dark" rule="#8E82F5" />
+          <MenlerWordmark size={17} theme="dark" rule={BRAND_ART[0].tint} />
           <span className="ev-art-badge">✦ Masterclass</span>
         </div>
         <span className="ev-art-title"><span>Coming Soon</span></span>
@@ -255,7 +353,7 @@ function ComingSoonCard() {
       </div>
       <div className="ev-body">
         <span className="ev-soon-dot">Coming soon</span>
-        <FitTitle text="Our next masterclass is brewing" max={LIVE_TITLE_MAX} />
+        <FitTitle text="Our next masterclass is brewing" max={LIVE_TITLE_MAX} lines={2} />
         <p className="ev-sub">
           We&rsquo;re lining up the next live session with someone shipping real AI work.
           Join the community and you&rsquo;ll be the first to know when seats open.
@@ -280,7 +378,13 @@ export default function Events() {
   // by running anything that still looks like a campaign doc through toEvent.
   const events = (data || []).map((e) => (e && e.status ? e : toEvent(e)));
   // A finished event is Past regardless of its Live toggle (see eventIsOver).
-  const live = events.filter((e) => e.status !== 'past' && !eventIsOver(e));
+  // With more than one session live, the soonest one leads — the CMS order is
+  // creation order, which would just as easily put next month's class above
+  // this Friday's. Anything with an unparseable date sorts to 0 and leads;
+  // that's the same "can't judge it, surface it" stance eventIsOver takes.
+  const live = events
+    .filter((e) => e.status !== 'past' && !eventIsOver(e))
+    .sort((a, b) => eventStartMs(a) - eventStartMs(b));
   // Past events read newest-first, so the most recent masterclass leads the grid
   // and same-day sessions fall in reverse time order. Array.sort is stable, so
   // anything with no parseable date keeps the CMS order from EVENTS_QUERY.
@@ -294,6 +398,8 @@ export default function Events() {
   const PAST_STEP = 3;
   const [pastShown, setPastShown] = useState(PAST_INITIAL);
   const pastVisible = past.slice(0, pastShown);
+
+  const liveArt = liveTones(live);
 
   // Programs block links out to the other pages — land at the top, not mid-page.
   const go = (path) => { navigate(path); window.scrollTo(0, 0); };
@@ -336,12 +442,12 @@ export default function Events() {
         <h2 className="section-h2">Live <em>events</em></h2>
         <div className="ev-grid ev-grid--live">
           {live.length === 0 && <ComingSoonCard />}
-          {live.map((ev) => (
+          {live.map((ev, i) => (
             <article className="ev-card ev-card--live" key={ev._id}>
-              <EventArt ev={ev} />
+              <EventArt ev={ev} tone={liveArt[i]} />
               <div className="ev-body">
                 <span className="ev-live-dot">● Live masterclass</span>
-                <FitTitle text={ev.title} max={LIVE_TITLE_MAX} />
+                <FitTitle text={ev.title} max={LIVE_TITLE_MAX} lines={2} />
                 {ev.subtitle && <p className="ev-sub">{ev.subtitle}</p>}
                 {ev.tags?.length > 0 && (
                   <div className="ev-tags">{ev.tags.map((t) => <span key={t}>{t}</span>)}</div>
@@ -371,9 +477,9 @@ export default function Events() {
           <p className="section-label">Catch up</p>
           <h2 className="section-h2">Past <em>events</em></h2>
           <div className="ev-grid ev-grid--past">
-            {pastVisible.map((ev) => (
+            {pastVisible.map((ev, i) => (
               <article className="ev-card ev-card--past" key={ev._id}>
-                <EventArt ev={ev} />
+                <EventArt ev={ev} tone={pastTone(i)} />
                 <div className="ev-body">
                   <FitTitle text={ev.title} />
                   {ev.subtitle && <p className="ev-sub">{ev.subtitle}</p>}
