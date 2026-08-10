@@ -638,6 +638,20 @@ function UsersTab() {
     setAddForm({ program: '', note: '' });
   };
 
+  // Escape closes it, and the page behind stops scrolling while it's open —
+  // both are things people try without thinking about it.
+  useEffect(() => {
+    if (!adding) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape') closeAdd(); };
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [adding]);
+
   const doVerify = async () => {
     if (!ref.trim()) return;
     setVerifying(true); setAddErr(''); setFound(null);
@@ -792,14 +806,18 @@ function UsersTab() {
       )}
 
       {adding && (
-        <div className="admin-drawer-backdrop" onClick={closeAdd}>
-          <aside className="admin-drawer" onClick={(e) => e.stopPropagation()}>
-            <div className="admin-drawer-head">
-              <h2>Record a Cashfree payment</h2>
-              <button className="admin-drawer-close" onClick={closeAdd} aria-label="Close">×</button>
+        <div className="admin-modal-backdrop" onClick={closeAdd} role="presentation">
+          <div className="admin-modal" onClick={(e) => e.stopPropagation()}
+            role="dialog" aria-modal="true" aria-labelledby="cf-modal-title">
+            <div className="admin-modal-head">
+              <div>
+                <h2 id="cf-modal-title">Record a Cashfree payment</h2>
+                <p>For money taken through a payment link, not the website.</p>
+              </div>
+              <button className="admin-modal-close" onClick={closeAdd} aria-label="Close">×</button>
             </div>
 
-            <div className="admin-drawer-body admin-addpay">
+            <div className="admin-modal-body admin-addpay">
               {/* Two steps, always both visible, so it's obvious this is a
                   find-then-confirm job and not a form to fill in. */}
               <ol className="admin-steps">
@@ -908,19 +926,19 @@ function UsersTab() {
                         placeholder="Anything worth remembering"
                         value={addForm.note} onChange={(e) => setF('note', e.target.value)} />
 
-                      <div className="admin-addpay-foot">
+                      <div className="admin-modal-foot">
+                        <button className="admin-btn" type="button" onClick={closeAdd}>Cancel</button>
                         <button className="admin-btn admin-btn--primary admin-addpay-save"
                           type="submit" disabled={saving || !addForm.program.trim()}>
                           {saving ? 'Saving…' : `Record ₹${found.payment.amount.toLocaleString('en-IN')}`}
                         </button>
-                        <button className="admin-btn" type="button" onClick={closeAdd}>Cancel</button>
                       </div>
                     </form>
                   )}
                 </>
               )}
             </div>
-          </aside>
+          </div>
         </div>
       )}
     </div>
