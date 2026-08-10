@@ -10,6 +10,13 @@ import Seo from '../components/common/Seo';
 const COURSE_OPTIONS = [
   { key: 'kickstarter', label: 'Gen AI Kickstarter', amount: 4999 },
   { key: 'generalist', label: 'Claude AI Generalist Fellowship', amount: 59999 },
+  // Slug matches the one Generalist.jsx sends for the full fellowship, with a
+  // suffix — the shorter cohort is a different product at a different price and
+  // must not be totalled as if it were the same one.
+  { key: 'generalist-6w', label: 'Claude AI Generalist — 6 weeks', amount: 35000 },
+  // 'engineering' is exactly what Engineering.jsx posts, so sales taken by hand
+  // group with the ones that came through the website.
+  { key: 'engineering', label: 'Claude AI Engineering Fellowship', amount: 59999 },
   { key: 'build-ai-automation-with-claude', label: 'Build AI Automation with Claude — pack', amount: 99 },
   { key: 'program-and-ops-with-ai', label: 'AI powered Program & Operations — pack', amount: 99 },
   { key: 'library', label: 'Menler Library — single resource', amount: 49 },
