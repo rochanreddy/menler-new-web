@@ -3352,6 +3352,8 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 
 .admin-modal-body {
   flex: 1 1 auto; min-height: 0; overflow-y: auto;
+  /* Stop the scroll handing off to the page once this hits its end. */
+  overscroll-behavior: contain;
   padding: 20px 24px 24px;
 }
 
@@ -3406,9 +3408,9 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .admin-field > span { display: block; font-size: 12.5px; font-weight: 700; color: var(--ink); margin-bottom: 5px; }
 .admin-field .admin-search { width: 100%; }
 .admin-field-warn { display: block; margin-top: 5px; font-size: 12px; font-style: normal; color: var(--amber); }
-
+
 
-.admin-await-icon { display: block; font-size: 26px; color: var(--specialist); opacity: .55; margin-bottom: 8px; }
+.admin-await-icon { display: block; font-size: 26px; color: var(--specialist); opacity: .55; margin-bottom: 8px; }
 
 .admin-receipt-top {
   display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
@@ -3419,7 +3421,7 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
   display: block; font-size: 10.5px; font-weight: 700; letter-spacing: 0.07em;
   text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px;
 }
-.admin-receipt-amt { font-size: 30px; font-weight: 700; letter-spacing: -0.03em; color: var(--ink); line-height: 1.05; }
+.admin-receipt-amt { font-size: 30px; font-weight: 700; letter-spacing: -0.03em; color: var(--ink); line-height: 1.05; }
 .admin-receipt-rows {
   margin: 0; padding: 16px 18px;
   display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 20px;
@@ -3464,7 +3466,7 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .admin-drawer-head h2 { font-size: 17px; margin: 0; color: var(--ink); }
 .admin-drawer-close { background: none; border: none; font-size: 26px; line-height: 1; cursor: pointer; color: var(--text-muted); padding: 0 4px; }
 .admin-drawer-close:hover { color: var(--ink); }
-.admin-drawer-body { flex: 1 1 auto; min-height: 0; padding: 8px 22px 28px; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
+.admin-drawer-body { flex: 1 1 auto; min-height: 0; padding: 8px 22px 28px; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
 .admin-detail-row { display: grid; grid-template-columns: 130px 1fr; gap: 14px; padding: 11px 0; border-bottom: 0.5px solid rgba(175,169,236,0.16); }
 .admin-detail-key { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-muted); }
 .admin-detail-val { font-size: 14px; color: var(--ink); word-break: break-word; }

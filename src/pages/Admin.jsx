@@ -109,12 +109,21 @@ function Row({ label, value }) {
 function Drawer({ title, fields, onClose }) {
   useEffect(() => {
     const onKey = (e) => e.key === 'Escape' && onClose();
+    // Same as the modal: Lenis owns the wheel, so hiding body overflow on its
+    // own leaves the page scrolling away underneath an open panel.
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.__lenis?.stop();
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prev;
+      window.__lenis?.start();
+    };
   }, [onClose]);
 
   return (
-    <div className="admin-drawer-backdrop" onClick={onClose}>
+    <div className="admin-drawer-backdrop" onClick={onClose} data-lenis-prevent>
       <aside className="admin-drawer" onClick={(e) => e.stopPropagation()}>
         <div className="admin-drawer-head">
           <h2>{title}</h2>
@@ -653,17 +662,23 @@ function UsersTab() {
     setAddForm({ name: '', email: '', phone: '', amount: '', program: '', otherProgram: '', paid_at: '', note: '' });
   };
 
-  // Escape closes it, and the page behind stops scrolling while it's open —
-  // both are things people try without thinking about it.
+  // Escape closes it, and the page behind stays put while it's open.
+  //
+  // body{overflow:hidden} alone isn't enough here: Lenis drives the page from
+  // wheel events, so it keeps scrolling the background regardless. It has to be
+  // stopped explicitly, and the modal itself carries data-lenis-prevent so the
+  // wheel still reaches its own scrollbar.
   useEffect(() => {
     if (!adding) return undefined;
     const onKey = (e) => { if (e.key === 'Escape') closeAdd(); };
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    window.__lenis?.stop();
     window.addEventListener('keydown', onKey);
     return () => {
       window.removeEventListener('keydown', onKey);
       document.body.style.overflow = prev;
+      window.__lenis?.start();
     };
   }, [adding]);
 
@@ -841,7 +856,7 @@ function UsersTab() {
       )}
 
       {adding && (
-        <div className="admin-modal-backdrop" onClick={closeAdd} role="presentation">
+        <div className="admin-modal-backdrop" onClick={closeAdd} role="presentation" data-lenis-prevent>
           <div className="admin-modal" onClick={(e) => e.stopPropagation()}
             role="dialog" aria-modal="true" aria-labelledby="cf-modal-title">
             <div className="admin-modal-head">
