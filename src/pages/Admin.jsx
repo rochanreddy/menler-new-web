@@ -2,6 +2,19 @@ import { useState, useEffect, useCallback } from 'react';
 import { adminApi } from '../lib/adminApi';
 import Seo from '../components/common/Seo';
 
+/* Courses offered in the manual-payment form. The paid campaign packs and the
+ * library aren't in the client price list (registration for those is free and
+ * only the pack is charged), so they're spelled out here with the same slugs
+ * the checkout uses — otherwise a hand-added library sale wouldn't group with
+ * the ones that came through the website. */
+const COURSE_OPTIONS = [
+  { key: 'kickstarter', label: 'Gen AI Kickstarter', amount: 4999 },
+  { key: 'generalist', label: 'Claude AI Generalist Fellowship', amount: 59999 },
+  { key: 'build-ai-automation-with-claude', label: 'Build AI Automation with Claude — pack', amount: 99 },
+  { key: 'program-and-ops-with-ai', label: 'AI powered Program & Operations — pack', amount: 99 },
+  { key: 'library', label: 'Menler Library — single resource', amount: 49 },
+];
+
 /* ── helpers ─────────────────────────────────────────────────────────────── */
 
 function fmtDate(iso) {
@@ -612,7 +625,9 @@ function UsersTab() {
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
   const [adding, setAdding] = useState(false);
-  const [addForm, setAddForm] = useState({ program: '', note: '' });
+  const [addForm, setAddForm] = useState({
+    name: '', email: '', phone: '', amount: '', program: '', otherProgram: '', paid_at: '', note: '',
+  });
   const [addErr, setAddErr] = useState('');
   const [saving, setSaving] = useState(false);
   const [ref, setRef] = useState('');
@@ -635,7 +650,7 @@ function UsersTab() {
   const closeAdd = () => {
     setAdding(false);
     setRef(''); setFound(null); setAddErr('');
-    setAddForm({ program: '', note: '' });
+    setAddForm({ name: '', email: '', phone: '', amount: '', program: '', otherProgram: '', paid_at: '', note: '' });
   };
 
   // Escape closes it, and the page behind stops scrolling while it's open —
@@ -656,7 +671,22 @@ function UsersTab() {
     if (!ref.trim()) return;
     setVerifying(true); setAddErr(''); setFound(null);
     try {
-      setFound(await adminApi.verifyPayment(ref.trim()));
+      const res = await adminApi.verifyPayment(ref.trim());
+      if (res.duplicate) {
+        setAddErr(`Already recorded — ${res.duplicate.name || 'an existing entry'} has this payment. Adding it again would double-count your revenue.`);
+        return;
+      }
+      setFound(res);
+      // Fill in what Cashfree knows. The course is left alone — only you know that.
+      const p = res.payment;
+      setAddForm((f) => ({
+        ...f,
+        name: p.customer.name || f.name,
+        email: p.customer.email || f.email,
+        phone: p.customer.phone || f.phone,
+        amount: String(p.amount),
+        paid_at: p.paid_at ? new Date(p.paid_at).toISOString().slice(0, 10) : f.paid_at,
+      }));
     } catch (err) {
       setAddErr(err.message || 'Could not check that reference.');
     } finally {
@@ -669,10 +699,15 @@ function UsersTab() {
     setAddErr('');
     setSaving(true);
     try {
-      // Only the reference and the two things Cashfree can't tell us. The amount
-      // and payer are read from Cashfree again server-side, so nothing typed
-      // here can inflate a revenue figure.
-      await adminApi.addPaidUser({ reference: ref.trim(), ...addForm });
+      const program = addForm.program === '__other'
+        ? (addForm.otherProgram || '').trim()
+        : addForm.program;
+      await adminApi.addPaidUser({
+        ...addForm,
+        program,
+        amount: Number(addForm.amount),
+        reference: ref.trim(),   // blank is fine — the entry just isn't marked verified
+      });
       closeAdd();
       load();
     } catch (err) {
@@ -817,127 +852,111 @@ function UsersTab() {
               <button className="admin-modal-close" onClick={closeAdd} aria-label="Close">×</button>
             </div>
 
-            <div className="admin-modal-body admin-addpay">
-              {/* Two steps, always both visible, so it's obvious this is a
-                  find-then-confirm job and not a form to fill in. */}
-              <ol className="admin-steps">
-                <li className={found ? 'is-done' : 'is-now'}><span>1</span>Find the payment</li>
-                <li className={found ? 'is-now' : ''}><span>2</span>Confirm and save</li>
-              </ol>
-
-              <div className="admin-lookup">
-                <input
-                  id="cf-ref"
-                  className="admin-lookup-input"
-                  placeholder="Paste Cashfree Order ID"
-                  value={ref}
-                  autoFocus
-                  spellCheck="false"
-                  autoComplete="off"
-                  onChange={(e) => { setRef(e.target.value); setFound(null); setAddErr(''); }}
-                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); doVerify(); } }}
-                />
-                <button className="admin-btn admin-btn--primary" type="button"
-                  onClick={doVerify} disabled={!ref.trim() || verifying}>
-                  {verifying ? 'Checking…' : 'Look up'}
-                </button>
+            <form onSubmit={saveManual} className="admin-modal-body admin-addpay">
+              {/* Optional Cashfree lookup. It fills the form in for you and marks
+                  the entry verified — but it's a shortcut, not a gate, so a
+                  payment can still be recorded from what you have to hand. */}
+              <div className="admin-lookup-box">
+                <label className="admin-addpay-label" htmlFor="cf-ref">
+                  Cashfree Order ID <span className="admin-muted">— optional, fills the form for you</span>
+                </label>
+                <div className="admin-lookup">
+                  <input
+                    id="cf-ref"
+                    className="admin-lookup-input"
+                    placeholder="order_1739…"
+                    value={ref}
+                    spellCheck="false"
+                    autoComplete="off"
+                    onChange={(e) => { setRef(e.target.value); setFound(null); setAddErr(''); }}
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); doVerify(); } }}
+                  />
+                  <button className="admin-btn" type="button"
+                    onClick={doVerify} disabled={!ref.trim() || verifying}>
+                    {verifying ? 'Checking…' : 'Look up'}
+                  </button>
+                </div>
+                {found ? (
+                  <p className="admin-lookup-ok">
+                    ✓ Verified with Cashfree — ₹{found.payment.amount.toLocaleString('en-IN')}
+                    {found.payment.cf_payment_id ? ` · txn ${found.payment.cf_payment_id}` : ''}. Details filled in below.
+                  </p>
+                ) : (
+                  <p className="admin-addpay-help">
+                    Leave it blank and fill the form in by hand if you don’t have the ID.
+                  </p>
+                )}
+                {addErr && <div className="admin-note admin-note--bad" style={{ marginTop: 10, marginBottom: 0 }}>{addErr}</div>}
               </div>
 
-              <details className="admin-where">
-                <summary>Where do I find this?</summary>
-                <p>
-                  Cashfree dashboard → <b>Payments</b> (or <b>Payment Links</b>) → open the
-                  payment → copy the <b>Order ID</b>. It’s the long one starting{' '}
-                  <code>order_</code> — not the short numeric transaction ID, which Cashfree
-                  can’t search on its own.
-                </p>
-              </details>
+              <div className="admin-grid2">
+                <label className="admin-field"><span>Full name *</span>
+                  <input className="admin-search" required value={addForm.name}
+                    onChange={(e) => setF('name', e.target.value)} />
+                </label>
+                <label className="admin-field"><span>Email</span>
+                  <input className="admin-search" type="email" value={addForm.email}
+                    onChange={(e) => setF('email', e.target.value)} />
+                </label>
+                <label className="admin-field"><span>Phone</span>
+                  <input className="admin-search" value={addForm.phone}
+                    onChange={(e) => setF('phone', e.target.value)} />
+                </label>
+                <label className="admin-field"><span>Paid on</span>
+                  <input className="admin-search" type="date" value={addForm.paid_at}
+                    onChange={(e) => setF('paid_at', e.target.value)} />
+                </label>
+              </div>
 
-              {addErr && <div className="admin-note admin-note--bad">{addErr}</div>}
+              <label className="admin-field"><span>Course / what they paid for *</span>
+                <select className="admin-search" required value={addForm.program}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    setF('program', v);
+                    // Fill the usual price, still editable for part payments.
+                    const known = COURSE_OPTIONS.find((c) => c.key === v);
+                    if (known && !found) setF('amount', String(known.amount));
+                  }}>
+                  <option value="">Select a course…</option>
+                  {COURSE_OPTIONS.map((c) => (
+                    <option key={c.key} value={c.key}>{c.label} — ₹{c.amount.toLocaleString('en-IN')}</option>
+                  ))}
+                  {programOptions.filter((p) => !COURSE_OPTIONS.some((c) => c.key === p)).map((p) => (
+                    <option key={p} value={p}>{p}</option>
+                  ))}
+                  <option value="__other">Something else…</option>
+                </select>
+              </label>
 
-              {/* Nothing looked up yet — say what will appear, so the empty
-                  space below the input isn't just dead. */}
-              {!found && !addErr && !verifying && (
-                <div className="admin-await">
-                  <span className="admin-await-icon" aria-hidden="true">⌕</span>
-                  <b>The payment will appear here</b>
-                  <p>
-                    Amount, who paid, when, and the transaction ID — read straight from
-                    Cashfree. You’ll only need to add what they paid for.
-                  </p>
-                </div>
+              {addForm.program === '__other' && (
+                <label className="admin-field"><span>Name it</span>
+                  <input className="admin-search" required placeholder="e.g. workshop, mentoring"
+                    value={addForm.otherProgram || ''} onChange={(e) => setF('otherProgram', e.target.value)} />
+                </label>
               )}
 
-              {verifying && <div className="admin-await"><b>Checking with Cashfree…</b></div>}
+              <label className="admin-field"><span>Amount paid (₹) *</span>
+                <input className="admin-search" required type="number" min="1" value={addForm.amount}
+                  onChange={(e) => setF('amount', e.target.value)} />
+                {found && Number(addForm.amount) !== found.payment.amount && (
+                  <em className="admin-field-warn">
+                    Cashfree says ₹{found.payment.amount.toLocaleString('en-IN')} was received.
+                  </em>
+                )}
+              </label>
 
-              {found && (
-                <>
-                  {/* A receipt, not a form. These are Cashfree's numbers and
-                      nothing here is editable — that's the entire point. */}
-                  <div className="admin-receipt">
-                    <div className="admin-receipt-top">
-                      <div>
-                        <span className="admin-receipt-label">Amount received</span>
-                        <b className="admin-receipt-amt">₹{found.payment.amount.toLocaleString('en-IN')}</b>
-                      </div>
-                      <span className="admin-verified-tag">✓ Verified by Cashfree</span>
-                    </div>
+              <label className="admin-field"><span>Note <span className="admin-muted">— optional</span></span>
+                <input className="admin-search" placeholder="Anything worth remembering"
+                  value={addForm.note} onChange={(e) => setF('note', e.target.value)} />
+              </label>
 
-                    <dl className="admin-receipt-rows">
-                      <div><dt>Paid by</dt><dd>{found.payment.customer.name || <em>not given</em>}</dd></div>
-                      <div><dt>Email</dt><dd>{found.payment.customer.email || <em>not given</em>}</dd></div>
-                      <div><dt>Phone</dt><dd>{found.payment.customer.phone || <em>not given</em>}</dd></div>
-                      <div><dt>Paid at</dt><dd>{fmtDate(found.payment.paid_at)}</dd></div>
-                      <div><dt>Method</dt><dd>{found.payment.method || '—'}</dd></div>
-                      <div><dt>Order ID</dt><dd className="admin-mono">{found.payment.order_id}</dd></div>
-                      <div><dt>Transaction ID</dt><dd className="admin-mono">{found.payment.cf_payment_id || '—'}</dd></div>
-                    </dl>
-                  </div>
-
-                  {found.duplicate ? (
-                    <div className="admin-note admin-note--bad">
-                      <b>Already recorded.</b> This payment is in the list under{' '}
-                      {found.duplicate.name || 'an existing entry'}. Adding it again would
-                      double-count your revenue.
-                    </div>
-                  ) : (
-                    <form onSubmit={saveManual} className="admin-addpay-form">
-                      <label className="admin-addpay-label" htmlFor="cf-prog">
-                        What did they pay for?
-                      </label>
-                      <p className="admin-addpay-help">The one thing Cashfree can’t tell us.</p>
-                      {programOptions.length > 0 && (
-                        <div className="admin-chips">
-                          {programOptions.map((p) => (
-                            <button type="button" key={p}
-                              className={`admin-chip ${addForm.program === p ? 'is-on' : ''}`}
-                              onClick={() => setF('program', p)}>{p}</button>
-                          ))}
-                        </div>
-                      )}
-                      <input id="cf-prog" className="admin-search" required
-                        placeholder="or type a new one"
-                        value={addForm.program} onChange={(e) => setF('program', e.target.value)} />
-
-                      <label className="admin-addpay-label" htmlFor="cf-note">
-                        Note <span className="admin-muted">— optional</span>
-                      </label>
-                      <input id="cf-note" className="admin-search"
-                        placeholder="Anything worth remembering"
-                        value={addForm.note} onChange={(e) => setF('note', e.target.value)} />
-
-                      <div className="admin-modal-foot">
-                        <button className="admin-btn" type="button" onClick={closeAdd}>Cancel</button>
-                        <button className="admin-btn admin-btn--primary admin-addpay-save"
-                          type="submit" disabled={saving || !addForm.program.trim()}>
-                          {saving ? 'Saving…' : `Record ₹${found.payment.amount.toLocaleString('en-IN')}`}
-                        </button>
-                      </div>
-                    </form>
-                  )}
-                </>
-              )}
-            </div>
+              <div className="admin-modal-foot">
+                <button className="admin-btn" type="button" onClick={closeAdd}>Cancel</button>
+                <button className="admin-btn admin-btn--primary admin-addpay-save" type="submit" disabled={saving}>
+                  {saving ? 'Saving…' : 'Save payment'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

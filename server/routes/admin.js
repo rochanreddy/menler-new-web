@@ -493,51 +493,70 @@ router.post('/paid-users/verify', requireAdmin, async (req, res) => {
  * typed deliberately — can't become a revenue figure. */
 router.post('/paid-users', requireAdmin, async (req, res) => {
   try {
-    if (!cashfreeConfigured()) {
-      return res.status(503).json({ error: 'Cashfree keys are not configured on this server, so payments cannot be verified here.' });
-    }
     const b = req.body || {};
+    const name = String(b.name || '').trim();
+    const email = String(b.email || '').trim().toLowerCase();
+    const phone = String(b.phone || '').trim();
+    const program = String(b.program || '').trim();
+    let amount = Number(b.amount);
     const ref = String(b.reference || '').trim();
-    if (!ref) return res.status(400).json({ error: 'A Cashfree Order ID or payment-link ID is required.' });
 
-    const found = await findCashfreePayment(ref);
-    if (!found.found) {
-      return res.status(400).json({ error: found.detail || 'That reference has no successful payment in Cashfree.' });
+    if (!name) return res.status(400).json({ error: 'A name is required.' });
+    if (!program) return res.status(400).json({ error: 'Pick what they paid for.' });
+
+    // A reference is optional. When there is one, Cashfree decides the money and
+    // the payment id — a hand-typed amount must never silently outrank the
+    // gateway. Without one the entry is saved as-is and flagged unverified, so
+    // the difference stays visible in the list rather than being assumed.
+    let verified = null;
+    if (ref && cashfreeConfigured()) {
+      const found = await findCashfreePayment(ref);
+      if (!found.found) {
+        return res.status(400).json({ error: found.detail || 'That reference has no successful payment in Cashfree.' });
+      }
+      verified = found;
+      amount = found.payment.amount;
+
+      const dupe = await Order.findOne({
+        $or: [
+          { order_id: found.payment.order_id },
+          ...(found.payment.cf_payment_id ? [{ 'extra.cf_payment_id': found.payment.cf_payment_id }] : []),
+        ],
+      }).lean();
+      if (dupe) {
+        return res.status(409).json({ error: `Already recorded — ${dupe.customer_name || dupe.customer_email || found.payment.order_id} is in the list.` });
+      }
     }
-    const p = found.payment;
 
-    const dupe = await Order.findOne({
-      $or: [
-        { order_id: p.order_id },
-        ...(p.cf_payment_id ? [{ 'extra.cf_payment_id': p.cf_payment_id }] : []),
-      ],
-    }).lean();
-    if (dupe) {
-      return res.status(409).json({ error: `Already recorded — ${dupe.customer_name || dupe.customer_email || p.order_id} is in the list.` });
+    if (!Number.isFinite(amount) || amount <= 0) {
+      return res.status(400).json({ error: 'A positive amount is required.' });
     }
 
-    // Cashfree is the source of truth for money and payer; the admin may only
-    // add what Cashfree doesn't carry — which programme it was for, and a note.
+    const p = verified?.payment;
     const order = await Order.create({
-      order_id: p.order_id,
-      program: String(b.program || '').trim() || 'manual',
-      amount: p.amount,
+      order_id: p?.order_id || `MANUAL_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+      program,
+      amount,
       status: 'PAID',
-      paid_at: p.paid_at ? new Date(p.paid_at) : new Date(),
-      customer_name: p.customer.name || String(b.name || '').trim(),
-      customer_email: (p.customer.email || String(b.email || '')).trim().toLowerCase(),
-      customer_phone: p.customer.phone || String(b.phone || '').trim(),
+      paid_at: b.paid_at
+        ? new Date(`${b.paid_at}T12:00:00+05:30`)
+        : (p?.paid_at ? new Date(p.paid_at) : new Date()),
+      customer_name: name,
+      customer_email: email,
+      customer_phone: phone,
       extra: {
         manual: true,
-        verified: true,
-        verified_at: new Date(),
-        verified_via: found.via,          // 'order' | 'link'
-        cf_payment_id: p.cf_payment_id,
-        payment_method: p.method,
+        ...(verified ? {
+          verified: true,
+          verified_at: new Date(),
+          verified_via: verified.via,      // 'order' | 'link'
+          cf_payment_id: p.cf_payment_id,
+          payment_method: p.method,
+        } : {}),
         ...(b.note ? { note: String(b.note).trim() } : {}),
       },
     });
-    res.status(201).json({ ok: true, id: order._id, payment: p });
+    res.status(201).json({ ok: true, id: order._id, verified: Boolean(verified) });
   } catch (err) {
     console.error('admin paid-users add error', err);
     res.status(500).json({ error: 'Could not add the payment.' });
