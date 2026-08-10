@@ -3287,9 +3287,53 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .admin-badge--ok { background: rgba(29,158,117,0.14); color: var(--placed); }
 .admin-badge--paid { background: rgba(83,74,183,0.14); color: var(--specialist); }
 .admin-mono { font-family: ui-monospace, 'Cascadia Code', Consolas, monospace; font-size: 11.5px; word-break: break-all; }
-/* "Add a payment" form inside the drawer */
+.admin-badge--warn { background: rgba(186,117,23,0.14); color: var(--amber); }
+
+/* ── Revenue summary above the paid-users table ── */
+.admin-money { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 14px; }
+.admin-money-box {
+  background: var(--white); border: 0.5px solid var(--border); border-radius: 14px; padding: 14px 16px;
+}
+.admin-money-box span {
+  display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;
+}
+.admin-money-box b {
+  display: block; font-size: 24px; font-weight: 700; letter-spacing: -0.025em;
+  color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.1;
+}
+
+/* ── Inline notices ── */
+.admin-note {
+  border-radius: 12px; padding: 12px 15px; font-size: 13px; line-height: 1.6;
+  border: 1px solid; margin-bottom: 14px;
+}
+.admin-note--ok { background: rgba(29,158,117,0.08); border-color: rgba(29,158,117,0.28); color: #10684b; }
+.admin-note--warn { background: rgba(186,117,23,0.09); border-color: rgba(186,117,23,0.3); color: #7a4c07; }
+.admin-note--bad { background: rgba(192,57,43,0.07); border-color: rgba(192,57,43,0.26); color: #8f2c1f; }
+
+/* "Record a payment" form inside the drawer */
 .admin-addpay { display: flex; flex-direction: column; gap: 10px; }
 .admin-addpay .admin-search { width: 100%; }
+.admin-addpay-lede { font-size: 13px; line-height: 1.6; color: var(--text-muted); margin: 0 0 4px; }
+.admin-addpay-label { font-size: 12.5px; font-weight: 700; color: var(--ink); margin-top: 4px; }
+.admin-addpay-help { font-size: 12px; line-height: 1.55; color: var(--text-muted); margin: -4px 0 0; }
+.admin-addpay-lookup { display: flex; gap: 8px; align-items: center; }
+.admin-addpay-lookup .admin-search { flex: 1; min-width: 0; }
+.admin-addpay-save { width: 100%; margin-top: 12px; justify-content: center; }
+
+/* What Cashfree returned — read-only on purpose: these are their numbers. */
+.admin-verified {
+  margin: 0; background: var(--cloud); border-radius: 12px; padding: 6px 14px;
+}
+.admin-verified > div {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 14px;
+  padding: 9px 0; border-bottom: 1px solid rgba(175,169,236,0.28);
+}
+.admin-verified > div:last-child { border-bottom: 0; }
+.admin-verified dt { font-size: 12px; color: var(--text-muted); font-weight: 600; flex: none; }
+.admin-verified dd { margin: 0; font-size: 13px; text-align: right; word-break: break-word; }
+.admin-verified-amt { font-size: 19px; font-weight: 700; letter-spacing: -0.02em; }
 .admin-date { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--text-muted); }
 .admin-date input { font: inherit; padding: 7px 9px; border: 1px solid var(--border); border-radius: 8px; color: var(--ink); background: var(--white); }
 .admin-del { display: inline-grid; place-items: center; width: 30px; height: 30px; padding: 0; background: none; border: 1px solid transparent; border-radius: 8px; cursor: pointer; color: var(--text-muted); transition: color .12s, background .12s, border-color .12s; }

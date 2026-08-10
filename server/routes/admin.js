@@ -10,7 +10,7 @@ import { ShortLink } from '../models/ShortLink.js';
 import { requireAdmin } from '../middleware/adminAuth.js';
 import { buildCertificatePdf, buildCertificateEmail } from '../utils/certificate.js';
 import { sendMail, isMailConfigured, verifyMailer } from '../utils/email.js';
-import { cashfreeConfigured, getCashfreePayments } from '../utils/cashfree.js';
+import { cashfreeConfigured, findCashfreePayment, getCashfreePayments } from '../utils/cashfree.js';
 import {
   ADMIN_COOKIE_NAME,
   signAdmin,
@@ -405,41 +405,139 @@ router.get('/paid-users', requireAdmin, async (req, res) => {
       }));
     }
 
-    res.json({ rows, total, page, limit });
+    // Money totals over everything matching the search, not just this page —
+    // a revenue figure that changes when you turn the page is worse than none.
+    const startOfMonthIST = (() => {
+      const now = new Date(Date.now() + 5.5 * 3600 * 1000);
+      return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1) - 5.5 * 3600 * 1000);
+    })();
+    const [agg] = await Order.aggregate([
+      { $match: filter },
+      {
+        $group: {
+          _id: null,
+          revenue: { $sum: '$amount' },
+          count: { $sum: 1 },
+          manual: { $sum: { $cond: ['$extra.manual', 1, 0] } },
+          // Manual rows added before payments were checked against Cashfree.
+          unverified: { $sum: { $cond: [{ $and: ['$extra.manual', { $ne: ['$extra.verified', true] }] }, 1, 0] } },
+          thisMonth: {
+            $sum: {
+              $cond: [{ $gte: [{ $ifNull: ['$paid_at', '$createdAt'] }, startOfMonthIST] }, '$amount', 0],
+            },
+          },
+        },
+      },
+    ]);
+
+    res.json({
+      rows,
+      total,
+      page,
+      limit,
+      summary: {
+        revenue: agg?.revenue || 0,
+        count: agg?.count || 0,
+        manual: agg?.manual || 0,
+        unverified: agg?.unverified || 0,
+        thisMonth: agg?.thisMonth || 0,
+      },
+    });
   } catch (err) {
     console.error('admin paid-users error', err);
     res.status(500).json({ error: 'Could not load paid users.' });
   }
 });
 
-// Manually record an off-site payment (direct Cashfree payment link).
+/* Look a reference up in Cashfree before anything is written. Read-only —
+ * it exists so the admin sees what they're about to record. */
+router.post('/paid-users/verify', requireAdmin, async (req, res) => {
+  try {
+    if (!cashfreeConfigured()) {
+      return res.status(503).json({ error: 'Cashfree keys are not configured on this server, so payments cannot be verified here.' });
+    }
+    const ref = String(req.body?.reference || '').trim();
+    if (!ref) return res.status(400).json({ error: 'Paste the Cashfree Order ID or payment-link ID.' });
+
+    const found = await findCashfreePayment(ref);
+    if (!found.found) {
+      return res.status(404).json({ error: found.detail || 'No matching payment in Cashfree.', reason: found.reason });
+    }
+
+    // Already recorded? Say so now rather than after they fill the form in.
+    const dupe = await Order.findOne({
+      $or: [
+        { order_id: found.payment.order_id },
+        ...(found.payment.cf_payment_id ? [{ 'extra.cf_payment_id': found.payment.cf_payment_id }] : []),
+      ],
+    }).lean();
+
+    res.json({
+      ok: true,
+      via: found.via,
+      payment: found.payment,
+      duplicate: dupe
+        ? { id: dupe._id, name: dupe.customer_name, paid_at: dupe.paid_at, manual: Boolean(dupe.extra?.manual) }
+        : null,
+    });
+  } catch (err) {
+    console.error('admin paid-users verify error', err);
+    res.status(502).json({ error: err?.message || 'Could not reach Cashfree.' });
+  }
+});
+
+/* Record an off-site payment (taken through a direct Cashfree link).
+ *
+ * The reference is re-verified here rather than trusted from the request: the
+ * amount and the payer come back from Cashfree, so a typo — or a wrong number
+ * typed deliberately — can't become a revenue figure. */
 router.post('/paid-users', requireAdmin, async (req, res) => {
   try {
-    const b = req.body || {};
-    const name = String(b.name || '').trim();
-    const email = String(b.email || '').trim().toLowerCase();
-    const phone = String(b.phone || '').trim();
-    const amount = Number(b.amount);
-    const program = String(b.program || '').trim();
-    if (!name || !Number.isFinite(amount) || amount <= 0) {
-      return res.status(400).json({ error: 'A name and a positive amount are required.' });
+    if (!cashfreeConfigured()) {
+      return res.status(503).json({ error: 'Cashfree keys are not configured on this server, so payments cannot be verified here.' });
     }
+    const b = req.body || {};
+    const ref = String(b.reference || '').trim();
+    if (!ref) return res.status(400).json({ error: 'A Cashfree Order ID or payment-link ID is required.' });
+
+    const found = await findCashfreePayment(ref);
+    if (!found.found) {
+      return res.status(400).json({ error: found.detail || 'That reference has no successful payment in Cashfree.' });
+    }
+    const p = found.payment;
+
+    const dupe = await Order.findOne({
+      $or: [
+        { order_id: p.order_id },
+        ...(p.cf_payment_id ? [{ 'extra.cf_payment_id': p.cf_payment_id }] : []),
+      ],
+    }).lean();
+    if (dupe) {
+      return res.status(409).json({ error: `Already recorded — ${dupe.customer_name || dupe.customer_email || p.order_id} is in the list.` });
+    }
+
+    // Cashfree is the source of truth for money and payer; the admin may only
+    // add what Cashfree doesn't carry — which programme it was for, and a note.
     const order = await Order.create({
-      order_id: `MANUAL_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-      program: program || 'manual',
-      amount,
+      order_id: p.order_id,
+      program: String(b.program || '').trim() || 'manual',
+      amount: p.amount,
       status: 'PAID',
-      paid_at: b.paid_at ? new Date(`${b.paid_at}T12:00:00+05:30`) : new Date(),
-      customer_name: name,
-      customer_email: email,
-      customer_phone: phone,
+      paid_at: p.paid_at ? new Date(p.paid_at) : new Date(),
+      customer_name: p.customer.name || String(b.name || '').trim(),
+      customer_email: (p.customer.email || String(b.email || '')).trim().toLowerCase(),
+      customer_phone: p.customer.phone || String(b.phone || '').trim(),
       extra: {
         manual: true,
-        ...(b.txn_id ? { txn_id: String(b.txn_id).trim() } : {}),
+        verified: true,
+        verified_at: new Date(),
+        verified_via: found.via,          // 'order' | 'link'
+        cf_payment_id: p.cf_payment_id,
+        payment_method: p.method,
         ...(b.note ? { note: String(b.note).trim() } : {}),
       },
     });
-    res.status(201).json({ ok: true, id: order._id });
+    res.status(201).json({ ok: true, id: order._id, payment: p });
   } catch (err) {
     console.error('admin paid-users add error', err);
     res.status(500).json({ error: 'Could not add the payment.' });

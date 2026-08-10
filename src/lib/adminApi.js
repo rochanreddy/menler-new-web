@@ -81,6 +81,7 @@ export const adminApi = {
   // Paid users — everyone with a confirmed PAID order (site-wide), plus
   // manually recorded Cashfree-payment-link payments.
   getPaidUsers: (params) => api(`/admin/paid-users${qs(params)}`),
+  verifyPayment: (reference) => api('/admin/paid-users/verify', { method: 'POST', body: { reference } }),
   addPaidUser: (body) => api('/admin/paid-users', { method: 'POST', body }),
   deletePaidUser: (id) => api(`/admin/paid-users/${encodeURIComponent(id)}`, { method: 'DELETE' }),
 
