@@ -689,17 +689,24 @@ function UsersTab() {
   }, [adding]);
 
   const openVerify = (row) => {
+    // Whatever reference the row already carries is worth trying on its own —
+    // a real order id, or the transaction id that was typed in. Only if neither
+    // resolves does anyone have to go and fetch something.
+    const known = (!/^MANUAL_/.test(row.order_id) && row.order_id)
+      || row.extra?.cf_payment_id || row.extra?.txn_id || '';
     setVerifyRow(row);
-    // A real Cashfree order id already on the row can be checked with no typing.
-    setVerifyRef(/^MANUAL_/.test(row.order_id) ? '' : row.order_id);
+    setVerifyRef(known);
     setVerifyErr(''); setVerifyDone(null);
+    if (known) runExistingVerify(row, known);
   };
 
-  const runExistingVerify = async () => {
-    if (!verifyRow) return;
+  const runExistingVerify = async (row, raw) => {
+    const target = row || verifyRow;
+    const value = String(raw ?? verifyRef).trim();
+    if (!target || !value) return;
     setVerifyBusy(true); setVerifyErr(''); setVerifyDone(null);
     try {
-      const res = await adminApi.verifyExisting(verifyRow._id, verifyRef.trim());
+      const res = await adminApi.verifyExisting(target._id, value);
       setVerifyDone(res);
       load();
     } catch (err) {
@@ -933,28 +940,32 @@ function UsersTab() {
                 </>
               ) : (
                 <>
-                  <p className="admin-addpay-help" style={{ marginTop: 0 }}>
-                    This entry was typed in by hand, so its amount has never been checked.
-                    Paste the Cashfree <b>Order ID</b> and it’ll be confirmed against the real
-                    payment — the amount and payer are replaced with Cashfree’s.
-                  </p>
-                  <label className="admin-field"><span>Cashfree Order ID</span>
-                    <input className="admin-search admin-mono-input" placeholder="order_1739…"
-                      value={verifyRef} autoFocus spellCheck="false"
+                  {verifyBusy ? (
+                    <p className="admin-addpay-help" style={{ marginTop: 0 }}>
+                      Checking <b>{verifyRef}</b> with Cashfree…
+                    </p>
+                  ) : (
+                    <p className="admin-addpay-help" style={{ marginTop: 0 }}>
+                      This entry was typed in by hand, so its amount has never been checked.
+                      Paste the <b>transaction ID</b> or the <b>Order ID</b> — either is tried
+                      against Cashfree, and the amount and payer are replaced with theirs.
+                    </p>
+                  )}
+                  <label className="admin-field"><span>Transaction ID or Order ID</span>
+                    <input className="admin-search admin-mono-input" placeholder="5114772211 or order_1739…"
+                      value={verifyRef} autoFocus spellCheck="false" disabled={verifyBusy}
                       onChange={(e) => { setVerifyRef(e.target.value); setVerifyErr(''); }}
+                      onPaste={(e) => {
+                        const pasted = (e.clipboardData || window.clipboardData)?.getData('text') || '';
+                        if (pasted.trim()) { e.preventDefault(); setVerifyRef(pasted.trim()); runExistingVerify(null, pasted.trim()); }
+                      }}
                       onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); runExistingVerify(); } }} />
-                    {verifyRow.extra?.txn_id && (
-                      <em className="admin-field-hint">
-                        Recorded transaction ID: <b>{verifyRow.extra.txn_id}</b> — find it in
-                        Cashfree and copy the Order ID from that same row.
-                      </em>
-                    )}
                   </label>
                   {verifyErr && <div className="admin-note admin-note--bad">{verifyErr}</div>}
                   <div className="admin-modal-foot">
                     <button className="admin-btn" type="button" onClick={() => setVerifyRow(null)}>Cancel</button>
                     <button className="admin-btn admin-btn--primary" type="button"
-                      onClick={runExistingVerify} disabled={verifyBusy || !verifyRef.trim()}>
+                      onClick={() => runExistingVerify()} disabled={verifyBusy || !verifyRef.trim()}>
                       {verifyBusy ? 'Checking…' : 'Verify'}
                     </button>
                   </div>
@@ -984,7 +995,7 @@ function UsersTab() {
                   happened, but it has to be chosen deliberately. */}
               <div className={`admin-lookup-box ${found ? 'is-ok' : ''}`}>
                 <label className="admin-addpay-label" htmlFor="cf-ref">
-                  Cashfree Order ID {manualMode
+                  Cashfree Order ID or Transaction ID {manualMode
                     ? <span className="admin-muted">— skipped</span>
                     : <span className="admin-req">*</span>}
                 </label>
@@ -992,7 +1003,7 @@ function UsersTab() {
                   <input
                     id="cf-ref"
                     className="admin-lookup-input"
-                    placeholder="order_1739…"
+                    placeholder="5114772211 or order_1739…"
                     value={ref}
                     disabled={manualMode}
                     spellCheck="false"

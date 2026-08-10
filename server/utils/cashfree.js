@@ -115,6 +115,29 @@ export async function getCashfreeLinkOrders(linkId) {
 
 const isSuccess = (p) => String(p?.payment_status || '').toUpperCase() === 'SUCCESS';
 
+/**
+ * Try to fetch a payment from its cf_payment_id alone.
+ *
+ * The documented PG route addresses a payment under its order, but a bare
+ * lookup is worth attempting before telling someone to go and find an order id:
+ * if the account serves it, pasting the transaction id is all anyone needs.
+ * Anything other than a usable body is treated as "not available" so the
+ * caller falls through to the routes that are guaranteed.
+ */
+async function tryPaymentById(cfPaymentId) {
+  for (const path of [`payments/${encodeURIComponent(cfPaymentId)}`,
+    `orders/payments/${encodeURIComponent(cfPaymentId)}`]) {
+    try {
+      const resp = await fetch(`${BASE}/${path}`, { headers: authHeaders() });
+      if (!resp.ok) continue;
+      const data = await resp.json().catch(() => null);
+      const payment = Array.isArray(data) ? data[0] : data;
+      if (payment?.cf_payment_id && payment?.order_id) return payment;
+    } catch { /* network/route unavailable — fall through */ }
+  }
+  return null;
+}
+
 /** Flatten one Cashfree payment into the shape the admin UI shows. */
 function normalise(order, payment) {
   return {
@@ -133,16 +156,34 @@ function normalise(order, payment) {
 }
 
 /**
- * Resolve whatever reference an admin has to hand into a real Cashfree payment.
+ * Resolve whatever reference an admin has to hand into a real Cashfree payment:
+ * an order id, a payment-link id, or a bare transaction id.
  *
- * The PG API has no "fetch a payment by its id alone" route — a payment is only
- * addressable under its order. So an order id or a payment-link id can be
- * verified, and a bare transaction id can't be; the caller is told which it is
- * rather than being left with a silent failure.
+ * A transaction id is tried directly first — if the account serves that route,
+ * pasting the number off the dashboard is all anyone has to do. The documented
+ * routes address a payment under its order, so those remain the fallback, and
+ * only if every one of them comes up empty is the caller asked for an order id.
  */
 export async function findCashfreePayment(reference) {
   const ref = String(reference || '').trim();
   if (!ref) return { found: false, reason: 'empty' };
+
+  // 0. A bare number is a cf_payment_id. Resolve it without an order if we can.
+  if (/^\d{6,}$/.test(ref)) {
+    const payment = await tryPaymentById(ref);
+    if (payment) {
+      if (!isSuccess(payment)) {
+        return {
+          found: false,
+          reason: 'not_paid',
+          detail: `Transaction ${ref} exists but its status is ${payment.payment_status || 'unknown'}, not SUCCESS.`,
+        };
+      }
+      // Pull the order too, purely for the payer's details.
+      const order = await getCashfreeOrder(payment.order_id).catch(() => null);
+      return { found: true, via: 'payment', payment: normalise(order, payment) };
+    }
+  }
 
   // 1. Treat it as an order id.
   try {
@@ -181,12 +222,13 @@ export async function findCashfreePayment(reference) {
     if (err.status && err.status !== 404) throw err;
   }
 
-  // 3. A bare numeric id is a cf_payment_id, which can't be looked up on its own.
+  // 3. A transaction id that step 0 couldn't resolve. Cashfree's documented
+  //    routes need the order, so that's what has to be pasted instead.
   if (/^\d{6,}$/.test(ref)) {
     return {
       found: false,
       reason: 'needs_order',
-      detail: 'That looks like a transaction ID. Cashfree can only look a payment up through its order, so paste the Order ID or the payment-link ID from the same row of the dashboard.',
+      detail: `Cashfree wouldn’t return transaction ${ref} on its own. Open it in the Cashfree dashboard and paste the Order ID from that same row instead — that always works.`,
     };
   }
 
