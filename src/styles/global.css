@@ -3884,7 +3884,11 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 /* Captures are shot at exactly 16:9 (the banner is forced to 396px at capture
    time), so cover fills the panel edge-to-edge with nothing cropped — no
    letterbox bars. The cloud fill only ever shows while the image loads. */
-.ev-card--live .ev-art-img { object-fit: cover; background: var(--cloud); }
+/* Anchored to the TOP, not the centre: a capture that isn't exactly 16:9 gets
+   its overflow trimmed by cover, and split evenly that takes a bite out of the
+   wordmark sitting at the very top of every banner. Trimming from the bottom
+   instead costs the date strip, which the card already prints as text. */
+.ev-card--live .ev-art-img { object-fit: cover; object-position: center top; background: var(--cloud); }
 .ev-card--live .ev-art--gen { justify-content: center; padding: 26px 24px; min-height: 0; }
 .ev-card--live .ev-art--gen .ev-art-title { max-width: 82%; }
 .ev-card--live .ev-art--face .ev-art-title { max-width: 62%; }
@@ -3945,7 +3949,7 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 
 /* One fixed 16:9 well for every past card, so the row lines up — captures are
    shot at exactly 16:9 (see the live rule), so cover fills it with no bars. */
-.ev-card--past .ev-art-img { width: 100%; aspect-ratio: 16 / 9; height: auto; object-fit: cover; background: var(--cloud); }
+.ev-card--past .ev-art-img { width: 100%; aspect-ratio: 16 / 9; height: auto; object-fit: cover; object-position: center top; background: var(--cloud); }
 .ev-card--past .ev-art--gen { aspect-ratio: 16 / 9; min-height: 0; }
 /* The past card's art headline gets barely half the panel (the mentor photo has
    the rest), so it can't share the live card's type size — at 27px it fitted
