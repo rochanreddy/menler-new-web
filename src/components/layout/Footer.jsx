@@ -83,7 +83,7 @@ export default function Footer() {
           <ul className="footer-links">
             <li><a onClick={() => go('/aptitude')}>AI Aptitude Test</a></li>
             <li><a onClick={() => go('/resources')}>Library</a></li>
-             <li><a onClick={() => go('/Events')}>Events</a></li>
+            <li><a onClick={() => go('/events')}>Events</a></li>
           </ul>
         </div>
         <div>

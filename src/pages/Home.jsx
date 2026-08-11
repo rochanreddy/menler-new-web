@@ -192,7 +192,7 @@ export default function Home() {
       <Seo
         title="Menler — AI Learning India · Claude AI Fellowship & Courses"
         description="India's Claude-native AI learning. AI courses & fellowships — Generalist (no-code), Engineering, and the Gen AI Kickstarter. Real projects."
-        keywords="AI learning India, AI courses India, AI fellowship India, Claude AI fellowship, AI upskilling India, AI skills training, AI-native work, AI-native workforce, AI careers India, AI jobs future, AI workflows, AI automation workflows, best AI tools, AI productivity tools, large language models explained, enterprise AI transformation, AI adoption, AI bootcamp India"
+        keywords="AI learning India, AI courses India, AI fellowship India, Claude AI fellowship, AI uping India, AI skills training, AI-native work, AI-native workforce, AI careers India, AI jobs future, AI workflows, AI automation workflows, best AI tools, AI productivity tools, large language models explained, enterprise AI transformation, AI adoption, AI bootcamp India"
         path="/"
       />
       {/* ── HERO ── */}
@@ -262,7 +262,7 @@ export default function Home() {
             <div className="next-batch">
               <div className="nb-info">
                 <p className="nb-label">Batch starts</p>
-                <p className="nb-when"><strong>August 2026</strong></p>
+                <p className="nb-when"><strong>September 2026</strong></p>
                 <p className="nb-deadline">Applications close by 25 July 2026</p>
               </div>
               <div className="nb-chips">
@@ -287,7 +287,7 @@ export default function Home() {
             <div className="next-batch">
               <div className="nb-info">
                 <p className="nb-label">Batch Starts</p>
-                <p className="nb-when"><strong>September 2026</strong></p>
+                <p className="nb-when"><strong>October 2026</strong></p>
                 <p className="nb-deadline">Applications open by 25 July 2026</p>
               </div>
               <div className="nb-chips">
