@@ -42,6 +42,9 @@ const CLAUDE_PLAYBOOK_PACK = {
 export const RESOURCE_PACKS = {
   'build-ai-automation-with-claude': CLAUDE_PLAYBOOK_PACK,
   'program-and-ops-with-ai': CLAUDE_PLAYBOOK_PACK,
+  'build-claude-skills-and-schedules': CLAUDE_PLAYBOOK_PACK,
+  'crack-your-next-high-paying-job-with-ai': CLAUDE_PLAYBOOK_PACK,
+  'build-your-first-webapp-with-claude': CLAUDE_PLAYBOOK_PACK,
 };
 
 /** The paid resource pack for a campaign slug, or null if it has none. */
