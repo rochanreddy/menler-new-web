@@ -3900,6 +3900,28 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
   .ev-card--live .ev-art,
   .ev-card--live .ev-art-img { width: calc(100% - 32px); margin: 16px 16px 0; }
 }
+/* On a phone the stacked live card runs pill → title → subtitle → tags → date
+   → time → button down a ~300px column, and at desktop sizing that reads as
+   one dense block with no hierarchy. Everything steps down a little and the
+   gaps between the groups open up, so the eye gets somewhere to rest. The
+   title's ceiling comes down in FitTitle (it sets the size inline, so CSS
+   can't reach it). */
+@media (max-width: 560px) {
+  .ev-card--live .ev-art,
+  .ev-card--live .ev-art-img { width: calc(100% - 24px); margin: 12px 12px 0; }
+  .ev-card--live .ev-body { padding: 6px 16px 16px; gap: 10px; }
+  .ev-card--live .ev-live-dot { font-size: 10px; padding: 4px 10px; }
+  .ev-card--live .ev-sub { font-size: 13.5px; line-height: 1.5; }
+  .ev-card--live .ev-tags { gap: 6px; }
+  .ev-card--live .ev-tags span { font-size: 11px; padding: 4px 9px; }
+  /* Date and time share a line when they fit, and stack cleanly when they
+     don't — both starting at the same left edge as everything above. */
+  .ev-card--live .ev-when { font-size: 12.5px; gap: 4px 14px; }
+  .ev-card--live .ev-when-item svg { width: 14px; height: 14px; }
+  .ev-card--live .ev-foot { padding-top: 12px; }
+  .ev-card--live .ev-join { font-size: 12.5px; padding: 8px 8px 8px 18px; }
+  .ev-card--live .ev-join .ev-arrow { width: 22px; height: 22px; }
+}
 .ev-art-img { display: block; width: 100%; height: auto; }
 
 /* ── "Coming soon" poster (Live section, nothing live) ── */

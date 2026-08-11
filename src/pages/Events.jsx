@@ -262,6 +262,12 @@ const ClockIcon = () => (
 const TITLE_MAX = 21;       // past cards
 const LIVE_TITLE_MAX = 27;  // live cards start larger (see .ev-card--live .ev-title)
 const TITLE_MIN = 13;
+// 27px is a desktop headline size. On a phone the live card stacks and its
+// body is barely 300px wide, where the same title takes two full-bleed lines
+// and shoves the pill, subtitle, tags, date and button into one dense block.
+// The fit loop only ever shrinks, so the ceiling is what has to come down.
+const PHONE_W = 560;
+const PHONE_TITLE_MAX = 19;
 function FitTitle({ text, max = TITLE_MAX, lines = 1 }) {
   const ref = useRef(null);
   useLayoutEffect(() => {
@@ -270,7 +276,7 @@ function FitTitle({ text, max = TITLE_MAX, lines = 1 }) {
     let alive = true;
     const fit = () => {
       if (!alive) return;
-      let size = max;
+      let size = window.innerWidth <= PHONE_W ? Math.min(max, PHONE_TITLE_MAX) : max;
       el.style.fontSize = `${size}px`;
       if (lines > 1) {
         // Wrapped: shrink until the text fits inside `lines` line-boxes. The
