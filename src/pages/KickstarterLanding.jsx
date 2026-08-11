@@ -319,6 +319,13 @@ export default function KickstarterLanding() {
     'sachin roy': '/sign/sachin-digital.png',
   };
   const signImg = (name) => CERT_SIGNS[String(name || '').trim().toLowerCase()] || '';
+  // Founder-led campaigns name the founder as the mentor, so the two signature
+  // blocks would print the same name and the same scanned signature twice.
+  // Such a certificate is signed once, by the founder, centred.
+  const signKey = (n) => String(n || '').trim().toLowerCase();
+  const soleFounderSign = has(d.founderName) && signKey(d.mentorName) === signKey(d.founderName);
+  const showMentorSign = has(d.mentorName) && !soleFounderSign;
+  const oneSignature = !showMentorSign || !has(d.founderName);
 
   // Validate → verify the phone via SMS OTP (Amplifeed shows its own code-entry
   // UI) → submit the lead → go straight to checkout.
@@ -499,16 +506,18 @@ export default function KickstarterLanding() {
                   <p className="lp2-cert-mock-name">Your Name</p>
                   <span className="lp2-cert-rule" />
                   <p className="lp2-cert-mock-for">for successfully completing<br /><b>{certTitle}</b></p>
-                  <div className="lp2-cert-foot">
+                  <div className={`lp2-cert-foot${oneSignature ? ' lp2-cert-foot--solo' : ''}`}>
                     {/* The signature IS the name — the digital sign replaces the
                         printed name entirely; signers without a scan on file
                         fall back to the printed name as before. */}
+                    {showMentorSign && (
                     <span className="lp2-cert-sign lp2-cert-sign--left">
                       {signImg(d.mentorName)
                         ? <img className="lp2-cert-sign-img" src={signImg(d.mentorName)} alt={d.mentorName} />
                         : <span className="lp2-cert-sign-name">{d.mentorName}</span>}
                       <span className="lp2-cert-sign-role">{certRole}</span>
                     </span>
+                    )}
                     {has(d.founderName) && (
                       <span className="lp2-cert-sign">
                         {signImg(d.founderName)

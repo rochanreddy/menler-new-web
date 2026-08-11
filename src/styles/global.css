@@ -1975,6 +1975,9 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
    lead-in so the hierarchy reads name → course → everything else. */
 .lp2-cert-mock-for b { color: var(--ink); font-weight: 700; font-size: 15px; display: inline-block; margin-top: 2px; }
 .lp2-cert-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 28px; gap: 16px; }
+/* A single signer (founder-led sessions, where the mentor IS the founder)
+   signs in the middle rather than hugging one edge. */
+.lp2-cert-foot--solo { justify-content: center; }
 .lp2-cert-seal { flex-shrink: 0; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; width: 66px; height: 66px; border-radius: 50%; background: radial-gradient(circle at 50% 24%, rgba(255,255,255,0.6), rgba(255,255,255,0) 56%), linear-gradient(155deg, #F6C457 0%, #BA7517 100%); color: #fff; box-shadow: 0 8px 20px rgba(186,117,23,0.42), inset 0 1px 2px rgba(255,255,255,0.5); border: 2px solid rgba(255,255,255,0.9); }
 .lp2-cert-seal-star { font-size: 18px; line-height: 1; }
 .lp2-cert-seal-txt { font-size: 7px; font-weight: 800; letter-spacing: .08em; line-height: 1.15; margin-top: 3px; }
@@ -2007,6 +2010,9 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .lp2-cert-mock-for b { font-size: 12px; }
   .lp2-cert-foot { flex-direction: row; align-items: flex-end; justify-content: space-between; gap: 10px; margin-top: 14px; }
   .lp2-cert-sign { max-width: 46%; }
+  /* Repeated inside the query — the .lp2-cert-foot rule above resets it. */
+  .lp2-cert-foot--solo { justify-content: center; }
+  .lp2-cert-foot--solo .lp2-cert-sign { max-width: 80%; }
   .lp2-cert-sign-img { height: 24px; max-width: 110px; padding: 0 6px 3px; }
   .lp2-cert-sign-name { font-size: 10.5px; padding: 0 6px 3px; }
   .lp2-cert-sign-role { font-size: 8px; margin-top: 3px; }
