@@ -13,6 +13,7 @@ import { dirname, join } from 'path';
 import { PROJECTS } from '../src/data/projectsData.js';
 import { HOME_FAQS, GENERALIST_FAQS, ENGINEERING_FAQS, KICKSTARTER_FAQS } from '../src/data/faqData.js';
 import { POLICIES } from '../src/data/policyContent.js';
+import { BLOG_POSTS } from '../src/data/blogData.js';
 
 const SITE = 'https://menler.in';
 const DIST = 'dist';
@@ -164,26 +165,77 @@ const STATIC_ROUTES = [
   },
   {
     path: '/blog', file: 'blog.html', nav: 'Blog',
-    title: 'Menler Blog — AI Build Logs, Workflows & Careers | India',
-    description: "The Menler blog: real Claude build logs, agentic AI workflows, AI career guides, and AI-native ways of working — written by operators, for India's AI-native workforce.",
-    keywords: 'AI blog India, AI learning blog, agentic AI explained, agentic AI workflows, AI build logs, AI careers India, AI jobs future, AI workflows',
-    h1: 'The Menler blog',
-    intro: "Real Claude build logs, agentic AI workflows, AI career guides, and AI-native ways of working — written by operators, for India's AI-native workforce.",
-    jsonLd: [crumbs([{ name: 'Home', path: '/' }, { name: 'Blog', path: '/blog' }])],
-  },
-  {
-    path: '/blog/earnings-agent', file: 'blog/earnings-agent.html', nav: 'Earnings agent build log', type: 'article',
-    title: 'How we shipped a Claude-native earnings agent in six days | Menler',
-    description: "Full prompt, full MCP map, full failure log — the Claude-native earnings agent build that shaped Menler's Finance track. Agentic AI workflows explained by operators.",
-    keywords: 'agentic AI explained, agentic AI workflows, Claude earnings agent, MCP, AI build log, AI blog India, enterprise AI use cases',
-    h1: 'How we shipped a Claude-native earnings agent in six days',
-    intro: "Full prompt, full MCP map, full failure log — the Claude-native earnings agent build that shaped Menler's Finance track.",
+    title: 'Menler Blog — AI in Education, Learning & Careers | India',
+    description: 'The Menler blog: how AI is changing learning — completion, personalization, choosing an LMS — plus AI careers and AI-native ways of working, written by operators.',
+    keywords: 'AI blog India, AI in education, AI learning blog, online course completion, personalized learning, LMS guide, AI careers India',
+    h1: 'Notes on AI-native learning. From the people building it.',
+    intro: 'The Menler blog — how AI is changing the way people learn and work: build logs, guides, and honest takes, written by operators.',
     jsonLd: [
-      { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: 'How we shipped a Claude-native earnings agent in six days', description: "Full prompt, full MCP map, full failure log — the Claude-native earnings agent build that shaped Menler's Finance track.", author: ORG, publisher: ORG, mainEntityOfPage: `${SITE}/blog/earnings-agent`, inLanguage: 'en' },
-      crumbs([{ name: 'Home', path: '/' }, { name: 'Blog', path: '/blog' }, { name: 'Earnings agent', path: '/blog/earnings-agent' }]),
+      {
+        '@context': 'https://schema.org',
+        '@type': 'Blog',
+        name: 'The Menler Blog',
+        url: `${SITE}/blog`,
+        publisher: ORG,
+        inLanguage: 'en',
+        blogPost: BLOG_POSTS.filter((p) => p.body).map((p) => ({
+          '@type': 'BlogPosting', headline: p.title, url: `${SITE}/blog/${p.slug}`, datePublished: p.datePublished,
+        })),
+      },
+      crumbs([{ name: 'Home', path: '/' }, { name: 'Blog', path: '/blog' }]),
     ],
   },
 ];
+
+// Blog posts — generated from the SAME data the pages render, so SEO can never
+// drift from the content. Stub posts (no body yet) are skipped: they'd be thin
+// pages, so they stay out of the prerender + sitemap until they're written.
+const blogPosting = (p) => ({
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: p.title,
+  description: p.excerpt,
+  image: p.cover || `${SITE}/og-image.png`,
+  author: { '@type': p.author?.type || 'Organization', name: p.author?.name || 'Menler', url: SITE },
+  publisher: { '@type': 'Organization', name: 'Menler', url: SITE, logo: { '@type': 'ImageObject', url: `${SITE}/icon-512.png` } },
+  datePublished: p.datePublished,
+  dateModified: p.dateModified || p.datePublished,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE}/blog/${p.slug}` },
+  url: `${SITE}/blog/${p.slug}`,
+  ...(p.tag ? { articleSection: p.tag, keywords: p.tag } : {}),
+  inLanguage: 'en',
+});
+
+// Full article text (with real heading structure) for the crawler fallback —
+// this is what AI answer engines lift answers from. (Local escape helper:
+// escText below is declared after this module-level code runs.)
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const blogBodyHtml = (p) =>
+  (p.body || [])
+    .map((b) => {
+      if (b.type === 'h2' || b.type === 'h3') return `<${b.type}>${esc(b.text)}</${b.type}>`;
+      if (b.type === 'ul') return `<ul>${b.items.map((it) => `<li>${esc(it)}</li>`).join('')}</ul>`;
+      if (b.type === 'quote') return `<blockquote>${esc(b.text)}</blockquote>`;
+      return `<p>${esc(b.text)}</p>`;
+    })
+    .join('');
+
+const BLOG_ROUTES = BLOG_POSTS.filter((p) => p.body).map((p) => ({
+  path: `/blog/${p.slug}`,
+  file: `blog/${p.slug}.html`,
+  nav: p.title,
+  type: 'article',
+  title: `${p.title} | Menler`,
+  description: p.excerpt,
+  keywords: p.tag,
+  h1: p.title,
+  intro: p.excerpt,
+  extraHtml: blogBodyHtml(p),
+  jsonLd: [
+    blogPosting(p),
+    crumbs([{ name: 'Home', path: '/' }, { name: 'Blog', path: '/blog' }, { name: p.title, path: `/blog/${p.slug}` }]),
+  ],
+}));
 
 // Project detail pages (in the sitemap, but were invisible to crawlers).
 const PROJECT_ROUTES = PROJECTS.map((p) => ({
@@ -213,7 +265,7 @@ const POLICY_ROUTES = Object.entries(POLICIES).map(([slug, p]) => ({
   intro: `${p.title} for Menler Learning Systems Private Limited.`,
 }));
 
-const ROUTES = [...STATIC_ROUTES, ...PROJECT_ROUTES, ...POLICY_ROUTES];
+const ROUTES = [...STATIC_ROUTES, ...BLOG_ROUTES, ...PROJECT_ROUTES, ...POLICY_ROUTES];
 
 // Rendering -----------------------------------------------------------------
 const escText = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -234,7 +286,9 @@ function fallback(route) {
     .filter((r) => r.path !== route.path)
     .map((r) => `<a href="${r.path}">${escText(r.nav)}</a>`)
     .join(' · ');
-  const extra = route.extra ? `<p>${escText(route.extra)}</p>` : '';
+  const extra =
+    (route.extra ? `<p>${escText(route.extra)}</p>` : '') +
+    (route.extraHtml || ''); // pre-escaped structured HTML (e.g. full blog body)
   // Visually hidden (sr-only): present in the HTML for non-JS crawlers/AI, but
   // never shown to users — so there's no flash of fallback text before React
   // boots and replaces #root.
@@ -285,7 +339,7 @@ for (const route of ROUTES) {
   mkdirSync(dirname(out), { recursive: true });
   writeFileSync(out, render(template, route), 'utf8');
 }
-console.log(`✓ Prerendered ${ROUTES.length} routes (${STATIC_ROUTES.length} static + ${PROJECT_ROUTES.length} projects + ${POLICY_ROUTES.length} policies) with baked-in SEO + structured data.`);
+console.log(`✓ Prerendered ${ROUTES.length} routes (${STATIC_ROUTES.length} static + ${BLOG_ROUTES.length} blog posts + ${PROJECT_ROUTES.length} projects + ${POLICY_ROUTES.length} policies) with baked-in SEO + structured data.`);
 
 // Sitemap ------------------------------------------------------------------
 // Auto-generated from the SAME ROUTES list, so every prerendered indexable page
