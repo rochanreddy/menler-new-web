@@ -1,163 +1,111 @@
-export const BLOG_ARTICLES = [
+// Blog content layer — placeholder data shaped like the real thing.
+//
+// Every post follows the same shape so wiring a CMS (Sanity) later is a pure
+// data swap — the pages/components never reach around this contract:
+//   slug          URL segment ('/blog/<slug>')
+//   title         plain text, becomes the post's single <h1>
+//   excerpt       1–2 sentences; card excerpt + meta description + JSON-LD description
+//   tag           single category label (drives the listing filter pills)
+//   author        { name, role, initials, type } — type is the schema.org
+//                 author @type: 'Person' or 'Organization'
+//   datePublished / dateModified   ISO dates (feed <time datetime> + JSON-LD)
+//   readTime      display string, e.g. '3 min read'
+//   cover         absolute URL of a real cover image, or null → brand Thumb
+//   thumb         Thumb variant used while cover is null
+//   featured      the listing hero (most recent featured wins)
+//   body          array of blocks: { type: 'p'|'h2'|'h3'|'quote', text } or
+//                 { type: 'ul', items: [] }. null = stub (card only, article
+//                 page shows a graceful "coming soon").
+
+export const BLOG_POSTS = [
   {
-    id: 'earnings-agent',
-    slug: '/blog/earnings-agent',
-    category: 'Build Logs · Featured',
-    categoryColor: 'var(--specialist)',
-    categoryBg: 'var(--cloud)',
-    imgClass: 'eng',
-    title: 'How we shipped a Claude-native earnings agent in six days — full build log',
-    dek: 'Full prompt, full MCP map, full failure log. The build that taught our Finance track everything we now teach in Week 8 of the Generalist Fellowship.',
-    excerpt: 'Full prompt, full MCP map, full failure log. The build that taught our Finance track everything we now teach in Week 8.',
-    author: 'Rohit Tandon',
-    authorInitial: 'RT',
-    date: '3 days ago',
-    readTime: '12 min read',
-    tags: ['Build Logs', 'Finance', 'MCP'],
+    slug: 'why-online-courses-have-a-completion-problem',
+    title: 'Why Online Courses Have a Completion Problem — And What Actually Fixes It',
+    excerpt: "Most online courses lose the majority of learners before they finish. Here's why that keeps happening, and what actually changes it.",
+    tag: 'AI in Education',
+    author: { name: 'The Menler Team', role: 'Menler Editorial', initials: 'M', type: 'Organization' },
+    datePublished: '2026-08-04',
+    dateModified: '2026-08-04',
+    readTime: '3 min read',
+    cover: null,
+    thumb: 'alumni',
     featured: true,
-    large: true,
-    filterGroup: 'builds',
+    body: [
+      { type: 'p', text: "Online learning promised to make education more accessible. In practice, it's also made it easier to quietly disappear. Most course platforms report that only a small fraction of learners who start a course actually finish it — and that number has stayed stubbornly low for years, regardless of how polished the content gets." },
+      { type: 'h2', text: 'Why Do Students Drop Out of Online Courses?' },
+      { type: 'p', text: "Rarely because the material is too hard. Most dropout happens in the first week, often right after the first bit of friction — a confusing next step, a quiz that doesn't match what was taught, a pace that doesn't fit the learner's actual level. Generic courses are built for an average learner who doesn't really exist." },
+      { type: 'h2', text: 'What Traditional LMS Platforms Get Wrong' },
+      { type: 'p', text: 'Most platforms treat content delivery and content design as the same problem. They\'re built to host videos and track completion, not to notice when a learner is stuck, bored, or moving faster than the course expects. The platform sees "watched 40% of video 3" — not why the learner stopped there.' },
+      { type: 'h2', text: 'How Does AI Actually Improve Completion?' },
+      { type: 'p', text: 'By closing the gap between what a learner needs right now and what the course assumes they need — adjusting difficulty in real time, surfacing the right explanation instead of just the next scripted one, and catching disengagement early enough to actually do something about it.' },
+      { type: 'h2', text: 'What This Looks Like in Practice' },
+      { type: 'p', text: "Fewer flat video-and-quiz sequences, more courses that respond to how someone is actually doing. The real measure of a good AI-native LMS isn't the AI itself — it's whether more learners make it to the end, and retain what they came for." },
+    ],
   },
   {
-    id: 'ai-engineer-offers',
-    slug: '/blog',
-    category: 'AI Careers',
-    imgClass: 'career',
-    title: 'What ₹38L AI engineer offers actually look like in India',
-    author: 'Menler Editorial',
-    authorInitial: 'ME',
-    date: '1 week ago',
-    readTime: '9 min read',
-    filterGroup: 'careers',
-  },
-  {
-    id: 'prompt-patterns',
-    slug: '/blog',
-    category: 'Prompts & Patterns',
-    imgClass: '',
-    title: 'The 7 prompt patterns we teach in Week 3',
-    author: 'Sneha Menon',
-    authorInitial: 'SM',
-    date: '2 weeks ago',
-    readTime: '7 min read',
-    filterGroup: 'prompts',
-  },
-  {
-    id: 'bengaluru-ai-hiring',
-    slug: '/blog',
-    category: 'India AI',
-    imgClass: 'india',
-    title: "Why Bengaluru's AI hiring is splitting into two markets",
-    author: 'Aman Kapoor',
-    authorInitial: 'AK',
-    date: '2 weeks ago',
-    readTime: '11 min read',
-    filterGroup: 'india',
-  },
-  {
-    id: 'spring-boot-to-ai',
-    slug: '/blog',
-    category: 'Alumni Voices',
-    imgClass: 'alumni',
-    title: 'From Spring Boot to founding AI engineer — 11 weeks',
-    author: 'Karan Iyer',
-    authorInitial: 'KI',
-    date: '3 weeks ago',
+    slug: 'choosing-an-lms-in-2026-a-practical-checklist',
+    title: 'Choosing an LMS in 2026: A Practical Checklist',
+    excerpt: 'The features that actually matter when evaluating a learning platform, and the ones that are just noise.',
+    tag: 'LMS Guides',
+    author: { name: 'The Menler Team', role: 'Menler Editorial', initials: 'M', type: 'Organization' },
+    datePublished: '2026-07-28',
+    dateModified: '2026-07-28',
     readTime: '6 min read',
-    filterGroup: 'alumni',
+    cover: null,
+    thumb: 'finance',
+    featured: false,
+    body: null,
   },
   {
-    id: 'not-prompt-engineering',
-    slug: '/blog',
-    category: 'Founder Notes',
-    imgClass: 'founder',
-    title: "Why we don't teach \"prompt engineering\" as a job",
-    author: "Founder's desk",
-    authorInitial: 'F',
-    date: '3 weeks ago',
+    slug: 'what-personalized-learning-actually-means',
+    title: 'What "Personalized Learning" Actually Means',
+    excerpt: "The term gets used constantly. Here's what it looks like when it's done right.",
+    tag: 'AI in Education',
+    author: { name: 'The Menler Team', role: 'Menler Editorial', initials: 'M', type: 'Organization' },
+    datePublished: '2026-07-21',
+    dateModified: '2026-07-21',
     readTime: '5 min read',
-    filterGroup: 'founder',
+    cover: null,
+    thumb: 'marketing',
+    featured: false,
+    body: null,
   },
   {
-    id: 'multi-agent-traces',
-    slug: '/blog',
-    category: 'Build Logs',
-    imgClass: '',
-    title: 'A multi-agent research system, end to end (with traces)',
-    author: 'Neha Subramanian',
-    authorInitial: 'NS',
-    date: '4 weeks ago',
-    readTime: '18 min read',
-    filterGroup: 'builds',
-  },
-  {
-    id: 'class12-study-agent',
-    slug: '/blog',
-    category: 'Build Logs · Kickstarter',
-    imgClass: 'kick',
-    title: 'A Class-12 student built a study agent — 60 friends use it',
-    author: 'Sahil Mehta',
-    authorInitial: 'SM',
-    date: '4 weeks ago',
+    slug: '5-signs-your-team-has-outgrown-a-generic-lms',
+    title: '5 Signs Your Team Has Outgrown a Generic LMS',
+    excerpt: "If more than one of these sounds familiar, it's probably time to look elsewhere.",
+    tag: 'LMS Guides',
+    author: { name: 'The Menler Team', role: 'Menler Editorial', initials: 'M', type: 'Organization' },
+    datePublished: '2026-07-14',
+    dateModified: '2026-07-14',
     readTime: '4 min read',
-    filterGroup: 'builds',
-  },
-  {
-    id: 'ai-hiring-loop',
-    slug: '/blog',
-    category: 'AI Careers',
-    imgClass: 'career',
-    title: 'The new AI hiring loop: what 14 companies asked our alumni',
-    author: 'Menler Editorial',
-    authorInitial: 'ME',
-    date: '5 weeks ago',
-    readTime: '10 min read',
-    filterGroup: 'careers',
-  },
-  {
-    id: 'when-not-multi-agent',
-    slug: '/blog',
-    category: 'Prompts & Patterns',
-    imgClass: '',
-    title: 'When to NOT use a multi-agent system',
-    author: 'Vikram Krishnan',
-    authorInitial: 'VK',
-    date: '5 weeks ago',
-    readTime: '8 min read',
-    filterGroup: 'prompts',
-  },
-  {
-    id: 'tier2-ai-surge',
-    slug: '/blog',
-    category: 'India AI',
-    imgClass: 'india',
-    title: "The Tier-2 AI talent surge no one is reporting",
-    author: 'Anjali Verma',
-    authorInitial: 'AV',
-    date: '6 weeks ago',
-    readTime: '9 min read',
-    filterGroup: 'india',
-  },
-  {
-    id: 'teacher-ai-club',
-    slug: '/blog',
-    category: 'Alumni Voices',
-    imgClass: 'alumni',
-    title: '"I taught Class 9 social studies. Now I run an AI club for sixty kids."',
-    author: 'Vandana K.',
-    authorInitial: 'VK',
-    date: '6 weeks ago',
-    readTime: '5 min read',
-    filterGroup: 'alumni',
+    cover: null,
+    thumb: 'eng',
+    featured: false,
+    body: null,
   },
 ];
 
-export const BLOG_FILTERS = [
-  { value: 'all', label: 'All' },
-  { value: 'builds', label: 'Build Logs' },
-  { value: 'careers', label: 'AI Careers' },
-  { value: 'prompts', label: 'Prompts & Patterns' },
-  { value: 'india', label: 'India AI' },
-  { value: 'alumni', label: 'Alumni Voices' },
-  { value: 'founder', label: 'Founder Notes' },
-];
+// Newest-first (the array above is already sorted, but don't rely on it).
+export const sortedPosts = () =>
+  [...BLOG_POSTS].sort((a, b) => (a.datePublished < b.datePublished ? 1 : -1));
+
+export const getFeaturedPost = () =>
+  sortedPosts().find((p) => p.featured) || sortedPosts()[0];
+
+export const getPostBySlug = (slug) => BLOG_POSTS.find((p) => p.slug === slug);
+
+export const getRelatedPosts = (post, count = 3) =>
+  sortedPosts()
+    .filter((p) => p.slug !== post.slug)
+    // same-tag posts first, then everything else newest-first
+    .sort((a, b) => (b.tag === post.tag) - (a.tag === post.tag))
+    .slice(0, count);
+
+// Distinct tags in listing order — the filter pills render from this, so a
+// dataset with no tags simply renders no pills.
+export const getAllTags = () =>
+  [...new Set(BLOG_POSTS.map((p) => p.tag).filter(Boolean))];
+
+export const formatPostDate = (iso) =>
+  new Date(`${iso}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
