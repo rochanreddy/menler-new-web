@@ -100,47 +100,18 @@ const BRAND_ART = [
   { accent: '#1D9E75', tint: '#7ADCBB' }, // Placed green
 ];
 
-const rgb = (hex) => {
-  const m = /^#?([0-9a-f]{6})$/i.exec(String(hex || '').trim());
-  if (!m) return null;
-  const n = parseInt(m[1], 16);
-  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
-};
-
-// Which brand colour a campaign is closest to. Campaigns choose a free-form
-// themeAccent for their own landing page, so the card can't use it literally —
-// but it CAN be snapped to the nearest brand colour, which is what keeps a card
-// and the page behind its Join button in the same colour family instead of the
-// click throwing you from a purple card onto an amber page. Nearest by plain
-// squared RGB distance; a campaign with no accent set returns null and falls
-// back to position (see toneOrder).
-const nearestBrand = (hex) => {
-  const c = rgb(hex);
-  if (!c) return null;
-  let best = 0;
-  let bestD = Infinity;
-  BRAND_ART.forEach((b, i) => {
-    const t = rgb(b.accent);
-    const d = (c[0] - t[0]) ** 2 + (c[1] - t[1]) ** 2 + (c[2] - t[2]) ** 2;
-    if (d < bestD) { bestD = d; best = i; }
-  });
-  return best;
-};
-
-// LIVE cards colour-MATCH their campaign. "Join masterclass" opens that
-// campaign's landing page, so an arbitrary colour here makes the click read as
-// a jump to a different site — an amber page should be reached from an amber
-// card. Each card asks for its nearest brand colour and only gives it up if the
-// card directly above it in the rail already took it.
-const liveTones = (list) => {
-  const picked = [];
-  list.forEach((ev, i) => {
-    const want = nearestBrand(ev.accent) ?? i % BRAND_ART.length;
-    const above = i > 0 ? picked[i - 1] : -1;
-    picked.push(want === above ? (want + 1) % BRAND_ART.length : want);
-  });
-  return picked.map((t) => BRAND_ART[t]);
-};
+// A LIVE card is already wearing the colour it will keep once the session runs
+// and it drops into the wall below (see pastTone). A live event's place in the
+// past grid is knowable in advance: it joins at the end of the age order, and
+// the rail is sorted soonest-first, so the next session to finish takes the
+// next age index, the one after it the one after that. Painting that colour now
+// means the card doesn't change appearance when it moves — the same card you
+// saw at the top of the page is the one you find in the history.
+//
+// This replaces matching the campaign's own accent. That kept a card and the
+// page behind its Join button in one colour family, which was worth something,
+// but not as much as a wall that never repaints itself.
+const liveTones = (list, pastCount) => list.map((_, i) => pastTone(pastCount + i));
 
 // PAST cards rotate instead. Their button opens a download modal — there's no
 // page behind it to match — so what matters is that the grid is evenly spread
@@ -155,7 +126,24 @@ const liveTones = (list) => {
 // cycle still works when the grid reflows: at 2-up it lands 0,1 / 2,0 / 1,2 and
 // stacked it's 0,1,2 — no two cards of one colour ever touch at any width.
 const PAST_LANES = [BRAND_ART[0], BRAND_ART[2], BRAND_ART[1]]; // purple · green · amber
-const pastTone = (i) => PAST_LANES[i % PAST_LANES.length];
+//
+// The lane is keyed on how OLD the event is, not on where it sits in the grid.
+// Counting from the top would mean a masterclass finishing and dropping out of
+// Live pushes every card down a slot and repaints the entire wall — the whole
+// history changing colour because one new session ended. Counted from the
+// oldest event instead, every card that already exists keeps its ageIndex, so
+// it keeps its colour for good; only the arriving one takes a new lane.
+//
+// Subtracting the age (rather than adding it) is what preserves the reading
+// direction: display order runs newest → oldest, so a descending lane by age is
+// an ascending one down the grid, and a row still reads purple · green · amber
+// with each column holding a single colour. ANCHOR sets where that cycle
+// starts; it's the ageIndex of the newest past event as the wall stands today,
+// so the existing cards keep exactly the colours they have now. Any value ≡ 1
+// (mod 3) does the same job — it's a starting point, not a magic number.
+const PAST_LANE_ANCHOR = 7;
+const pastTone = (ageIndex) =>
+  PAST_LANES[(((PAST_LANE_ANCHOR - ageIndex) % PAST_LANES.length) + PAST_LANES.length) % PAST_LANES.length];
 
 // Map a raw campaign doc → the shape the cards render. One place, so the query,
 // the fallback and the cards never drift.
@@ -167,9 +155,6 @@ const toEvent = (c) => ({
   tags: c.eventTags || [],
   date: formatEventDate(c.date), time: c.time || '',
   campaignSlug: c.slug || '',
-  // The campaign's own landing-page accent — not painted directly, only used to
-  // pick which brand colour the card art snaps to (see nearestBrand).
-  accent: c.themeAccent || c.highlightBg || '',
   // Real banner capture from the campaign's landing page (eventImage in Sanity).
   // When present it IS the card art; the generated panel is the fallback.
   thumbnail: c.eventImage || '',
@@ -221,7 +206,7 @@ const FALLBACK = [
 const EVENTS_QUERY = `*[_type == "campaignPage" && hideFromEvents != true] | order(eventOrder asc, _createdAt desc){
   "_id": _id, "slug": slug.current, title,
   bannerLine1, bannerLine2, bannerTagline, subtitle,
-  date, time, themeAccent, highlightBg,
+  date, time,
   mentorName, mentorRole, "mentorPhoto": mentorPhoto.asset->url,
   "eventImage": eventImage.asset->url,
   isLiveEvent, eventTags, eventAttendees,
@@ -415,7 +400,8 @@ export default function Events() {
   const [pastShown, setPastShown] = useState(PAST_INITIAL);
   const pastVisible = past.slice(0, pastShown);
 
-  const liveArt = liveTones(live);
+  // Live cards borrow the lane each event will hold once it joins the wall.
+  const liveArt = liveTones(live, past.length);
 
   // Programs block links out to the other pages — land at the top, not mid-page.
   const go = (path) => { navigate(path); window.scrollTo(0, 0); };
@@ -495,7 +481,8 @@ export default function Events() {
           <div className="ev-grid ev-grid--past">
             {pastVisible.map((ev, i) => (
               <article className="ev-card ev-card--past" key={ev._id}>
-                <EventArt ev={ev} tone={pastTone(i)} />
+                {/* Oldest event is 0, so an event's lane never moves once set. */}
+                <EventArt ev={ev} tone={pastTone(past.length - 1 - i)} />
                 <div className="ev-body">
                   <FitTitle text={ev.title} />
                   {ev.subtitle && <p className="ev-sub">{ev.subtitle}</p>}
