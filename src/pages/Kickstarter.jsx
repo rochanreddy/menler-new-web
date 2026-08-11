@@ -16,7 +16,7 @@ import { KICKSTARTER_FAQS } from '../data/faqData';
 import { submitLead } from '../services/leadService';
 
 // Curriculum PDF served by the "Download curriculum" button (no verification).
-const KS_CURRICULUM_PDF = '/pdfs/Menler_AI_Kickstarter_Curriculum.pdf';
+const KS_CURRICULUM_PDF = '/pdfs/AI_Kickstarter.pdf';
 
 const DAYS = [
   { num: '01', topic: 'The AI Landscape', tool: 'Claude, ChatGPT, Gemini', cap: false },
