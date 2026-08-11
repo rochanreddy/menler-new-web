@@ -3881,14 +3881,13 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
   margin: 16px; border-radius: 14px;
   aspect-ratio: 16 / 9; height: auto;
 }
-/* Captures are shot at exactly 16:9 (the banner is forced to 396px at capture
-   time), so cover fills the panel edge-to-edge with nothing cropped — no
-   letterbox bars. The cloud fill only ever shows while the image loads. */
-/* Anchored to the TOP, not the centre: a capture that isn't exactly 16:9 gets
-   its overflow trimmed by cover, and split evenly that takes a bite out of the
-   wordmark sitting at the very top of every banner. Trimming from the bottom
-   instead costs the date strip, which the card already prints as text. */
-.ev-card--live .ev-art-img { object-fit: cover; object-position: center top; background: var(--cloud); }
+/* A live card is alone on its row, so its art has nothing to line up with and
+   no reason to be forced into the 16:9 well. Letting the capture keep its own
+   ratio shows the banner WHOLE — wordmark at the top, date strip at the bottom
+   — instead of cropping one end or the other to fit a shape it never had. A
+   capture that is 16:9 looks exactly as it did. (Past cards still crop: their
+   wells sit side by side in a grid and have to match.) */
+.ev-card--live .ev-art-img { aspect-ratio: auto; height: auto; background: var(--cloud); }
 .ev-card--live .ev-art--gen { justify-content: center; padding: 26px 24px; min-height: 0; }
 .ev-card--live .ev-art--gen .ev-art-title { max-width: 82%; }
 .ev-card--live .ev-art--face .ev-art-title { max-width: 62%; }
