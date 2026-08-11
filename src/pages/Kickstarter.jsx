@@ -53,7 +53,7 @@ const KS_PRICING = {
   price: '4,999',
   priceSub: 'incl. all taxes · one-time',
   features: KS_FEATS,
-  startDate: 'July 25, 2026',
+  startDate: 'August 30, 2026',
   chips: [
     { label: 'Duration', value: '2 Weekends' },
     { label: 'Sessions', value: '4 Live · 8 hrs' },
