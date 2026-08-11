@@ -130,8 +130,19 @@ export default defineType({
     // The default mock-up shows two signatures: the mentor (left) and the
     // founder (right). These names also drive the mock-up below.
     defineField({ name: 'certificateImage', title: 'Sample certificate image', type: 'image', options: { hotspot: true }, group: 'certificate', description: 'Upload a sample certificate. If empty, a default certificate mock-up is shown.' }),
-    defineField({ name: 'founderName', title: 'Founder name (signature — bottom right)', type: 'string', group: 'certificate', description: 'Shown on the default mock-up. Leave blank to hide the founder signature.' }),
+    defineField({ name: 'founderName', title: 'Founder name (signature — bottom right)', type: 'string', group: 'certificate', description: 'Shown on the default mock-up. Leave blank to hide the founder signature. If it matches the mentor name, the certificate is signed once, in the middle.' }),
     defineField({ name: 'founderRole', title: 'Founder role / title', type: 'string', group: 'certificate', description: 'e.g. Founder, Menler' }),
+    // A scanned signature replaces the printed name entirely. Uploading one
+    // here saves a code change for every new guest mentor; the built-in scans
+    // (Sachin, Sridevi, Deepak) still apply by name when these are empty.
+    defineField({
+      name: 'mentorSignature', title: 'Mentor signature (scan)', type: 'image', group: 'certificate',
+      description: 'Optional. A PNG with a transparent background, signature in dark ink — it replaces the printed mentor name on the mock-up. Leave blank to use the printed name (or the stored signature, for mentors who have one on file).',
+    }),
+    defineField({
+      name: 'founderSignature', title: 'Founder signature (scan)', type: 'image', group: 'certificate',
+      description: 'Optional. Same as above, for the founder signature on the right.',
+    }),
     defineField({ name: 'certificateTitle', title: 'Course name on the certificate', type: 'string', group: 'certificate', description: 'Shown after "for successfully completing". Leave blank to reuse the banner headline.' }),
     defineField({ name: 'certificateNote', title: 'Certificate caption', type: 'string', group: 'certificate' }),
 

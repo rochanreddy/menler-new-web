@@ -102,6 +102,9 @@ const FALLBACK = {
   // wording when the course name differs from the campaign's marketing title.
   certificateTitle: '',
   certificateNote: 'A Menler Certificate of Participation — shareable on LinkedIn.',
+  // Uploaded scans; blank falls back to CERT_SIGNS, then to the printed name.
+  mentorSignature: '',
+  founderSignature: '',
   whatsappUrl: MENLER_WHATSAPP_URL,
   instagramUrl: '',
   communityPlatform: 'whatsapp',
@@ -129,6 +132,7 @@ const CAMPAIGN_QUERY = `*[_type == "campaignPage" && slug.current == $slug][0]{
   founderName, founderRole,
   learn[]{title, detail}, forYou, get[]{title, detail},
   "certificateImage": certificateImage.asset->url, certificateTitle, certificateNote,
+  "mentorSignature": mentorSignature.asset->url, "founderSignature": founderSignature.asset->url,
   whatsappUrl, instagramUrl, communityPlatform, discordUrl, facebookUrl, whatsappText, communityText,
   showLearn, showGet, showCertificate, showMentor, showCommunity
 }`;
@@ -318,7 +322,13 @@ export default function KickstarterLanding() {
     'sridevi edupuganti': '/sign/sridevi-digital.png',
     'sachin roy': '/sign/sachin-digital.png',
   };
-  const signImg = (name) => CERT_SIGNS[String(name || '').trim().toLowerCase()] || '';
+  // A scan uploaded in Sanity wins, so a guest mentor can be signed in without
+  // a code change; the built-in scans stay the default for the regular signers.
+  // Kept off optImg's q=72: a signature is thin dark strokes on transparency,
+  // where lossy compression shows as haze around the ink.
+  const signSrc = (url) => (url && url.includes('cdn.sanity.io') ? `${url}?w=340&fit=max&auto=format&q=92` : url);
+  const signImg = (name, uploaded) =>
+    signSrc(uploaded) || CERT_SIGNS[String(name || '').trim().toLowerCase()] || '';
   // Founder-led campaigns name the founder as the mentor, so the two signature
   // blocks would print the same name and the same scanned signature twice.
   // Such a certificate is signed once, by the founder, centred.
@@ -512,16 +522,16 @@ export default function KickstarterLanding() {
                         fall back to the printed name as before. */}
                     {showMentorSign && (
                     <span className="lp2-cert-sign lp2-cert-sign--left">
-                      {signImg(d.mentorName)
-                        ? <img className="lp2-cert-sign-img" src={signImg(d.mentorName)} alt={d.mentorName} />
+                      {signImg(d.mentorName, d.mentorSignature)
+                        ? <img className="lp2-cert-sign-img" src={signImg(d.mentorName, d.mentorSignature)} alt={d.mentorName} />
                         : <span className="lp2-cert-sign-name">{d.mentorName}</span>}
                       <span className="lp2-cert-sign-role">{certRole}</span>
                     </span>
                     )}
                     {has(d.founderName) && (
                       <span className="lp2-cert-sign">
-                        {signImg(d.founderName)
-                          ? <img className="lp2-cert-sign-img" src={signImg(d.founderName)} alt={d.founderName} />
+                        {signImg(d.founderName, d.founderSignature)
+                          ? <img className="lp2-cert-sign-img" src={signImg(d.founderName, d.founderSignature)} alt={d.founderName} />
                           : <span className="lp2-cert-sign-name">{d.founderName}</span>}
                         <span className="lp2-cert-sign-role">{d.founderRole}</span>
                       </span>
