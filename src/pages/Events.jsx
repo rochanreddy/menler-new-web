@@ -155,24 +155,7 @@ const liveTones = (list) => {
 // cycle still works when the grid reflows: at 2-up it lands 0,1 / 2,0 / 1,2 and
 // stacked it's 0,1,2 — no two cards of one colour ever touch at any width.
 const PAST_LANES = [BRAND_ART[0], BRAND_ART[2], BRAND_ART[1]]; // purple · green · amber
-//
-// The lane is keyed on how OLD the event is, not on where it sits in the grid.
-// Counting from the top would mean a masterclass finishing and dropping out of
-// Live pushes every card down a slot and repaints the entire wall — the whole
-// history changing colour because one new session ended. Counted from the
-// oldest event instead, every card that already exists keeps its ageIndex, so
-// it keeps its colour for good; only the arriving one takes a new lane.
-//
-// Subtracting the age (rather than adding it) is what preserves the reading
-// direction: display order runs newest → oldest, so a descending lane by age is
-// an ascending one down the grid, and a row still reads purple · green · amber
-// with each column holding a single colour. ANCHOR sets where that cycle
-// starts; it's the ageIndex of the newest past event as the wall stands today,
-// so the existing cards keep exactly the colours they have now. Any value ≡ 1
-// (mod 3) does the same job — it's a starting point, not a magic number.
-const PAST_LANE_ANCHOR = 7;
-const pastTone = (ageIndex) =>
-  PAST_LANES[(((PAST_LANE_ANCHOR - ageIndex) % PAST_LANES.length) + PAST_LANES.length) % PAST_LANES.length];
+const pastTone = (i) => PAST_LANES[i % PAST_LANES.length];
 
 // Map a raw campaign doc → the shape the cards render. One place, so the query,
 // the fallback and the cards never drift.
@@ -506,8 +489,7 @@ export default function Events() {
           <div className="ev-grid ev-grid--past">
             {pastVisible.map((ev, i) => (
               <article className="ev-card ev-card--past" key={ev._id}>
-                {/* Oldest event is 0, so an event's lane never moves once set. */}
-                <EventArt ev={ev} tone={pastTone(past.length - 1 - i)} />
+                <EventArt ev={ev} tone={pastTone(i)} />
                 <div className="ev-body">
                   <FitTitle text={ev.title} />
                   {ev.subtitle && <p className="ev-sub">{ev.subtitle}</p>}
