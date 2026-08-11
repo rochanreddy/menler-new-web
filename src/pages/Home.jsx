@@ -263,7 +263,7 @@ export default function Home() {
               <div className="nb-info">
                 <p className="nb-label">Batch starts</p>
                 <p className="nb-when"><strong>September 2026</strong></p>
-                <p className="nb-deadline">Applications close by 25 July 2026</p>
+                <p className="nb-deadline">Applications close by 30 August 2026</p>
               </div>
               <div className="nb-chips">
                 <span className="nb-chip">10 Weeks</span>
@@ -288,7 +288,7 @@ export default function Home() {
               <div className="nb-info">
                 <p className="nb-label">Batch Starts</p>
                 <p className="nb-when"><strong>October 2026</strong></p>
-                <p className="nb-deadline">Applications open by 25 July 2026</p>
+                <p className="nb-deadline">Applications open by 30 September 2026</p>
               </div>
               <div className="nb-chips">
                 <span className="nb-chip">12 Weeks</span>
