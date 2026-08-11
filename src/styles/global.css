@@ -1877,8 +1877,12 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 
 .lp2-mentor { display: flex; gap: 22px; align-items: stretch; margin-top: 34px; padding: 22px; background: var(--parchment); border: 1px solid rgba(186,117,23,0.16); border-radius: 16px; }
 /* Rendered as a background so it matches the text column height exactly
-   (bottom aligns with the bio) instead of overhanging like a raw <img>. */
-.lp2-mentor-img { width: 138px; align-self: stretch; min-height: 168px; flex-shrink: 0; background-color: #ddd; background-size: cover; background-position: center top; background-repeat: no-repeat; border-radius: 14px; }
+   (bottom aligns with the bio) instead of overhanging like a raw <img>.
+   The max-height stops that on a long bio: matching a 400px text column at
+   138px wide turned a near-square headshot into a stretched 1:3 sliver
+   cropped to the face. It clamps at a portrait ratio and top-aligns; only
+   cards whose bio runs past it are affected, the rest still align bottoms. */
+.lp2-mentor-img { width: 138px; align-self: stretch; min-height: 168px; max-height: 250px; flex-shrink: 0; background-color: #ddd; background-size: cover; background-position: center top; background-repeat: no-repeat; border-radius: 14px; }
 @media (max-width: 560px) {
   /* Stack the mentor card: a landscape photo on top, then all the details
      full-width below — so the bio reads across the card instead of a narrow
