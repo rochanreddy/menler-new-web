@@ -101,7 +101,7 @@ export default function App() {
             <Route path="/community" element={<Community />} />
             <Route path="/events" element={<Events />} />
             <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/earnings-agent" element={<BlogArticle />} />
+            <Route path="/blog/:slug" element={<BlogArticle />} />
             <Route path="/about" element={<About />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/pay-test" element={<PayTest />} />
