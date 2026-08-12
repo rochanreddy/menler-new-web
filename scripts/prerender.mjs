@@ -13,9 +13,36 @@ import { dirname, join } from 'path';
 import { PROJECTS } from '../src/data/projectsData.js';
 import { HOME_FAQS, GENERALIST_FAQS, ENGINEERING_FAQS, KICKSTARTER_FAQS } from '../src/data/faqData.js';
 import { POLICIES } from '../src/data/policyContent.js';
-import { BLOG_POSTS } from '../src/data/blogData.js';
+import { BLOG_POSTS as FILE_POSTS } from '../src/data/blogData.js';
 
 const SITE = 'https://menler.in';
+
+/* Posts live in the database and are written in the admin, so the build asks
+ * the API for them. Without this a published post would render only after the
+ * browser fetched it — which is fine for a reader and useless for a crawler,
+ * and search traffic is most of what a blog is for.
+ *
+ * If the API can't be reached the build still succeeds using the bundled file,
+ * because a deploy blocked by a sleeping backend helps nobody. */
+const POSTS_API = process.env.POSTS_API_URL || process.env.VITE_API_URL || 'https://go.menler.in';
+
+async function loadPosts() {
+  try {
+    const res = await fetch(`${POSTS_API}/posts`, { signal: AbortSignal.timeout(20000) });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const { posts } = await res.json();
+    if (Array.isArray(posts) && posts.length) {
+      console.log(`✓ Loaded ${posts.length} published posts from ${POSTS_API}`);
+      return posts;
+    }
+    throw new Error('no posts returned');
+  } catch (err) {
+    console.warn(`! Could not load posts from ${POSTS_API} (${err.message}) — using the bundled file.`);
+    return FILE_POSTS;
+  }
+}
+
+const BLOG_POSTS = await loadPosts();
 const DIST = 'dist';
 const SOCIAL = [
   'https://www.linkedin.com/company/menler/',
@@ -337,7 +364,15 @@ for (const route of ROUTES) {
   const rel = route.path === '/' ? 'index.html' : `${route.path.replace(/^\/+/, '')}/index.html`;
   const out = join(DIST, rel);
   mkdirSync(dirname(out), { recursive: true });
-  writeFileSync(out, render(template, route), 'utf8');
+
+  let html = render(template, route);
+  // Hand the blog pages their posts inline, so the first paint shows real
+  // articles instead of a flash of the bundled fallback while the API answers.
+  if (route.path === '/blog' || route.path.startsWith('/blog/')) {
+    const json = JSON.stringify(BLOG_POSTS).replace(/</g, '\\u003c');
+    html = html.replace('</head>', `    <script>window.__POSTS__=${json}</script>\n  </head>`);
+  }
+  writeFileSync(out, html, 'utf8');
 }
 console.log(`✓ Prerendered ${ROUTES.length} routes (${STATIC_ROUTES.length} static + ${BLOG_ROUTES.length} blog posts + ${PROJECT_ROUTES.length} projects + ${POLICY_ROUTES.length} policies) with baked-in SEO + structured data.`);
 

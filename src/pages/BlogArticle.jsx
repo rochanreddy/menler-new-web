@@ -5,6 +5,7 @@ import Thumb from '../components/common/Thumb';
 import PostCard from '../components/blog/PostCard';
 import BlogPostingSchema from '../components/blog/BlogPostingSchema';
 import { getPostBySlug, getRelatedPosts, formatPostDate } from '../data/blogData';
+import { usePosts } from '../lib/usePosts';
 
 // One body block → one semantic element. Content arrives as structured blocks
 // (see blogData.js), so headings are real <h2>/<h3>, never styled <p>s.
@@ -20,7 +21,8 @@ function Block({ block }) {
 
 export default function BlogArticle() {
   const { slug } = useParams();
-  const post = getPostBySlug(slug);
+  const { posts } = usePosts();
+  const post = getPostBySlug(slug, posts);
 
   if (!post) {
     return (
@@ -39,7 +41,7 @@ export default function BlogArticle() {
     );
   }
 
-  const related = getRelatedPosts(post, 3);
+  const related = getRelatedPosts(post, 3, posts);
 
   return (
     <>

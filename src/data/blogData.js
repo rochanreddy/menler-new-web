@@ -87,16 +87,16 @@ export const BLOG_POSTS = [
 ];
 
 // Newest-first (the array above is already sorted, but don't rely on it).
-export const sortedPosts = () =>
-  [...BLOG_POSTS].sort((a, b) => (a.datePublished < b.datePublished ? 1 : -1));
+export const sortedPosts = (list = BLOG_POSTS) =>
+  [...list].sort((a, b) => (a.datePublished < b.datePublished ? 1 : -1));
 
-export const getFeaturedPost = () =>
-  sortedPosts().find((p) => p.featured) || sortedPosts()[0];
+export const getFeaturedPost = (list = BLOG_POSTS) =>
+  sortedPosts(list).find((p) => p.featured) || sortedPosts(list)[0];
 
-export const getPostBySlug = (slug) => BLOG_POSTS.find((p) => p.slug === slug);
+export const getPostBySlug = (slug, list = BLOG_POSTS) => list.find((p) => p.slug === slug);
 
-export const getRelatedPosts = (post, count = 3) =>
-  sortedPosts()
+export const getRelatedPosts = (post, count = 3, list = BLOG_POSTS) =>
+  sortedPosts(list)
     .filter((p) => p.slug !== post.slug)
     // same-tag posts first, then everything else newest-first
     .sort((a, b) => (b.tag === post.tag) - (a.tag === post.tag))
@@ -104,8 +104,8 @@ export const getRelatedPosts = (post, count = 3) =>
 
 // Distinct tags in listing order — the filter pills render from this, so a
 // dataset with no tags simply renders no pills.
-export const getAllTags = () =>
-  [...new Set(BLOG_POSTS.map((p) => p.tag).filter(Boolean))];
+export const getAllTags = (list = BLOG_POSTS) =>
+  [...new Set(list.map((p) => p.tag).filter(Boolean))];
 
 export const formatPostDate = (iso) =>
   new Date(`${iso}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });

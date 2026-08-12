@@ -8,6 +8,7 @@ import BlogHeroArt from '../components/blog/BlogHeroArt';
 import { useToast } from '../components/common/Toast';
 import { submitLead } from '../services/leadService';
 import { sortedPosts, getFeaturedPost, getAllTags, formatPostDate } from '../data/blogData';
+import { usePosts } from '../lib/usePosts';
 
 const PAGE_SIZE = 6;
 
@@ -18,9 +19,10 @@ export default function Blog() {
   const [email, setEmail] = useState('');
   const [done, setDone] = useState(false);
 
-  const featured = getFeaturedPost();
-  const tags = getAllTags();
-  const rest = sortedPosts().filter((p) => p.slug !== featured?.slug);
+  const { posts } = usePosts();
+  const featured = getFeaturedPost(posts);
+  const tags = getAllTags(posts);
+  const rest = sortedPosts(posts).filter((p) => p.slug !== featured?.slug);
   const filtered = filter === 'all' ? rest : rest.filter((p) => p.tag === filter);
   const shown = filtered.slice(0, visible);
 

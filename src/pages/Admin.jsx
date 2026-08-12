@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { adminApi } from '../lib/adminApi';
 import Seo from '../components/common/Seo';
+import BlogTab from '../components/admin/BlogTab';
 
 /* Courses offered in the manual-payment form. The paid campaign packs and the
  * library aren't in the client price list (registration for those is free and
@@ -1897,6 +1898,7 @@ const TABS = [
   { key: 'campaigns', label: 'Campaigns' },
   { key: 'shortlinks', label: 'Short links' },
   { key: 'certificates', label: 'Certificates' },
+  { key: 'blog', label: 'Blog' },
 ];
 
 function AdminPanel({ onLogout }) {
@@ -1930,6 +1932,7 @@ function AdminPanel({ onLogout }) {
         {tab === 'campaigns' && <CampaignsTab />}
         {tab === 'shortlinks' && <ShortLinksTab />}
         {tab === 'certificates' && <CertificatesTab />}
+        {tab === 'blog' && <BlogTab />}
       </main>
     </div>
   );

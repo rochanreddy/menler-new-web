@@ -84,6 +84,14 @@ export const adminApi = {
   verifyPayment: (reference) => api('/admin/paid-users/verify', { method: 'POST', body: { reference } }),
   verifyExisting: (id, reference) =>
     api(`/admin/paid-users/${encodeURIComponent(id)}/verify`, { method: 'POST', body: { reference } }),
+  // Blog
+  posts: (params) => api(`/posts/admin/all${qs(params)}`),
+  post: (id) => api(`/posts/admin/one/${encodeURIComponent(id)}`),
+  createPost: (body) => api('/posts/admin', { method: 'POST', body }),
+  updatePost: (id, body) => api(`/posts/admin/${encodeURIComponent(id)}`, { method: 'PATCH', body }),
+  setPostStatus: (id, status) => api(`/posts/admin/${encodeURIComponent(id)}/status`, { method: 'POST', body: { status } }),
+  deletePost: (id) => api(`/posts/admin/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+
   setBatch: (id, batch) =>
     api(`/admin/paid-users/${encodeURIComponent(id)}/batch`, { method: 'PATCH', body: { batch } }),
   addPaidUser: (body) => api('/admin/paid-users', { method: 'POST', body }),
