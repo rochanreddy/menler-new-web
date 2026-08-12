@@ -92,6 +92,7 @@ export const adminApi = {
   setPostStatus: (id, status) => api(`/posts/admin/${encodeURIComponent(id)}/status`, { method: 'POST', body: { status } }),
   deletePost: (id) => api(`/posts/admin/${encodeURIComponent(id)}`, { method: 'DELETE' }),
 
+  resendPack: (id) => api('/admin/paid-users/' + encodeURIComponent(id) + '/resend-pack', { method: 'POST' }),
   setBatch: (id, batch) =>
     api(`/admin/paid-users/${encodeURIComponent(id)}/batch`, { method: 'PATCH', body: { batch } }),
   addPaidUser: (body) => api('/admin/paid-users', { method: 'POST', body }),

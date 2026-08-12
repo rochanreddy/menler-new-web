@@ -11,6 +11,8 @@ import { requireAdmin } from '../middleware/adminAuth.js';
 import { buildCertificatePdf, buildCertificateEmail } from '../utils/certificate.js';
 import { sendMail, isMailConfigured, verifyMailer } from '../utils/email.js';
 import { cashfreeConfigured, findCashfreePayment, getCashfreePayments } from '../utils/cashfree.js';
+import { deliverPackForOrder } from '../utils/packDelivery.js';
+import { RESOURCE_PACKS } from '../../src/data/resourceCatalog.js';
 import {
   ADMIN_COOKIE_NAME,
   signAdmin,
@@ -450,11 +452,29 @@ router.get('/paid-users', requireAdmin, async (req, res) => {
       { $sort: { _id: -1 } },
     ]);
 
+    // Whether each buyer actually got their pack. Orders paid before delivery
+    // moved server-side have no marker of their own, so fall back to the lead's
+    // resource list, which is where the browser used to record it.
+    const packOrders = rows.filter((r) => RESOURCE_PACKS[String(r.program || '').toLowerCase()]);
+    const leadIds = packOrders.map((r) => r.leadId).filter(Boolean);
+    const leads = leadIds.length
+      ? await Lead.find({ _id: { $in: leadIds } }).select('resource').lean()
+      : [];
+    const resourceByLead = new Map(leads.map((l) => [String(l._id), l.resource || '']));
+    for (const r of rows) {
+      const hasPack = Boolean(RESOURCE_PACKS[String(r.program || '').toLowerCase()]);
+      r.packExpected = hasPack;
+      r.packSent = hasPack
+        ? Boolean(r.extra?.resources_sent_at || resourceByLead.get(String(r.leadId)))
+        : null;
+    }
+
     res.json({
       rows,
       total,
       page,
       limit,
+      packsUndelivered: rows.filter((r) => r.packExpected && !r.packSent).length,
       batches: batchAgg
         .filter((b) => b._id)
         .map((b) => ({ batch: b._id, count: b.n, revenue: b.revenue })),
@@ -680,6 +700,25 @@ router.post('/paid-users/:id/verify', requireAdmin, async (req, res) => {
   } catch (err) {
     console.error('admin paid-users verify-existing error', err);
     res.status(502).json({ error: err?.message || 'Could not reach Cashfree.' });
+  }
+});
+
+/* Send (or re-send) the resource pack for one paid order. `force` is what makes
+ * this useful after a failure: without it an order that recorded a delivery is
+ * skipped, which is right for the webhook and wrong for a human who can see the
+ * buyer never got the email. */
+router.post('/paid-users/:id/resend-pack', requireAdmin, async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ error: 'Not found.' });
+    if (order.status !== 'PAID') return res.status(400).json({ error: 'That order is not paid.' });
+
+    const out = await deliverPackForOrder(order, { force: true });
+    if (!out.sent) return res.status(400).json({ error: out.reason || 'Nothing to send.' });
+    res.json({ ok: true, sent: out.sent, to: out.to });
+  } catch (err) {
+    console.error('admin resend pack error', err);
+    res.status(500).json({ error: err?.message || 'Could not send the resources.' });
   }
 });
 

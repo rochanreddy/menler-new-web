@@ -710,6 +710,18 @@ function UsersTab() {
     };
   }, [adding]);
 
+  const sendPack = async (row) => {
+    const who = row.customer_email || row.customer_name || 'this buyer';
+    if (!window.confirm(`Email the resource pack to ${who}?`)) return;
+    try {
+      const r = await adminApi.resendPack(row._id);
+      window.alert(`Sent ${r.sent} file${r.sent === 1 ? '' : 's'} to ${r.to}.`);
+      load();
+    } catch (e) {
+      window.alert(e.message || 'Could not send the resources.');
+    }
+  };
+
   const openVerify = (row) => {
     // Whatever reference the row already carries is worth trying on its own —
     // a real order id, or the transaction id that was typed in. Only if neither
@@ -870,13 +882,13 @@ function UsersTab() {
           <thead>
             <tr>
               <th>Name</th><th>Email</th><th>Phone</th>
-              <th>Program</th><th>Batch</th><th>Amount</th><th>Via</th><th>Paid on</th><th />
+              <th>Program</th><th>Batch</th><th>Amount</th><th>Resources</th><th>Via</th><th>Paid on</th><th />
             </tr>
           </thead>
           <tbody>
-            {loading && <tr><td colSpan={9} className="admin-empty">Loading…</td></tr>}
+            {loading && <tr><td colSpan={10} className="admin-empty">Loading…</td></tr>}
             {!loading && data.rows.length === 0 && (
-              <tr><td colSpan={9} className="admin-empty">No paid users yet.</td></tr>
+              <tr><td colSpan={10} className="admin-empty">No paid users yet.</td></tr>
             )}
             {!loading && data.rows.map((r) => (
               <tr key={r._id} onClick={() => setSelected(r)}>
@@ -900,6 +912,21 @@ function UsersTab() {
                   />
                 </td>
                 <td><b>₹{r.amount}</b></td>
+                <td>
+                  {/* Only programmes that ship files can be undelivered. */}
+                  {!r.packExpected ? <span className="admin-muted">—</span>
+                    : r.packSent
+                      ? <span className="admin-badge admin-badge--ok">Sent</span>
+                      : (
+                        <button type="button" className="admin-verifybtn"
+                          title="This buyer never received their playbooks — click to send them now"
+                          onClick={(e) => { e.stopPropagation(); sendPack(r); }}>
+                          <span className="admin-verifybtn-dot" aria-hidden="true" />
+                          Not sent
+                          <span className="admin-verifybtn-cta">Send&nbsp;→</span>
+                        </button>
+                      )}
+                </td>
                 <td>
                   {!r.extra?.manual
                     ? <span className="admin-badge admin-badge--ok">Website</span>

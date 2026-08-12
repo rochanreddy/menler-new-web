@@ -12,6 +12,7 @@ import {
   CASHFREE_MODE,
 } from '../utils/cashfree.js';
 import { forwardLeadToCrm } from './leads.js';
+import { deliverPackForOrder } from '../utils/packDelivery.js';
 import { validateEmail } from '../utils/emailValidation.js';
 
 const router = Router();
@@ -129,6 +130,14 @@ async function markPaid(order, cfPaymentId) {
       forwardLeadToCrm(lead);
     }
   }
+
+  // Deliver the paid resource pack from here rather than from the buyer's
+  // browser. Deliberately not awaited into the caller's failure path: a mail
+  // problem must never make the webhook look unhandled to Cashfree, or it will
+  // retry the whole payment event.
+  deliverPackForOrder(order)
+    .then((r) => { if (r.sent) console.log(`[pack] sent ${r.sent} files to ${r.to} for ${order.order_id}`); })
+    .catch((e) => console.error(`[pack] delivery failed for ${order.order_id}:`, e.message));
 }
 
 /* Webhook — Cashfree posts payment events here. Verify on the RAW body. */
