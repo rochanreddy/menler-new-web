@@ -4224,3 +4224,9 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
   font-style: italic; color: var(--specialist); font-size: 16px;
 }
 .bpv-empty { color: var(--text-muted); font-style: italic; }
+
+/* Certificate: single-signature toggle */
+.admin-onesig { display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; padding: 12px 14px; border: 0.5px solid var(--border); border-radius: 12px; background: var(--white); cursor: pointer; }
+.admin-onesig input { width: auto; margin-top: 2px; flex: none; }
+.admin-onesig b { display: block; font-size: 13.5px; color: var(--ink); }
+.admin-onesig em { display: block; margin-top: 3px; font-style: normal; font-size: 12.5px; line-height: 1.55; color: var(--text-muted); }

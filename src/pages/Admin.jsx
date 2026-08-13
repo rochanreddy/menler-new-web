@@ -1604,6 +1604,7 @@ function CertificatesTab() {
   const [mentorRole, setMentorRole] = useState('Ex-McKinsey | MIT & UT Mentor');
   const [founderName, setFounderName] = useState('Sachin Roy');
   const [founderRole, setFounderRole] = useState('Founder, Menler');
+  const [oneSignature, setOneSignature] = useState(false);
   const [subject, setSubject] = useState('');
   const [emailHeading, setEmailHeading] = useState(DEFAULT_EMAIL_HEADING);
   const [emailMessage, setEmailMessage] = useState(DEFAULT_EMAIL_MESSAGE);
@@ -1668,7 +1669,8 @@ function CertificatesTab() {
       await adminApi.previewCertificate({
         name: valid[0]?.name || 'Your Name',
         programName: programName.trim(),
-        mentorName, mentorRole, founderName, founderRole,
+        ...(oneSignature ? { mentorName: '', mentorRole: '' } : { mentorName, mentorRole }),
+        founderName, founderRole,
       });
     } catch (err) {
       setError(err.message || 'Could not generate the preview.');
@@ -1719,7 +1721,8 @@ function CertificatesTab() {
         const r = await adminApi.sendCertificates({
           recipients: valid.slice(i, i + CHUNK),
           programName: programName.trim(),
-          mentorName, mentorRole, founderName, founderRole,
+          ...(oneSignature ? { mentorName: '', mentorRole: '' } : { mentorName, mentorRole }),
+        founderName, founderRole,
           subject: subject.trim(),
           emailHeading, emailMessage, emailClosing, feedbackUrl, deckUrl,
         });
@@ -1757,11 +1760,27 @@ function CertificatesTab() {
         <div className="admin-toolbar">
           <input className="admin-search" style={{ flex: 1 }} placeholder="Program name — printed on the certificate" value={programName} onChange={(e) => setProgramName(e.target.value)} />
         </div>
+        <label className="admin-onesig">
+          <input type="checkbox" checked={oneSignature}
+            onChange={(e) => setOneSignature(e.target.checked)} />
+          <span>
+            <b>One signature only</b>
+            <em>Tick this when the founder ran the session himself — the left signature is
+              left off entirely and only the right one is printed.</em>
+          </span>
+        </label>
+
         <div className="admin-toolbar" style={{ marginTop: 10 }}>
-          <input className="admin-search" style={{ maxWidth: 170 }} placeholder="Left signature name" value={mentorName} onChange={(e) => setMentorName(e.target.value)} />
-          <input className="admin-search" style={{ flex: 1 }} placeholder="Left signature role" value={mentorRole} onChange={(e) => setMentorRole(e.target.value)} />
-          <input className="admin-search" style={{ maxWidth: 170 }} placeholder="Right signature name" value={founderName} onChange={(e) => setFounderName(e.target.value)} />
-          <input className="admin-search" style={{ flex: 1 }} placeholder="Right signature role" value={founderRole} onChange={(e) => setFounderRole(e.target.value)} />
+          {/* Hidden rather than disabled when unused: a greyed-out name still
+              reads as "this will be printed", which is the confusion here. */}
+          {!oneSignature && (
+            <>
+              <input className="admin-search" style={{ maxWidth: 170 }} placeholder="Left signature name" value={mentorName} onChange={(e) => setMentorName(e.target.value)} />
+              <input className="admin-search" style={{ flex: 1 }} placeholder="Left signature role" value={mentorRole} onChange={(e) => setMentorRole(e.target.value)} />
+            </>
+          )}
+          <input className="admin-search" style={{ maxWidth: 170 }} placeholder={oneSignature ? 'Signature name' : 'Right signature name'} value={founderName} onChange={(e) => setFounderName(e.target.value)} />
+          <input className="admin-search" style={{ flex: 1 }} placeholder={oneSignature ? 'Signature role' : 'Right signature role'} value={founderRole} onChange={(e) => setFounderRole(e.target.value)} />
         </div>
         <div className="admin-toolbar" style={{ marginTop: 10 }}>
           <input className="admin-search" style={{ flex: 2 }} placeholder="Email subject (optional — defaults to “Your … certificate”)" value={subject} onChange={(e) => setSubject(e.target.value)} />

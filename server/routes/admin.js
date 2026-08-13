@@ -1091,12 +1091,21 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const slugName = (name) =>
   String(name).trim().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').slice(0, 60) || 'participant';
 
-/** Only forwards signature overrides that were actually filled in, so the
- *  certificate keeps its built-in defaults otherwise. */
+/**
+ * Forward the signature fields the request actually carries.
+ *
+ * A field that is present but empty is forwarded as an empty string, not
+ * dropped: the PDF builder skips a signature with no name, so an empty value is
+ * how you get a certificate with one signature instead of two. Dropping it
+ * meant the built-in default reappeared, and clearing the left name in the
+ * panel did nothing — the old mentor kept signing sessions he never ran.
+ *
+ * A field that is absent entirely still falls through to the built-in default.
+ */
 const signatories = (body = {}) =>
   ['mentorName', 'mentorRole', 'founderName', 'founderRole'].reduce((acc, k) => {
-    const v = String(body[k] ?? '').trim();
-    if (v) acc[k] = v;
+    if (body[k] === undefined) return acc;
+    acc[k] = String(body[k] ?? '').trim();
     return acc;
   }, {});
 
