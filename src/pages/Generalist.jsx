@@ -441,7 +441,7 @@ export default function Generalist() {
           })}
         </div>
         <div style={{ textAlign: 'center', marginTop: 28 }}>
-          <button className="btn-primary" onClick={() => setCurricItem({ title: 'AI Generalist Curriculum', pdf: '/pdfs/AI-Generalist-Fellowship.pdf', badge: 'Curriculum', desc: 'Full 10-week syllabus, phases, domains, projects and outcomes for the Generalist Fellowship.', source: 'curriculum-download', section: 'Generalist Curriculum' })}>Download Curriculum</button>
+          <button className="btn-primary" onClick={() => setCurricItem({ title: 'AI Generalist Curriculum', pdf: '/pdfs/Menler_AI_Generalist_Fellowship.pdf', badge: 'Curriculum', desc: 'Full 10-week syllabus, phases, domains, projects and outcomes for the Generalist Fellowship.', source: 'curriculum-download', section: 'Generalist Curriculum' })}>Download Curriculum</button>
         </div>
       </section>
 

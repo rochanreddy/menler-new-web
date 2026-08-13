@@ -9,7 +9,7 @@ import { downloadFile } from './download';
 import { submitLead } from '../services/leadService';
 
 const BROCHURE_PDFS = {
-  kickstarter: '/pdfs/1_updated_Menler AI Kickstarter Brochure_2026.pdf',
+  kickstarter: '/pdfs/Menler_AI_Kickstarter.pdf',
   generalist: '/pdfs/Menler_Claude_Gen_brochure.pdf',
   engineering: '/pdfs/Menler_Claude_Gen_brochure.pdf',
 };
