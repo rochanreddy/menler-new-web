@@ -164,6 +164,16 @@ const STATIC_ROUTES = [
     jsonLd: [crumbs([{ name: 'Home', path: '/' }, { name: 'Resources', path: '/resources' }])],
   },
   {
+    path: '/events', file: 'events.html', nav: 'Events',
+    title: 'Free AI Masterclasses & Live Workshops India | Menler Events',
+    description: 'Free live AI masterclasses from Menler — hands-on sessions on Claude, AI careers and building real projects, led by people shipping AI work. Past sessions include downloadable resources.',
+    keywords: 'free AI workshop India, AI masterclass India, live AI classes, Claude workshop, AI webinar India, free AI training online, AI career session, Claude masterclass, online AI workshop, AI events India',
+    h1: 'Expert AI masterclasses on Claude, careers and building',
+    intro: 'Live, hands-on AI sessions with people shipping real AI work — practical skills, portfolio-worthy builds and honest answers. Attend the next one free, or download the resources from past sessions.',
+    extra: 'Menler runs free live AI masterclasses for students and working professionals across India. Each session is hands-on: you build something during the class rather than watching slides. Sessions cover Claude for everyday work, AI for analysts and operations, building a portfolio recruiters notice, and AI career positioning. Every past session leaves behind downloadable resources — prompt libraries, templates and playbooks — free to anyone who missed it. Upcoming sessions are announced on the Menler WhatsApp community.',
+    jsonLd: [crumbs([{ name: 'Home', path: '/' }, { name: 'Events', path: '/events' }])],
+  },
+  {
     path: '/community', file: 'community.html', nav: 'Community',
     title: 'Community | Menler',
     description: 'Join the Menler community — updates, free resources, peer support and mentor tips for your AI journey. Connect with us on WhatsApp.',
