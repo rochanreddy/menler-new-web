@@ -400,3 +400,112 @@ const sitemapUrls = ROUTES
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapUrls.join('\n')}\n</urlset>\n`;
 writeFileSync(join(DIST, 'sitemap.xml'), sitemap, 'utf8');
 console.log(`✓ Generated sitemap.xml with ${sitemapUrls.length} indexable URLs (auto-synced with prerender).`);
+
+/* ── llms.txt / llms-full.txt ────────────────────────────────────────────────
+ * Answer engines read a site rather than rank it, and they don't run
+ * JavaScript. These two files hand them the site as plain prose, generated from
+ * the same routes, posts and FAQs everything else uses — a hand-written llms.txt
+ * drifts the moment a price or a batch date changes, which is precisely the
+ * detail a model will then quote back at somebody for months.
+ *
+ *   llms.txt       a map: what Menler is, and every page worth reading
+ *   llms-full.txt  the answers themselves, so a model can cite us without
+ *                  having to fetch and parse ten separate pages
+ */
+const PROGRAM_FACTS = [
+  ['Claude AI Generalist Fellowship', '/generalist',
+    'A 10-week, no-code fellowship for non-technical professionals and students. Covers AI workflows across marketing, finance, product, HR and operations. ₹59,999. Includes real projects and placement support. Next batch starts September 2026.'],
+  ['Claude AI Generalist — 6 weeks', '/generalist',
+    'A shorter 6-week version of the Generalist fellowship. ₹35,000.'],
+  ['Claude AI Engineering Fellowship', '/engineering',
+    'A 12-week fellowship for developers. Build production AI systems — Claude API, RAG, MCP, agents, evaluations and LLMOps. ₹59,999. Includes placement support. Next batch starts October 2026.'],
+  ['Gen AI Kickstarter', '/kickstarter',
+    'A 14-day beginner bootcamp — 4 live sessions across 2 weekends. Hands-on with 10+ AI tools, 4 portfolio projects and a certificate. No prerequisites. ₹4,999. Next batch starts 30 August 2026.'],
+];
+
+const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
+
+const llmsHead = `# Menler
+
+> Menler is an India-based, Claude-native AI learning company. It runs live, cohort-based AI courses and fellowships that teach professionals, students and engineers to build real work with Claude and other AI tools — with real projects, a portfolio, and placement support.
+
+Menler focuses on depth over breadth and outcomes over completion: learners ship real AI assets (workflows, agents, RAG apps) rather than only watching lectures. Every programme is live, cohort-based and delivered online from India.
+`;
+
+const llmsTxt = `${llmsHead}
+## Programs
+${PROGRAM_FACTS.map(([name, path, desc]) => `- [${name}](${SITE}${path}): ${desc}`).join('\n')}
+
+## Free tools & resources
+- [AI Aptitude Test](${SITE}/aptitude): A free 15-question AI-readiness assessment with a personalised score and learning roadmap. No signup to start.
+- [Library / Resources](${SITE}/resources): Free AI learning resources — a Claude prompt library, AI tool guides, templates, cheat sheets and an AI glossary.
+- [Community](${SITE}/community): The Menler community on WhatsApp — updates, resources and support.
+- [Events](${SITE}/events): Live workshops and sessions, with recordings and downloadable resources.
+
+## About
+- [About Menler](${SITE}/about): Menler's vision, approach and team.
+- [What learners build](${SITE}/projects): Real projects shipped by Menler learners across domains.
+
+## Blog
+${BLOG_POSTS.filter((p) => p.body).map((p) => `- [${p.title}](${SITE}/blog/${p.slug}): ${clean(p.excerpt)}`).join('\n') || `- [Menler blog](${SITE}/blog): AI build logs, workflows and career guidance.`}
+
+## Contact
+- Website: ${SITE}
+- Email: support@menler.in
+- LinkedIn: https://www.linkedin.com/company/menler/
+- Instagram: https://www.instagram.com/menler.in
+
+## Optional
+- [Privacy policy](${SITE}/policy/privacy)
+- [Refund policy](${SITE}/policy/refund)
+- [Terms](${SITE}/policy/terms)
+`;
+writeFileSync(join(DIST, 'llms.txt'), llmsTxt, 'utf8');
+
+// The long form: every FAQ answered inline, plus each page's own summary. This
+// is the file that lets an answer engine quote Menler accurately instead of
+// paraphrasing a nav bar.
+const faqSection = (heading, faqs) =>
+  `### ${heading}\n\n${faqs.map((f) => `**${clean(f.q)}**\n\n${clean(f.a)}\n`).join('\n')}`;
+
+const postSection = (p) => {
+  const body = (p.body || []).map((b) => {
+    if (b.type === 'h2') return `### ${clean(b.text)}`;
+    if (b.type === 'h3') return `#### ${clean(b.text)}`;
+    if (b.type === 'quote') return `> ${clean(b.text)}`;
+    if (b.type === 'ul') return (b.items || []).map((i) => `- ${clean(i)}`).join('\n');
+    return clean(b.text);
+  }).join('\n\n');
+  return `### ${clean(p.title)}\n\n${SITE}/blog/${p.slug} · published ${p.datePublished}\n\n${clean(p.excerpt)}\n\n${body}\n`;
+};
+
+const llmsFull = `${llmsHead}
+This file contains Menler's public information in full, so it can be read and
+cited without fetching each page separately. Last built ${today}.
+
+## Programs
+${PROGRAM_FACTS.map(([name, path, desc]) => `### ${name}\n\n${SITE}${path}\n\n${desc}\n`).join('\n')}
+
+## Pages
+${STATIC_ROUTES.filter((r) => !r.noindex).map((r) => `- **${r.nav}** (${SITE}${r.path}) — ${clean(r.intro || r.description)}`).join('\n')}
+
+## Frequently asked questions
+
+${faqSection('About Menler', HOME_FAQS)}
+
+${faqSection('Claude AI Generalist Fellowship', GENERALIST_FAQS)}
+
+${faqSection('Claude AI Engineering Fellowship', ENGINEERING_FAQS)}
+
+${faqSection('Gen AI Kickstarter', KICKSTARTER_FAQS)}
+
+## Articles
+${BLOG_POSTS.filter((p) => p.body).map(postSection).join('\n') || '(no published articles yet)'}
+
+## Contact
+Website ${SITE} · Email support@menler.in · LinkedIn https://www.linkedin.com/company/menler/ · Instagram https://www.instagram.com/menler.in
+`;
+writeFileSync(join(DIST, 'llms-full.txt'), llmsFull, 'utf8');
+
+const faqCount = [HOME_FAQS, GENERALIST_FAQS, ENGINEERING_FAQS, KICKSTARTER_FAQS].reduce((n, f) => n + f.length, 0);
+console.log(`✓ Generated llms.txt and llms-full.txt (${PROGRAM_FACTS.length} programmes, ${faqCount} FAQs, ${BLOG_POSTS.filter((p) => p.body).length} articles).`);

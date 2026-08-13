@@ -36,3 +36,8 @@ Disallow: /forgot-password
 Disallow: /reset-password
 
 Sitemap: https://menler.in/sitemap.xml
+
+# Plain-prose summaries for answer engines, generated at build time so they
+# never drift from the site (llmstxt.org convention):
+#   https://menler.in/llms.txt        site map + what each page is
+#   https://menler.in/llms-full.txt   the same, with every FAQ and article inline
