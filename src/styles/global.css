@@ -4230,3 +4230,6 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .admin-onesig input { width: auto; margin-top: 2px; flex: none; }
 .admin-onesig b { display: block; font-size: 13.5px; color: var(--ink); }
 .admin-onesig em { display: block; margin-top: 3px; font-style: normal; font-size: 12.5px; line-height: 1.55; color: var(--text-muted); }
+
+/* Campaign form: which channel the OTP will arrive on */
+.lp2-otphint { margin: -4px 0 2px; font-size: 12px; line-height: 1.5; color: var(--text-muted); }

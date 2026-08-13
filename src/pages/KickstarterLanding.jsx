@@ -6,7 +6,7 @@ import MenlerCommunitySection from '../components/common/MenlerCommunitySection'
 import { MENLER_WHATSAPP_URL, MENLER_INSTAGRAM_URL, CAMPAIGN_INSTAGRAM_SLUGS } from '../data/communityLinks';
 import { submitLead } from '../services/leadService';
 import { useContentState } from '../lib/useContent';
-import { verifySmsOtp } from '../lib/amplifeedOtp';
+import { verifySmsOtp, verifyEmailOtp } from '../lib/amplifeedOtp';
 
 // ── Single-mentor workshop registration landing page (/ai-kickstarter) ──
 // Left column scrolls (mentor + workshop details); right column is a STATIC
@@ -256,6 +256,9 @@ export default function KickstarterLanding() {
   };
 
   const phoneMinLen = form.countryCode === '+91' ? 10 : 8;
+  // Which channel the verification code goes out on. SMS reaches Indian
+  // numbers only, so anyone else is verified by email.
+  const indianNumber = form.countryCode === '+91';
 
   // Sanity-editable content for this slug, merged per-field over the fallback.
   const { slug } = useParams();
@@ -359,7 +362,13 @@ export default function KickstarterLanding() {
       const phone = `${form.countryCode} ${form.phone}`;
       // SMS OTP identifier: country code + number, digits only (no "+"/spaces).
       const phoneDigits = `${form.countryCode}${form.phone}`.replace(/\D/g, '');
-      const otp = await verifySmsOtp(phoneDigits);
+      // Our SMS provider only delivers inside India, so an international number
+      // silently never receives a code and the registration dead-ends. Verify
+      // those by email instead — same proof of a real person, and every other
+      // form on the site already verifies that way.
+      const otp = indianNumber
+        ? await verifySmsOtp(phoneDigits)
+        : await verifyEmailOtp(form.email.trim());
       setOtpBusy(false);
       setBusy(true);
       const created = await submitLead({
@@ -620,6 +629,14 @@ export default function KickstarterLanding() {
                       disabled={busy || otpBusy}
                     />
                   </div>
+                  {/* Say where the code will arrive before it's sent — an
+                      international registrant otherwise waits on an SMS that
+                      never comes and assumes the form is broken. */}
+                  {!indianNumber && (
+                    <p className="lp2-otphint">
+                      We’ll email your verification code — SMS only works for Indian numbers.
+                    </p>
+                  )}
                   <input className="lp2-input" type="text" required placeholder="City" value={form.city} onChange={(e) => set('city', e.target.value)} disabled={busy || otpBusy} />
                   {showCollege && (
                     <input className="lp2-input" type="text" required placeholder="College / University" value={form.college} onChange={(e) => set('college', e.target.value)} disabled={busy || otpBusy} />
@@ -640,7 +657,7 @@ export default function KickstarterLanding() {
                     <option value="business owner">Business Owner</option>
                   </select>
                   <button className="lp2-submit" type="submit" disabled={busy || otpBusy}>
-                    {otpBusy ? 'Sending OTP…' : busy ? 'Registering…' : 'Verify to Register'}
+                    {otpBusy ? (indianNumber ? 'Sending OTP…' : 'Emailing your code…') : busy ? 'Registering…' : 'Verify to Register'}
                   </button>
                   {err && <p className="lp2-err">{typeof err === 'string' ? err : "Couldn't register — please try again."}</p>}
                 </form>
