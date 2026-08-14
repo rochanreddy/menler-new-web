@@ -1,16 +1,50 @@
 import mongoose from 'mongoose';
 
 /* One block of article body. Deliberately a small, closed set: a writer picking
- * from five options produces consistent pages, where a free-form rich text
- * field produces five different heading sizes by the end of the month. */
+ * from a short menu produces consistent pages, where a free-form rich text
+ * field produces five different heading sizes by the end of the month.
+ *
+ * Fields are shared across types rather than nested per type, so the existing
+ * text blocks keep exactly the shape they've always had and older posts need no
+ * migration. Which fields matter for which type:
+ *   p / h2 / h3 / quote   text
+ *   ul                    items
+ *   image                 src, alt (required), caption
+ *   infographic           src, alt (required), summary (required), caption
+ *   cta                   text, buttonLabel, href
+ *   resource              text (title), href, description
+ */
+export const BLOCK_TYPES = ['p', 'h2', 'h3', 'quote', 'ul', 'image', 'infographic', 'cta', 'resource'];
+
 const blockSchema = new mongoose.Schema(
   {
-    type: { type: String, enum: ['p', 'h2', 'h3', 'quote', 'ul'], default: 'p' },
-    text: { type: String, default: '' },        // p / h2 / h3 / quote
+    type: { type: String, enum: BLOCK_TYPES, default: 'p' },
+    text: { type: String, default: '' },        // p / h2 / h3 / quote / cta / resource title
     items: { type: [String], default: undefined }, // ul
+
+    // image / infographic
+    src: { type: String, default: undefined },
+    alt: { type: String, default: undefined },
+    caption: { type: String, default: undefined },
+    // Text baked into a picture is invisible to a screen reader and to a
+    // crawler, so an infographic carries its point in words as well.
+    summary: { type: String, default: undefined },
+
+    // cta / resource
+    buttonLabel: { type: String, default: undefined },
+    href: { type: String, default: undefined },
+    description: { type: String, default: undefined },
   },
   { _id: false },
 );
+
+/** Words a block contributes to the read time — every human-readable field. */
+export function blockWords(b = {}) {
+  const parts = b.type === 'ul'
+    ? (b.items || [])
+    : [b.text, b.caption, b.summary, b.description];
+  return parts.join(' ').trim().split(/\s+/).filter(Boolean).length;
+}
 
 const postSchema = new mongoose.Schema(
   {
@@ -42,6 +76,12 @@ const postSchema = new mongoose.Schema(
     seoTitle: { type: String, default: '' },
     seoDescription: { type: String, default: '' },
 
+    /* Shareable no-login preview. The token IS the credential, so it's long,
+     * random, and regenerating it silently invalidates every link already sent
+     * out — the only way to take a preview back once it's been shared. */
+    previewToken: { type: String, default: '', index: true },
+    previewTokenAt: { type: Date, default: null },
+
     lastEditedBy: { type: String, default: '' },
   },
   { timestamps: true, collection: 'posts' },
@@ -49,10 +89,7 @@ const postSchema = new mongoose.Schema(
 
 /** ~200 wpm over every word in the body — close enough, and never stale. */
 postSchema.virtual('readTime').get(function readTime() {
-  const words = (this.body || []).reduce((n, b) => {
-    const text = b.type === 'ul' ? (b.items || []).join(' ') : (b.text || '');
-    return n + text.trim().split(/\s+/).filter(Boolean).length;
-  }, 0);
+  const words = (this.body || []).reduce((n, b) => n + blockWords(b), 0);
   return `${Math.max(1, Math.ceil(words / 200))} min read`;
 });
 
