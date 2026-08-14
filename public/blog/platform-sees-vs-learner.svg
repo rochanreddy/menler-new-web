@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="1200" height="620" role="img" aria-label="Two panels compared: the completion data a traditional LMS records, next to what the learner actually experienced during the same lesson.">
+  <defs>
+    <style>
+      .h  { font-family: 'DM Serif Display', Georgia, serif; }
+      .t  { font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif; }
+      .mono { font-family: 'SF Mono', Menlo, Consolas, monospace; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="620" rx="18" fill="#F7F6FE"/>
+
+  <!-- Left: what the platform records -->
+  <rect x="48" y="48" width="516" height="524" rx="14" fill="#1A1647"/>
+  <text class="t" x="80" y="94" font-size="11" font-weight="700" letter-spacing="1.4" fill="#AFA9EC">WHAT THE PLATFORM RECORDS</text>
+
+  <g fill="#E1DEFE" class="mono" font-size="15">
+    <text x="80" y="148">learner_id      4471</text>
+    <text x="80" y="182">module          3 of 9</text>
+    <text x="80" y="216">video_3         watched 40%</text>
+    <text x="80" y="250">quiz_3          not attempted</text>
+    <text x="80" y="284">last_seen       6 days ago</text>
+    <text x="80" y="318">status          in progress</text>
+  </g>
+
+  <line x1="80" y1="356" x2="532" y2="356" stroke="#534AB7" stroke-width="1"/>
+  <text class="t" x="80" y="392" font-size="17" fill="#FFFFFF">Six accurate facts.</text>
+  <text class="t" x="80" y="424" font-size="17" fill="#AFA9EC">Not one of them says why.</text>
+  <text class="t" x="80" y="486" font-size="14" fill="#8F88D6">A completion tracker can only report</text>
+  <text class="t" x="80" y="508" font-size="14" fill="#8F88D6">that someone stopped. By the time the</text>
+  <text class="t" x="80" y="530" font-size="14" fill="#8F88D6">number moves, they’ve already gone.</text>
+
+  <!-- Right: what the learner experienced -->
+  <rect x="636" y="48" width="516" height="524" rx="14" fill="#FFFFFF" stroke="#AFA9EC" stroke-opacity="0.6"/>
+  <text class="t" x="668" y="94" font-size="11" font-weight="700" letter-spacing="1.4" fill="#534AB7">WHAT THE LEARNER EXPERIENCED</text>
+
+  <g>
+    <circle cx="678" cy="142" r="5" fill="#534AB7"/>
+    <text class="t" x="700" y="147" font-size="16" fill="#26215C">Followed the first two modules fine.</text>
+  </g>
+  <g>
+    <circle cx="678" cy="192" r="5" fill="#534AB7"/>
+    <text class="t" x="700" y="197" font-size="16" fill="#26215C">Hit a term in video 3 that assumed</text>
+    <text class="t" x="700" y="219" font-size="16" fill="#26215C">something module 1 never covered.</text>
+  </g>
+  <g>
+    <circle cx="678" cy="264" r="5" fill="#534AB7"/>
+    <text class="t" x="700" y="269" font-size="16" fill="#26215C">Rewound twice, searched for it, and</text>
+    <text class="t" x="700" y="291" font-size="16" fill="#26215C">found an answer written for engineers.</text>
+  </g>
+  <g>
+    <circle cx="678" cy="336" r="5" fill="#BA7517"/>
+    <text class="t" x="700" y="341" font-size="16" fill="#26215C">Decided the course was pitched above</text>
+    <text class="t" x="700" y="363" font-size="16" fill="#26215C">them and never opened it again.</text>
+  </g>
+
+  <rect x="668" y="410" width="452" height="128" rx="11" fill="#EEEDFE"/>
+  <text class="t" x="694" y="446" font-size="14" font-weight="700" fill="#534AB7">The gap between the two panels</text>
+  <text class="t" x="694" y="476" font-size="14" fill="#26215C">is the whole problem. One is a log of what</text>
+  <text class="t" x="694" y="500" font-size="14" fill="#26215C">happened; the other is the moment where a</text>
+  <text class="t" x="694" y="524" font-size="14" fill="#26215C">course could still have done something.</text>
+</svg>

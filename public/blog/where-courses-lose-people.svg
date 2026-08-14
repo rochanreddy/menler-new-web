@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660" role="img" aria-label="Where online courses lose people: four moments of friction across a course, and what a responsive course does at each one.">
+  <defs>
+    <style>
+      .h  { font-family: 'DM Serif Display', Georgia, serif; fill: #26215C; }
+      .t  { font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif; fill: #26215C; }
+      .m  { font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif; fill: #6E6A93; }
+      .lbl{ font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif; fill: #534AB7; font-weight: 700; letter-spacing: 1.4px; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="660" rx="18" fill="#F7F6FE"/>
+
+  <text class="h" x="56" y="70" font-size="34">Where online courses lose people</text>
+  <text class="m" x="56" y="104" font-size="17">Most dropout happens in the first week — at a moment of friction, not at a hard idea.</text>
+
+  <!-- Course timeline -->
+  <line x1="56" y1="196" x2="1144" y2="196" stroke="#AFA9EC" stroke-width="2"/>
+  <text class="lbl" x="56" y="176" font-size="11">START</text>
+  <text class="lbl" x="1090" y="176" font-size="11">FINISH</text>
+
+  <!-- The four friction points -->
+  <g>
+    <circle cx="188" cy="196" r="11" fill="#534AB7"/>
+    <line x1="188" y1="207" x2="188" y2="252" stroke="#AFA9EC" stroke-width="2"/>
+    <rect x="76" y="252" width="224" height="164" rx="12" fill="#FFFFFF" stroke="#AFA9EC" stroke-opacity="0.6"/>
+    <text class="lbl" x="96" y="282" font-size="11">MOMENT 1</text>
+    <text class="t" x="96" y="310" font-size="18" font-weight="700">A confusing next step</text>
+    <text class="m" x="96" y="340" font-size="14">The learner finishes something</text>
+    <text class="m" x="96" y="360" font-size="14">and can’t tell what comes next.</text>
+    <text class="m" x="96" y="380" font-size="14">Nothing is hard yet — it’s just</text>
+    <text class="m" x="96" y="400" font-size="14">unclear, so they close the tab.</text>
+  </g>
+
+  <g>
+    <circle cx="452" cy="196" r="11" fill="#534AB7"/>
+    <line x1="452" y1="207" x2="452" y2="252" stroke="#AFA9EC" stroke-width="2"/>
+    <rect x="340" y="252" width="224" height="164" rx="12" fill="#FFFFFF" stroke="#AFA9EC" stroke-opacity="0.6"/>
+    <text class="lbl" x="360" y="282" font-size="11">MOMENT 2</text>
+    <text class="t" x="360" y="310" font-size="18" font-weight="700">A quiz that doesn’t</text>
+    <text class="t" x="360" y="332" font-size="18" font-weight="700">match the teaching</text>
+    <text class="m" x="360" y="362" font-size="14">Being tested on something the</text>
+    <text class="m" x="360" y="382" font-size="14">course never covered reads as</text>
+    <text class="m" x="360" y="402" font-size="14">“this isn’t for me”.</text>
+  </g>
+
+  <g>
+    <circle cx="716" cy="196" r="11" fill="#534AB7"/>
+    <line x1="716" y1="207" x2="716" y2="252" stroke="#AFA9EC" stroke-width="2"/>
+    <rect x="604" y="252" width="224" height="164" rx="12" fill="#FFFFFF" stroke="#AFA9EC" stroke-opacity="0.6"/>
+    <text class="lbl" x="624" y="282" font-size="11">MOMENT 3</text>
+    <text class="t" x="624" y="310" font-size="18" font-weight="700">A pace built for an</text>
+    <text class="t" x="624" y="332" font-size="18" font-weight="700">average learner</text>
+    <text class="m" x="624" y="362" font-size="14">Too slow bores the ones ahead;</text>
+    <text class="m" x="624" y="382" font-size="14">too fast loses the ones behind.</text>
+    <text class="m" x="624" y="402" font-size="14">The average learner isn’t real.</text>
+  </g>
+
+  <g>
+    <circle cx="980" cy="196" r="11" fill="#BA7517"/>
+    <line x1="980" y1="207" x2="980" y2="252" stroke="#AFA9EC" stroke-width="2"/>
+    <rect x="868" y="252" width="224" height="164" rx="12" fill="#FFFFFF" stroke="#E8C989"/>
+    <text class="lbl" x="888" y="282" font-size="11" fill="#BA7517">MOMENT 4</text>
+    <text class="t" x="888" y="310" font-size="18" font-weight="700">Nobody notices</text>
+    <text class="m" x="888" y="340" font-size="14">The platform logs “watched 40%</text>
+    <text class="m" x="888" y="360" font-size="14">of video 3” and moves on. No</text>
+    <text class="m" x="888" y="380" font-size="14">one asks why they stopped —</text>
+    <text class="m" x="888" y="400" font-size="14">so nothing changes.</text>
+  </g>
+
+  <!-- What a responsive course does instead -->
+  <rect x="56" y="466" width="1088" height="140" rx="14" fill="#EEEDFE" stroke="#AFA9EC" stroke-opacity="0.7"/>
+  <text class="lbl" x="84" y="500" font-size="11">WHAT A RESPONSIVE COURSE DOES INSTEAD</text>
+  <text class="t" x="84" y="534" font-size="17">Adjusts difficulty while the learner is still in the lesson, rather than reporting on it afterwards.</text>
+  <text class="t" x="84" y="562" font-size="17">Surfaces the explanation that fits this learner, not the next one in the script.</text>
+  <text class="t" x="84" y="590" font-size="17">Treats disengagement as a signal to act on in the first week, not a number to review at the end.</text>
+</svg>

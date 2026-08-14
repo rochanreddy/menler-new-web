@@ -13,9 +13,20 @@
 //   cover         absolute URL of a real cover image, or null → brand Thumb
 //   thumb         Thumb variant used while cover is null
 //   featured      the listing hero (most recent featured wins)
-//   body          array of blocks: { type: 'p'|'h2'|'h3'|'quote', text } or
-//                 { type: 'ul', items: [] }. null = stub (card only, article
-//                 page shows a graceful "coming soon").
+//   body          array of blocks. null = stub (card only, article page shows
+//                 a graceful "coming soon"). The block types, and the fields
+//                 each one uses (see server/models/Post.js for the stored shape
+//                 and BlogArticle.jsx for how each renders):
+//                   p | h2 | h3 | quote   text
+//                   ul                    items: []
+//                   image                 src, alt (required), caption
+//                   infographic           src, alt + summary (both required),
+//                                         caption — the summary exists because
+//                                         words drawn inside a picture are
+//                                         invisible to screen readers and to
+//                                         crawlers
+//                   cta                   text, buttonLabel, href
+//                   resource              text (title), href, description
 
 export const BLOG_POSTS = [
   {
@@ -34,12 +45,37 @@ export const BLOG_POSTS = [
       { type: 'p', text: "Online learning promised to make education more accessible. In practice, it's also made it easier to quietly disappear. Most course platforms report that only a small fraction of learners who start a course actually finish it — and that number has stayed stubbornly low for years, regardless of how polished the content gets." },
       { type: 'h2', text: 'Why Do Students Drop Out of Online Courses?' },
       { type: 'p', text: "Rarely because the material is too hard. Most dropout happens in the first week, often right after the first bit of friction — a confusing next step, a quiz that doesn't match what was taught, a pace that doesn't fit the learner's actual level. Generic courses are built for an average learner who doesn't really exist." },
+      {
+        type: 'infographic',
+        src: '/blog/where-courses-lose-people.svg',
+        alt: 'A course timeline marked with four moments of friction — a confusing next step, a mismatched quiz, a pace built for an average learner, and nobody noticing — above a panel describing what a responsive course does instead.',
+        summary: 'Four moments account for most early dropout, and none of them are about difficulty. First, a confusing next step: the learner finishes something and cannot tell what comes next. Second, a quiz that tests what the course never taught, which reads as "this isn\'t for me". Third, a pace built for an average learner who does not exist — too slow for some, too fast for others. Fourth, nobody notices: the platform logs that someone stopped and nothing changes. A responsive course adjusts difficulty while the learner is still in the lesson, surfaces the explanation that fits this learner rather than the next one in the script, and treats disengagement as a signal to act on in the first week.',
+        caption: 'The four moments where courses lose people — all of them in the first week, none of them about difficulty.',
+      },
       { type: 'h2', text: 'What Traditional LMS Platforms Get Wrong' },
       { type: 'p', text: 'Most platforms treat content delivery and content design as the same problem. They\'re built to host videos and track completion, not to notice when a learner is stuck, bored, or moving faster than the course expects. The platform sees "watched 40% of video 3" — not why the learner stopped there.' },
+      {
+        type: 'image',
+        src: '/blog/platform-sees-vs-learner.svg',
+        alt: 'Two panels side by side. The left lists the six data points an LMS records about a learner, ending in "status: in progress". The right lists what actually happened to that learner: an unexplained term in video 3, two rewinds, an answer written for engineers, and a decision that the course was pitched above them.',
+        caption: 'Same learner, same lesson. The left is everything the platform knows about it.',
+      },
       { type: 'h2', text: 'How Does AI Actually Improve Completion?' },
       { type: 'p', text: 'By closing the gap between what a learner needs right now and what the course assumes they need — adjusting difficulty in real time, surfacing the right explanation instead of just the next scripted one, and catching disengagement early enough to actually do something about it.' },
       { type: 'h2', text: 'What This Looks Like in Practice' },
       { type: 'p', text: "Fewer flat video-and-quiz sequences, more courses that respond to how someone is actually doing. The real measure of a good AI-native LMS isn't the AI itself — it's whether more learners make it to the end, and retain what they came for." },
+      {
+        type: 'resource',
+        text: 'Choosing an LMS in 2026: A Practical Checklist',
+        href: '/blog/choosing-an-lms-in-2026-a-practical-checklist',
+        description: 'The features worth evaluating a platform on, and the ones that are just noise.',
+      },
+      {
+        type: 'cta',
+        text: 'Not sure where you sit on the AI curve? Find out in ten minutes.',
+        buttonLabel: 'Take the free AI aptitude test',
+        href: '/aptitude',
+      },
     ],
   },
   {
