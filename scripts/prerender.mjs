@@ -247,12 +247,32 @@ const blogPosting = (p) => ({
 // this is what AI answer engines lift answers from. (Local escape helper:
 // escText below is declared after this module-level code runs.)
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const escA = (s) => esc(s).replace(/"/g, '&quot;');
 const blogBodyHtml = (p) =>
   (p.body || [])
     .map((b) => {
       if (b.type === 'h2' || b.type === 'h3') return `<${b.type}>${esc(b.text)}</${b.type}>`;
       if (b.type === 'ul') return `<ul>${b.items.map((it) => `<li>${esc(it)}</li>`).join('')}</ul>`;
       if (b.type === 'quote') return `<blockquote>${esc(b.text)}</blockquote>`;
+      if (b.type === 'image' || b.type === 'infographic') {
+        if (!b.src) return '';
+        // The alt text and — for an infographic — the summary are the whole
+        // reason these fields are mandatory: this fallback is what an answer
+        // engine reads, and it can't see the picture either.
+        const words = [b.type === 'infographic' ? b.summary : '', b.caption].filter(Boolean);
+        return `<figure><img src="${escA(b.src)}" alt="${escA(b.alt || '')}" />`
+          + (words.length ? `<figcaption>${words.map((w) => `<p>${esc(w)}</p>`).join('')}</figcaption>` : '')
+          + '</figure>';
+      }
+      if (b.type === 'cta') {
+        if (!b.href || !b.buttonLabel) return '';
+        return `<p>${esc(b.text)} <a href="${escA(b.href)}">${esc(b.buttonLabel)}</a></p>`;
+      }
+      if (b.type === 'resource') {
+        if (!b.href) return '';
+        return `<p>Further reading: <a href="${escA(b.href)}">${esc(b.text || b.href)}</a>`
+          + (b.description ? ` — ${esc(b.description)}` : '') + '</p>';
+      }
       return `<p>${esc(b.text)}</p>`;
     })
     .join('');

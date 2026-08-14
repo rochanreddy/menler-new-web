@@ -1,6 +1,8 @@
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /blog-portal
+Disallow: /blog/preview/
 Disallow: /dashboard
 Disallow: /profile
 Disallow: /login
@@ -26,6 +28,8 @@ User-agent: CCBot
 User-agent: cohere-ai
 Allow: /
 Disallow: /admin
+Disallow: /blog-portal
+Disallow: /blog/preview/
 Disallow: /dashboard
 Disallow: /profile
 Disallow: /login
