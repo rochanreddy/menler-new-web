@@ -24,6 +24,7 @@ const Events = lazy(() => import('./pages/Events'));
 const BlogArticle = lazy(() => import('./pages/BlogArticle'));
 const About = lazy(() => import('./pages/About'));
 const Admin = lazy(() => import('./pages/Admin'));
+const BlogPortal = lazy(() => import('./pages/BlogPortal'));
 const Policy = lazy(() => import('./pages/Policy'));
 const PayTest = lazy(() => import('./pages/PayTest'));
 const NotFound = lazy(() => import('./pages/NotFound'));
@@ -101,9 +102,12 @@ export default function App() {
             <Route path="/community" element={<Community />} />
             <Route path="/events" element={<Events />} />
             <Route path="/blog" element={<Blog />} />
+            {/* Before /blog/:slug — a two-segment path can't be a slug. */}
+            <Route path="/blog/preview/:token" element={<BlogArticle preview />} />
             <Route path="/blog/:slug" element={<BlogArticle />} />
             <Route path="/about" element={<About />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/blog-portal" element={<BlogPortal />} />
             <Route path="/pay-test" element={<PayTest />} />
             <Route path="/policy/:slug" element={<Policy />} />
             <Route path="*" element={<NotFound />} />

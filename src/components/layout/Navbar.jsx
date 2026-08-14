@@ -58,10 +58,11 @@ export default function Navbar() {
 
   const isActive = (path) => location.pathname === path;
 
-  // The admin panel, Sanity Studio, and campaign landing pages are standalone,
-  // chrome-free areas — no public navbar.
+  // The admin panel, the blog portal, Sanity Studio, and campaign landing pages
+  // are standalone, chrome-free areas — no public navbar.
   if (
     location.pathname.startsWith('/admin') ||
+    location.pathname.startsWith('/blog-portal') ||
     location.pathname.startsWith('/studio') ||
     location.pathname.startsWith('/ai-kickstarter') ||
     location.pathname.startsWith('/campaign/') ||
