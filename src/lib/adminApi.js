@@ -92,6 +92,18 @@ export const adminApi = {
   setPostStatus: (id, status) => api(`/posts/admin/${encodeURIComponent(id)}/status`, { method: 'POST', body: { status } }),
   deletePost: (id) => api(`/posts/admin/${encodeURIComponent(id)}`, { method: 'DELETE' }),
 
+  /** The post's shareable no-login preview token. `regenerate` kills the old one. */
+  postPreviewToken: (id, regenerate = false) =>
+    api(`/posts/admin/${encodeURIComponent(id)}/preview-token`, { method: 'POST', body: { regenerate } }),
+
+  /* Blog portal — a separate login that unlocks the blog screens and nothing
+   * else. Its own credentials and its own cookie; signing in here gives no
+   * access to any other admin endpoint. */
+  blogPortalLogin: (username, password) =>
+    api('/posts/portal/login', { method: 'POST', body: { username, password } }),
+  blogPortalLogout: () => api('/posts/portal/logout', { method: 'POST' }),
+  blogPortalSession: () => api('/posts/portal/session'),
+
   resendPack: (id) => api('/admin/paid-users/' + encodeURIComponent(id) + '/resend-pack', { method: 'POST' }),
   setBatch: (id, batch) =>
     api(`/admin/paid-users/${encodeURIComponent(id)}/batch`, { method: 'PATCH', body: { batch } }),
