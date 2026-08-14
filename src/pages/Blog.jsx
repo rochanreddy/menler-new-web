@@ -51,17 +51,23 @@ export default function Blog() {
       {/* ── HERO ── */}
       <section className="hero" aria-label="Hero — The Menler Blog">
         <div className="hero-ring r1" /><div className="hero-ring r2" /><div className="hero-ring r3" />
-        <div className="hero-grid" style={{ minHeight: 'min(480px, calc(100dvh - 130px))' }}>
-          <div className="hero-visual" aria-hidden="true">
+        {/* Shorter than the marketing heroes on purpose — on a blog the reader
+            came for the stories, so the listing should be close to the fold. */}
+        <div className="hero-grid" style={{ minHeight: 'min(400px, calc(100dvh - 190px))' }}>
+          {/* Not aria-hidden like the other heroes' art — these cards are real
+              links to real stories, so they have to stay reachable. */}
+          <div className="hero-visual hero-visual--deck">
             <BlogHeroArt posts={[featured, ...rest].filter(Boolean)} />
           </div>
           <div className="hero-inner">
             <p className="hero-eyebrow">The Menler Blog</p>
             <h1 className="hero-h1">Notes on AI-native<br />learning. <em>From the<br />people building it.</em></h1>
             <p className="hero-sub">How AI is changing the way people learn and work — build logs, guides, and honest takes, written by operators.</p>
+            {/* The blog is the top of the funnel: the loudest button goes to
+                the programme, and the story it's written about sits beside it. */}
             <div className="hero-actions">
-              {featured && <Link className="btn-primary" to={`/blog/${featured.slug}`}>Read the Latest Story</Link>}
-              <a className="btn-outline" href="#newsletter">Get Friday Issues</a>
+              <Link className="btn-primary" to="/generalist">Explore the Generalist Fellowship</Link>
+              {featured && <Link className="btn-outline" to={`/blog/${featured.slug}`}>Read the Latest Story</Link>}
             </div>
           </div>
         </div>

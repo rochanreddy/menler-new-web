@@ -1,15 +1,30 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Thumb from '../common/Thumb';
 import { formatPostDate } from '../../data/blogData';
 
 const CYCLE_MS = 3500;
 
+/** The face of one card — identical whether it's a link or a deck control. */
+function Face({ post }) {
+  return (
+    <>
+      <span className="bhs-img"><Thumb variant={post.thumb || 'default'} /></span>
+      {post.tag && <span className="mag-card-tag">{post.tag}</span>}
+      <span className="bhs-title">{post.title}</span>
+      <span className="bhs-meta">{formatPostDate(post.datePublished)} · {post.readTime}</span>
+    </>
+  );
+}
+
 /**
  * Blog hero visual — a deck of real story cards stacked one behind another.
- * The front card recedes and the next comes forward on a timer; clicking the
- * deck advances it immediately (hover pauses the timer). Slot positions live
- * in CSS (.bhs-slot--N) and transition smoothly as slots reassign. Decorative
- * (inside the aria-hidden hero-visual); auto-cycling stops for reduced motion.
+ * The front card recedes and the next comes forward on a timer; hover or
+ * keyboard focus pauses it. Slot positions live in CSS (.bhs-slot--N) and
+ * transition smoothly as slots reassign; auto-cycling stops for reduced motion.
+ *
+ * The cards are the stories, so they behave like them: the front one is a real
+ * link to its post, and the ones behind bring themselves forward when clicked.
  */
 export default function BlogHeroArt({ posts = [] }) {
   const deck = posts.slice(0, 3);
@@ -27,24 +42,36 @@ export default function BlogHeroArt({ posts = [] }) {
   return (
     <div
       className="blog-hero-art"
-      onClick={() => n > 1 && setFront((f) => (f + 1) % n)}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={() => setPaused(false)}
     >
-      <div className="bhs-ring bhs-ring--1" />
-      <div className="bhs-ring bhs-ring--2" />
-      {deck.map((p, i) => (
-        <div key={p.slug} className={`bhs-pos bhs-slot--${(i - front + n) % n}`}>
-          <div className="bhs-float" style={{ animationDelay: `${i * -2.7}s` }}>
-            <div className="bhs-card">
-              <span className="bhs-img"><Thumb variant={p.thumb || 'default'} /></span>
-              {p.tag && <span className="mag-card-tag">{p.tag}</span>}
-              <span className="bhs-title">{p.title}</span>
-              <span className="bhs-meta">{formatPostDate(p.datePublished)} · {p.readTime}</span>
+      <div className="bhs-ring bhs-ring--1" aria-hidden="true" />
+      <div className="bhs-ring bhs-ring--2" aria-hidden="true" />
+      {deck.map((p, i) => {
+        const slot = (i - front + n) % n;
+        return (
+          <div key={p.slug} className={`bhs-pos bhs-slot--${slot}`}>
+            <div className="bhs-float" style={{ animationDelay: `${i * -2.7}s` }}>
+              {slot === 0 ? (
+                <Link className="bhs-card" to={`/blog/${p.slug}`}>
+                  <Face post={p} />
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  className="bhs-card bhs-card--back"
+                  onClick={() => setFront(i)}
+                  aria-label={`Bring “${p.title}” to the front of the deck`}
+                >
+                  <Face post={p} />
+                </button>
+              )}
             </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
