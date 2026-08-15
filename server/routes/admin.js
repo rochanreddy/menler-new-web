@@ -12,6 +12,7 @@ import { buildCertificatePdf, buildCertificateEmail } from '../utils/certificate
 import { sendMail, isMailConfigured, verifyMailer } from '../utils/email.js';
 import { cashfreeConfigured, findCashfreePayment, getCashfreePayments } from '../utils/cashfree.js';
 import { deliverPackForOrder } from '../utils/packDelivery.js';
+import { zoomConfigured, meetingIdFromLink, pastInstances, pastMeeting, meetingParticipants, explainZoomError } from '../utils/zoom.js';
 import { RESOURCE_PACKS } from '../../src/data/resourceCatalog.js';
 import {
   ADMIN_COOKIE_NAME,
@@ -928,6 +929,106 @@ router.get('/users/export.csv', requireAdmin, async (req, res) => {
 // List every campaign the CRM might need a link for: those that have produced
 // leads (derived from extra.campaign) plus any saved settings. Zoom links live
 // only here and are never exposed to the public site.
+/* ── Zoom attendance ─────────────────────────────────────────────────────────
+ * Who actually turned up to a campaign's session, and for how long, matched
+ * against the people who registered for it. Zoom only reports on meetings that
+ * have finished, and takes roughly half an hour to settle after one ends. */
+
+router.get('/zoom/instances', requireAdmin, async (req, res) => {
+  try {
+    if (!zoomConfigured()) return res.status(503).json({ error: 'Zoom is not configured on this server.', notConfigured: true });
+    const slug = String(req.query.slug || '').trim();
+    const setting = await CampaignSetting.findOne({ slug }).lean();
+    const meetingId = meetingIdFromLink(setting?.zoomLink);
+    if (!meetingId) {
+      return res.status(400).json({ error: 'No Zoom link saved for this campaign — add one first.', needsLink: true });
+    }
+    res.json({ meetingId, instances: await pastInstances(meetingId) });
+  } catch (err) {
+    console.error('zoom instances', err.message);
+    res.status(502).json({ error: explainZoomError(err) });
+  }
+});
+
+router.get('/zoom/attendance', requireAdmin, async (req, res) => {
+  try {
+    if (!zoomConfigured()) return res.status(503).json({ error: 'Zoom is not configured on this server.', notConfigured: true });
+
+    const slug = String(req.query.slug || '').trim();
+    let uuid = String(req.query.uuid || '').trim();
+
+    if (!uuid) {
+      const setting = await CampaignSetting.findOne({ slug }).lean();
+      const meetingId = meetingIdFromLink(setting?.zoomLink);
+      if (!meetingId) return res.status(400).json({ error: 'No Zoom link saved for this campaign — add one first.', needsLink: true });
+      const list = await pastInstances(meetingId);
+      if (!list.length) return res.status(404).json({ error: 'Zoom has no finished sessions for this meeting yet.' });
+      uuid = list[0].uuid;                              // most recent occurrence
+    }
+
+    const [meeting, attended] = await Promise.all([
+      pastMeeting(uuid).catch(() => null),
+      meetingParticipants(uuid),
+    ]);
+
+    // Match on email, which is the only field both sides reliably share — Zoom
+    // display names are whatever somebody typed into their client.
+    const leads = await Lead.find({ 'extra.campaign': slug }).select('name email phone createdAt extra').lean();
+    const byEmail = new Map();
+    for (const l of leads) {
+      const e = String(l.email || '').trim().toLowerCase();
+      if (e && !byEmail.has(e)) byEmail.set(e, l);
+    }
+
+    const seen = new Set();
+    const rows = attended.map((p) => {
+      const lead = p.email ? byEmail.get(p.email) : null;
+      if (lead) seen.add(String(lead.email).toLowerCase());
+      return {
+        name: lead?.name || p.name,
+        email: p.email || lead?.email || '',
+        phone: lead?.phone || '',
+        joinedAt: p.joinedAt,
+        leftAt: p.leftAt,
+        minutes: p.minutes,
+        sessions: p.sessions,
+        registered: Boolean(lead),
+        attended: true,
+      };
+    });
+
+    // Registrants Zoom never saw. Worth as much as the attendance itself — this
+    // is the list to follow up, and the one to think twice about certifying.
+    const noShows = leads
+      .filter((l) => !seen.has(String(l.email || '').trim().toLowerCase()))
+      .map((l) => ({
+        name: l.name, email: l.email, phone: l.phone || '',
+        joinedAt: null, leftAt: null, minutes: 0, sessions: 0,
+        registered: true, attended: false,
+      }));
+
+    const totalMinutes = rows.reduce((n, r) => n + r.minutes, 0);
+    res.json({
+      uuid,
+      meeting: meeting ? {
+        topic: meeting.topic, startTime: meeting.start_time, endTime: meeting.end_time,
+        durationMinutes: meeting.duration, zoomTotal: meeting.participants_count,
+      } : null,
+      rows: [...rows, ...noShows],
+      summary: {
+        attended: rows.length,
+        registered: leads.length,
+        noShows: noShows.length,
+        walkIns: rows.filter((r) => !r.registered).length,
+        avgMinutes: rows.length ? Math.round(totalMinutes / rows.length) : 0,
+      },
+    });
+  } catch (err) {
+    console.error('zoom attendance', err.message);
+    res.status(502).json({ error: explainZoomError(err) });
+  }
+});
+
 router.get('/campaigns', requireAdmin, async (_req, res) => {
   try {
     const [fromLeads, saved] = await Promise.all([

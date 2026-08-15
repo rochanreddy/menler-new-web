@@ -1262,6 +1262,171 @@ function UsersTab() {
 
 /* ── Campaigns tab (per-campaign Zoom link — admin only) ─────────────────── */
 
+/* Who actually turned up to a campaign's Zoom session, and for how long.
+ *
+ * Read straight from Zoom's report API and matched to the people who registered,
+ * so the interesting rows — registered but never joined, joined for four minutes
+ * — are visible rather than having to be worked out from two lists. */
+function Attendance({ slug, onClose }) {
+  const [data, setData] = useState(null);
+  const [instances, setInstances] = useState([]);
+  const [uuid, setUuid] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState('');
+  const [filter, setFilter] = useState('all');
+
+  useEffect(() => {
+    let alive = true;
+    setLoading(true); setErr('');
+    adminApi.zoomAttendance(slug, uuid)
+      .then((d) => { if (alive) { setData(d); if (!uuid) setUuid(d.uuid); } })
+      .catch((e) => { if (alive) setErr(e.message); })
+      .finally(() => { if (alive) setLoading(false); });
+    return () => { alive = false; };
+  }, [slug, uuid]);
+
+  // Session picker only matters for recurring meetings, so it's fetched
+  // separately and simply doesn't appear when there's a single occurrence.
+  useEffect(() => {
+    adminApi.zoomInstances(slug).then((d) => setInstances(d.instances || [])).catch(() => {});
+  }, [slug]);
+
+  useEffect(() => {
+    const onKey = (e) => e.key === 'Escape' && onClose();
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.__lenis?.stop();
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prev;
+      window.__lenis?.start();
+    };
+  }, [onClose]);
+
+  const s = data?.summary || {};
+  const rows = (data?.rows || []).filter((r) => (
+    filter === 'attended' ? r.attended
+      : filter === 'noshow' ? !r.attended
+        : filter === 'walkin' ? (r.attended && !r.registered)
+          : true));
+
+  const clock = (d) => (d ? new Date(d).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }) : '—');
+
+  const csv = () => {
+    const head = ['Name', 'Email', 'Phone', 'Attended', 'Joined', 'Left', 'Minutes', 'Registered'];
+    const body = (data?.rows || []).map((r) => [
+      r.name, r.email, r.phone, r.attended ? 'yes' : 'no',
+      r.joinedAt ? new Date(r.joinedAt).toISOString() : '',
+      r.leftAt ? new Date(r.leftAt).toISOString() : '',
+      r.minutes, r.registered ? 'yes' : 'no',
+    ].map((c) => (/[",\n]/.test(String(c ?? '')) ? `"${String(c).replace(/"/g, '""')}"` : String(c ?? ''))).join(','));
+    const blob = new Blob([[head.join(','), ...body].join('\n')], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `attendance-${slug}.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
+  const TABS = [['all', 'Everyone', data?.rows?.length], ['attended', 'Attended', s.attended],
+    ['noshow', 'Did not join', s.noShows], ['walkin', 'Not registered', s.walkIns]];
+
+  return (
+    <div className="admin-modal-backdrop" onClick={onClose} role="presentation" data-lenis-prevent>
+      <div className="admin-modal admin-modal--wide" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+        <div className="admin-modal-head">
+          <div>
+            <h2>Session attendance</h2>
+            <p>
+              {data?.meeting?.topic || slug}
+              {data?.meeting?.startTime && ` · ${new Date(data.meeting.startTime).toLocaleString('en-IN')}`}
+              {data?.meeting?.durationMinutes ? ` · ran ${data.meeting.durationMinutes} min` : ''}
+            </p>
+          </div>
+          <button className="admin-modal-close" onClick={onClose} aria-label="Close">×</button>
+        </div>
+
+        <div className="admin-modal-body">
+          {loading && <p className="admin-empty">Asking Zoom…</p>}
+          {err && (
+            <div className="admin-note admin-note--bad">
+              {err}
+              <br />
+              <span className="admin-muted">
+                Zoom only reports on sessions that have finished, and takes about half an hour to settle afterwards.
+              </span>
+            </div>
+          )}
+
+          {!loading && !err && data && (
+            <>
+              <div className="admin-money">
+                <div className="admin-money-box"><span>Attended</span><b>{s.attended}</b></div>
+                <div className="admin-money-box"><span>Registered</span><b>{s.registered}</b></div>
+                <div className="admin-money-box"><span>Did not join</span><b>{s.noShows}</b></div>
+                <div className="admin-money-box"><span>Avg time</span><b>{s.avgMinutes}<span style={{ fontSize: 14 }}> min</span></b></div>
+              </div>
+
+              <div className="admin-toolbar">
+                <div className="bl-tabs">
+                  {TABS.map(([k, label, n]) => (
+                    <button key={k} className={`bl-tab ${filter === k ? 'is-on' : ''}`} onClick={() => setFilter(k)}>
+                      {label} {n !== undefined && <em>{n}</em>}
+                    </button>
+                  ))}
+                </div>
+                {instances.length > 1 && (
+                  <select className="admin-search" style={{ flex: '0 0 230px' }}
+                    value={uuid} onChange={(e) => setUuid(e.target.value)}>
+                    {instances.map((i) => (
+                      <option key={i.uuid} value={i.uuid}>
+                        {new Date(i.start_time).toLocaleString('en-IN')}
+                      </option>
+                    ))}
+                  </select>
+                )}
+                <button className="admin-btn" onClick={csv}>⭳ Export CSV</button>
+              </div>
+
+              <div className="admin-table-wrap">
+                <table className="admin-table">
+                  <thead>
+                    <tr><th>Name</th><th>Email</th><th>Joined</th><th>Left</th><th>Time in call</th><th /></tr>
+                  </thead>
+                  <tbody>
+                    {!rows.length && <tr><td colSpan={6} className="admin-empty">Nobody in this group.</td></tr>}
+                    {rows.map((r, i) => (
+                      <tr key={(r.email || r.name) + i}>
+                        <td><b>{r.name || '—'}</b></td>
+                        <td className="admin-muted">{r.email || '—'}</td>
+                        <td>{clock(r.joinedAt)}</td>
+                        <td>{clock(r.leftAt)}</td>
+                        <td>
+                          {r.attended ? <b>{r.minutes} min</b> : <span className="admin-muted">—</span>}
+                          {r.sessions > 1 && <><br /><span className="admin-muted" style={{ fontSize: 11.5 }}>rejoined {r.sessions}×</span></>}
+                        </td>
+                        <td>
+                          {!r.attended && <span className="admin-badge admin-badge--warn">Did not join</span>}
+                          {r.attended && !r.registered && <span className="admin-badge">Not registered</span>}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="admin-muted" style={{ fontSize: 12, marginTop: 10 }}>
+                Matched on email, so somebody who joined Zoom with a different address shows as
+                “Not registered”. Rejoins are merged — the time shown is total minutes connected.
+              </p>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function CampaignsTab() {
   const [rows, setRows] = useState([]);
   const [drafts, setDrafts] = useState({}); // slug -> zoom link being edited
@@ -1269,6 +1434,7 @@ function CampaignsTab() {
   const [error, setError] = useState('');
   const [savingSlug, setSavingSlug] = useState('');
   const [savedSlug, setSavedSlug] = useState('');
+  const [attendanceSlug, setAttendanceSlug] = useState(null);
   const [newSlug, setNewSlug] = useState('');
 
   const load = useCallback(async () => {
@@ -1377,12 +1543,22 @@ function CampaignsTab() {
                   >
                     {savingSlug === r.slug ? 'Saving…' : savedSlug === r.slug ? 'Saved ✓' : 'Save'}
                   </button>
+                  {r.zoomLink && (
+                    <button className="admin-btn" style={{ marginLeft: 6 }}
+                      onClick={() => setAttendanceSlug(r.slug)}>
+                      Attendance
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      {attendanceSlug && (
+        <Attendance slug={attendanceSlug} onClose={() => setAttendanceSlug(null)} />
+      )}
     </div>
   );
 }

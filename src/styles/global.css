@@ -4365,3 +4365,5 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
   margin-top: 14px; padding: 11px 14px; border-radius: 10px;
   background: var(--parchment); font-size: 12.5px; line-height: 1.55; color: var(--text-muted);
 }
+/* Attendance panel is a table, so it needs more room than a form modal */
+.admin-modal--wide { width: min(920px, 100%); }
