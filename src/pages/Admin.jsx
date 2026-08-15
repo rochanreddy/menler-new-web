@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { adminApi } from '../lib/adminApi';
 import Seo from '../components/common/Seo';
-import BlogTab from '../components/admin/BlogTab';
 import AttendanceTab from '../components/admin/AttendanceTab';
 
 /* Courses offered in the manual-payment form. The paid campaign packs and the
@@ -2111,7 +2110,6 @@ const TABS = [
   { key: 'attendance', label: 'Attendance' },
   { key: 'shortlinks', label: 'Short links' },
   { key: 'certificates', label: 'Certificates' },
-  { key: 'blog', label: 'Blog' },
 ];
 
 function AdminPanel({ onLogout }) {
@@ -2145,7 +2143,6 @@ function AdminPanel({ onLogout }) {
         {tab === 'campaigns' && <CampaignsTab />}
         {tab === 'shortlinks' && <ShortLinksTab />}
         {tab === 'certificates' && <CertificatesTab />}
-        {tab === 'blog' && <BlogTab />}
         {tab === 'attendance' && <AttendanceTab />}
       </main>
     </div>
