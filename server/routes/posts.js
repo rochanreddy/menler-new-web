@@ -2,7 +2,7 @@ import { Router } from 'express';
 import crypto from 'crypto';
 
 import { Post, slugify, blockWords } from '../models/Post.js';
-import { requireBlogAccess, requireBlogAdmin } from '../middleware/blogAuth.js';
+import { requireBlogAccess, requireBlogAdmin, requireBlogPortal } from '../middleware/blogAuth.js';
 import { BLOG_COOKIE_NAME, signBlogEditor, blogCookieOptions } from '../utils/blogToken.js';
 
 const router = Router();
@@ -200,10 +200,15 @@ router.post('/portal/logout', (_req, res) => {
   res.json({ ok: true });
 });
 
-/* Who's signed in, and what they're allowed to do with it. The portal UI reads
- * `canPublish` to decide what to show — the server enforces it either way. */
-router.get('/portal/session', requireBlogAccess, (req, res) => {
-  res.json({ authenticated: true, actor: req.blogActor, canPublish: req.blogActor === 'admin' });
+/* Is there a portal session on this browser? Only the portal's own cookie
+ * counts — an admin signed in at /admin still gets the login screen here, and
+ * uses the Blog tab they already have.
+ *
+ * canPublish is always false: this session writes and shares previews; putting
+ * a page in front of the public stays with the admin. The UI reads it to decide
+ * what to draw, and requireBlogAdmin enforces it regardless. */
+router.get('/portal/session', requireBlogPortal, (_req, res) => {
+  res.json({ authenticated: true, actor: 'blog', canPublish: false });
 });
 
 /* ── Admin ───────────────────────────────────────────────────────────────── */

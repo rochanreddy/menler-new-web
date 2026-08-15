@@ -15,6 +15,21 @@ export function blogActor(req) {
   return null;
 }
 
+/* The portal's own front door — the blog cookie and nothing else.
+ *
+ * An admin session deliberately does NOT open it. The admin already has the
+ * Blog tab; letting their cookie through here only meant nobody could see what
+ * an outsider actually sees without opening a private window, which is exactly
+ * the check worth being able to make. */
+export function requireBlogPortal(req, res, next) {
+  if (!verifyBlogEditor(req.cookies?.[BLOG_COOKIE_NAME] || '')) {
+    res.status(401).json({ error: 'Not authenticated.' });
+    return;
+  }
+  req.blogActor = 'blog';
+  next();
+}
+
 /** Read + write blog content: the admin, or a signed-in blog-portal editor. */
 export function requireBlogAccess(req, res, next) {
   const actor = blogActor(req);
