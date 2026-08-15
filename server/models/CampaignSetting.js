@@ -9,6 +9,8 @@ const campaignSettingSchema = new mongoose.Schema(
     slug: { type: String, required: true, unique: true, index: true, trim: true },
     title: { type: String, default: '' },
     zoomLink: { type: String, default: '' },
+    // The exact past occurrence to report on, when one was picked.
+    zoomUuid: { type: String, default: '' },
   },
   { timestamps: true }
 );

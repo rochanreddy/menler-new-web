@@ -87,8 +87,13 @@ export default function AttendanceTab() {
   const saveLink = async () => {
     setSavingLink(true); setErr('');
     try {
-      await adminApi.saveCampaign(slug, { zoomLink: link.trim() });
-      setCampaigns((cs) => cs.map((c) => (c.slug === slug ? { ...c, zoomLink: link.trim() } : c)));
+      // When the session came from the picker, pin that exact occurrence. A
+      // meeting id alone means "most recent run of this room", and these rooms
+      // are reused — the class and the sound check before it share an id.
+      const picked = zoomList.find((m) => m.id === link.trim());
+      const body = { zoomLink: link.trim(), zoomUuid: picked?.uuid || '' };
+      await adminApi.saveCampaign(slug, body);
+      setCampaigns((cs) => cs.map((c) => (c.slug === slug ? { ...c, ...body } : c)));
     } catch (e) { setErr(e.message); } finally { setSavingLink(false); }
   };
 

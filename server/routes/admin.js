@@ -1018,14 +1018,20 @@ router.get('/zoom/attendance', requireAdmin, async (req, res) => {
 
     if (!uuid) {
       const setting = await CampaignSetting.findOne({ slug }).lean();
-      const meetingId = meetingIdFromLink(setting?.zoomLink);
-      if (!meetingId) return res.status(400).json({ error: 'No Zoom link saved for this campaign — add one first.', needsLink: true });
-      // Prefer the instance list (it gives every past session), but fall back to
-      // asking Zoom for the meeting itself, which returns the latest occurrence
-      // and needs one fewer scope.
-      const list = await pastInstances(meetingId);
-      uuid = list[0]?.uuid || await latestInstanceUuid(meetingId);
-      if (!uuid) return res.status(404).json({ error: 'Zoom has no finished sessions for this meeting yet.' });
+
+      // A pinned occurrence wins. Resolving a meeting id instead gives the most
+      // recent run of that room, and these rooms get reused for rehearsals —
+      // the class with 262 people and the two-minute sound check share an id,
+      // so "most recent" can quietly report the sound check.
+      if (setting?.zoomUuid) {
+        uuid = setting.zoomUuid;
+      } else {
+        const meetingId = meetingIdFromLink(setting?.zoomLink);
+        if (!meetingId) return res.status(400).json({ error: 'No Zoom session linked to this campaign yet.', needsLink: true });
+        const list = await pastInstances(meetingId);
+        uuid = list[0]?.uuid || await latestInstanceUuid(meetingId);
+        if (!uuid) return res.status(404).json({ error: 'Zoom has no finished sessions for this meeting yet.' });
+      }
     }
 
     const [meeting, attended] = await Promise.all([
@@ -1136,14 +1142,21 @@ router.put('/campaigns/:slug', requireAdmin, async (req, res) => {
     const slug = String(req.params.slug || '').trim();
     if (!slug) return res.status(400).json({ error: 'A campaign slug is required.' });
 
-    const { zoomLink = '', title } = req.body || {};
+    const { zoomLink = '', zoomUuid, title } = req.body || {};
     const link = String(zoomLink).trim();
-    if (link && !/^https?:\/\//i.test(link)) {
-      return res.status(400).json({ error: 'Zoom link must start with http:// or https://' });
+    // A bare meeting id is what Zoom actually prints in Meetings → Previous, so
+    // accept it as readily as a join link — requiring a URL meant the value most
+    // people have to hand was refused.
+    if (link && !/^https?:\/\//i.test(link) && !meetingIdFromLink(link)) {
+      return res.status(400).json({ error: 'Paste a Zoom join link, or the meeting ID (e.g. 823 5894 9022).' });
     }
 
     const update = { zoomLink: link };
     if (typeof title === 'string') update.title = title.trim();
+    // Pin the exact occurrence when one was chosen. A meeting id alone resolves
+    // to "most recent occurrence", which on a room used for rehearsals lands on
+    // a one-person test run rather than the class.
+    if (typeof zoomUuid === 'string') update.zoomUuid = zoomUuid.trim();
 
     const doc = await CampaignSetting.findOneAndUpdate(
       { slug },
@@ -1151,7 +1164,7 @@ router.put('/campaigns/:slug', requireAdmin, async (req, res) => {
       { new: true, upsert: true },
     ).lean();
 
-    res.json({ ok: true, campaign: { slug: doc.slug, title: doc.title || '', zoomLink: doc.zoomLink || '' } });
+    res.json({ ok: true, campaign: { slug: doc.slug, title: doc.title || '', zoomLink: doc.zoomLink || '', zoomUuid: doc.zoomUuid || '' } });
   } catch (err) {
     console.error('admin campaign save error', err);
     res.status(500).json({ error: 'Could not save the campaign.' });
