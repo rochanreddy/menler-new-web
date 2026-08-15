@@ -69,22 +69,11 @@ export default function AttendanceTab() {
         if (!alive) return;
         setZoomList(d.meetings || []);
         setSuggested(d.suggestedId || '');
+        // Pre-select the likely one, but never save it. Linking is the moment
+        // this campaign's numbers become a fact somebody will act on, and that
+        // should be a decision, not something that happened while the page
+        // loaded — an admin who didn't choose it has no reason to check it.
         if (d.suggestedId) setLink(d.suggestedId);
-
-        /* Link it without being asked. The suggestion only exists when the
-         * wording is a strong match, and confirming a choice the page has
-         * already made is a click that decides nothing. Not done while
-         * re-linking: that is someone overriding the guess on purpose.
-         *
-         * Safe because a bad guess can't reach the screen as data — the
-         * mismatch guard withholds the numbers — and the link can be changed. */
-        if (d.suggestedId && !relink) {
-          const picked = (d.meetings || []).find((m) => m.id === d.suggestedId);
-          const body = { zoomLink: d.suggestedId, zoomUuid: picked?.uuid || '' };
-          adminApi.saveCampaign(slug, body)
-            .then(() => { if (alive) setCampaigns((cs) => cs.map((c) => (c.slug === slug ? { ...c, ...body } : c))); })
-            .catch(() => { /* leave it to be linked by hand */ });
-        }
       })
       .catch((e) => { if (alive) setZoomListErr(e.message); });
     return () => { alive = false; };

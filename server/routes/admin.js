@@ -986,55 +986,18 @@ router.get('/zoom/meetings', requireAdmin, async (req, res) => {
     let suggestedId = '';
     let matchedBy = '';
 
-    /* Preferred signal: who was actually in the room.
+    /* Only a hint, so only cheap signals.
      *
-     * Matching on the meeting's name only works while the Zoom topic is kept in
-     * step with the campaign, which is a convention, not a fact. The registrant
-     * emails are a fact — the session whose participants are this campaign's
-     * registrants is this campaign's session, whatever it happens to be called.
+     * Confirming a match by comparing attendee lists is far more reliable, but
+     * it costs one Zoom call per candidate session and the whole page waits on
+     * it. That was worth paying when the result was linked automatically; now
+     * that a person picks and confirms, it buys a starred row at the price of
+     * several seconds' delay on every campaign — a bad trade.
      *
-     * Candidates are narrowed by date first, because confirming this costs one
-     * API call per session and the class is always near its registrations. */
+     * Wording and date are free, and a wrong hint costs nothing here: nothing
+     * is saved until it's chosen, and a mismatched session is still caught
+     * afterwards by comparing who attended against who registered. */
     if (slug && meetings.length) {
-      const regs = await Lead.find({ 'extra.campaign': slug }).select('email createdAt').lean();
-      const emails = new Set(regs.map((l) => String(l.email || '').trim().toLowerCase()).filter(Boolean));
-
-      /* Anchor on the median signup, not the latest.
-       *
-       * Registrations keep trickling in for weeks after a class — one campaign
-       * here took its last signup 27 days afterwards, which put its own session
-       * outside the search window entirely. The median sits in the rush just
-       * before the class: for that same campaign it falls on the exact day the
-       * class ran. */
-      const times = regs.map((l) => +new Date(l.createdAt)).filter(Boolean).sort((a, b) => a - b);
-      const anchorAt = times.length ? times[Math.floor(times.length / 2)] : 0;
-
-      if (emails.size && anchorAt) {
-        const candidates = meetings
-          .filter((m) => Math.abs(new Date(m.startTime) - anchorAt) < 21 * 864e5)
-          .sort((a, b) => Math.abs(new Date(a.startTime) - anchorAt) - Math.abs(new Date(b.startTime) - anchorAt))
-          .slice(0, 8);
-
-        let bestHits = 0;
-        for (const m of candidates) {
-          try {
-            const people = await meetingParticipants(m.uuid);
-            if (!people.length) continue;
-            const hits = people.filter((p) => p.email && emails.has(p.email)).length;
-            // A handful of shared addresses could be staff; a real class shares
-            // a substantial slice of its attendees with its own signup list.
-            if (hits > bestHits && hits >= 5 && hits / people.length >= 0.25) {
-              bestHits = hits;
-              suggestedId = m.id;
-              matchedBy = 'attendees';
-            }
-          } catch { /* skip a session Zoom won't report on */ }
-        }
-      }
-    }
-
-    // Fall back to the wording only when the attendees couldn't decide it.
-    if (slug && meetings.length && !suggestedId) {
       const setting = await CampaignSetting.findOne({ slug }).lean();
       const lead = await Lead.findOne({ 'extra.campaign': slug, 'extra.workshop': { $type: 'string', $ne: '' } })
         .sort('-createdAt').select('extra.workshop createdAt').lean();
