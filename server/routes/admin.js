@@ -279,19 +279,39 @@ router.get('/stats/period', requireAdmin, async (req, res) => {
 });
 
 // Leads count for one calendar day (IST) — powers the date-picker stat card.
+/* Leads in a date range, inclusive of both ends, in IST — the team's day, not
+ * the server's UTC one. `from`/`to` may be the same date for a single day, and
+ * a lone `date` is still accepted so nothing calling the older shape breaks. */
 router.get('/stats/day', requireAdmin, async (req, res) => {
   try {
-    const date = String(req.query.date || '').trim();
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-      return res.status(400).json({ error: 'Pass ?date=YYYY-MM-DD.' });
+    const isDay = (v) => /^\d{4}-\d{2}-\d{2}$/.test(v);
+    const single = String(req.query.date || '').trim();
+    let from = String(req.query.from || '').trim() || single;
+    let to = String(req.query.to || '').trim() || single;
+
+    if (!isDay(from) || !isDay(to)) {
+      return res.status(400).json({ error: 'Pass ?from=YYYY-MM-DD&to=YYYY-MM-DD (or ?date=YYYY-MM-DD).' });
     }
-    const start = new Date(`${date}T00:00:00+05:30`);
-    const end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
-    const count = await Lead.countDocuments({ createdAt: { $gte: start, $lt: end } });
-    res.json({ date, count });
+    // Tolerate a range entered backwards rather than returning zero.
+    if (from > to) [from, to] = [to, from];
+
+    const start = new Date(`${from}T00:00:00+05:30`);
+    const end = new Date(new Date(`${to}T00:00:00+05:30`).getTime() + 24 * 60 * 60 * 1000);
+
+    const [count, unique] = await Promise.all([
+      Lead.countDocuments({ createdAt: { $gte: start, $lt: end } }),
+      Lead.aggregate([
+        { $match: { createdAt: { $gte: start, $lt: end } } },
+        { $group: { _id: CONTACT_KEY } },
+        { $count: 'n' },
+      ]).then((r) => r[0]?.n || 0),
+    ]);
+
+    const days = Math.round((end - start) / 864e5);
+    res.json({ from, to, days, count, unique, date: from });
   } catch (err) {
     console.error('admin stats/day error', err);
-    res.status(500).json({ error: 'Could not load the day count.' });
+    res.status(500).json({ error: 'Could not load the count.' });
   }
 });
 

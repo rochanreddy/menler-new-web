@@ -4371,3 +4371,15 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 /* Which class the attendance numbers belong to */
 .admin-sessionline { font-size: 13.5px; color: var(--ink); margin: 0 0 12px; }
 .admin-sessionline b { font-weight: 700; }
+
+/* Leads card: date range + quick presets */
+.admin-stat-range { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+.admin-stat-range > span { font-size: 11.5px; color: var(--text-muted); flex: none; }
+.admin-stat-range .admin-stat-date { flex: 1; min-width: 0; }
+.admin-stat-quick { display: flex; gap: 4px; margin-top: 7px; }
+.admin-stat-quick button {
+  flex: 1; font: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer;
+  padding: 4px 0; border-radius: 7px; border: 1px solid var(--border);
+  background: var(--white); color: var(--text-muted);
+}
+.admin-stat-quick button:hover { border-color: var(--specialist); color: var(--specialist); }

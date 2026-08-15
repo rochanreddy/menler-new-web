@@ -172,33 +172,62 @@ function StatCard({ label, value, accent }) {
   );
 }
 
-// Stat card with a date picker — shows the leads count for the chosen day (IST).
+// Leads over a chosen date range (IST). Both ends inclusive; same date twice
+// means a single day, which is what this card used to do.
 function DayStatCard() {
   const today = new Date(Date.now() + 5.5 * 60 * 60 * 1000).toISOString().slice(0, 10);
-  const [date, setDate] = useState(today);
-  const [count, setCount] = useState(null);
+  const [from, setFrom] = useState(today);
+  const [to, setTo] = useState(today);
+  const [data, setData] = useState(null);
 
   useEffect(() => {
     let stale = false;
-    setCount(null);
-    adminApi.getDayLeads(date)
-      .then((r) => { if (!stale) setCount(r.count); })
-      .catch(() => { if (!stale) setCount('—'); });
+    setData(null);
+    adminApi.getDayLeads(from, to)
+      .then((r) => { if (!stale) setData(r); })
+      .catch(() => { if (!stale) setData({ count: '—' }); });
     return () => { stale = true; };
-  }, [date]);
+  }, [from, to]);
+
+  // Quick ranges cover what people actually ask for; the pickers stay for the
+  // rest. Each sets both ends, so the two controls never disagree.
+  const quick = (days) => {
+    const end = new Date(Date.now() + 5.5 * 3600 * 1000);
+    const start = new Date(end.getTime() - (days - 1) * 864e5);
+    setFrom(start.toISOString().slice(0, 10));
+    setTo(end.toISOString().slice(0, 10));
+  };
+
+  const label = from === to
+    ? 'Leads on'
+    : `Leads · ${data?.days ? `${data.days} days` : 'range'}`;
 
   return (
     <div className="admin-stat" style={{ borderTopColor: 'var(--placed)' }}>
-      <div className="admin-stat-value">{count === null ? '…' : count}</div>
-      <div className="admin-stat-label">Leads on</div>
-      <input
-        className="admin-stat-date"
-        type="date"
-        value={date}
-        max={today}
-        onChange={(e) => e.target.value && setDate(e.target.value)}
-        aria-label="Pick a date to see that day's leads"
-      />
+      <div className="admin-stat-value">{data === null ? '…' : data.count}</div>
+      <div className="admin-stat-label">
+        {label}
+        {data?.unique != null && data.unique !== data.count && (
+          <span className="admin-muted"> · {data.unique} people</span>
+        )}
+      </div>
+
+      <div className="admin-stat-range">
+        <input className="admin-stat-date" type="date" value={from} max={to || today}
+          onChange={(e) => e.target.value && setFrom(e.target.value)}
+          aria-label="From date" />
+        <span>to</span>
+        <input className="admin-stat-date" type="date" value={to} min={from} max={today}
+          onChange={(e) => e.target.value && setTo(e.target.value)}
+          aria-label="To date" />
+      </div>
+
+      <div className="admin-stat-quick">
+        <button type="button" onClick={() => quick(1)}>Today</button>
+        <button type="button" onClick={() => quick(7)}>7d</button>
+        <button type="button" onClick={() => quick(30)}>30d</button>
+        <button type="button" onClick={() => quick(90)}>90d</button>
+      </div>
     </div>
   );
 }
