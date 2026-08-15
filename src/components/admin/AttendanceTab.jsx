@@ -70,6 +70,21 @@ export default function AttendanceTab() {
         setZoomList(d.meetings || []);
         setSuggested(d.suggestedId || '');
         if (d.suggestedId) setLink(d.suggestedId);
+
+        /* Link it without being asked. The suggestion only exists when the
+         * wording is a strong match, and confirming a choice the page has
+         * already made is a click that decides nothing. Not done while
+         * re-linking: that is someone overriding the guess on purpose.
+         *
+         * Safe because a bad guess can't reach the screen as data — the
+         * mismatch guard withholds the numbers — and the link can be changed. */
+        if (d.suggestedId && !relink) {
+          const picked = (d.meetings || []).find((m) => m.id === d.suggestedId);
+          const body = { zoomLink: d.suggestedId, zoomUuid: picked?.uuid || '' };
+          adminApi.saveCampaign(slug, body)
+            .then(() => { if (alive) setCampaigns((cs) => cs.map((c) => (c.slug === slug ? { ...c, ...body } : c))); })
+            .catch(() => { /* leave it to be linked by hand */ });
+        }
       })
       .catch((e) => { if (alive) setZoomListErr(e.message); });
     return () => { alive = false; };
@@ -211,7 +226,11 @@ export default function AttendanceTab() {
 
       {slug && (!current?.zoomLink || relink) && (
         <div className="admin-note admin-note--warn">
-          <b>{relink ? 'Pick the right session for this campaign.' : 'This campaign isn’t linked to a Zoom session yet.'}</b>
+          <b>
+            {relink ? 'Pick the right session for this campaign.'
+              : suggested ? 'Linking this campaign to its Zoom session…'
+                : 'No Zoom session on this account matches this campaign.'}
+          </b>
 
           {zoomList.length > 0 ? (
             <>
