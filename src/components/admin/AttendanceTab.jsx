@@ -85,6 +85,13 @@ export default function AttendanceTab() {
     adminApi.zoomInstances(slug).then((d) => setInstances(d.instances || [])).catch(() => {});
   }, [slug]);
 
+  // Load as soon as a linked campaign is chosen. Making someone press a button
+  // to see the only thing this page exists for is a step with no decision in it.
+  useEffect(() => {
+    if (slug && current?.zoomLink && !relink) fetchAttendance();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug, current?.zoomLink, relink]);
+
   const saveLink = async () => {
     setSavingLink(true); setErr('');
     try {
@@ -130,6 +137,31 @@ export default function AttendanceTab() {
   const TABS = [['all', 'Everyone', data?.rows?.length], ['attended', 'Attended', s.attended],
     ['noshow', 'Did not join', s.noShows], ['walkin', 'Not registered', s.walkIns]];
 
+  /* Does the session on screen actually belong to the campaign on screen?
+   *
+   * A wrong link doesn't look wrong — it looks like a class nobody registered
+   * for. That is exactly how a list appeared for a workshop that hadn't run
+   * yet: a different session's attendees, compared against these registrants,
+   * so everybody showed as "not registered". Two signals catch it, and neither
+   * needs the reader to notice a date in small print. */
+  const mismatch = (() => {
+    if (!data?.meeting) return '';
+    const campaignName = current?.title || slug || '';
+    const words = (x) => new Set((String(x).toLowerCase().match(/[a-z0-9]{4,}/g) || [])
+      .filter((w) => !['with', 'your', 'from', 'this', 'that', 'into', 'menler', 'live', 'session', 'workshop', 'class', 'build', 'claude'].includes(w)));
+    const want = words(campaignName);
+    const got = words(data.meeting.topic);
+    const shared = [...want].filter((w) => got.has(w)).length;
+    if (want.size && shared === 0) {
+      return `This session is called “${data.meeting.topic}”, which doesn’t look like “${campaignName}”.`;
+    }
+    // Everyone unregistered means the two sides are almost certainly unrelated.
+    if (s.attended > 5 && s.walkIns === s.attended) {
+      return 'Not one attendee matches this campaign’s registrations, which usually means the wrong session is linked.';
+    }
+    return '';
+  })();
+
   return (
     <div>
       <div className="admin-toolbar">
@@ -145,7 +177,7 @@ export default function AttendanceTab() {
         </select>
         {slug && current?.zoomLink && (
           <button className="admin-btn admin-btn--primary" onClick={() => fetchAttendance()} disabled={loading}>
-            {loading ? 'Asking Zoom…' : data ? 'Refresh' : 'Load attendance'}
+            {loading ? 'Asking Zoom…' : 'Refresh'}
           </button>
         )}
       </div>
@@ -242,20 +274,32 @@ export default function AttendanceTab() {
 
       {data && (
         <>
+          {mismatch && (
+            <div className="admin-note admin-note--bad">
+              <b>This might be the wrong session.</b> {mismatch}
+              <div className="row" style={{ marginTop: 10 }}>
+                <button type="button" className="admin-btn"
+                  onClick={() => { setRelink(true); setLink(''); setData(null); }}>
+                  Pick a different session
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Say plainly which class these numbers are, above the numbers —
+              a mismatch spotted after reading the table is spotted too late. */}
+          <p className="admin-sessionline">
+            Showing <b>{data.meeting?.topic || 'this session'}</b>
+            {data.meeting?.startTime && <> · {fmtDate(data.meeting.startTime)}, {clock(data.meeting.startTime)}</>}
+            {data.meeting?.durationMinutes ? <> · ran {data.meeting.durationMinutes} min</> : null}
+          </p>
+
           <div className="admin-money">
             <div className="admin-money-box"><span>Attended</span><b>{s.attended}</b></div>
             <div className="admin-money-box"><span>Registered</span><b>{s.registered}</b></div>
             <div className="admin-money-box"><span>Did not join</span><b>{s.noShows}</b></div>
             <div className="admin-money-box"><span>Avg time</span><b>{s.avgMinutes}<span style={{ fontSize: 14 }}> min</span></b></div>
           </div>
-
-          {data.meeting && (
-            <p className="admin-muted" style={{ fontSize: 13, marginBottom: 12 }}>
-              <b>{data.meeting.topic || slug}</b>
-              {data.meeting.startTime && ` · ${fmtDate(data.meeting.startTime)}, ${clock(data.meeting.startTime)}`}
-              {data.meeting.durationMinutes ? ` · ran ${data.meeting.durationMinutes} min` : ''}
-            </p>
-          )}
 
           <div className="admin-toolbar">
             <div className="bl-tabs">

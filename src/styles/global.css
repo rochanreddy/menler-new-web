@@ -4367,3 +4367,7 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 }
 /* Attendance panel is a table, so it needs more room than a form modal */
 .admin-modal--wide { width: min(920px, 100%); }
+
+/* Which class the attendance numbers belong to */
+.admin-sessionline { font-size: 13.5px; color: var(--ink); margin: 0 0 12px; }
+.admin-sessionline b { font-weight: 700; }
