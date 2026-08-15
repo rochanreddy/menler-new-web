@@ -161,18 +161,15 @@ export default function AttendanceTab() {
    * needs the reader to notice a date in small print. */
   const mismatch = (() => {
     if (!data?.meeting) return '';
-    const campaignName = current?.title || slug || '';
-    const words = (x) => new Set((String(x).toLowerCase().match(/[a-z0-9]{4,}/g) || [])
-      .filter((w) => !['with', 'your', 'from', 'this', 'that', 'into', 'menler', 'live', 'session', 'workshop', 'class', 'build', 'claude'].includes(w)));
-    const want = words(campaignName);
-    const got = words(data.meeting.topic);
-    const shared = [...want].filter((w) => got.has(w)).length;
-    if (want.size && shared === 0) {
-      return `This session is called “${data.meeting.topic}”, which doesn’t look like “${campaignName}”.`;
-    }
-    // Everyone unregistered means the two sides are almost certainly unrelated.
+    /* Judged on who was in the room, not on what the meeting was called.
+     *
+     * A name check would flag every correctly-linked session that happens to be
+     * titled differently from its campaign — which is most of them, once the
+     * naming is no longer required. Attendance overlap has no such problem: a
+     * class shares people with its own signup list, and an unrelated one
+     * doesn't. */
     if (s.attended > 5 && s.walkIns === s.attended) {
-      return 'Not one attendee matches this campaign’s registrations, which usually means the wrong session is linked.';
+      return `Not one of the ${s.attended} attendees appears in this campaign’s ${s.registered} registrations, which almost always means a different class is linked.`;
     }
     return '';
   })();
