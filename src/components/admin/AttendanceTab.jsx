@@ -19,6 +19,7 @@ export default function AttendanceTab() {
   const [zoomList, setZoomList] = useState([]);
   const [suggested, setSuggested] = useState('');
   const [zoomListErr, setZoomListErr] = useState('');
+  const [relink, setRelink] = useState(false);
 
   const [data, setData] = useState(null);
   const [instances, setInstances] = useState([]);
@@ -53,14 +54,14 @@ export default function AttendanceTab() {
   // Reset per-campaign state whenever the selection changes, so a previous
   // campaign's table can't sit under a new campaign's heading.
   useEffect(() => {
-    setData(null); setInstances([]); setUuid(''); setErr(''); setFilter('all');
+    setData(null); setInstances([]); setUuid(''); setErr(''); setFilter('all'); setRelink(false);
     setLink(current?.zoomLink || '');
   }, [slug, current?.zoomLink]);
 
   // Offer the account's real sessions to link against, and pre-select the one
   // whose Zoom topic looks like this campaign.
   useEffect(() => {
-    if (!slug || current?.zoomLink) return;
+    if (!slug || (current?.zoomLink && !relink)) return;
     let alive = true;
     setZoomList([]); setSuggested(''); setZoomListErr('');
     adminApi.zoomMeetings(slug)
@@ -72,7 +73,7 @@ export default function AttendanceTab() {
       })
       .catch((e) => { if (alive) setZoomListErr(e.message); });
     return () => { alive = false; };
-  }, [slug, current?.zoomLink]);
+  }, [slug, current?.zoomLink, relink]);
 
   const fetchAttendance = useCallback((forUuid = '') => {
     if (!slug) return;
@@ -94,6 +95,8 @@ export default function AttendanceTab() {
       const body = { zoomLink: link.trim(), zoomUuid: picked?.uuid || '' };
       await adminApi.saveCampaign(slug, body);
       setCampaigns((cs) => cs.map((c) => (c.slug === slug ? { ...c, ...body } : c)));
+      setRelink(false);
+      setData(null);
     } catch (e) { setErr(e.message); } finally { setSavingLink(false); }
   };
 
@@ -161,9 +164,22 @@ export default function AttendanceTab() {
           the only reason that link is stored. Picking from the account's real
           sessions beats hunting a meeting id in the Zoom portal — the paste box
           stays as the fallback for when Zoom won't list them. */}
-      {slug && !current?.zoomLink && (
+      {/* Which session this campaign points at, and a way out of a wrong one.
+          Auto-matching can pick the wrong class, and without this the only
+          remedy was editing the database. */}
+      {slug && current?.zoomLink && !relink && (
+        <p className="admin-muted" style={{ fontSize: 12.5, margin: '0 0 12px' }}>
+          Linked to Zoom meeting <b>{current.zoomLink}</b>
+          {' · '}
+          <button type="button" className="admin-linkbtn" onClick={() => { setRelink(true); setLink(''); }}>
+            wrong session? change it
+          </button>
+        </p>
+      )}
+
+      {slug && (!current?.zoomLink || relink) && (
         <div className="admin-note admin-note--warn">
-          <b>This campaign isn’t linked to a Zoom session yet.</b>
+          <b>{relink ? 'Pick the right session for this campaign.' : 'This campaign isn’t linked to a Zoom session yet.'}</b>
 
           {zoomList.length > 0 ? (
             <>

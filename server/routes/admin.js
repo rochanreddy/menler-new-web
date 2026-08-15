@@ -980,15 +980,28 @@ router.get('/zoom/meetings', requireAdmin, async (req, res) => {
         'live', 'session', 'workshop', 'masterclass', 'class', 'free', 'online', 'zoom', 'meeting']);
       const words = (s) => new Set((String(s).toLowerCase().match(/[a-z0-9]{4,}/g) || []).filter((w) => !STOP.has(w)));
 
-      const want = words(title);
+      /* Weight each word by how rare it is across the account's own topics.
+       *
+       * Counting words equally matched "Build Your WebApp with Claude" to
+       * "Build Claude Skills and Schedules": two of three words agreed, which
+       * cleared the bar, even though the only word that distinguishes the class
+       * — webapp — was absent. Nearly every session here is "Build … Claude",
+       * so those words carry almost no information and rarer ones carry nearly
+       * all of it. */
+      const df = new Map();
+      for (const m of meetings) for (const w of words(m.topic)) df.set(w, (df.get(w) || 0) + 1);
+      const weight = (w) => Math.log((meetings.length + 1) / ((df.get(w) || 0) + 1)) + 0.1;
+
+      const want = [...words(title)];
+      const wantWeight = want.reduce((n, w) => n + weight(w), 0);
       const anchor = lead?.createdAt || setting?.updatedAt || null;
 
       let best = 0;
       for (const m of meetings) {
         const got = words(m.topic);
-        const overlap = [...want].filter((w) => got.has(w)).length;
-        const text = want.size ? overlap / want.size : 0;
-        if (text < 0.5) continue;                       // too weak to be a match at all
+        const matched = want.filter((w) => got.has(w));
+        const text = wantWeight ? matched.reduce((n, w) => n + weight(w), 0) / wantWeight : 0;
+        if (text < 0.6) continue;                       // too weak to be a match at all
 
         // 1.0 for a same-day session, tailing off across a fortnight.
         const days = anchor && m.startTime
@@ -996,10 +1009,10 @@ router.get('/zoom/meetings', requireAdmin, async (req, res) => {
           : 7;
         const recency = Math.max(0, 1 - days / 14);
 
-        const score = text * 0.7 + recency * 0.3;
+        const score = text * 0.85 + recency * 0.15;     // wording decides; date only breaks ties
         if (score > best) { best = score; suggestedId = m.id; }
       }
-      if (best < 0.55) suggestedId = '';               // offer nothing rather than the wrong class
+      if (best < 0.7) suggestedId = '';                 // offer nothing rather than the wrong class
     }
 
     res.json({ meetings, suggestedId });
