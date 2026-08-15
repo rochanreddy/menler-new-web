@@ -186,10 +186,17 @@ export default function AttendanceTab() {
           ) : (
             <>
               <p style={{ margin: '8px 0 0' }}>
-                {zoomListErr
-                  ? <>Zoom wouldn’t list your sessions ({zoomListErr}) — paste the meeting ID or join link instead.</>
-                  : <>Paste the meeting ID or the join link you sent registrants.</>}
+                Paste the <b>Meeting ID</b> from Zoom → Meetings → <b>Previous</b>. Spaces are fine —{' '}
+                <code>823 5894 9022</code> works as typed. You only do this once per campaign.
               </p>
+              {/* The reason the picker is unavailable is a server-configuration
+                  detail, so it's kept out of the instruction and set apart —
+                  whoever is linking a campaign can act without reading it. */}
+              {zoomListErr && (
+                <p className="admin-muted" style={{ margin: '6px 0 0', fontSize: 12 }}>
+                  Sessions can’t be listed automatically yet: {zoomListErr}
+                </p>
+              )}
               <div className="admin-toolbar" style={{ marginTop: 10 }}>
                 <input className="admin-search" style={{ flex: 1 }} placeholder="89123456789 or https://us06web.zoom.us/j/89123456789"
                   value={link} onChange={(e) => setLink(e.target.value)} />
