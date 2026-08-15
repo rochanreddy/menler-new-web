@@ -63,9 +63,6 @@ export const adminApi = {
   /** Leads count for one calendar day (IST). date = "YYYY-MM-DD". */
   getDayLeads: (from, to) => api(`/admin/stats/day${qs({ from, to: to || from })}`),
 
-  /** Leads count for a rolling period of N days. */
-  getPeriodLeads: (days) => api(`/admin/stats/period?days=${encodeURIComponent(days)}`),
-
   /** Distinct pages leads were captured on (for the Pages filter). */
   getLeadPages: () => api('/admin/leads/pages'),
 

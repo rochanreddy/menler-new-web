@@ -227,47 +227,8 @@ function DayStatCard() {
         <button type="button" onClick={() => quick(7)}>7d</button>
         <button type="button" onClick={() => quick(30)}>30d</button>
         <button type="button" onClick={() => quick(90)}>90d</button>
+        <button type="button" onClick={() => quick(365)}>1y</button>
       </div>
-    </div>
-  );
-}
-
-// One stat card for "leads in the last N" with a built-in period picker —
-// replaces the separate today / 7-day / 30-day cards.
-const LEAD_PERIODS = [
-  { days: 1, label: 'Last 24 hours' },
-  { days: 7, label: 'Last 7 days' },
-  { days: 30, label: 'Last 1 month' },
-  { days: 90, label: 'Last 3 months' },
-  { days: 180, label: 'Last 6 months' },
-  { days: 365, label: 'Last 12 months' },
-];
-
-function PeriodStatCard() {
-  const [days, setDays] = useState(7);
-  const [count, setCount] = useState(null);
-
-  useEffect(() => {
-    let stale = false;
-    setCount(null);
-    adminApi.getPeriodLeads(days)
-      .then((r) => { if (!stale) setCount(r.count); })
-      .catch(() => { if (!stale) setCount('—'); });
-    return () => { stale = true; };
-  }, [days]);
-
-  return (
-    <div className="admin-stat" style={{ borderTopColor: 'var(--specialist)' }}>
-      <div className="admin-stat-value">{count === null ? '…' : count}</div>
-      <div className="admin-stat-label">Leads in</div>
-      <select
-        className="admin-stat-date"
-        value={days}
-        onChange={(e) => setDays(Number(e.target.value))}
-        aria-label="Pick a period to see its leads count"
-      >
-        {LEAD_PERIODS.map((p) => <option key={p.days} value={p.days}>{p.label}</option>)}
-      </select>
     </div>
   );
 }
@@ -357,7 +318,6 @@ function Overview() {
         <StatCard label="Total leads" value={t.leads} accent="var(--specialist)" />
         <StatCard label="Unique leads" value={t.uniqueLeads} accent="var(--specialist)" />
         <DayStatCard />
-        <PeriodStatCard />
         <StatCard label="Registrations completed" value={t.checkoutDone} accent="var(--ink)" />
         <StatCard label="Verified leads" value={t.verifiedLeads} accent="var(--lavender)" />
       </div>
