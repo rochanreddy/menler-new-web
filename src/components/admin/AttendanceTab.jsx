@@ -272,19 +272,30 @@ export default function AttendanceTab() {
         </div>
       )}
 
-      {data && (
+      {/* Numbers we don't believe are not shown. A warning above a table still
+          leaves the table there to be read, screenshotted and exported — and a
+          plausible wrong figure travels further than an obvious one. */}
+      {data && mismatch && (
+        <div className="admin-note admin-note--bad">
+          <b>Not showing this — it looks like the wrong session.</b>
+          <br />
+          {mismatch}
+          <br />
+          <span className="admin-muted">
+            Those attendees belong to a different class, so counting them against this
+            campaign would be wrong. Pick the right session and the list will load.
+          </span>
+          <div className="row" style={{ marginTop: 12 }}>
+            <button type="button" className="admin-btn admin-btn--primary"
+              onClick={() => { setRelink(true); setLink(''); setData(null); }}>
+              Pick the right session
+            </button>
+          </div>
+        </div>
+      )}
+
+      {data && !mismatch && (
         <>
-          {mismatch && (
-            <div className="admin-note admin-note--bad">
-              <b>This might be the wrong session.</b> {mismatch}
-              <div className="row" style={{ marginTop: 10 }}>
-                <button type="button" className="admin-btn"
-                  onClick={() => { setRelink(true); setLink(''); setData(null); }}>
-                  Pick a different session
-                </button>
-              </div>
-            </div>
-          )}
 
           {/* Say plainly which class these numbers are, above the numbers —
               a mismatch spotted after reading the table is spotted too late. */}
