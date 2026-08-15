@@ -16,6 +16,9 @@ export default function AttendanceTab() {
   const [slug, setSlug] = useState('');
   const [link, setLink] = useState('');
   const [savingLink, setSavingLink] = useState(false);
+  const [zoomList, setZoomList] = useState([]);
+  const [suggested, setSuggested] = useState('');
+  const [zoomListErr, setZoomListErr] = useState('');
 
   const [data, setData] = useState(null);
   const [instances, setInstances] = useState([]);
@@ -52,6 +55,23 @@ export default function AttendanceTab() {
   useEffect(() => {
     setData(null); setInstances([]); setUuid(''); setErr(''); setFilter('all');
     setLink(current?.zoomLink || '');
+  }, [slug, current?.zoomLink]);
+
+  // Offer the account's real sessions to link against, and pre-select the one
+  // whose Zoom topic looks like this campaign.
+  useEffect(() => {
+    if (!slug || current?.zoomLink) return;
+    let alive = true;
+    setZoomList([]); setSuggested(''); setZoomListErr('');
+    adminApi.zoomMeetings(slug)
+      .then((d) => {
+        if (!alive) return;
+        setZoomList(d.meetings || []);
+        setSuggested(d.suggestedId || '');
+        if (d.suggestedId) setLink(d.suggestedId);
+      })
+      .catch((e) => { if (alive) setZoomListErr(e.message); });
+    return () => { alive = false; };
   }, [slug, current?.zoomLink]);
 
   const fetchAttendance = useCallback((forUuid = '') => {
@@ -132,18 +152,53 @@ export default function AttendanceTab() {
         </div>
       )}
 
-      {/* The link lives here because this page is the only reason it's stored. */}
+      {/* Linking a campaign to its Zoom session lives here, because this page is
+          the only reason that link is stored. Picking from the account's real
+          sessions beats hunting a meeting id in the Zoom portal — the paste box
+          stays as the fallback for when Zoom won't list them. */}
       {slug && !current?.zoomLink && (
         <div className="admin-note admin-note--warn">
-          <b>No Zoom link saved for this campaign.</b> Paste the join link you send registrants —
-          the meeting ID is read from it.
-          <div className="admin-toolbar" style={{ marginTop: 10 }}>
-            <input className="admin-search" style={{ flex: 1 }} placeholder="https://us06web.zoom.us/j/89123456789?pwd=…"
-              value={link} onChange={(e) => setLink(e.target.value)} />
-            <button className="admin-btn admin-btn--primary" onClick={saveLink} disabled={savingLink || !link.trim()}>
-              {savingLink ? 'Saving…' : 'Save link'}
-            </button>
-          </div>
+          <b>This campaign isn’t linked to a Zoom session yet.</b>
+
+          {zoomList.length > 0 ? (
+            <>
+              <p style={{ margin: '8px 0 0' }}>
+                Pick the class from your Zoom account
+                {suggested && ' — the likely match is marked'}.
+              </p>
+              <div className="admin-toolbar" style={{ marginTop: 10 }}>
+                <select className="admin-search" style={{ flex: 1 }} value={link} onChange={(e) => setLink(e.target.value)}>
+                  <option value="">Choose a session…</option>
+                  {zoomList.map((m) => (
+                    <option key={m.uuid || m.id} value={m.id}>
+                      {m.id === suggested ? '★ ' : ''}
+                      {new Date(m.startTime).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}
+                      {' · '}{m.topic || 'Untitled meeting'}
+                      {m.participants != null ? ` · ${m.participants} joined` : ''}
+                    </option>
+                  ))}
+                </select>
+                <button className="admin-btn admin-btn--primary" onClick={saveLink} disabled={savingLink || !link.trim()}>
+                  {savingLink ? 'Linking…' : 'Link this session'}
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <p style={{ margin: '8px 0 0' }}>
+                {zoomListErr
+                  ? <>Zoom wouldn’t list your sessions ({zoomListErr}) — paste the meeting ID or join link instead.</>
+                  : <>Paste the meeting ID or the join link you sent registrants.</>}
+              </p>
+              <div className="admin-toolbar" style={{ marginTop: 10 }}>
+                <input className="admin-search" style={{ flex: 1 }} placeholder="89123456789 or https://us06web.zoom.us/j/89123456789"
+                  value={link} onChange={(e) => setLink(e.target.value)} />
+                <button className="admin-btn admin-btn--primary" onClick={saveLink} disabled={savingLink || !link.trim()}>
+                  {savingLink ? 'Saving…' : 'Save link'}
+                </button>
+              </div>
+            </>
+          )}
         </div>
       )}
 

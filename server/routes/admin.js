@@ -12,7 +12,7 @@ import { buildCertificatePdf, buildCertificateEmail } from '../utils/certificate
 import { sendMail, isMailConfigured, verifyMailer } from '../utils/email.js';
 import { cashfreeConfigured, findCashfreePayment, getCashfreePayments } from '../utils/cashfree.js';
 import { deliverPackForOrder } from '../utils/packDelivery.js';
-import { zoomConfigured, meetingIdFromLink, pastInstances, latestInstanceUuid, pastMeeting, meetingParticipants, explainZoomError } from '../utils/zoom.js';
+import { zoomConfigured, meetingIdFromLink, pastInstances, latestInstanceUuid, pastMeeting, pastMeetings, meetingParticipants, explainZoomError } from '../utils/zoom.js';
 import { RESOURCE_PACKS } from '../../src/data/resourceCatalog.js';
 import {
   ADMIN_COOKIE_NAME,
@@ -946,6 +946,65 @@ router.get('/zoom/instances', requireAdmin, async (req, res) => {
     res.json({ meetingId, instances: await pastInstances(meetingId) });
   } catch (err) {
     console.error('zoom instances', err.message);
+    res.status(502).json({ error: explainZoomError(err) });
+  }
+});
+
+/* Past Zoom sessions on this account, so a campaign can be pointed at one by
+ * picking it rather than by hunting a meeting id in the Zoom portal.
+ *
+ * When a slug is given, sessions whose Zoom topic resembles the campaign's title
+ * are marked — the classes are usually named after the campaign, so the right
+ * one can be offered rather than searched for. */
+router.get('/zoom/meetings', requireAdmin, async (req, res) => {
+  try {
+    if (!zoomConfigured()) return res.status(503).json({ error: 'Zoom is not configured on this server.', notConfigured: true });
+
+    const meetings = await pastMeetings({ days: clampInt(req.query.days, 90, 1, 365) });
+
+    const slug = String(req.query.slug || '').trim();
+    let suggestedId = '';
+    if (slug && meetings.length) {
+      const setting = await CampaignSetting.findOne({ slug }).lean();
+      const lead = await Lead.findOne({ 'extra.campaign': slug, 'extra.workshop': { $type: 'string', $ne: '' } })
+        .sort('-createdAt').select('extra.workshop createdAt').lean();
+      const title = String(setting?.title || lead?.extra?.workshop || slug);
+
+      /* Title similarity alone is not enough here: nearly every campaign is
+       * called "Build … with Claude", so shared words match the wrong class as
+       * readily as the right one. Filler words are dropped, and the score is
+       * weighted by how close the session ran to the campaign's last signup —
+       * a class is held within days of its registrations, which separates two
+       * similarly-named campaigns that title matching cannot. */
+      const STOP = new Set(['with', 'your', 'yours', 'from', 'this', 'that', 'into', 'menler',
+        'live', 'session', 'workshop', 'masterclass', 'class', 'free', 'online', 'zoom', 'meeting']);
+      const words = (s) => new Set((String(s).toLowerCase().match(/[a-z0-9]{4,}/g) || []).filter((w) => !STOP.has(w)));
+
+      const want = words(title);
+      const anchor = lead?.createdAt || setting?.updatedAt || null;
+
+      let best = 0;
+      for (const m of meetings) {
+        const got = words(m.topic);
+        const overlap = [...want].filter((w) => got.has(w)).length;
+        const text = want.size ? overlap / want.size : 0;
+        if (text < 0.5) continue;                       // too weak to be a match at all
+
+        // 1.0 for a same-day session, tailing off across a fortnight.
+        const days = anchor && m.startTime
+          ? Math.abs(new Date(m.startTime) - new Date(anchor)) / 864e5
+          : 7;
+        const recency = Math.max(0, 1 - days / 14);
+
+        const score = text * 0.7 + recency * 0.3;
+        if (score > best) { best = score; suggestedId = m.id; }
+      }
+      if (best < 0.55) suggestedId = '';               // offer nothing rather than the wrong class
+    }
+
+    res.json({ meetings, suggestedId });
+  } catch (err) {
+    console.error('zoom meetings', err.message);
     res.status(502).json({ error: explainZoomError(err) });
   }
 });

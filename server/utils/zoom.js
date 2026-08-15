@@ -141,6 +141,50 @@ export async function meetingParticipants(uuid) {
     .sort((a, b) => b.seconds - a.seconds);
 }
 
+/**
+ * Every meeting this account finished in a date window, newest first.
+ *
+ * This is what removes the manual step: instead of hunting a meeting id in the
+ * Zoom portal and pasting it per campaign, the sessions can simply be listed
+ * and picked. Needs report:read:user:admin.
+ *
+ * Zoom caps a single report query at one month, so a longer window is walked a
+ * month at a time.
+ */
+export async function pastMeetings({ days = 90 } = {}) {
+  const out = [];
+  const end = new Date();
+  let cursor = new Date(end.getTime() - days * 864e5);
+
+  while (cursor < end) {
+    const chunkEnd = new Date(Math.min(cursor.getTime() + 29 * 864e5, end.getTime()));
+    const from = cursor.toISOString().slice(0, 10);
+    const to = chunkEnd.toISOString().slice(0, 10);
+
+    let token = '';
+    do {
+      const qs = `from=${from}&to=${to}&page_size=300&type=past${token ? `&next_page_token=${encodeURIComponent(token)}` : ''}`;
+      const data = await zoomGet(`/report/users/me/meetings?${qs}`);
+      out.push(...(data.meetings || []));
+      token = data.next_page_token || '';
+    } while (token);
+
+    cursor = new Date(chunkEnd.getTime() + 864e5);
+  }
+
+  // The same meeting id recurs; keep each occurrence but present newest first.
+  return out
+    .map((m) => ({
+      id: String(m.id),
+      uuid: m.uuid,
+      topic: m.topic || '',
+      startTime: m.start_time,
+      minutes: m.duration,
+      participants: m.participants_count ?? null,
+    }))
+    .sort((a, b) => (a.startTime < b.startTime ? 1 : -1));
+}
+
 /** Turn a Zoom API failure into something an admin can act on. */
 export function explainZoomError(err) {
   const msg = String(err?.message || '');

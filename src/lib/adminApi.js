@@ -111,6 +111,7 @@ export const adminApi = {
   deletePaidUser: (id) => api(`/admin/paid-users/${encodeURIComponent(id)}`, { method: 'DELETE' }),
 
   // Zoom attendance for a campaign's session (admin-only).
+  zoomMeetings: (slug) => api(`/admin/zoom/meetings${qs({ slug })}`),
   zoomInstances: (slug) => api(`/admin/zoom/instances${qs({ slug })}`),
   zoomAttendance: (slug, uuid) => api(`/admin/zoom/attendance${qs({ slug, uuid })}`),
 
