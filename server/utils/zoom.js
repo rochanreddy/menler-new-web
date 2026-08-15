@@ -152,6 +152,18 @@ export async function meetingParticipants(uuid) {
  * month at a time.
  */
 export async function pastMeetings({ days = 90 } = {}) {
+  /* "me" doesn't resolve for a Server-to-Server token — there is no signed-in
+   * user behind it, and Zoom answers "User does not exist: me". So the host is
+   * named explicitly: ZOOM_USER_ID, the email of the account that runs the
+   * classes. Discovering it instead would mean asking for user:read scopes,
+   * which is a lot of access for one lookup. */
+  const host = (process.env.ZOOM_USER_ID || '').trim();
+  if (!host) {
+    const err = new Error('Set ZOOM_USER_ID to the email of the Zoom account that hosts the classes — a server-to-server token has no "me" to fall back on.');
+    err.status = 400;
+    throw err;
+  }
+  const user = encodeURIComponent(host);
   const out = [];
   const end = new Date();
   let cursor = new Date(end.getTime() - days * 864e5);
@@ -164,7 +176,7 @@ export async function pastMeetings({ days = 90 } = {}) {
     let token = '';
     do {
       const qs = `from=${from}&to=${to}&page_size=300&type=past${token ? `&next_page_token=${encodeURIComponent(token)}` : ''}`;
-      const data = await zoomGet(`/report/users/me/meetings?${qs}`);
+      const data = await zoomGet(`/report/users/${user}/meetings?${qs}`);
       out.push(...(data.meetings || []));
       token = data.next_page_token || '';
     } while (token);
