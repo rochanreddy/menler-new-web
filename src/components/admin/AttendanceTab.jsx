@@ -26,7 +26,21 @@ export default function AttendanceTab() {
 
   const loadCampaigns = useCallback(() => {
     adminApi.getCampaigns()
-      .then((d) => setCampaigns(d.rows || d.campaigns || []))
+      .then((d) => {
+        // Newest first. The API already sorts this way, but the order matters
+        // enough here — you almost always want the class that just ran — that
+        // it's worth not depending on a caller staying sorted.
+        const rows = [...(d.rows || d.campaigns || [])].sort((a, b) => {
+          const ta = a.lastLeadAt ? +new Date(a.lastLeadAt) : 0;
+          const tb = b.lastLeadAt ? +new Date(b.lastLeadAt) : 0;
+          return tb - ta;
+        });
+        setCampaigns(rows);
+        // Preselect the most recent one: it's the reason this page is open.
+        // Set functionally rather than reading `slug`, which would make this
+        // callback depend on state it also writes — a refetch loop.
+        if (rows.length) setSlug((prev) => prev || rows[0].slug);
+      })
       .catch((e) => setErr(e.message));
   }, []);
   useEffect(loadCampaigns, [loadCampaigns]);
@@ -93,8 +107,10 @@ export default function AttendanceTab() {
       <div className="admin-toolbar">
         <select className="admin-search" style={{ flex: 1 }} value={slug} onChange={(e) => setSlug(e.target.value)}>
           <option value="">Choose a campaign…</option>
-          {campaigns.map((c) => (
+          {campaigns.map((c, i) => (
             <option key={c.slug} value={c.slug}>
+              {i === 0 ? '★ ' : ''}
+              {c.lastLeadAt ? `${fmtDate(c.lastLeadAt)} · ` : ''}
               {c.title || c.slug} — {c.leads || 0} registered{c.zoomLink ? '' : ' · no Zoom link'}
             </option>
           ))}
