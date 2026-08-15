@@ -9,7 +9,11 @@ import BlogTab from '../components/admin/BlogTab';
  * a second would drift), reached through its own login on its own URL with its
  * own credentials. Nothing here links to any other admin screen, and nothing
  * else on the API accepts this session — /posts/portal/session is the only
- * thing it can open besides the blog endpoints themselves. */
+ * thing it can open besides the blog endpoints themselves.
+ *
+ * The login is required even for an admin: a door you can walk through because
+ * of a cookie you got somewhere else can't be tested by the person who set it
+ * up, which is when a mistake here would surface. */
 
 function PortalLogin({ onSuccess }) {
   const [username, setUsername] = useState('');
@@ -82,8 +86,8 @@ export default function BlogPortal() {
   }
   if (!session) return <PortalLogin onSuccess={check} />;
 
-  /* An admin who's already signed in to the main panel lands here too — they
-   * keep their own rights rather than being downgraded by the URL they used. */
+  /* Reached only with a portal session — being signed in at /admin in the same
+   * browser doesn't open this door, so what's below is what an outsider sees. */
   return (
     <div className="admin-shell">
       <Seo title="Blog portal | Menler" noindex />
