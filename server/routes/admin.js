@@ -12,7 +12,7 @@ import { buildCertificatePdf, buildCertificateEmail } from '../utils/certificate
 import { sendMail, isMailConfigured, verifyMailer } from '../utils/email.js';
 import { cashfreeConfigured, findCashfreePayment, getCashfreePayments } from '../utils/cashfree.js';
 import { deliverPackForOrder } from '../utils/packDelivery.js';
-import { zoomConfigured, meetingIdFromLink, pastInstances, pastMeeting, meetingParticipants, explainZoomError } from '../utils/zoom.js';
+import { zoomConfigured, meetingIdFromLink, pastInstances, latestInstanceUuid, pastMeeting, meetingParticipants, explainZoomError } from '../utils/zoom.js';
 import { RESOURCE_PACKS } from '../../src/data/resourceCatalog.js';
 import {
   ADMIN_COOKIE_NAME,
@@ -961,9 +961,12 @@ router.get('/zoom/attendance', requireAdmin, async (req, res) => {
       const setting = await CampaignSetting.findOne({ slug }).lean();
       const meetingId = meetingIdFromLink(setting?.zoomLink);
       if (!meetingId) return res.status(400).json({ error: 'No Zoom link saved for this campaign — add one first.', needsLink: true });
+      // Prefer the instance list (it gives every past session), but fall back to
+      // asking Zoom for the meeting itself, which returns the latest occurrence
+      // and needs one fewer scope.
       const list = await pastInstances(meetingId);
-      if (!list.length) return res.status(404).json({ error: 'Zoom has no finished sessions for this meeting yet.' });
-      uuid = list[0].uuid;                              // most recent occurrence
+      uuid = list[0]?.uuid || await latestInstanceUuid(meetingId);
+      if (!uuid) return res.status(404).json({ error: 'Zoom has no finished sessions for this meeting yet.' });
     }
 
     const [meeting, attended] = await Promise.all([

@@ -60,10 +60,34 @@ export function meetingIdFromLink(link) {
 const encodeUuid = (uuid) =>
   (uuid.startsWith('/') || uuid.includes('//')) ? encodeURIComponent(encodeURIComponent(uuid)) : encodeURIComponent(uuid);
 
-/** Past occurrences of a meeting id, newest first. Recurring meetings have many. */
+/**
+ * Past occurrences of a meeting id, newest first. Recurring meetings have many.
+ *
+ * Needs meeting:read:list_past_instances:admin. That scope isn't offered on
+ * every plan, so a refusal returns an empty list rather than throwing — the
+ * caller falls back to the single most recent occurrence, which is what anyone
+ * opening this actually wants nine times out of ten.
+ */
 export async function pastInstances(meetingId) {
-  const data = await zoomGet(`/past_meetings/${encodeURIComponent(meetingId)}/instances`);
-  return (data.meetings || []).sort((a, b) => (a.start_time < b.start_time ? 1 : -1));
+  try {
+    const data = await zoomGet(`/past_meetings/${encodeURIComponent(meetingId)}/instances`);
+    return (data.meetings || []).sort((a, b) => (a.start_time < b.start_time ? 1 : -1));
+  } catch (err) {
+    if (err.status === 400 || err.status === 401 || err.status === 403) return [];
+    throw err;
+  }
+}
+
+/**
+ * The UUID of the most recent finished occurrence.
+ *
+ * Asking for a meeting id (rather than a UUID) returns the latest occurrence,
+ * so this works with only meeting:read:past_meeting:admin — no instance-listing
+ * scope required.
+ */
+export async function latestInstanceUuid(meetingId) {
+  const data = await pastMeeting(meetingId);
+  return data?.uuid || '';
 }
 
 /** Summary for one past occurrence — topic, start, and Zoom's own totals. */
