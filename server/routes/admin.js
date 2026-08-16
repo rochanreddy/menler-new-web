@@ -200,7 +200,11 @@ router.get('/stats', requireAdmin, async (_req, res) => {
         { $match: { createdAt: { $gte: since14 } } },
         {
           $group: {
-            _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+            // Group in IST. Without the timezone Mongo buckets by UTC, so
+            // everything logged between midnight and 5:30am India time is
+            // counted under the previous day — the chart and the day counter
+            // then disagree about every single day.
+            _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt', timezone: 'Asia/Kolkata' } },
             count: { $sum: 1 },
           },
         },
@@ -230,12 +234,17 @@ router.get('/stats', requireAdmin, async (_req, res) => {
       ]),
     ]);
 
-    // Fill the 14-day series so every day has a bar (zero when no leads).
+    /* Fill the 14-day series so every day has a bar (zero when no leads).
+     *
+     * The keys have to be IST days too, or they miss the IST-grouped buckets
+     * they're looking up — shifting the clock forward before slicing gives the
+     * India date for that moment. Ends on today rather than 13 days after a
+     * midnight-adjusted start, which is what drifted the axis by a day. */
+    const istDay = (ms) => new Date(ms + 5.5 * 3600 * 1000).toISOString().slice(0, 10);
     const dayMap = new Map(byDayRaw.map((d) => [d._id, d.count]));
     const byDay = [];
-    for (let i = 0; i < 14; i++) {
-      const d = new Date(since14.getTime() + i * 24 * 60 * 60 * 1000);
-      const key = d.toISOString().slice(0, 10);
+    for (let i = 13; i >= 0; i--) {
+      const key = istDay(Date.now() - i * 864e5);
       byDay.push({ date: key, count: dayMap.get(key) || 0 });
     }
 
