@@ -162,11 +162,16 @@ function Drawer({ title, fields, onClose }) {
 
 /* ── Overview ────────────────────────────────────────────────────────────── */
 
-function StatCard({ label, value, accent }) {
+/* `note` says what the number actually counts. Without it these are five bare
+ * figures that can only be told apart by someone who already knows how each is
+ * derived — "total" and "unique" being the pair that most invites a wrong
+ * reading, since the gap between them is repeat submissions, not lost people. */
+function StatCard({ label, value, note, accent }) {
   return (
     <div className="admin-stat" style={accent ? { borderTopColor: accent } : undefined}>
       <div className="admin-stat-value">{value}</div>
       <div className="admin-stat-label">{label}</div>
+      {note && <div className="admin-stat-note">{note}</div>}
     </div>
   );
 }
@@ -197,19 +202,23 @@ function DayStatCard() {
     setTo(end.toISOString().slice(0, 10));
   };
 
-  const label = from === to
-    ? 'Leads on'
-    : `Leads · ${data?.days ? `${data.days} days` : 'range'}`;
+  // "Leads on" with the date sitting in a picker underneath read as an unfinished
+  // sentence, and "· 40 people" alongside 45 looked like a second, smaller total
+  // rather than the same leads counted per person.
+  const pretty = (d) => new Date(`${d}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+  const label = from === to ? `Leads on ${pretty(from)}` : `Leads · ${pretty(from)} to ${pretty(to)}`;
+  const note = data
+    ? [
+      data.fromCampaign != null ? `${data.fromCampaign} from campaigns · ${data.fromWebsite} from the website` : '',
+      data.unique != null && data.unique !== data.count ? `${data.unique} people` : '',
+    ].filter(Boolean).join(' · ')
+    : '';
 
   return (
     <div className="admin-stat" style={{ borderTopColor: 'var(--placed)' }}>
       <div className="admin-stat-value">{data === null ? '…' : data.count}</div>
-      <div className="admin-stat-label">
-        {label}
-        {data?.unique != null && data.unique !== data.count && (
-          <span className="admin-muted"> · {data.unique} people</span>
-        )}
-      </div>
+      <div className="admin-stat-label">{label}</div>
+      <div className="admin-stat-note">{note}</div>
 
       <div className="admin-stat-range">
         <input className="admin-stat-date" type="date" value={from} max={to || today}
@@ -314,11 +323,15 @@ function Overview() {
   return (
     <div className="admin-overview">
       <div className="admin-stat-grid">
-        <StatCard label="Total leads" value={t.leads} accent="var(--specialist)" />
-        <StatCard label="Unique leads" value={t.uniqueLeads} accent="var(--specialist)" />
+        <StatCard label="Total leads" value={t.leads} accent="var(--specialist)"
+          note="Every form submission — website and campaign pages together" />
+        <StatCard label="Unique leads" value={t.uniqueLeads} accent="var(--specialist)"
+          note="Distinct people. Someone who signs up twice counts once here" />
         <DayStatCard />
-        <StatCard label="Registrations completed" value={t.checkoutDone} accent="var(--ink)" />
-        <StatCard label="Verified leads" value={t.verifiedLeads} accent="var(--lavender)" />
+        <StatCard label="Registrations completed" value={t.checkoutDone} accent="var(--ink)"
+          note="Reached the end of checkout, whether they paid or not" />
+        <StatCard label="Verified leads" value={t.verifiedLeads} accent="var(--lavender)"
+          note="Confirmed their email or phone with a one-time code" />
       </div>
 
       <div className="admin-panel-card">

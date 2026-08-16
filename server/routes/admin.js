@@ -298,17 +298,27 @@ router.get('/stats/day', requireAdmin, async (req, res) => {
     const start = new Date(`${from}T00:00:00+05:30`);
     const end = new Date(new Date(`${to}T00:00:00+05:30`).getTime() + 24 * 60 * 60 * 1000);
 
-    const [count, unique] = await Promise.all([
-      Lead.countDocuments({ createdAt: { $gte: start, $lt: end } }),
+    const inRange = { createdAt: { $gte: start, $lt: end } };
+    const [count, unique, fromCampaign] = await Promise.all([
+      Lead.countDocuments(inRange),
       Lead.aggregate([
-        { $match: { createdAt: { $gte: start, $lt: end } } },
+        { $match: inRange },
         { $group: { _id: CONTACT_KEY } },
         { $count: 'n' },
       ]).then((r) => r[0]?.n || 0),
+      // A lead carries a campaign slug when it came from a campaign landing
+      // page; everything else arrived through the main site. Split here so the
+      // card can answer "campaign or website" without anyone scrolling to the
+      // breakdowns to work it out.
+      Lead.countDocuments({ ...inRange, 'extra.campaign': { $type: 'string', $ne: '' } }),
     ]);
 
     const days = Math.round((end - start) / 864e5);
-    res.json({ from, to, days, count, unique, date: from });
+    res.json({
+      from, to, days, count, unique, date: from,
+      fromCampaign,
+      fromWebsite: Math.max(0, count - fromCampaign),
+    });
   } catch (err) {
     console.error('admin stats/day error', err);
     res.status(500).json({ error: 'Could not load the count.' });
