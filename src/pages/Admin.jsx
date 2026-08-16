@@ -357,12 +357,29 @@ function Overview() {
       </div>
 
       <div className="admin-panel-card">
-        <p className="admin-card-title">Leads · last 14 days</p>
+        <div className="admin-chart-head">
+          <p className="admin-card-title">Leads · last 14 days</p>
+          {/* Each bar is both sources stacked. Without saying so, a spike can't
+              be read — a campaign day and a busy website day look identical. */}
+          <span className="admin-legend">
+            <span><i className="admin-swatch admin-swatch--campaign" />Campaign pages</span>
+            <span><i className="admin-swatch admin-swatch--website" />Website</span>
+          </span>
+        </div>
         <div className="admin-chart">
           {stats.byDay.map((d) => (
-            <div className="admin-chart-col" key={d.date} title={`${d.date}: ${d.count}`}>
-              <div className="admin-chart-bar" style={{ height: `${(d.count / maxDay) * 100}%` }}>
+            <div className="admin-chart-col" key={d.date}
+              title={`${d.date} — ${d.count} leads: ${d.campaign ?? 0} campaign, ${d.website ?? 0} website`}>
+              <div className="admin-chart-bar admin-chart-bar--stack" style={{ height: `${(d.count / maxDay) * 100}%` }}>
                 {d.count > 0 && <span className="admin-chart-num">{d.count}</span>}
+                {d.count > 0 && (
+                  <>
+                    <span className="admin-chart-seg admin-swatch--website"
+                      style={{ height: `${((d.website ?? 0) / d.count) * 100}%` }} />
+                    <span className="admin-chart-seg admin-swatch--campaign"
+                      style={{ height: `${((d.campaign ?? 0) / d.count) * 100}%` }} />
+                  </>
+                )}
               </div>
               <span className="admin-chart-x">{d.date.slice(8)}/{d.date.slice(5, 7)}</span>
             </div>

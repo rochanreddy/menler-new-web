@@ -4386,3 +4386,13 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 
 /* One line under a stat saying what it counts */
 .admin-stat-note { margin-top: 6px; font-size: 11.5px; line-height: 1.45; color: var(--text-muted); }
+
+/* Stacked 14-day chart: campaign vs website per day */
+.admin-chart-head { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.admin-legend { display: flex; gap: 14px; font-size: 11.5px; color: var(--text-muted); }
+.admin-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.admin-swatch { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.admin-swatch--campaign { background: var(--specialist); }
+.admin-swatch--website { background: var(--lavender); }
+.admin-chart-bar--stack { background: none; overflow: hidden; flex-direction: column; justify-content: flex-end; }
+.admin-chart-seg { display: block; width: 100%; }

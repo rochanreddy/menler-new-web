@@ -206,6 +206,11 @@ router.get('/stats', requireAdmin, async (_req, res) => {
             // then disagree about every single day.
             _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt', timezone: 'Asia/Kolkata' } },
             count: { $sum: 1 },
+            // Split by source per day, so the chart can show where a spike came
+            // from rather than only that there was one.
+            campaign: {
+              $sum: { $cond: [{ $gt: [{ $strLenCP: { $ifNull: ['$extra.campaign', ''] } }, 0] }, 1, 0] },
+            },
           },
         },
       ]),
@@ -241,11 +246,14 @@ router.get('/stats', requireAdmin, async (_req, res) => {
      * India date for that moment. Ends on today rather than 13 days after a
      * midnight-adjusted start, which is what drifted the axis by a day. */
     const istDay = (ms) => new Date(ms + 5.5 * 3600 * 1000).toISOString().slice(0, 10);
-    const dayMap = new Map(byDayRaw.map((d) => [d._id, d.count]));
+    const dayMap = new Map(byDayRaw.map((d) => [d._id, d]));
     const byDay = [];
     for (let i = 13; i >= 0; i--) {
       const key = istDay(Date.now() - i * 864e5);
-      byDay.push({ date: key, count: dayMap.get(key) || 0 });
+      const hit = dayMap.get(key);
+      const count = hit?.count || 0;
+      const campaign = hit?.campaign || 0;
+      byDay.push({ date: key, count, campaign, website: Math.max(0, count - campaign) });
     }
 
     const tidy = (arr) =>
