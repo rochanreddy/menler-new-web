@@ -77,6 +77,11 @@ function leadFilter(query) {
   }
   if (query.program) filter.program = query.program;
   if (query.source) filter.source = query.source;
+  // Background is free text and its wording has changed over time — "Founder"
+  // and "Business Owner" are now one option — so match loosely rather than
+  // exactly, or picking the current label hides everyone who chose the old one.
+  if (query.background === '__none__') filter.background = { $in: [null, ''] };
+  else if (query.background) filter.background = new RegExp(esc(query.background), 'i');
   // Page the lead was captured on (e.g. /generalist) + the section within it.
   // Section matches the same derived key the sections facet groups by
   // (section → cta_label → source), so picking a dropdown entry always works.
@@ -362,6 +367,28 @@ router.get('/leads/pages', requireAdmin, async (_req, res) => {
 
 // UTM sources seen on one page (with counts) — the drill-down after picking a
 // campaign, so the admin can see which ad/traffic source filled it.
+/* Backgrounds people have actually chosen, commonest first.
+ *
+ * Grouped case-insensitively because the same answer arrives capitalised
+ * differently from different forms — "business owner" from a campaign page and
+ * "Business Owner" from a lead form are one answer, and listing both twice in a
+ * filter is just noise. */
+router.get('/leads/backgrounds', requireAdmin, async (_req, res) => {
+  try {
+    const rows = await Lead.aggregate([
+      { $match: { background: { $nin: [null, ''] } } },
+      { $group: { _id: { $toLower: '$background' }, count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 60 },
+    ]);
+    const blank = await Lead.countDocuments({ background: { $in: [null, ''] } });
+    res.json({ backgrounds: rows.map((r) => ({ background: r._id, count: r.count })), blank });
+  } catch (err) {
+    console.error('admin leads/backgrounds error', err);
+    res.status(500).json({ error: 'Could not load backgrounds.' });
+  }
+});
+
 router.get('/leads/utms', requireAdmin, async (req, res) => {
   try {
     const page = String(req.query.page || '').trim();

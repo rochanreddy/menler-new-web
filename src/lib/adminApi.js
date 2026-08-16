@@ -71,6 +71,8 @@ export const adminApi = {
 
   /** UTM sources seen on one page (for the per-campaign UTM filter). */
   getLeadUtms: (page) => api(`/admin/leads/utms?page=${encodeURIComponent(page)}`),
+  /** Backgrounds people have chosen, for the Leads filter. */
+  getLeadBackgrounds: () => api('/admin/leads/backgrounds'),
   getLeads: (params) => api(`/admin/leads${qs(params)}`),
   deleteLead: (id) => api(`/admin/leads/${encodeURIComponent(id)}`, { method: 'DELETE' }),
   getUsers: (params) => api(`/admin/users${qs(params)}`),

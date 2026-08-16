@@ -476,6 +476,7 @@ function LeadsTab() {
   const [source, setSource] = useState('');
   const [utmSource, setUtmSource] = useState('');
   const [checkout, setCheckout] = useState('');
+  const [background, setBackground] = useState('');
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [sort, setSort] = useState('-createdAt');
@@ -483,7 +484,7 @@ function LeadsTab() {
   const [data, setData] = useState({ rows: [], total: 0, page: 1, limit: 25 });
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
-  const [facets, setFacets] = useState({ pages: [], sources: [], utmSources: [] });
+  const [facets, setFacets] = useState({ pages: [], sources: [], utmSources: [], backgrounds: [] });
 
   // Pages and campaigns are two dropdowns over the same underlying `page`
   // filter — whichever is picked wins (choosing one clears the other).
@@ -492,12 +493,12 @@ function LeadsTab() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const d = await adminApi.getLeads({ search, page_path: effectivePage, section, source, utm_source: utmSource, checkout, from, to, sort, page, limit: 25 });
+      const d = await adminApi.getLeads({ search, page_path: effectivePage, section, source, utm_source: utmSource, checkout, background, from, to, sort, page, limit: 25 });
       setData(d);
     } finally {
       setLoading(false);
     }
-  }, [search, effectivePage, section, source, utmSource, checkout, from, to, sort, page]);
+  }, [search, effectivePage, section, source, utmSource, checkout, background, from, to, sort, page]);
 
   // Picking a page loads that page's sections for the drill-down dropdown.
   useEffect(() => {
@@ -536,11 +537,18 @@ function LeadsTab() {
   // Build filter dropdown options once — pages from the leads themselves,
   // sources/UTMs from the overview stats.
   useEffect(() => {
-    Promise.all([adminApi.getLeadPages(), adminApi.getStats()])
-      .then(([p, s]) => setFacets({
+    Promise.all([
+      adminApi.getLeadPages(),
+      adminApi.getStats(),
+      // Tolerated separately: this endpoint is newer than the deployed API may
+      // be, and one missing facet shouldn't take the other filters with it.
+      adminApi.getLeadBackgrounds().catch(() => ({ backgrounds: [] })),
+    ])
+      .then(([p, s, b]) => setFacets({
         pages: p.pages || [],
         sources: s.bySource.map((x) => x.label).filter((x) => x && x !== '—'),
         utmSources: (s.byUtmSource || []).map((x) => x.label).filter(Boolean),
+        backgrounds: b.backgrounds || [],
       }))
       .catch(() => {});
   }, []);
@@ -590,6 +598,13 @@ function LeadsTab() {
           <option value="">All UTM sources</option>
           <option value="__none__">(No UTM source)</option>
           {facets.utmSources.map((u) => <option key={u} value={u}>{u}</option>)}
+        </select>
+        <select value={background} onChange={(e) => { setPage(1); setBackground(e.target.value); }}>
+          <option value="">All backgrounds</option>
+          {facets.backgrounds.map((x) => (
+            <option key={x.background} value={x.background}>{x.background} ({x.count})</option>
+          ))}
+          <option value="__none__">(Not given)</option>
         </select>
         <select value={checkout} onChange={(e) => { setPage(1); setCheckout(e.target.value); }}>
           <option value="">All checkout</option>
