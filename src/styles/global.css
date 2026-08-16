@@ -2185,14 +2185,19 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-seats { margin-top: 8px; font-size: 12.5px; font-weight: 600; color: var(--a-dark); }
 .lp2-form-h { margin-top: 0; margin-bottom: 10px; font-size: 15px; font-weight: 600; color: var(--ink); }
 .lp2-phone-row { display: flex; align-items: stretch; gap: 8px; margin-bottom: 10px; width: 100%; }
+/* Wide enough for the longest label in the list — "AE +971" — plus the native
+   dropdown arrow. It was sized for a five-option list of short codes and clipped
+   the moment the list grew; 82px left roughly 46px of text room, and even
+   "IN +91" didn't fit. */
 .lp2-phone-row .lp2-country-code {
-  flex: 0 0 82px;
-  width: 82px;
-  max-width: 82px;
+  flex: 0 0 104px;
+  width: 104px;
+  max-width: 104px;
   margin-bottom: 0;
-  padding: 12px 24px 12px 10px;
+  padding: 12px 26px 12px 10px;
   font-size: 13px;
   cursor: pointer;
+  text-overflow: ellipsis;
 }
 .lp2-phone-row .lp2-phone-input {
   flex: 1 1 0;
