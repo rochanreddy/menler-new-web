@@ -3401,7 +3401,7 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
   width: 100%; max-width: 38px; min-height: 2px; background: linear-gradient(var(--specialist), var(--lavender));
   border-radius: 5px 5px 0 0; position: relative; display: flex; justify-content: center;
 }
-.admin-chart-num { position: absolute; top: -16px; font-size: 11px; font-weight: 700; color: var(--ink); }
+.admin-chart-num { font-size: 11px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
 .admin-chart-x { font-size: 10px; color: var(--text-muted); margin-top: 6px; white-space: nowrap; }
 
 .admin-breakdown { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }

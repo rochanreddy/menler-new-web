@@ -215,11 +215,15 @@ function DayStatCard() {
       <div className="admin-stat-value">{data === null ? '…' : data.count}</div>
       <div className="admin-stat-label">{label}</div>
       <div className="admin-stat-note">
-        {data?.unique != null
-          ? (repeats > 0
-            ? `${data.unique} different people — ${repeats} signed up more than once`
-            : 'All different people')
-          : 'Website and campaigns together'}
+        {/* A zero needs saying, not describing. "All different people" under a
+            0 reads as a broken query rather than a quiet morning. */}
+        {data?.count === 0
+          ? (from === to ? 'Nothing yet on this day' : 'Nothing in this range')
+          : data?.unique != null
+            ? (repeats > 0
+              ? `${data.unique} different people — ${repeats} signed up more than once`
+              : 'All different people')
+            : 'Website and campaigns together'}
       </div>
 
       <div className="admin-stat-range">
@@ -380,8 +384,10 @@ function Overview() {
             return (
               <div className="admin-chart-col" key={d.date}
                 title={`${d.date} — ${d.count} leads: ${campaign} campaign, ${website} website`}>
+                {/* Above the bar, not inside it: stacking needs overflow hidden
+                    on the bar, which clipped a label positioned over its top. */}
+                {d.count > 0 && <span className="admin-chart-num">{d.count}</span>}
                 <div className="admin-chart-bar admin-chart-bar--stack" style={{ height: `${(d.count / maxDay) * 100}%` }}>
-                  {d.count > 0 && <span className="admin-chart-num">{d.count}</span>}
                   {d.count > 0 && (
                     <>
                       <span className="admin-chart-seg admin-swatch--website"
