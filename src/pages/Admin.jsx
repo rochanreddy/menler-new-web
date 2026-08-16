@@ -207,18 +207,20 @@ function DayStatCard() {
   // rather than the same leads counted per person.
   const pretty = (d) => new Date(`${d}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
   const label = from === to ? `Leads on ${pretty(from)}` : `Leads · ${pretty(from)} to ${pretty(to)}`;
-  const note = data
-    ? [
-      data.fromCampaign != null ? `${data.fromCampaign} from campaigns · ${data.fromWebsite} from the website` : '',
-      data.unique != null && data.unique !== data.count ? `${data.unique} people` : '',
-    ].filter(Boolean).join(' · ')
-    : '';
+  const repeats = data && data.unique != null ? data.count - data.unique : 0;
 
   return (
+    <>
     <div className="admin-stat" style={{ borderTopColor: 'var(--placed)' }}>
       <div className="admin-stat-value">{data === null ? '…' : data.count}</div>
       <div className="admin-stat-label">{label}</div>
-      <div className="admin-stat-note">{note}</div>
+      <div className="admin-stat-note">
+        {data?.unique != null
+          ? (repeats > 0
+            ? `${data.unique} different people — ${repeats} signed up more than once`
+            : 'All different people')
+          : 'Website and campaigns together'}
+      </div>
 
       <div className="admin-stat-range">
         <input className="admin-stat-date" type="date" value={from} max={to || today}
@@ -238,6 +240,26 @@ function DayStatCard() {
         <button type="button" onClick={() => quick(365)}>1y</button>
       </div>
     </div>
+
+    {/* The same range, split by where the lead came from. Two cards rather
+        than a line of small print: the split is the thing most often being
+        checked, and it reads at a glance beside the total it adds up to. */}
+    <div className="admin-stat" style={{ borderTopColor: 'var(--amber)' }}>
+      <div className="admin-stat-value">{data === null ? '…' : data.fromCampaign ?? '—'}</div>
+      <div className="admin-stat-label">From campaign pages</div>
+      <div className="admin-stat-note">
+        menler.in/campaign/… — workshop and masterclass signups
+      </div>
+    </div>
+
+    <div className="admin-stat" style={{ borderTopColor: 'var(--lavender)' }}>
+      <div className="admin-stat-value">{data === null ? '…' : data.fromWebsite ?? '—'}</div>
+      <div className="admin-stat-label">From the website</div>
+      <div className="admin-stat-note">
+        Programme pages, brochures, aptitude test, library
+      </div>
+    </div>
+    </>
   );
 }
 
