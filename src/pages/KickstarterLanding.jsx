@@ -7,6 +7,7 @@ import { MENLER_WHATSAPP_URL, MENLER_INSTAGRAM_URL, CAMPAIGN_INSTAGRAM_SLUGS } f
 import { submitLead } from '../services/leadService';
 import { useContentState } from '../lib/useContent';
 import { verifySmsOtp, verifyEmailOtp } from '../lib/amplifeedOtp';
+import { BACKGROUND_OPTIONS } from '../data/backgrounds';
 
 // ── Single-mentor workshop registration landing page (/ai-kickstarter) ──
 // Left column scrolls (mentor + workshop details); right column is a STATIC
@@ -703,11 +704,7 @@ export default function KickstarterLanding() {
                     disabled={busy || otpBusy}
                   >
                     <option value="" disabled hidden>Select background...</option>
-                    <option value="student">Student</option>
-                    <option value="working professional (tech)">Working Professional (Tech)</option>
-                    <option value="working professional (non-tech)">Working Professional (Non-Tech)</option>
-                    <option value="graduate">Graduate</option>
-                    <option value="founder / business owner">Founder / Business Owner</option>
+                    {BACKGROUND_OPTIONS.map((b) => <option key={b} value={b}>{b}</option>)}
                   </select>
                   <button className="lp2-submit" type="submit" disabled={busy || otpBusy}>
                     {otpBusy ? (indianNumber ? 'Sending OTP…' : 'Emailing your code…') : busy ? 'Registering…' : 'Verify to Register'}

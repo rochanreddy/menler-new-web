@@ -3,16 +3,11 @@ import { submitLead } from '../../services/leadService';
 import { verifyEmailOtp } from '../../lib/amplifeedOtp';
 import { suggestEmail } from '../../lib/emailHints';
 import { useToast } from '../common/Toast';
+import { BACKGROUND_OPTIONS } from '../../data/backgrounds';
 
 // Default background options (full role list). Callers can pass their own via
 // the `backgroundOptions` prop, and hide the Program field with showProgram={false}.
-const DEFAULT_BACKGROUNDS = [
-  // Founder and Business Owner were two options for what people answering this
-  // read as one thing, so the split told us nothing and only slowed the choice.
-  'Student', 'Founder / Business Owner', 'Analyst', 'Engineering', 'Finance',
-  "Founder's Office", 'Human Resources (HR)', 'Operations', 'Marketing & Sales',
-  'Product Management', 'Program Management', 'Strategy & Consulting', 'Other',
-];
+const DEFAULT_BACKGROUNDS = BACKGROUND_OPTIONS;
 
 export default function LeadForm({ defaultProgram = '', showProgram = true, backgroundOptions, ctaLabel = 'Express interest', source = 'lead-form', section }) {
   const bgOptions = backgroundOptions && backgroundOptions.length ? backgroundOptions : DEFAULT_BACKGROUNDS;
