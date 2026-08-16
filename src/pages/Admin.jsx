@@ -367,23 +367,34 @@ function Overview() {
           </span>
         </div>
         <div className="admin-chart">
-          {stats.byDay.map((d) => (
-            <div className="admin-chart-col" key={d.date}
-              title={`${d.date} — ${d.count} leads: ${d.campaign ?? 0} campaign, ${d.website ?? 0} website`}>
-              <div className="admin-chart-bar admin-chart-bar--stack" style={{ height: `${(d.count / maxDay) * 100}%` }}>
-                {d.count > 0 && <span className="admin-chart-num">{d.count}</span>}
-                {d.count > 0 && (
-                  <>
-                    <span className="admin-chart-seg admin-swatch--website"
-                      style={{ height: `${((d.website ?? 0) / d.count) * 100}%` }} />
-                    <span className="admin-chart-seg admin-swatch--campaign"
-                      style={{ height: `${((d.campaign ?? 0) / d.count) * 100}%` }} />
-                  </>
-                )}
+          {stats.byDay.map((d) => {
+            /* Derive the split rather than trusting both fields to be present.
+             * The browser updates the moment it's deployed; the API can lag by
+             * minutes. Reading d.campaign and d.website independently made an
+             * older API render every segment at zero height — a chart of
+             * invisible bars, which looks like lost data rather than a stale
+             * server. Falling back to "all website" keeps the bar drawn. */
+            const campaign = d.campaign ?? 0;
+            const website = d.website ?? Math.max(0, d.count - campaign);
+            const total = campaign + website || d.count;
+            return (
+              <div className="admin-chart-col" key={d.date}
+                title={`${d.date} — ${d.count} leads: ${campaign} campaign, ${website} website`}>
+                <div className="admin-chart-bar admin-chart-bar--stack" style={{ height: `${(d.count / maxDay) * 100}%` }}>
+                  {d.count > 0 && <span className="admin-chart-num">{d.count}</span>}
+                  {d.count > 0 && (
+                    <>
+                      <span className="admin-chart-seg admin-swatch--website"
+                        style={{ height: `${(website / total) * 100}%` }} />
+                      <span className="admin-chart-seg admin-swatch--campaign"
+                        style={{ height: `${(campaign / total) * 100}%` }} />
+                    </>
+                  )}
+                </div>
+                <span className="admin-chart-x">{d.date.slice(8)}/{d.date.slice(5, 7)}</span>
               </div>
-              <span className="admin-chart-x">{d.date.slice(8)}/{d.date.slice(5, 7)}</span>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 

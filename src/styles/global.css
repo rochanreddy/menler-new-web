@@ -4394,5 +4394,7 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .admin-swatch { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
 .admin-swatch--campaign { background: var(--specialist); }
 .admin-swatch--website { background: var(--lavender); }
-.admin-chart-bar--stack { background: none; overflow: hidden; flex-direction: column; justify-content: flex-end; }
+/* Keeps the original gradient underneath: if the segments ever fail to paint,
+   the bar is still drawn rather than vanishing. */
+.admin-chart-bar--stack { overflow: hidden; flex-direction: column; justify-content: flex-end; }
 .admin-chart-seg { display: block; width: 100%; }
