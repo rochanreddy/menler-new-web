@@ -46,6 +46,11 @@ export default function Blog() {
         description="The Menler blog: how AI is changing learning — completion, personalization, choosing an LMS — plus AI careers and AI-native ways of working, written by operators."
         keywords="AI blog India, AI in education, AI learning blog, online course completion, personalized learning, LMS guide, AI careers India"
         path="/blog"
+        // Kept out of search while the blog is still being trialled. Needed at
+        // runtime as well as in the prerendered HTML: React re-writes these
+        // tags on boot, so a baked-in noindex alone would be replaced by the
+        // default index directive before a crawler that runs JS reads it.
+        noindex
       />
 
       {/* ── HERO ── */}

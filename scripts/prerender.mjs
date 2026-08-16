@@ -201,7 +201,11 @@ const STATIC_ROUTES = [
     jsonLd: [crumbs([{ name: 'Home', path: '/' }, { name: 'About', path: '/about' }])],
   },
   {
-    path: '/blog', file: 'blog.html', nav: 'Blog',
+    // Held back from search while the blog is still being trialled. noindex
+    // rather than a robots.txt block: Google has to fetch a page to see that
+    // it should drop it, so disallowing crawling would freeze whatever is
+    // already indexed instead of removing it.
+    path: '/blog', file: 'blog.html', nav: 'Blog', noindex: true,
     title: 'Menler Blog — AI in Education, Learning & Careers | India',
     description: 'The Menler blog: how AI is changing learning — completion, personalization, choosing an LMS — plus AI careers and AI-native ways of working, written by operators.',
     keywords: 'AI blog India, AI in education, AI learning blog, online course completion, personalized learning, LMS guide, AI careers India',
@@ -278,6 +282,7 @@ const blogBodyHtml = (p) =>
     .join('');
 
 const BLOG_ROUTES = BLOG_POSTS.filter((p) => p.body).map((p) => ({
+  noindex: true,          // held back from search while the blog is trialled
   path: `/blog/${p.slug}`,
   file: `blog/${p.slug}.html`,
   nav: p.title,
@@ -323,6 +328,11 @@ const POLICY_ROUTES = Object.entries(POLICIES).map(([slug, p]) => ({
 }));
 
 const ROUTES = [...STATIC_ROUTES, ...BLOG_ROUTES, ...PROJECT_ROUTES, ...POLICY_ROUTES];
+
+/* Whether the blog is advertised to answer engines. Derived from the routes so
+ * it can't disagree with them: a blog held back from search shouldn't be
+ * offered up in llms.txt either. */
+const BLOG_PUBLIC = BLOG_ROUTES.some((r) => !r.noindex);
 
 // Rendering -----------------------------------------------------------------
 const escText = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -476,9 +486,9 @@ ${PROGRAM_FACTS.map(([name, path, desc]) => `- [${name}](${SITE}${path}): ${desc
 - [About Menler](${SITE}/about): Menler's vision, approach and team.
 - [What learners build](${SITE}/projects): Real projects shipped by Menler learners across domains.
 
-## Blog
-${BLOG_POSTS.filter((p) => p.body).map((p) => `- [${p.title}](${SITE}/blog/${p.slug}): ${clean(p.excerpt)}`).join('\n') || `- [Menler blog](${SITE}/blog): AI build logs, workflows and career guidance.`}
-
+${BLOG_PUBLIC ? `## Blog
+${BLOG_POSTS.filter((p) => p.body).map((p) => `- [${p.title}](${SITE}/blog/${p.slug}): ${clean(p.excerpt)}`).join('\n')}
+` : ''}
 ## Contact
 - Website: ${SITE}
 - Email: support@menler.in
@@ -529,13 +539,13 @@ ${faqSection('Claude AI Engineering Fellowship', ENGINEERING_FAQS)}
 
 ${faqSection('Gen AI Kickstarter', KICKSTARTER_FAQS)}
 
-## Articles
-${BLOG_POSTS.filter((p) => p.body).map(postSection).join('\n') || '(no published articles yet)'}
-
+${BLOG_PUBLIC ? `## Articles
+${BLOG_POSTS.filter((p) => p.body).map(postSection).join('\n')}
+` : ''}
 ## Contact
 Website ${SITE} · Email support@menler.in · LinkedIn https://www.linkedin.com/company/menler/ · Instagram https://www.instagram.com/menler.in
 `;
 writeFileSync(join(DIST, 'llms-full.txt'), llmsFull, 'utf8');
 
 const faqCount = [HOME_FAQS, GENERALIST_FAQS, ENGINEERING_FAQS, KICKSTARTER_FAQS].reduce((n, f) => n + f.length, 0);
-console.log(`✓ Generated llms.txt and llms-full.txt (${PROGRAM_FACTS.length} programmes, ${faqCount} FAQs, ${BLOG_POSTS.filter((p) => p.body).length} articles).`);
+console.log(`✓ Generated llms.txt and llms-full.txt (${PROGRAM_FACTS.length} programmes, ${faqCount} FAQs, ${BLOG_PUBLIC ? BLOG_POSTS.filter((p) => p.body).length : 0} articles).`);

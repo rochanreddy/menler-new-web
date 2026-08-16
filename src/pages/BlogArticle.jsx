@@ -144,7 +144,10 @@ export default function BlogArticle({ preview = false }) {
         path={preview ? undefined : `/blog/${post.slug}`}
         image={post.cover || undefined}
         type="article"
-        noindex={preview}
+        // Previews were already hidden; published posts are too while the blog
+        // is being trialled. Set here as well as in the prerendered HTML,
+        // because React replaces the robots tag when it boots.
+        noindex
       />
       {/* A preview is a private copy of a page that may not be published yet —
           it gets no structured data, so it can never be picked up as the real
