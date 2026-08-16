@@ -7,7 +7,9 @@ import { useToast } from '../common/Toast';
 // Default background options (full role list). Callers can pass their own via
 // the `backgroundOptions` prop, and hide the Program field with showProgram={false}.
 const DEFAULT_BACKGROUNDS = [
-  'Student', 'Founder', 'Business Owner', 'Analyst', 'Engineering', 'Finance',
+  // Founder and Business Owner were two options for what people answering this
+  // read as one thing, so the split told us nothing and only slowed the choice.
+  'Student', 'Founder / Business Owner', 'Analyst', 'Engineering', 'Finance',
   "Founder's Office", 'Human Resources (HR)', 'Operations', 'Marketing & Sales',
   'Product Management', 'Program Management', 'Strategy & Consulting', 'Other',
 ];

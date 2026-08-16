@@ -707,7 +707,7 @@ export default function KickstarterLanding() {
                     <option value="working professional (tech)">Working Professional (Tech)</option>
                     <option value="working professional (non-tech)">Working Professional (Non-Tech)</option>
                     <option value="graduate">Graduate</option>
-                    <option value="business owner">Business Owner</option>
+                    <option value="founder / business owner">Founder / Business Owner</option>
                   </select>
                   <button className="lp2-submit" type="submit" disabled={busy || otpBusy}>
                     {otpBusy ? (indianNumber ? 'Sending OTP…' : 'Emailing your code…') : busy ? 'Registering…' : 'Verify to Register'}
