@@ -259,6 +259,18 @@ export default function Aptitude() {
   // Answer sheet — revealed with a simple toggle. No verification here: the
   // email was already verified at the score gate above.
   const [sheetUnlocked, setSheetUnlocked] = useState(false);
+  /* Which answer-sheet questions are expanded. Only used on phones — the CSS
+   * hides the toggle above 600px and shows every card in full, so this state
+   * is simply ignored on a desktop. Ten questions with four long options each
+   * is roughly thirteen screens of scrolling on a phone, which makes the one
+   * thing you open a report to do — find the ones you got wrong — the hardest
+   * thing to do on it. */
+  const [openQ, setOpenQ] = useState(() => new Set());
+  const toggleQ = (i) => setOpenQ((prev) => {
+    const next = new Set(prev);
+    if (next.has(i)) next.delete(i); else next.add(i);
+    return next;
+  });
 
   // ── QUIZ RUNNER ──
   if (state.view === 'runner') {
@@ -410,13 +422,27 @@ export default function Aptitude() {
                   const correct = qq.options.reduce((bi, o, oi, arr) => (o.s > arr[bi].s ? oi : bi), 0);
                   const unanswered = ans === null;
                   const isCorrect = !unanswered && ans === correct;
+                  const verdict = unanswered ? 'Not answered' : isCorrect ? 'Correct' : 'Incorrect';
+                  const open = openQ.has(i);
                   return (
-                    <div key={i} className={`apt-qcard${isCorrect ? ' is-correct' : ' is-wrong'}`}>
+                    <div key={i} className={`apt-qcard${isCorrect ? ' is-correct' : ' is-wrong'}${open ? ' is-open' : ''}`}>
+                      {/* The phone summary. Hidden above 600px, where every card
+                          is open and this would only repeat the card below it. */}
+                      <button type="button" className="apt-qcard-toggle" aria-expanded={open} onClick={() => toggleQ(i)}>
+                        <span className="apt-qcard-toggle-head">
+                          <span className="apt-qcard-num">Question {i + 1}</span>
+                          <span className={`apt-qcard-status ${isCorrect ? 'ok' : 'no'}`}>{verdict}</span>
+                          <svg className="apt-exp-chevron" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </span>
+                        <span className="apt-qcard-q">{qq.q}</span>
+                      </button>
                       <div className="apt-qcard-body">
                         <p className="apt-qcard-num">Question {i + 1}</p>
                         <p className="apt-qcard-q">{qq.q}</p>
                         <p className={`apt-qcard-status ${isCorrect ? 'ok' : 'no'}`}>
-                          {unanswered ? 'Not answered' : isCorrect ? 'Correct' : 'Incorrect'}
+                          {verdict}
                         </p>
                         <div className="apt-qcard-opts" role="list">
                           {qq.options.map((o, oi) => {

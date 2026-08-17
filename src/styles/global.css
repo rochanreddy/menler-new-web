@@ -2718,17 +2718,62 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .apt-exp-chevron { width: 14px; height: 14px; color: var(--text-muted); transition: transform 0.2s ease; }
 .apt-qcard-exp[open] .apt-exp-chevron { transform: rotate(180deg); }
 .apt-qcard-exp > p { font-size: 13px; line-height: 1.65; color: var(--text-muted); margin: 0; padding: 0 24px 20px; }
-/* Mobile: tighten the report cards so the boxes, option pills and explanation
-   text align cleanly within the narrow width (no overflow / off-centre boxes). */
+/* The phone summary row. Never shown on desktop, where the card is open. */
+.apt-qcard-toggle { display: none; }
+
+/* Mobile answer sheet.
+ *
+ * Two problems, one cause. Every question was open, so ten questions of four
+ * long options ran to roughly thirteen screens — and finding the ones you got
+ * wrong, the only reason to open a report, meant scrolling past the ones you
+ * got right. Meanwhile five nested paddings (shell 40, body 10, card 14, pill
+ * 11, plus the tick box) left the option text about half the screen wide, so
+ * every option wrapped to four or five lines and made the scroll worse.
+ *
+ * So: cards collapse to a one-line verdict, and the padding that was buying
+ * nothing on a 360px screen is given back to the text. */
 @media (max-width: 600px) {
-  .apt-answers-body { padding: 4px 10px 12px; }
-  .apt-qcard-body { padding: 16px 14px; }
-  .apt-qcard-q { font-size: 14.5px; }
-  .apt-opt-row { gap: 10px; }
-  .apt-opt-box { width: 22px; height: 22px; }
-  .apt-opt-pill { padding: 6px 11px; font-size: 12.5px; line-height: 1.4; }
-  .apt-qcard-exp > summary { padding: 14px 14px; }
-  .apt-qcard-exp > p { padding: 0 14px 16px; }
+  /* The section and the card inside it each carried desktop padding — 40px and
+     40px a side — so 160px of a 390px screen was gutter before a word of the
+     report was drawn. The card ended up 268px wide and every option wrapped to
+     four or five lines. */
+  .apt-runner { padding: 28px 12px; }
+  .runner-shell.apt-report { padding: 18px 12px; border-radius: 14px; }
+  .apt-answers-body { padding: 4px 6px 10px; }
+  .apt-qcard { margin-bottom: 10px; border-width: 1.5px; border-radius: 12px; }
+
+  .apt-qcard-toggle {
+    display: block; width: 100%; text-align: left; background: none; border: 0;
+    font: inherit; color: inherit; cursor: pointer; padding: 12px 12px;
+  }
+  .apt-qcard-toggle-head { display: flex; align-items: center; gap: 8px; }
+  .apt-qcard-toggle .apt-qcard-num { flex: 1 1 auto; margin: 0; }
+  .apt-qcard-toggle .apt-qcard-status { margin: 0; font-size: 12px; }
+  .apt-qcard-toggle .apt-exp-chevron { flex: none; transition: transform .2s ease; }
+  .apt-qcard.is-open .apt-qcard-toggle .apt-exp-chevron { transform: rotate(180deg); }
+  /* Two lines closed, all of it open — enough to recognise the question
+     without turning the collapsed list back into a wall of text. */
+  .apt-qcard-toggle .apt-qcard-q {
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+    overflow: hidden; margin: 6px 0 0; font-size: 13.5px; font-weight: 600;
+  }
+  .apt-qcard.is-open .apt-qcard-toggle .apt-qcard-q { -webkit-line-clamp: unset; }
+
+  /* Closed: nothing but the summary. Open: the options, without repeating the
+     number, question and verdict the summary is already showing. */
+  .apt-qcard:not(.is-open) .apt-qcard-body,
+  .apt-qcard:not(.is-open) .apt-qcard-exp { display: none; }
+  .apt-qcard-body { padding: 0 12px 12px; }
+  .apt-qcard-body > .apt-qcard-num,
+  .apt-qcard-body > .apt-qcard-q,
+  .apt-qcard-body > .apt-qcard-status { display: none; }
+
+  .apt-qcard-opts { gap: 7px; }
+  .apt-opt-row { gap: 8px; }
+  .apt-opt-box { width: 20px; height: 20px; border-radius: 6px; }
+  .apt-opt-pill { padding: 5px 9px; font-size: 12.5px; line-height: 1.4; }
+  .apt-qcard-exp > summary { padding: 10px 12px; font-size: 13px; }
+  .apt-qcard-exp > p { padding: 0 12px 12px; font-size: 12.5px; }
 }
 .apt-roadmap-label { font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--specialist); margin: 8px 0 12px; }
 .apt-roadmap { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
