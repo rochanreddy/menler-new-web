@@ -2214,6 +2214,35 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-input { width: 100%; padding: 12px 14px; margin-bottom: 10px; border: 1px solid rgba(38,33,92,0.2); border-radius: 10px; font-family: inherit; font-size: 14px; color: var(--ink); }
 .lp2-input:focus { outline: none; border-color: var(--a); box-shadow: 0 0 0 3px rgba(186,117,23,0.14); }
 .lp2-input:disabled { background: #f5f5f7; color: var(--text-muted); cursor: default; }
+
+/* ── iOS: stop the page zooming when a field is focused ────────────────────
+ *
+ * Safari on iPhone zooms the page in whenever you tap a form field whose text
+ * is smaller than 16px. Every field on this site was 13–15px, so it zoomed on
+ * every form. Once zoomed, the visual viewport is narrower than the layout
+ * viewport, and anything positioned `fixed; inset: 0` is laid out against the
+ * layout one — so it renders wider than the screen. That is what pushed the
+ * Amplifeed OTP dialog and its close button off the right edge, and why it
+ * only happened on some phones: Android's Chrome does not do this.
+ *
+ * The usual "fix" of adding maximum-scale=1 to the viewport meta is not one —
+ * it takes pinch-zoom away from everyone who needs it. 16px removes the
+ * trigger instead, and reads better on a phone anyway.
+ *
+ * Text entry only. Tapping a <select> opens a native picker and never zooms,
+ * and leaving those alone keeps their carefully-sized widths intact.
+ */
+@media (max-width: 600px) {
+  .lf-field input, .lf-field textarea,
+  .mini-lead-form input,
+  .prog-lead-form input,
+  .apt-lead-row input,
+  .amplifeed-form input, .amplifeed-form textarea,
+  input.lp2-input, textarea.lp2-input,
+  input.pay-input {
+    font-size: 16px;
+  }
+}
 .lp2-submit { width: 100%; margin-top: 4px; background: var(--a); color: #fff; border: none; font-family: inherit; font-size: 15.5px; font-weight: 600; padding: 14px; border-radius: 11px; cursor: pointer; box-shadow: 0 12px 26px rgba(186,117,23,0.3); transition: opacity .15s, transform .15s; }
 .lp2-submit:hover { opacity: .95; transform: translateY(-1px); }
 .lp2-submit:disabled { opacity: .6; cursor: default; transform: none; }
