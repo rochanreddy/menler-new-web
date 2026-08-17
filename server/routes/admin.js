@@ -237,9 +237,12 @@ router.get('/stats', requireAdmin, async (_req, res) => {
       ]),
       Lead.aggregate([
         { $match: { $or: [{ 'extra.campaign': { $nin: [null, ''] } }, { source: 'campaign-workshop' }] } },
-        { $group: { _id: { g: { $ifNull: ['$extra.campaign', '—'] }, person: CONTACT_KEY }, n: { $sum: 1 } } },
-        { $group: { _id: '$_id.g', count: { $sum: '$n' }, unique: { $sum: 1 } } },
-        { $sort: { count: -1 } },
+        { $group: { _id: { g: { $ifNull: ['$extra.campaign', '—'] }, person: CONTACT_KEY }, n: { $sum: 1 }, last: { $max: '$createdAt' } } },
+        { $group: { _id: '$_id.g', count: { $sum: '$n' }, unique: { $sum: 1 }, last: { $max: '$last' } } },
+        // Newest campaign first, not biggest. The overview is a "what's running
+        // now" view — an old campaign that pulled well would otherwise sit at
+        // the top forever and push this week's off the card.
+        { $sort: { last: -1 } },
         { $limit: 30 },
       ]),
     ]);
@@ -264,7 +267,7 @@ router.get('/stats', requireAdmin, async (_req, res) => {
     }
 
     const tidy = (arr) =>
-      arr.map((x) => ({ label: x._id || '—', count: x.count, unique: x.unique }));
+      arr.map((x) => ({ label: x._id || '—', count: x.count, unique: x.unique, last: x.last }));
 
     res.json({
       totals: {

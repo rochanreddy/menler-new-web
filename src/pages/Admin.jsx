@@ -296,11 +296,28 @@ function BreakdownList({ title, rows }) {
   );
 }
 
+// How many campaigns the card shows before it asks to be expanded. Matches the
+// number of pages the website card lists, so the two sit side by side at the
+// same height instead of one running far past the other.
+const CAMPAIGNS_SHOWN = 8;
+
 // Campaign-page leads with a per-campaign filter — pick a campaign to see just
-// its count, or "All campaigns" for the full breakdown.
+// its count, or "All campaigns" for the newest few.
 function CampaignBreakdown({ rows }) {
   const [picked, setPicked] = useState('');
-  const shown = picked ? rows.filter((r) => r.label === picked) : rows;
+  const [all, setAll] = useState(false);
+
+  /* Newest campaign first. The server already sorts this way, but sorting here
+   * too means the order is right the moment the frontend deploys rather than
+   * whenever the API catches up — and campaigns with no date (an older API)
+   * keep the order they arrived in instead of jumping to the top. */
+  const ordered = [...rows].sort((a, b) => (b.last || '').localeCompare(a.last || ''));
+  const recent = all ? ordered : ordered.slice(0, CAMPAIGNS_SHOWN);
+  const hidden = ordered.length - recent.length;
+
+  // Filtering searches every campaign, not just the visible ones — otherwise
+  // picking an older campaign from the dropdown would show nothing.
+  const shown = picked ? ordered.filter((r) => r.label === picked) : recent;
   const max = Math.max(1, ...rows.map((r) => r.count));
   return (
     <div className="admin-panel-card">
@@ -310,8 +327,8 @@ function CampaignBreakdown({ rows }) {
           <span style={{ fontWeight: 400, color: 'var(--text-muted)', fontSize: 12 }}> · unique / total</span>
         </p>
         <select className="admin-card-filter" value={picked} onChange={(e) => setPicked(e.target.value)} aria-label="Filter by campaign">
-          <option value="">All campaigns</option>
-          {rows.map((r) => <option key={r.label} value={r.label}>{r.label}</option>)}
+          <option value="">Latest campaigns</option>
+          {ordered.map((r) => <option key={r.label} value={r.label}>{r.label}</option>)}
         </select>
       </div>
       {shown.length === 0 && <p className="admin-empty">No campaign leads yet.</p>}
@@ -328,6 +345,13 @@ function CampaignBreakdown({ rows }) {
           </li>
         ))}
       </ul>
+      {/* Say what's been left out. A list that silently stops at eight reads as
+          "these are all the campaigns", which is the one thing it isn't. */}
+      {!picked && (hidden > 0 || all) && (
+        <button type="button" className="admin-breakdown-more" onClick={() => setAll((v) => !v)}>
+          {all ? 'Show only the latest' : `Show ${hidden} older campaign${hidden === 1 ? '' : 's'}`}
+        </button>
+      )}
     </div>
   );
 }

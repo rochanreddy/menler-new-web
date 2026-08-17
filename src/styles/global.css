@@ -3415,6 +3415,10 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .admin-breakdown-bar { height: 8px; background: var(--cloud); border-radius: 999px; overflow: hidden; }
 .admin-breakdown-bar > span { display: block; height: 100%; background: var(--specialist); border-radius: 999px; }
 .admin-breakdown-count { font-size: 13px; font-weight: 700; color: var(--ink); min-width: 28px; text-align: right; }
+/* Quiet by design: it reveals the tail of a list, so it shouldn't compete with
+   the numbers above it. */
+.admin-breakdown-more { margin-top: 12px; padding: 0; border: 0; background: none; font: inherit; font-size: 12px; font-weight: 600; color: var(--specialist); cursor: pointer; }
+.admin-breakdown-more:hover { text-decoration: underline; }
 
 .admin-recent { list-style: none; margin: 0; padding: 0; }
 .admin-recent li { display: flex; align-items: center; gap: 14px; padding: 11px 0; border-top: 0.5px solid var(--border); font-size: 13.5px; flex-wrap: wrap; }
