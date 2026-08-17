@@ -493,11 +493,20 @@ function ApplyForm() {
   if (done) {
     return (
       <div className="gcamp-done">
-        <span className="gcamp-done-tick" aria-hidden="true">✓</span>
-        <p className="gcamp-done-t">You're on the list.</p>
+        {/* The ring pops, then the check draws itself. An SVG path rather than
+            a "✓" character because a stroke can be drawn; a glyph can only
+            appear. */}
+        <span className="gcamp-done-tick" aria-hidden="true">
+          <svg viewBox="0 0 52 52">
+            <circle className="gcamp-tick-ring" cx="26" cy="26" r="24" />
+            <path className="gcamp-tick-path" d="M15.5 26.5 L23 34 L37 19" />
+          </svg>
+        </span>
+        <p className="gcamp-done-t">You're registered!</p>
         <p className="gcamp-done-d">
-          Admissions will call you shortly. Until then, these are already open
-          to you.
+          We've got your details. Admissions will call you on{' '}
+          <b>{form.countryCode} {form.phone}</b> shortly — until then, these are
+          already open to you.
         </p>
         <div className="gcamp-done-links">
           <Link className="gcamp-cta gcamp-cta--light" to="/events">Upcoming events</Link>
