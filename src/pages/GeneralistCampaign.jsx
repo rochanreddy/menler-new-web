@@ -12,7 +12,8 @@ import Seo from '../components/common/Seo';
 import PricingCard from '../components/common/PricingCard';
 import { useToast } from '../components/common/Toast';
 import { verifyAndDownloadBrochure } from '../lib/brochure';
-import { verifyEmailOtp } from '../lib/amplifeedOtp';
+import { verifySmsOtp, verifyEmailOtp } from '../lib/amplifeedOtp';
+import { COUNTRY_CODES } from '../data/countryCodes';
 import { submitLead } from '../services/leadService';
 import '../styles/generalist-campaign.css';
 
@@ -131,13 +132,6 @@ const PLAN = {
 
 // Hero fact pills.
 const FACTS = ['6 weeks', 'Live online', 'Mentor-led', 'Certified'];
-
-// What happens after the form is submitted.
-const STEPS = [
-  { t: 'We call you back', d: 'An admissions call within 24 hours, no obligation.' },
-  { t: 'Curriculum walkthrough', d: 'We map the six weeks to your domain and goals.' },
-  { t: 'Seat confirmation', d: 'Lock your cohort seat and get onboarding access.' },
-];
 
 // "Who this is for" — audience cards with tinted number badges.
 const AUDIENCE = [
@@ -404,21 +398,83 @@ function CurriculumDownload() {
  * visitor somewhere useful instead of a dead end: upcoming events and the
  * resource library, both open to them while admissions gets in touch.
  */
+/* The form, in a dialog over the page.
+ *
+ * Escape and a click on the backdrop close it, and the page behind stays put
+ * while it is open. body{overflow:hidden} alone is not enough on this site —
+ * Lenis drives scrolling from wheel events and keeps going regardless, so it
+ * has to be stopped explicitly, and the panel carries data-lenis-prevent so
+ * the wheel still reaches its own scrollbar. */
+function ApplyModal({ onClose }) {
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.__lenis?.stop();
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prev;
+      window.__lenis?.start();
+    };
+  }, [onClose]);
+
+  return (
+    <div className="gcamp-modal-back" onClick={onClose} role="presentation" data-lenis-prevent>
+      <div
+        className="gcamp-modal"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Apply for the AI Generalist Fellowship"
+      >
+        <button type="button" className="gcamp-modal-x" onClick={onClose} aria-label="Close">×</button>
+        <ApplyForm />
+      </div>
+    </div>
+  );
+}
+
+/* Admissions form → one-time code → thank-you.
+ *
+ * The code goes by SMS to Indian numbers and by email to everyone else. That
+ * split is not a preference: the SMS gateway only delivers to +91, so an
+ * international applicant sending themselves an SMS code would wait for one
+ * that never arrives. Email reaches all of them, which is why the address is
+ * required rather than optional. */
 function ApplyForm() {
   const toast = useToast();
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
+  const [form, setForm] = useState({ name: '', email: '', countryCode: '+91', phone: '' });
   const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState('');
   const [done, setDone] = useState(false);
+
+  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  const indian = form.countryCode === '+91';
+  const minLen = indian ? 10 : 8;
+
+  const onPhone = (raw) => {
+    const digits = raw.replace(/\D/g, '').slice(0, indian ? 10 : 15);
+    set('phone', digits);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErr('');
+    if (form.phone.length < minLen) {
+      setErr(`Enter a valid ${indian ? '10-digit ' : ''}phone number.`);
+      return;
+    }
     setLoading(true);
     try {
-      const otp = await verifyEmailOtp(email.trim());
+      const digits = `${form.countryCode}${form.phone}`.replace(/\D/g, '');
+      const otp = indian
+        ? await verifySmsOtp(digits)
+        : await verifyEmailOtp(form.email.trim());
       await submitLead({
-        email: email.trim(),
-        phone: phone.trim(),
+        name: form.name.trim(),
+        email: form.email.trim(),
+        phone: `${form.countryCode} ${form.phone}`,
         program: 'Claude AI Generalist',
         ...otp,
         source: 'campaign-ai-claude-generalist',
@@ -427,8 +483,8 @@ function ApplyForm() {
       });
       setDone(true);
       toast.success("You're verified — our admissions team will call you shortly.");
-    } catch {
-      toast.error("Couldn't verify that just now. Please try again.");
+    } catch (e2) {
+      setErr(e2?.message || "Couldn't verify that just now. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -458,21 +514,56 @@ function ApplyForm() {
       <form className="gcamp-applyform" onSubmit={handleSubmit}>
         <input
           required
-          type="email"
-          aria-label="Email address"
-          placeholder="Your email"
-          autoComplete="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="text"
+          aria-label="Full name"
+          placeholder="Full name"
+          autoComplete="name"
+          value={form.name}
+          onChange={(e) => set('name', e.target.value)}
+          disabled={loading}
         />
         <input
-          type="tel"
-          aria-label="Phone number"
-          placeholder="Phone (optional)"
-          autoComplete="tel"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+          required
+          type="email"
+          aria-label="Email address"
+          placeholder="Email address"
+          autoComplete="email"
+          value={form.email}
+          onChange={(e) => set('email', e.target.value)}
+          disabled={loading}
         />
+        <div className="gcamp-phonerow">
+          <select
+            className="gcamp-dial"
+            aria-label="Country code"
+            value={form.countryCode}
+            onChange={(e) => { set('countryCode', e.target.value); set('phone', ''); }}
+            disabled={loading}
+          >
+            {COUNTRY_CODES.map(({ code, label }) => (
+              <option key={label} value={code}>{label}</option>
+            ))}
+          </select>
+          <input
+            required
+            type="tel"
+            inputMode="numeric"
+            aria-label="Phone number"
+            placeholder={indian ? '10-digit mobile' : 'Phone number'}
+            autoComplete="tel"
+            value={form.phone}
+            onChange={(e) => onPhone(e.target.value)}
+            disabled={loading}
+          />
+        </div>
+        {/* Said before they submit, not after — someone abroad who expects an
+            SMS will otherwise sit waiting for one that cannot arrive. */}
+        <p className="gcamp-formnote gcamp-formnote--tight">
+          {indian
+            ? "We'll text a one-time code to this number."
+            : "We'll email your one-time code — SMS only works for Indian numbers."}
+        </p>
+        {err && <p className="gcamp-formerr">{err}</p>}
         <button type="submit" disabled={loading}>
           {loading ? 'Verifying…' : 'Apply Now'}
         </button>
@@ -487,6 +578,7 @@ function ApplyForm() {
 export default function GeneralistCampaign() {
   const heroRef = useRef(null);
   const [showBar, setShowBar] = useState(false);
+  const [applyOpen, setApplyOpen] = useState(false);
 
   // The sticky CTA only appears once the hero (and its own button) is gone.
   useEffect(() => {
@@ -500,12 +592,7 @@ export default function GeneralistCampaign() {
     return () => io.disconnect();
   }, []);
 
-  const scrollToApply = () => {
-    const el = document.getElementById('apply');
-    if (!el) return;
-    if (window.__lenis) window.__lenis.scrollTo(el);
-    else el.scrollIntoView({ behavior: 'smooth' });
-  };
+  const openApply = () => setApplyOpen(true);
 
   return (
     <div className="gcamp">
@@ -543,7 +630,7 @@ export default function GeneralistCampaign() {
             {FACTS.map((f) => <span className="gcamp-fact" key={f}>{f}</span>)}
           </div>
 
-          <button type="button" className="gcamp-cta" onClick={scrollToApply}>
+          <button type="button" className="gcamp-cta" onClick={openApply}>
             Apply Now
           </button>
           <p className="gcamp-cta-note">Limited seats · Talk to admissions first</p>
@@ -561,7 +648,7 @@ export default function GeneralistCampaign() {
         </div>
       </section>
 
-      <AccredSection />
+      <AccredSection marquee />
 
       <section className="gcamp-sec gcamp-sec--parchment">
         <Reveal className="gcamp-head">
@@ -617,39 +704,11 @@ export default function GeneralistCampaign() {
           <h2 className="gcamp-h2">One fellowship. <em>Everything in it.</em></h2>
         </Reveal>
         <Reveal delay={80}>
-          <PricingCard {...PLAN} ctaLabel="Apply Now" onCta={scrollToApply} />
+          <PricingCard {...PLAN} ctaLabel="Apply Now" onCta={openApply} />
         </Reveal>
       </section>
 
-      <section className="gcamp-sec gcamp-sec--ink gcamp-apply" id="apply">
-        <div className="gcamp-apply-grid">
-          <Reveal>
-            <div className="gcamp-head">
-              <p className="gcamp-eyebrow">Admissions</p>
-              <h2 className="gcamp-h2">Reserve your <em>seat.</em></h2>
-              <p className="gcamp-sub">
-                Cohorts are kept small so every fellow gets mentor time. Tell us
-                where to reach you and we'll take it from there.
-              </p>
-            </div>
-            <ol className="gcamp-steps">
-              {STEPS.map((s, i) => (
-                <li className="gcamp-step" key={s.t}>
-                  <span className="gcamp-step-n">{i + 1}</span>
-                  <div>
-                    <p className="gcamp-step-t">{s.t}</p>
-                    <p className="gcamp-step-d">{s.d}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </Reveal>
-
-          <Reveal className="gcamp-formcard" delay={90}>
-            <ApplyForm />
-          </Reveal>
-        </div>
-      </section>
+      {applyOpen && <ApplyModal onClose={() => setApplyOpen(false)} />}
 
       <footer className="gcamp-foot">
         <MenlerWordmark theme="dark" size={20} />
@@ -668,7 +727,7 @@ export default function GeneralistCampaign() {
           <p className="gcamp-bar-t">Claude AI Generalist</p>
           <p className="gcamp-bar-d">6 weeks · Live · Limited seats</p>
         </div>
-        <button type="button" className="gcamp-cta" onClick={scrollToApply}>
+        <button type="button" className="gcamp-cta" onClick={openApply}>
           Apply Now
         </button>
       </div>

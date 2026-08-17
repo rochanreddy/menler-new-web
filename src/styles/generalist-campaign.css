@@ -12,6 +12,7 @@
   --gc-y: 46px;          /* section vertical padding */
   --gc-x: 20px;          /* section side gutter */
   --gc-bar: 76px;        /* height reserved for the sticky mobile CTA */
+  --gc-nav: 58px;        /* height of the pinned top bar */
   background: var(--white);
   color: var(--ink);
   min-height: 100vh;
@@ -38,7 +39,10 @@
 .gcamp-sec--ink .gcamp-sub { color: var(--lavender); }
 
 /* ── Top bar (the global navbar is hidden on this route) ── */
-.gcamp-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px var(--gc-x); border-bottom: 1px solid var(--border); }
+/* Pinned to the top of the window. It carries the wordmark and the "admissions
+   open" status, which are worth having on screen the whole way down an ad
+   landing page rather than only at the very top of it. */
+.gcamp-top { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px var(--gc-x); background: var(--white); border-bottom: 1px solid var(--border); }
 .gcamp-top-tag { display: inline-flex; align-items: center; gap: 7px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--specialist); }
 .gcamp-top-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--placed); box-shadow: 0 0 0 3px rgba(29, 158, 117, 0.16); }
 
@@ -73,40 +77,63 @@
 /* ── Numbers band ── */
 /* The hairline sits on the numbers row itself and shares the page gutter, so
    it starts and ends exactly where the first and last stat do. */
-.gcamp-stats { background: var(--ink); padding: 26px var(--gc-x) 30px; }
-.gcamp-stats-row { display: flex; gap: 8px; justify-content: space-between; padding-top: 18px; border-top: 1px solid rgba(175, 169, 236, 0.28); }
+.gcamp-stats { background: var(--ink); padding: 16px var(--gc-x) 18px; }
+/* No rule above the numbers: the band already changes colour, which separates
+   it from the hero on its own. The line only added height. */
+.gcamp-stats-row { display: flex; gap: 8px; justify-content: space-between; }
 .gcamp-stat { flex: none; white-space: nowrap; }
 .gcamp-stat-n { display: block; font-family: 'DM Serif Display', serif; font-size: clamp(19px, 5.6vw, 34px); line-height: 1; color: var(--parchment); margin-bottom: 7px; }
 .gcamp-stat-l { display: block; font-size: clamp(8.5px, 2.5vw, 12.5px); line-height: 1.35; color: var(--lavender); }
 
-/* ── Accreditation strip (shared component, compacted for phones) ── */
-.gcamp .accred-section { padding: 32px var(--gc-x); border-bottom: none; }
-.gcamp .accred-by-row { gap: 10px; }
-.gcamp .accred-by-row .partner-chip { width: calc(50% - 5px); height: 92px; padding: 12px 16px; }
-.gcamp .accred-by-row .partner-logo-img { max-height: 52px; }
-.gcamp .accred-by-row .partner-logo-img[alt="Anthropic"] { max-height: 74px; }
-.gcamp .accred-by-row .partner-logo-img[alt="Google for Education"] { max-height: 66px; }
-.gcamp .accred-by-row .partner-logo-img[alt="Startup India"] { max-height: 44px; }
+/* ── Accreditation strip — one continuously scrolling row ──
+   Four logos in a two-by-two grid took the height of a small section to say
+   something a moving row says in a strip. The rail is the shared one the
+   hiring logos use, so the chips are sized here rather than reimplemented. */
+.gcamp .accred-section { padding: 24px var(--gc-x); border-bottom: none; }
+.gcamp .accred-section--rail .logorail-rows { margin-top: 12px; }
+.gcamp .accred-section--rail .logorail-track .partner-chip { min-width: 150px; height: 76px; margin-right: 12px; padding: 10px 16px; }
+.gcamp .accred-section--rail .logorail-track .partner-logo-img { height: auto; max-height: 42px; max-width: 118px; }
+.gcamp .accred-section--rail .logorail-track .partner-logo-img[alt="Anthropic"] { max-height: 58px; }
+.gcamp .accred-section--rail .logorail-track .partner-logo-img[alt="Google for Education"] { max-height: 52px; }
+.gcamp .accred-section--rail .logorail-track .partner-logo-img[alt="Startup India"] { max-height: 36px; }
 
 /* ── Who this is for ── */
-.gcamp-who-grid { display: grid; gap: 12px; }
-.gcamp-who-card { display: flex; align-items: flex-start; gap: 14px; background: var(--white); border: 1px solid rgba(175, 169, 236, 0.22); border-radius: 16px; padding: 18px; box-shadow: 0 6px 18px rgba(38, 33, 92, 0.04); }
-.gcamp-who-num { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; font-size: 15px; font-weight: 700; }
-.gcamp-who-t { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
-.gcamp-who-d { font-size: 13px; line-height: 1.5; color: var(--text-muted); }
+/* Two to a row on phones. One-up made six short cards into six screenfuls of
+   scrolling for a section whose whole job is to be skimmed. */
+.gcamp-who-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.gcamp-who-card { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; background: var(--white); border: 1px solid rgba(175, 169, 236, 0.22); border-radius: 16px; padding: 16px 14px; box-shadow: 0 6px 18px rgba(38, 33, 92, 0.04); }
+.gcamp-who-num { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; font-size: 14px; font-weight: 700; }
+.gcamp-who-t { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+.gcamp-who-d { font-size: 12.5px; line-height: 1.45; color: var(--text-muted); }
 
 /* ── Curriculum rail — vertical scroll drives the week cards sideways ──
    .is-pinned is added by JS once the scroll driver runs; without it (reduced
    motion / no JS) the track stays a plain swipeable snapping row. */
 .gcamp-curric { background: var(--white); }
 .gcamp-curric-sticky { padding: var(--gc-y) 0; }
-.gcamp-curric.is-pinned .gcamp-curric-sticky { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; padding: 16px 0 calc(var(--gc-bar) + 2px); }
+/* The sticky is a full screen tall and its content is shorter, so there is
+   always slack. Centring the whole block put all of it above the heading and
+   below the dots — from the page those read as a gap after the section before
+   and a gap before the section after, which is exactly what they were.
+   Spacing it out instead pins the heading to the top and the dots to the
+   bottom, so the same slack sits around the card and reads as one deliberate
+   full-screen slide. Not `flex: 1` on the track: that stretches the card to
+   fill, and the shorter weeks then show a screen of empty navy. */
+/* Pins below the top bar, not under it — both are sticky to the same window,
+   so without the offset the week heading scrolls beneath the wordmark. */
+.gcamp-curric.is-pinned .gcamp-curric-sticky { position: sticky; top: var(--gc-nav); height: calc(100vh - var(--gc-nav)); display: flex; flex-direction: column; justify-content: center; overflow: hidden; padding: 16px 0 calc(var(--gc-bar) - 4px); }
+/* The card is the height of the fullest week and no bigger — it does not grow
+   to fill the pinned screen. What is left after the heading, the card and the
+   dots is shared above and below the group, which at this size is a few tens of
+   pixels rather than the band of empty page it used to be. */
 .gcamp-curric-head { padding: 0 var(--gc-x); margin-bottom: 20px; }
 .gcamp-curric-count { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: var(--specialist); margin-top: 10px; }
 
-/* Cards stretch to a common height. Every week carries both a lesson plan and
-   a build, so the tallest and shortest are close and no card shows the dead
-   space you get when one week has far more content than the others. */
+/* Cards keep a common height. Sizing each to its own content leaves the
+   shorter weeks — the last one especially, which is the one on screen as you
+   leave the section — sitting above a band of empty page. Filling the card
+   puts that space inside a card, where it reads as a card rather than as a
+   hole in the page. */
 .gcamp-curric-track { display: flex; align-items: stretch; }
 .gcamp-curric.is-pinned .gcamp-curric-track { will-change: transform; transition: transform 0.08s linear; }
 .gcamp-curric:not(.is-pinned) .gcamp-curric-track { width: 100% !important; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
@@ -115,7 +142,10 @@
 
 /* One card per week */
 .gcamp-wcard { flex: none; min-width: 0; padding: 0 var(--gc-x); }
-.gcamp-wcard-in { position: relative; background: var(--ink); border-radius: 20px; padding: 24px 22px; height: 100%; overflow: hidden; }
+/* Content sits in the middle of the card. The card is as tall as the pinned
+   screen allows, and no week fills it, so top-aligning left the shorter weeks
+   with a third of a card of empty navy hanging below the last line. */
+.gcamp-wcard-in { position: relative; display: flex; flex-direction: column; justify-content: center; background: var(--ink); border-radius: 20px; padding: 24px 22px; height: 100%; overflow: hidden; }
 .gcamp-wcard-in::after { content: ''; position: absolute; inset: 0; border-radius: 20px; border: 1px solid rgba(175, 169, 236, 0.16); pointer-events: none; }
 .gcamp-wcard-top { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
 .gcamp-wcard-n { flex: none; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: var(--ink); background: var(--lavender); border-radius: 8px; padding: 5px 9px; }
@@ -150,8 +180,21 @@
 .gcamp .toolstack-section { padding: var(--gc-y) var(--gc-x); }
 .gcamp .toolstack-title { font-size: clamp(26px, 7vw, 38px); }
 .gcamp .toolstack-sub { font-size: 14px; margin-bottom: 26px; }
-.gcamp .toolstack-row { flex-wrap: wrap; gap: 10px; }
-.gcamp .toolstack-chip { flex: 0 0 auto; padding: 11px 14px; font-size: 13px; }
+/* Four to a row on phones. Sixteen tools two-up ran to eight rows and made a
+   supporting section as tall as the ones that do the selling. Three to a row
+   barely helped — fewer rows, but each one taller — so it goes to four, with
+   the logo above the name rather than beside it. "NotebookLM" is the name that
+   decides the width. */
+/* Four across a phone, three on a very narrow one, and the remainder centred
+   rather than left hanging against one edge — fifteen tools four-up leaves a
+   row of three, and in a grid that row would sit off to the left with a hole
+   beside it. */
+.gcamp .toolstack-grid { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 7px; }
+.gcamp .toolstack-row { display: contents; }
+.gcamp .toolstack-chip { flex: 0 1 calc(25% - 6px); min-width: 72px; width: auto; flex-direction: column; justify-content: center; gap: 5px; padding: 9px 4px; text-align: center; border-radius: 12px; }
+.gcamp .toolstack-chip::before { border-radius: 12px; }
+.gcamp .toolstack-logo { height: 20px; max-width: 24px; padding: 3px; border-radius: 6px; }
+.gcamp .toolstack-name { font-size: 10.5px; line-height: 1.2; }
 .gcamp .captains-section { padding: var(--gc-y) var(--gc-x); }
 .gcamp .captains-head { margin-bottom: 26px; }
 
@@ -171,25 +214,46 @@
 .gcamp-plan .kp-chips { grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 22px; }
 
 /* ── Apply ── */
-.gcamp-apply { scroll-margin-top: 12px; }
-.gcamp-apply-grid { display: grid; gap: 26px; }
-.gcamp-steps { list-style: none; display: grid; gap: 12px; margin-top: 22px; }
-.gcamp-step { display: flex; gap: 12px; align-items: flex-start; }
-.gcamp-step-n { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; background: rgba(175, 169, 236, 0.16); color: var(--lavender); font-size: 12px; font-weight: 700; }
-.gcamp-step-t { font-size: 13.5px; font-weight: 600; color: var(--parchment); margin-bottom: 2px; }
-.gcamp-step-d { font-size: 12.5px; line-height: 1.45; color: rgba(175, 169, 236, 0.85); }
+/* ── Apply dialog ──
+   The form used to be a band of its own at the foot of the page; it opens over
+   the page now, so the only route to it is an Apply Now button. */
+.gcamp-modal-back { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 18px; background: rgba(20, 17, 48, 0.66); backdrop-filter: blur(4px); animation: gcamp-fade 0.16s ease; }
+/* Centred card, not a sheet from the bottom edge. `dvh` rather than `vh` so the
+   mobile browser's own chrome cannot push the bottom of the dialog off-screen
+   the moment the keyboard opens over a field. */
+.gcamp-modal { position: relative; width: 100%; max-width: 384px; max-height: calc(100dvh - 36px); overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; background: var(--ink); color: var(--parchment); border: 1px solid rgba(175, 169, 236, 0.24); border-radius: 20px; padding: 22px 18px 20px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45); animation: gcamp-pop 0.2s cubic-bezier(0.22, 1, 0.36, 1); }
+.gcamp-modal-x { position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border: none; border-radius: 50%; background: rgba(255, 255, 255, 0.08); color: var(--lavender); font-size: 17px; line-height: 1; cursor: pointer; transition: background 0.15s ease, color 0.15s ease; }
+.gcamp-modal-x:hover { background: rgba(255, 255, 255, 0.18); color: var(--parchment); }
+@keyframes gcamp-fade { from { opacity: 0; } }
+@keyframes gcamp-pop { from { transform: scale(0.97); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .gcamp-modal-back, .gcamp-modal { animation: none; }
+}
 
-.gcamp-formcard { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(175, 169, 236, 0.2); border-radius: 20px; padding: 22px 20px; }
-.gcamp-formcard-t { font-size: 15px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
-.gcamp-formcard-d { font-size: 12.5px; line-height: 1.5; color: var(--lavender); margin-bottom: 16px; }
-.gcamp-applyform { display: grid; gap: 10px; }
-.gcamp-applyform input { width: 100%; font-family: inherit; font-size: 14px; padding: 13px 14px; border-radius: 12px; border: 1px solid rgba(175, 169, 236, 0.3); background: rgba(255, 255, 255, 0.06); color: var(--parchment); outline: none; transition: border-color 0.15s ease, background 0.15s ease; }
-.gcamp-applyform input::placeholder { color: rgba(175, 169, 236, 0.75); }
+/* Serif title, matching every other heading on the page — the dialog is part
+   of the page, not a system prompt bolted onto it. */
+.gcamp-formcard-t { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: 21px; line-height: 1.15; color: var(--parchment); margin-bottom: 4px; padding-right: 28px; }
+.gcamp-formcard-d { font-size: 12.5px; line-height: 1.45; color: rgba(175, 169, 236, 0.85); margin-bottom: 14px; }
+.gcamp-applyform { display: grid; gap: 8px; }
+.gcamp-applyform input { width: 100%; font-family: inherit; font-size: 14px; padding: 12px 13px; border-radius: 11px; border: 1px solid rgba(175, 169, 236, 0.28); background: rgba(255, 255, 255, 0.055); color: var(--parchment); outline: none; transition: border-color 0.15s ease, background 0.15s ease; }
+.gcamp-applyform input::placeholder { color: rgba(175, 169, 236, 0.7); }
 .gcamp-applyform input:focus { border-color: var(--lavender); background: rgba(255, 255, 255, 0.1); }
-.gcamp-applyform button { padding: 14px; border: none; border-radius: 999px; background: var(--lavender); color: var(--ink); font-family: inherit; font-size: 14.5px; font-weight: 700; cursor: pointer; transition: background 0.15s ease; }
+.gcamp-applyform button { margin-top: 4px; padding: 13px; border: none; border-radius: 999px; background: var(--lavender); color: var(--ink); font-family: inherit; font-size: 14.5px; font-weight: 700; cursor: pointer; transition: background 0.15s ease; }
 .gcamp-applyform button:hover { background: var(--cloud); }
 .gcamp-applyform button:disabled { opacity: 0.65; cursor: default; }
+/* Dial code beside the number. Wide enough for the longest label in the list —
+   "AE +971" — plus the native dropdown arrow. */
+.gcamp-phonerow { display: flex; gap: 8px; }
+.gcamp-phonerow .gcamp-dial { flex: 0 0 100px; width: 100px; font-family: inherit; font-size: 14px; padding: 12px 22px 12px 11px; border-radius: 11px; border: 1px solid rgba(175, 169, 236, 0.28); background: rgba(255, 255, 255, 0.055); color: var(--parchment); outline: none; cursor: pointer; }
+/* The options render on the OS's own menu, which is light — inheriting the
+   card's parchment text would leave them white on white. */
+.gcamp-phonerow .gcamp-dial option { color: #1b1b1b; }
+.gcamp-phonerow .gcamp-dial:focus { border-color: var(--lavender); }
+.gcamp-phonerow input { flex: 1 1 0; min-width: 0; }
+
 .gcamp-formnote { margin-top: 12px; font-size: 11.5px; line-height: 1.5; color: rgba(175, 169, 236, 0.75); }
+.gcamp-formnote--tight { margin-top: 0; }
+.gcamp-formerr { font-size: 12px; line-height: 1.5; color: #ffb4ab; }
 
 /* Verified state — hand the visitor on to events + the library */
 .gcamp-done { text-align: center; }
@@ -246,25 +310,33 @@
 
   /* Even columns with hairline separators read as a designed band; the phone
      layout's space-between left huge gaps at this width. */
-  .gcamp-stats { padding: 34px var(--gc-x) 38px; }
-  .gcamp-stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; padding-top: 26px; }
+  .gcamp-stats { padding: 24px var(--gc-x) 26px; }
+  .gcamp-stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; }
   .gcamp-stat { padding-left: 30px; border-left: 1px solid rgba(175, 169, 236, 0.18); }
   .gcamp-stat:first-child { padding-left: 0; border-left: none; }
   .gcamp-stat-n { font-size: 42px; }
   .gcamp-stat-l { font-size: 13.5px; }
 
-  .gcamp .accred-section { padding: 40px var(--gc-x); }
-  .gcamp .accred-by-row { gap: 16px; }
-  .gcamp .accred-by-row .partner-chip { width: 210px; height: 104px; padding: 14px 20px; }
-  .gcamp .accred-by-row .partner-logo-img { max-height: 54px; }
-  .gcamp .accred-by-row .partner-logo-img[alt="Anthropic"] { max-height: 76px; }
-  .gcamp .accred-by-row .partner-logo-img[alt="Google for Education"] { max-height: 70px; }
-  .gcamp .accred-by-row .partner-logo-img[alt="Startup India"] { max-height: 46px; }
+  .gcamp .accred-section { padding: 32px var(--gc-x); }
+  .gcamp .accred-section--rail .logorail-track .partner-chip { min-width: 210px; height: 96px; margin-right: 16px; padding: 14px 20px; }
+  .gcamp .accred-section--rail .logorail-track .partner-logo-img { max-height: 54px; max-width: 160px; }
+  .gcamp .accred-section--rail .logorail-track .partner-logo-img[alt="Anthropic"] { max-height: 76px; }
+  .gcamp .accred-section--rail .logorail-track .partner-logo-img[alt="Google for Education"] { max-height: 70px; }
+  .gcamp .accred-section--rail .logorail-track .partner-logo-img[alt="Startup India"] { max-height: 46px; }
 
   .gcamp-who-grid { grid-template-columns: repeat(4, 1fr); gap: 18px; }
   .gcamp-who-card { flex-direction: column; gap: 16px; padding: 26px 22px; }
 
+  /* Centring is the base rule now; this only opens the card up a little where
+     there is room for it. */
+  .gcamp-modal { max-width: 420px; padding: 28px 26px 24px; }
+  .gcamp-formcard-t { font-size: 24px; }
+
   .gcamp-curric.is-pinned .gcamp-curric-sticky { padding: 40px 0; }
+  /* Content sits at the top of the card here. There is enough width at this
+     size that the fullest week nearly fills its card, so centring would only
+     shift the heading around between slides. */
+  .gcamp-wcard-in { justify-content: flex-start; }
   /* NB: the week cards live inside a track six viewports wide, so a
      percentage-based gutter (var(--gutter)) would resolve against THAT and
      blow the padding up. Use a fixed gutter and centre the card instead —
@@ -285,9 +357,15 @@
 
   /* Six chips must fit the 1120px column: 6×172 + 5×12 = 1092. The home
      page's 188px chips would overflow this narrower content width. */
-  .gcamp .toolstack-chip { flex: 0 0 172px; padding: 14px 16px; }
-  .gcamp .toolstack-row { flex-wrap: nowrap; gap: 12px; }
-  .gcamp .toolstack-grid { gap: 12px; }
+  /* Back to the shared 5/6/5 rows of wide chips. The four-column grid above is
+     a phone layout — at this width there is room for the logo and the name on
+     one line, which is what the rest of the site shows. */
+  .gcamp .toolstack-grid { display: flex; flex-direction: column; gap: 12px; }
+  .gcamp .toolstack-row { display: flex; flex-wrap: nowrap; gap: 12px; }
+  .gcamp .toolstack-chip { flex: 0 0 172px; flex-direction: row; gap: 10px; padding: 14px 16px; text-align: left; border-radius: 16px; }
+  .gcamp .toolstack-chip::before { border-radius: 16px; }
+  .gcamp .toolstack-logo { height: 26px; max-width: 30px; padding: 5px; border-radius: 8px; }
+  .gcamp .toolstack-name { font-size: 15px; }
 
   .gcamp-plan .kp-card { padding: 40px 44px; }
   .gcamp-plan .kp-head { flex-direction: row; gap: 28px; }
@@ -298,8 +376,6 @@
   .gcamp-plan .kp-chips { grid-template-columns: repeat(4, 1fr); gap: 10px; }
 
   .gcamp-done-links { grid-template-columns: 1fr 1fr; }
-  .gcamp-apply-grid { grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
-  .gcamp-formcard { padding: 32px 30px; }
 
   .gcamp-foot { padding: 34px var(--gc-x) 40px; }
   .gcamp-bar { display: none; }
