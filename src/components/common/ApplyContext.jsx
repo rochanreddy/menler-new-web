@@ -10,7 +10,7 @@ export function ApplyProvider({ children }) {
   const [open, setOpen] = useState(false);
   const [formProps, setFormProps] = useState({});
   // openApply() with no args (or called as an event handler) opens the default
-  // form; openApply({ showProgram, backgroundOptions, ... }) customizes it.
+  // form; openApply({ showProgram, ctaLabel, source, section }) customizes it.
   const openApply = useCallback((arg) => {
     const isEvent = arg && (arg.nativeEvent || arg.target || typeof arg.preventDefault === 'function');
     setFormProps(!arg || isEvent ? {} : arg);

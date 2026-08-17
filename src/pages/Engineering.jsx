@@ -9,6 +9,7 @@ import { useApply } from '../components/common/ApplyContext';
 import HiringJobs from '../components/common/HiringJobs';
 import { ENGINEERING_FAQS } from '../data/faqData';
 import { verifyAndDownloadBrochure } from '../lib/brochure';
+import BackgroundField from '../components/forms/BackgroundField';
 
 // Hiring section content for the Engineering page only — edit freely, it does
 // NOT affect the Generalist / Kickstarter hiring sections.
@@ -44,7 +45,7 @@ export default function Engineering() {
   const navigate = useNavigate();
   const go = (path) => { navigate(path); window.scrollTo(0, 0); };
 
-  const [form, setForm] = useState({ name: '', email: '', phone: '', role: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', background: '' });
   const [done, setDone] = useState(false);
   const openApply = useApply();
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
@@ -56,7 +57,7 @@ export default function Engineering() {
         email: form.email,
         phone: form.phone,
         program: 'engineering',
-        track: form.role,
+        background: form.background,
         resource: 'Engineering Fellowship Brochure',
         source: 'engineering-page',
         cta_label: 'Brochure: Engineering',
@@ -146,16 +147,7 @@ export default function Engineering() {
           ) : (
             <form className="mini-lead-form" onSubmit={handleBrochure}>
               <input type="email" required aria-label="Email address" placeholder="you@domain.com" value={form.email} onChange={e => set('email', e.target.value)} autoComplete="email" />
-              <select required aria-label="Current role" value={form.role} onChange={e => set('role', e.target.value)}>
-                <option value="">You are…</option>
-                <option>Software engineer (backend)</option>
-                <option>Software engineer (frontend / fullstack)</option>
-                <option>Data scientist</option>
-                <option>ML engineer</option>
-                <option>IT / DevOps engineer</option>
-                <option>Deep tech / systems engineer</option>
-                <option>Final-year CS / engineering student</option>
-              </select>
+              <BackgroundField label="You are…" onChange={(v) => set('background', v)} />
               <button type="submit">Verify & Download</button>
             </form>
           )}

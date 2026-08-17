@@ -7,7 +7,7 @@ import { MENLER_WHATSAPP_URL, MENLER_INSTAGRAM_URL, CAMPAIGN_INSTAGRAM_SLUGS } f
 import { submitLead } from '../services/leadService';
 import { useContentState } from '../lib/useContent';
 import { verifySmsOtp, verifyEmailOtp } from '../lib/amplifeedOtp';
-import { BACKGROUND_OPTIONS } from '../data/backgrounds';
+import BackgroundField from '../components/forms/BackgroundField';
 
 // ── Single-mentor workshop registration landing page (/ai-kickstarter) ──
 // Left column scrolls (mentor + workshop details); right column is a STATIC
@@ -695,17 +695,13 @@ export default function KickstarterLanding() {
                   {showCollege && (
                     <input className="lp2-input" type="text" required placeholder="College / University" value={form.college} onChange={(e) => set('college', e.target.value)} disabled={busy || otpBusy} />
                   )}
-                  <select
+                  <BackgroundField
                     className="lp2-input"
-                    required
-                    style={{ color: form.background ? 'var(--ink)' : 'rgba(38,33,92,0.45)' }}
-                    value={form.background}
-                    onChange={(e) => set('background', e.target.value)}
+                    label="Select background..."
+                    mutedColor="rgba(38,33,92,0.45)"
                     disabled={busy || otpBusy}
-                  >
-                    <option value="" disabled hidden>Select background...</option>
-                    {BACKGROUND_OPTIONS.map((b) => <option key={b} value={b}>{b}</option>)}
-                  </select>
+                    onChange={(v) => set('background', v)}
+                  />
                   <button className="lp2-submit" type="submit" disabled={busy || otpBusy}>
                     {otpBusy ? (indianNumber ? 'Sending OTP…' : 'Emailing your code…') : busy ? 'Registering…' : 'Verify to Register'}
                   </button>

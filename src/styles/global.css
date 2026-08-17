@@ -795,6 +795,12 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lf-field input, .lf-field select, .lf-field textarea { font-family: inherit; font-size: 13px; color: var(--ink); background: var(--parchment); border: 0.5px solid rgba(175,169,236,0.35); border-radius: 8px; padding: 10px 12px; outline: none; transition: border-color .15s, background .15s; }
 .lf-field input:focus, .lf-field select:focus, .lf-field textarea:focus { border-color: var(--specialist); background: white; }
 .lf-field textarea { resize: vertical; min-height: 70px; }
+/* The background question's follow-ups (domain, or a free-text "other") sit
+   directly under the select that revealed them. Only forms whose fields have
+   no margin of their own need this — .pay-input and .lp2-input already carry
+   a bottom margin, so adding one here would space those two apart further
+   than every other pair of fields around them. */
+.lf-field > .bg-followup, .prog-lead-form .bg-followup { margin-top: 8px; }
 .lf-submit { width: 100%; background: var(--specialist); color: white; font-size: 13px; font-weight: 500; padding: 13px; border-radius: 22px; border: none; cursor: pointer; margin-top: 8px; transition: background .15s, opacity .15s; font-family: inherit; }
 .lf-submit:hover { background: var(--ink); }
 .lf-submit:disabled { opacity: 0.5; cursor: not-allowed; }

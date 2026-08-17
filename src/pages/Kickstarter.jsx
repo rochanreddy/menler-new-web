@@ -11,6 +11,7 @@ import { useApply } from '../components/common/ApplyContext';
 import HiringJobs from '../components/common/HiringJobs';
 import PricingCard from '../components/common/PricingCard';
 import PayModal from '../components/common/PayModal';
+import BackgroundField from '../components/forms/BackgroundField';
 import { useContent } from '../lib/useContent';
 import { KICKSTARTER_FAQS } from '../data/faqData';
 import { submitLead } from '../services/leadService';
@@ -150,7 +151,9 @@ export default function Kickstarter() {
   const navigate = useNavigate();
   const go = (path) => { navigate(path); window.scrollTo(0, 0); };
 
-  const [form, setForm] = useState({ name: '', email: '', phone: '', role: '' });
+  // `background`, not `role`: the brochure form asked the same question as
+  // every other form but stored the answer under a name nothing reported on.
+  const [form, setForm] = useState({ name: '', email: '', phone: '', background: '' });
   const [done, setDone] = useState(false);
   const [activeProject, setActiveProject] = useState(null);
   const [activeModule, setActiveModule] = useState(0);
@@ -162,7 +165,6 @@ export default function Kickstarter() {
   // Kickstarter enrolment form: only name/email/phone/background, no Program.
   const openKickstarterLead = (ctaLabel = 'Apply · Kickstarter') => openApply({
     showProgram: false,
-    backgroundOptions: ['School student', 'College student', 'Graduate', 'Fresher'],
     ctaLabel,
     source: 'kickstarter-lead',
     section: 'Gen AI Kickstarter',
@@ -359,14 +361,7 @@ export default function Kickstarter() {
           ) : (
             <form className="mini-lead-form" onSubmit={handleSubmit}>
               <input type="email" required aria-label="Email address" placeholder="you@domain.com" value={form.email} onChange={e => set('email', e.target.value)} autoComplete="email" />
-              <select required aria-label="You are" value={form.role} onChange={e => set('role', e.target.value)}>
-                <option value="">You are…</option>
-                <option>School student (Class 10–12)</option>
-                <option>College student</option>
-                <option>Working professional new to AI</option>
-                <option>Founder / first AI hire</option>
-                <option>Parent or educator</option>
-              </select>
+              <BackgroundField label="You are…" onChange={(v) => set('background', v)} />
               <button type="submit">Send Brochure</button>
             </form>
           )}

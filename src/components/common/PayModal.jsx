@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { PROGRAM_PRICES, formatINR } from '../../data/pricing';
 import { createEnrolOrder, getPaymentStatus } from '../../services/paymentService';
 import { openCashfreeCheckout } from '../../lib/cashfree';
+import BackgroundField from '../forms/BackgroundField';
 
 /**
  * Enrolment payment modal. Collects name/email/phone, creates a Cashfree order
@@ -76,14 +77,7 @@ export default function PayModal({ program, onClose }) {
               <input className="pay-input" required type="email" placeholder="Email" value={form.email} onChange={(e) => set('email', e.target.value)} autoComplete="email" />
               <input className="pay-input" required type="tel" placeholder="Phone (10 digits)" value={form.phone} onChange={(e) => set('phone', e.target.value)} autoComplete="tel" />
               <input className="pay-input" required type="text" placeholder="City" value={form.city} onChange={(e) => set('city', e.target.value)} autoComplete="address-level2" />
-              <select className="pay-input" required value={form.background} onChange={(e) => set('background', e.target.value)}>
-                <option value="" disabled>Your background</option>
-                <option>Working professional (Tech)</option>
-                <option>Working professional (Non-tech)</option>
-                <option>Student</option>
-                <option>Founder / Business owner</option>
-                <option>Other</option>
-              </select>
+              <BackgroundField className="pay-input" label="Your background" onChange={(v) => set('background', v)} />
               {/* Domain track is only shown for the Generalist enrolment, not Kickstarter. */}
               {program !== 'kickstarter' && (
                 <select className="pay-input" required value={form.track} onChange={(e) => set('track', e.target.value)}>

@@ -3,18 +3,16 @@ import { submitLead } from '../../services/leadService';
 import { verifyEmailOtp } from '../../lib/amplifeedOtp';
 import { suggestEmail } from '../../lib/emailHints';
 import { useToast } from '../common/Toast';
-import { BACKGROUND_OPTIONS } from '../../data/backgrounds';
+import BackgroundField from './BackgroundField';
 
-// Default background options (full role list). Callers can pass their own via
-// the `backgroundOptions` prop, and hide the Program field with showProgram={false}.
-const DEFAULT_BACKGROUNDS = BACKGROUND_OPTIONS;
-
-export default function LeadForm({ defaultProgram = '', showProgram = true, backgroundOptions, ctaLabel = 'Express interest', source = 'lead-form', section }) {
-  const bgOptions = backgroundOptions && backgroundOptions.length ? backgroundOptions : DEFAULT_BACKGROUNDS;
+// Hide the Program field with showProgram={false}. The background question is
+// the shared one — it used to be overridable per caller, which is how the site
+// ended up asking it several different ways.
+export default function LeadForm({ defaultProgram = '', showProgram = true, ctaLabel = 'Express interest', source = 'lead-form', section }) {
   const toast = useToast();
   const [form, setForm] = useState({
     name: '', email: '', phone: '',
-    background: '', backgroundOther: '', program: defaultProgram, track: '', message: '',
+    background: '', program: defaultProgram, track: '', message: '',
   });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -104,13 +102,7 @@ export default function LeadForm({ defaultProgram = '', showProgram = true, back
 
       <div className="lf-field">
         <label>Background</label>
-        <select required value={form.background} onChange={e => set('background', e.target.value)}>
-          <option value="">Select…</option>
-          {bgOptions.map(opt => <option key={opt}>{opt}</option>)}
-        </select>
-        {form.background === 'Other' && (
-          <input required style={{ marginTop: 8 }} placeholder="Tell us your background" value={form.backgroundOther} onChange={e => set('backgroundOther', e.target.value)} />
-        )}
+        <BackgroundField label="Select…" onChange={(v) => set('background', v)} />
       </div>
 
       {showProgram && (

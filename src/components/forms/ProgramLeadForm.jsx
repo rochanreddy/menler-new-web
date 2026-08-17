@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { verifyAndDownloadBrochure } from '../../lib/brochure';
 import { useToast } from '../common/Toast';
+import BackgroundField from './BackgroundField';
 
 export default function ProgramLeadForm({ program, programColor = 'var(--specialist)', buttonBg = 'var(--specialist)' }) {
   const toast = useToast();
-  const [form, setForm] = useState({ name: '', email: '', phone: '', track: '' });
+  // Stored as `background`, not `track`: this asks who they are, and filing it
+  // under the domain-track field left it out of every background report.
+  const [form, setForm] = useState({ name: '', email: '', phone: '', background: '' });
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -57,14 +60,7 @@ export default function ProgramLeadForm({ program, programColor = 'var(--special
       </div>
       <div>
         <label>Your background</label>
-        <select required value={form.track} onChange={e => set('track', e.target.value)}>
-          <option value="">Select…</option>
-          <option>Student</option>
-          <option>Working professional</option>
-          <option>Founder / entrepreneur</option>
-          <option>Career transition</option>
-          <option>Other</option>
-        </select>
+        <BackgroundField label="Select…" onChange={(v) => set('background', v)} />
       </div>
       <button type="submit" style={{ background: buttonBg }} disabled={loading}>
         {loading ? 'Sending…' : 'Get brochure & cohort details'}

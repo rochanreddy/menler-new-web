@@ -24,10 +24,7 @@ export default function Navbar() {
     setOpenDropdown(null);
     setMobileOpen(false);
     if (location.pathname === '/kickstarter') {
-      openApply({
-        showProgram: false,
-        backgroundOptions: ['School student', 'College student', 'Graduate', 'Fresher'],
-      });
+      openApply({ showProgram: false });
     } else {
       openApply();
     }
