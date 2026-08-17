@@ -9,6 +9,7 @@ import Footer from '../components/layout/Footer';
 import Seo from '../components/common/Seo';
 import Reveal from '../components/common/Reveal';
 import MentorsRail from '../components/common/MentorsRail';
+import ToolStack from '../components/common/ToolStack';
 import MenlerCommunitySection from '../components/common/MenlerCommunitySection';
 import { useToast } from '../components/common/Toast';
 const Hero3D = lazy(() => import('../components/common/Hero3D'));
@@ -19,38 +20,8 @@ import { useContent } from '../lib/useContent';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 import { BrandLogo } from '../components/common/PartnersMarquee';
 import HiringRail from '../components/common/HiringRail';
+import { HIRING_COMPANIES } from '../data/hiringCompanies';
 import TestimonialsColumns from '../components/common/TestimonialsColumns';
-
-// Hiring-association companies. Each chip tries the local logo file first
-// (drop official PNG/SVGs in /public/logos with the names below), then the
-// Clearbit logo CDN by domain, then a clean text name d.
-const HIRING_COMPANIES = [
-  { name: 'Ringg AI', domain: 'ringg.ai', logo: '/logos/ringg.webp' },
-  { name: 'MyGate', domain: 'mygate.com', logo: '/logos/mygate_new.webp' },
-  { name: 'Zolve', domain: 'zolve.com', logo: '/logos/zolve.webp' },
-  { name: 'Instawork', domain: 'instawork.com', logo: '/logos/instawork.webp' },
-  { name: 'Lyzr', domain: 'lyzr.ai', logo: '/logos/lyzr.webp' },
-  { name: 'Emergent', domain: 'emergent.sh', logo: '/logos/emergent.webp' },
-  { name: 'Gushwork', domain: 'gushwork.ai', logo: '/logos/gushwork.webp' },
-  { name: 'Cars24', domain: 'cars24.com', logo: '/logos/cars24.webp' },
-  { name: 'Matters', domain: 'matters.ai', logo: '/logos/matters.webp' },
-  { name: 'Razorpay', domain: 'razorpay.com', logo: '/logos/razorpay.webp' },
-  { name: 'Figr', domain: 'figr.design', logo: '/logos/figr.webp' },
-  { name: 'Mercor', domain: 'mercor.com', logo: '/logos/mercor.webp' },
-  { name: 'Adobe', domain: 'adobe.com', logo: '/logos/adobe.webp' },
-  { name: 'Sarvam AI', domain: 'sarvam.ai', logo: '/logos/sarvam_ai_logo.webp' },
-  { name: 'Anthropic', domain: 'anthropic.com', logo: '/logos/anthropic.png' },
-  { name: 'PwC', domain: 'pwc.com', logo: '/logos/pwc.webp' },
-  { name: 'Cognizant', domain: 'cognizant.com', logo: '/logos/cognizant.webp' },
-  { name: 'Accenture', domain: 'accenture.com', logo: '/logos/accenture.webp' },
-  { name: 'Flipkart', domain: 'flipkart.com', logo: '/logos/flipkart.webp' },
-  { name: 'Autodesk', domain: 'autodesk.com', logo: '/logos/autodesk.png' },
-  { name: 'AnyDesk', domain: 'anydesk.com', logo: '/logos/anydesk.webp' },
-  { name: 'MathCo', domain: 'themathcompany.com', logo: '/logos/mathco.webp' },
-  { name: 'Masai', domain: 'masaischool.com', logo: '/logos/masai.webp' },
-  { name: 'Scaler', domain: 'scaler.com', logo: '/logos/scaler.webp' },
-  { name: 'PhysicsWallah', domain: 'pw.live', logo: '/logos/physicswallah.webp' },
-];
 
 // "Builders from" company logos shown on the program cards.
 const GEN_BUILDERS = [
@@ -67,37 +38,6 @@ const ENG_BUILDERS = [
   { name: 'Microsoft', domain: 'microsoft.com' },
   { name: 'Samsung', domain: 'samsung.com' },
 ];
-
-// GenAI toolstack — shown in the home "tech stack" section.
-const TECH = [
-  { name: 'Claude', logo: '/logos/claude.svg' },
-  { name: 'Perplexity', logo: '/logos/perplexity.svg' },
-  { name: 'NotebookLM', logo: '/logos/google-notebook-lm.webp' },
-  { name: 'Notion AI', logo: '/logos/notion.webp' },
-  { name: 'Gamma', logo: '/logos/gamma.webp' },
-  { name: 'Canva AI', logo: '/logos/canva.webp' },
-  { name: 'Granola', logo: '/logos/granola_ai.webp' },
-  { name: 'Fireflies', logo: '/logos/fireflies.webp' },
-  { name: 'ElevenLabs', logo: '/logos/elevenlabs.png' },
-  { name: 'Runway', logo: '/logos/runway.webp' },
-  { name: 'HeyGen', logo: '/logos/heygen.webp' },
-  { name: 'n8n', logo: '/logos/n8n.webp' },
-  { name: 'Zapier', logo: '/logos/zapier.webp' },
-  { name: 'Lovable', logo: '/logos/lovable-logo.webp' },
-  { name: 'Emergent', logo: '/logos/emergent.webp' },
-  { name: 'Lyzr', logo: '/logos/lyzr.webp' },
-];
-
-// One toolstack chip. Falls back to text-only if the logo fails to load.
-function ToolStackChip({ tool }) {
-  const [ok, setOk] = useState(!!tool.logo);
-  return (
-    <div className="toolstack-chip">
-      {ok && <img className="toolstack-logo" src={tool.logo} alt="" aria-hidden="true" loading="lazy" onError={() => setOk(false)} />}
-      <span className="toolstack-name">{tool.name}</span>
-    </div>
-  );
-}
 
 export default function Home() {
   const navigate = useNavigate();
@@ -345,17 +285,11 @@ export default function Home() {
       </section>
 
       {/* ── TECH STACK ── */}
-      <section className="section toolstack-section" style={{ paddingBottom: 72 }}>
-        <h2 className="toolstack-title">{home?.toolstack?.title || 'Your GenAI toolstack'}</h2>
-        <p className="toolstack-sub">{home?.toolstack?.sub || 'Get hands on with AI tools from your first prompt to your first real project.'}</p>
-        <div className="toolstack-grid">
-          {[TECH.slice(0, 5), TECH.slice(5, 11), TECH.slice(11, 16)].map((row, ri) => (
-            <div key={ri} className="toolstack-row">
-              {row.map(t => <ToolStackChip key={t.name} tool={t} />)}
-            </div>
-          ))}
-        </div>
-      </section>
+      <ToolStack
+        title={home?.toolstack?.title || undefined}
+        sub={home?.toolstack?.sub || undefined}
+        style={{ paddingBottom: 72 }}
+      />
 
       {/* ── MINI LEAD ── */}
       <section className="mini-lead">
