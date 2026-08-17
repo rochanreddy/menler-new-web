@@ -27,8 +27,10 @@ export default function PricingCard({
         </div>
         <div className="kp-price">
           {origPrice && <span className="kp-price-orig">₹{origPrice}</span>}
-          <div className="kp-price-row"><span className="kp-price-sym">₹</span><span className="kp-price-num">{price}</span></div>
-          <span className="kp-price-sub">{priceSub}</span>
+          {/* Campaign pages show the card without a price — the figure is
+              handled by admissions, so skip the whole row when none is given. */}
+          {price && <div className="kp-price-row"><span className="kp-price-sym">₹</span><span className="kp-price-num">{price}</span></div>}
+          {priceSub && <span className="kp-price-sub">{priceSub}</span>}
           <button className="kp-cta" onClick={onCta}>
             {ctaLabel}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
