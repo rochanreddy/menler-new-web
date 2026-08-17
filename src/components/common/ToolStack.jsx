@@ -7,7 +7,6 @@ export const TECH = [
   { name: 'Perplexity', logo: '/logos/perplexity.svg' },
   { name: 'NotebookLM', logo: '/logos/google-notebook-lm.webp' },
   { name: 'Notion AI', logo: '/logos/notion.webp' },
-  { name: 'Gamma', logo: '/logos/gamma.webp' },
   { name: 'Canva AI', logo: '/logos/canva.webp' },
   { name: 'Granola', logo: '/logos/granola_ai.webp' },
   { name: 'Fireflies', logo: '/logos/fireflies.webp' },
@@ -43,7 +42,10 @@ export default function ToolStack({
       <h2 className="toolstack-title">{title}</h2>
       <p className="toolstack-sub">{sub}</p>
       <div className="toolstack-grid">
-        {[TECH.slice(0, 5), TECH.slice(5, 11), TECH.slice(11, 16)].map((row, ri) => (
+        {/* Fifteen tools, three rows of five — even, rather than the 5/6/5 the
+            sixteenth made. Slice from the length so adding or dropping a tool
+            can't quietly leave one stranded on a row of its own. */}
+        {[TECH.slice(0, 5), TECH.slice(5, 10), TECH.slice(10)].map((row, ri) => (
           <div key={ri} className="toolstack-row">
             {row.map(t => <ToolStackChip key={t.name} tool={t} />)}
           </div>
