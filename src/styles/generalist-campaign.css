@@ -53,7 +53,10 @@
 /* "Master Claude AI. / Transform your domain." */
 .gcamp-master { font-family: 'DM Serif Display', serif; font-size: clamp(23px, 6.4vw, 30px); line-height: 1.24; margin-bottom: 20px; }
 .gcamp-master em { font-style: italic; color: var(--specialist); }
-.gcamp-master span { display: block; font-family: 'DM Sans', sans-serif; font-size: 0.54em; font-weight: 600; color: var(--text-muted); margin-top: 6px; }
+/* Second line of the same statement, so it is set like the first — the serif,
+   the size and the ink are all inherited. It was a small grey sans line, which
+   read as a caption underneath the headline rather than the other half of it. */
+.gcamp-master span { display: block; margin-top: 4px; }
 
 /* Fact pills under the headline */
 .gcamp-facts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 24px; }
