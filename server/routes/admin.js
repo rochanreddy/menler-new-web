@@ -10,7 +10,7 @@ import { ShortLink } from '../models/ShortLink.js';
 import { requireAdmin } from '../middleware/adminAuth.js';
 import { buildCertificatePdf, buildCertificateEmail } from '../utils/certificate.js';
 import { sendMail, isMailConfigured, verifyMailer } from '../utils/email.js';
-import { cashfreeConfigured, findCashfreePayment, getCashfreePayments } from '../utils/cashfree.js';
+import { cashfreeConfigured, describePayment, findCashfreePayment, getCashfreePayments } from '../utils/cashfree.js';
 import { deliverPackForOrder } from '../utils/packDelivery.js';
 import { zoomConfigured, meetingIdFromLink, pastInstances, latestInstanceUuid, pastMeeting, pastMeetings, meetingParticipants, explainZoomError } from '../utils/zoom.js';
 import { RESOURCE_PACKS } from '../../src/data/resourceCatalog.js';
@@ -482,19 +482,34 @@ router.get('/paid-users', requireAdmin, async (req, res) => {
       Order.countDocuments(filter),
     ]);
 
-    // Backfill Cashfree's real transaction id (cf_payment_id) for rows that
-    // predate the webhook storing it. One API call per missing row, saved back,
-    // so each order is only ever fetched once.
+    /* Backfill what Cashfree knows but the row doesn't: the transaction id for
+     * orders that predate the webhook storing it, and how the payment was made
+     * for every order that predates it storing that. One API call per row that
+     * is missing either, saved back, so each order is only ever fetched once
+     * however many times this list is opened.
+     *
+     * A MANUAL_ order id is one we minted for an entry typed in by hand, so
+     * there is nothing at Cashfree to ask for. */
     if (cashfreeConfigured()) {
       await Promise.all(rows.map(async (r) => {
-        if (r.extra?.manual || r.extra?.cf_payment_id) return;
+        const askable = r.order_id && !/^MANUAL_/.test(r.order_id);
+        if (!askable || (r.extra?.cf_payment_id && r.extra?.payment)) return;
         try {
           const payments = await getCashfreePayments(r.order_id);
           const paid = payments.find((p) => (p.payment_status || '').toUpperCase() === 'SUCCESS') || payments[0];
-          if (paid?.cf_payment_id) {
-            r.extra = { ...(r.extra || {}), cf_payment_id: String(paid.cf_payment_id) };
-            await Order.updateOne({ _id: r._id }, { $set: { 'extra.cf_payment_id': String(paid.cf_payment_id) } });
-          }
+          if (!paid) return;
+          const info = describePayment(paid);
+          const set = {
+            ...(paid.cf_payment_id ? { 'extra.cf_payment_id': String(paid.cf_payment_id) } : {}),
+            ...(info ? { 'extra.payment': info, 'extra.payment_method': info.label } : {}),
+          };
+          if (!Object.keys(set).length) return;
+          r.extra = {
+            ...(r.extra || {}),
+            ...(paid.cf_payment_id ? { cf_payment_id: String(paid.cf_payment_id) } : {}),
+            ...(info ? { payment: info, payment_method: info.label } : {}),
+          };
+          await Order.updateOne({ _id: r._id }, { $set: set });
         } catch { /* leave blank; the order id still cross-references */ }
       }));
     }
@@ -532,20 +547,70 @@ router.get('/paid-users', requireAdmin, async (req, res) => {
       { $sort: { _id: -1 } },
     ]);
 
-    // Whether each buyer actually got their pack. Orders paid before delivery
-    // moved server-side have no marker of their own, so fall back to the lead's
-    // resource list, which is where the browser used to record it.
-    const packOrders = rows.filter((r) => RESOURCE_PACKS[String(r.program || '').toLowerCase()]);
-    const leadIds = packOrders.map((r) => r.leadId).filter(Boolean);
-    const leads = leadIds.length
-      ? await Lead.find({ _id: { $in: leadIds } }).select('resource').lean()
+    /* Pull in each buyer's lead — it carries where they came from, which an
+     * order never does. An order records the money; the lead records the ad,
+     * the campaign page and the button that led to it, so "which campaign is
+     * actually producing sales" is only answerable by joining the two.
+     *
+     * Matched on email/phone as well as leadId: a payment recorded by hand has
+     * no lead reference at all, and those are exactly the ones whose origin
+     * nobody can otherwise reconstruct. */
+    const leadIds = rows.map((r) => r.leadId).filter(Boolean);
+    const emails = rows.map((r) => (r.customer_email || '').toLowerCase()).filter(Boolean);
+    const phones = rows.map((r) => (r.customer_phone || '').replace(/\D/g, '').slice(-10)).filter(Boolean);
+    const or = [
+      ...(leadIds.length ? [{ _id: { $in: leadIds } }] : []),
+      ...(emails.length ? [{ email: { $in: emails } }] : []),
+      ...(phones.length ? [{ phone: { $in: phones } }] : []),
+    ];
+    const leads = or.length
+      ? await Lead.find({ $or: or })
+        .select('email phone resource source page background utm_source utm_medium utm_campaign utm_content utm_term gclid fbclid referrer_url cta_label section extra createdAt')
+        .sort({ createdAt: 1 }).lean()
       : [];
-    const resourceByLead = new Map(leads.map((l) => [String(l._id), l.resource || '']));
+
+    const byId = new Map(leads.map((l) => [String(l._id), l]));
+    // First lead wins for a repeat contact: the first touch is the one that
+    // brought them in, and that's what an attribution figure is asking about.
+    const byContact = new Map();
+    for (const l of leads) {
+      for (const k of [(l.email || '').toLowerCase(), (l.phone || '').replace(/\D/g, '').slice(-10)]) {
+        if (k && !byContact.has(k)) byContact.set(k, l);
+      }
+    }
+
+    const attributionOf = (l) => (!l ? null : {
+      source: l.source || '',
+      page: l.page || '',
+      campaign: l.extra?.campaign || '',
+      background: l.background || '',
+      utm_source: l.utm_source || '',
+      utm_medium: l.utm_medium || '',
+      utm_campaign: l.utm_campaign || '',
+      utm_content: l.utm_content || '',
+      utm_term: l.utm_term || '',
+      gclid: l.gclid || '',
+      fbclid: l.fbclid || '',
+      referrer: l.referrer_url || '',
+      cta_label: l.cta_label || '',
+      section: l.section || '',
+      first_seen: l.createdAt || null,
+    });
+
     for (const r of rows) {
+      const lead = byId.get(String(r.leadId))
+        || byContact.get((r.customer_email || '').toLowerCase())
+        || byContact.get((r.customer_phone || '').replace(/\D/g, '').slice(-10))
+        || null;
+      r.attribution = attributionOf(lead);
+
+      // Whether each buyer actually got their pack. Orders paid before delivery
+      // moved server-side have no marker of their own, so fall back to the
+      // lead's resource list, which is where the browser used to record it.
       const hasPack = Boolean(RESOURCE_PACKS[String(r.program || '').toLowerCase()]);
       r.packExpected = hasPack;
       r.packSent = hasPack
-        ? Boolean(r.extra?.resources_sent_at || resourceByLead.get(String(r.leadId)))
+        ? Boolean(r.extra?.resources_sent_at || lead?.resource)
         : null;
     }
 
@@ -690,7 +755,8 @@ router.post('/paid-users', requireAdmin, async (req, res) => {
           verified_at: new Date(),
           verified_via: verified.via,      // 'order' | 'link'
           cf_payment_id: p.cf_payment_id,
-          payment_method: p.method,
+          payment_method: p.methodInfo?.label || p.method,
+          ...(p.methodInfo ? { payment: p.methodInfo } : {}),
         } : {
           // Typed by hand off the Cashfree dashboard. Kept separate from
           // cf_payment_id so a number nobody checked never passes for one the
@@ -763,7 +829,8 @@ router.post('/paid-users/:id/verify', requireAdmin, async (req, res) => {
       verified_at: new Date(),
       verified_via: found.via,
       cf_payment_id: p.cf_payment_id,
-      payment_method: p.method,
+      payment_method: p.methodInfo?.label || p.method,
+      ...(p.methodInfo ? { payment: p.methodInfo } : {}),
     };
     order.markModified('extra');
     await order.save();
@@ -842,6 +909,36 @@ router.delete('/paid-users/:id', requireAdmin, async (req, res) => {
 router.get('/paid-users/export.csv', requireAdmin, async (req, res) => {
   try {
     const rows = await Order.find(paidFilter(req.query)).sort({ paid_at: -1 }).lean();
+
+    /* The export carries the attribution too, matched the same way the list
+     * does. Without it the spreadsheet can total revenue but can't say which
+     * campaign earned it, which is the question the export usually exists to
+     * answer. */
+    const emails = rows.map((r) => (r.customer_email || '').toLowerCase()).filter(Boolean);
+    const phones = rows.map((r) => (r.customer_phone || '').replace(/\D/g, '').slice(-10)).filter(Boolean);
+    const ids = rows.map((r) => r.leadId).filter(Boolean);
+    const or = [
+      ...(ids.length ? [{ _id: { $in: ids } }] : []),
+      ...(emails.length ? [{ email: { $in: emails } }] : []),
+      ...(phones.length ? [{ phone: { $in: phones } }] : []),
+    ];
+    const leads = or.length
+      ? await Lead.find({ $or: or })
+        .select('email phone source page background utm_source utm_medium utm_campaign utm_content extra createdAt')
+        .sort({ createdAt: 1 }).lean()
+      : [];
+    const byId = new Map(leads.map((l) => [String(l._id), l]));
+    const byContact = new Map();
+    for (const l of leads) {
+      for (const k of [(l.email || '').toLowerCase(), (l.phone || '').replace(/\D/g, '').slice(-10)]) {
+        if (k && !byContact.has(k)) byContact.set(k, l);
+      }
+    }
+    const leadOf = (r) => byId.get(String(r.leadId))
+      || byContact.get((r.customer_email || '').toLowerCase())
+      || byContact.get((r.customer_phone || '').replace(/\D/g, '').slice(-10))
+      || null;
+
     const csv = toCsv([
       { key: 'customer_name', label: 'Name' },
       { key: 'customer_email', label: 'Email' },
@@ -849,11 +946,24 @@ router.get('/paid-users/export.csv', requireAdmin, async (req, res) => {
       { key: 'program', label: 'Program' },
       { label: 'Batch', get: (r) => r.extra?.batch || '' },
       { key: 'amount', label: 'Amount' },
+      { label: 'Paid by', get: (r) => r.extra?.payment?.label || r.extra?.payment_method || '' },
+      { label: 'EMI', get: (r) => (r.extra?.payment?.emi ? 'yes' : '') },
+      { label: 'Payment detail', get: (r) => r.extra?.payment?.detail || '' },
       { key: 'order_id', label: 'Order ID' },
       { label: 'Transaction ID', get: (r) => r.extra?.cf_payment_id || r.extra?.txn_id || '' },
+      { label: 'Bank reference', get: (r) => r.extra?.payment?.reference || '' },
       { label: 'Paid at', get: (r) => (r.paid_at ? new Date(r.paid_at).toISOString() : '') },
       { label: 'Manual', get: (r) => (r.extra?.manual ? 'yes' : '') },
       { label: 'Verified', get: (r) => (r.extra?.verified ? 'yes' : '') },
+      { label: 'Campaign', get: (r) => leadOf(r)?.extra?.campaign || '' },
+      { label: 'Landing page', get: (r) => leadOf(r)?.page || '' },
+      { label: 'Lead source', get: (r) => leadOf(r)?.source || '' },
+      { label: 'utm_source', get: (r) => leadOf(r)?.utm_source || '' },
+      { label: 'utm_medium', get: (r) => leadOf(r)?.utm_medium || '' },
+      { label: 'utm_campaign', get: (r) => leadOf(r)?.utm_campaign || '' },
+      { label: 'utm_content', get: (r) => leadOf(r)?.utm_content || '' },
+      { label: 'Background', get: (r) => leadOf(r)?.background || '' },
+      { label: 'First seen', get: (r) => (leadOf(r)?.createdAt ? new Date(leadOf(r).createdAt).toISOString() : '') },
       { label: 'Note', get: (r) => r.extra?.note || '' },
     ], rows);
     sendCsv(res, 'menler-paid-users.csv', csv);

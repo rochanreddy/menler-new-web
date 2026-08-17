@@ -9,6 +9,7 @@ import {
   getCashfreeOrder,
   verifyWebhookSignature,
   cashfreeConfigured,
+  describePayment,
   CASHFREE_MODE,
 } from '../utils/cashfree.js';
 import { forwardLeadToCrm } from './leads.js';
@@ -111,13 +112,26 @@ router.post('/cashfree/order', async (req, res) => {
   }
 });
 
-/* Mark a paid order + its lead. Called from webhook and status check. */
-async function markPaid(order, cfPaymentId) {
+/* Mark a paid order + its lead. Called from webhook and status check.
+ *
+ * `payment` is the raw Cashfree payment object when there is one. How the money
+ * arrived — UPI, card, EMI — exists only in that payload; the order we created
+ * knows nothing about it, so if it isn't captured here the admin panel can only
+ * ever say "Cashfree". */
+async function markPaid(order, cfPaymentId, payment) {
   if (!order || order.status === 'PAID') return;
   order.status = 'PAID';
   order.paid_at = new Date();
-  // Cashfree's transaction id (from the webhook) — shown in the admin panel.
-  if (cfPaymentId) order.extra = { ...(order.extra || {}), cf_payment_id: String(cfPaymentId) };
+  const info = describePayment(payment);
+  if (cfPaymentId || info) {
+    order.extra = {
+      ...(order.extra || {}),
+      // Cashfree's transaction id — shown in the admin panel.
+      ...(cfPaymentId ? { cf_payment_id: String(cfPaymentId) } : {}),
+      ...(info ? { payment_method: info.label, payment: info } : {}),
+    };
+    order.markModified('extra');
+  }
   await order.save();
   if (order.leadId) {
     const lead = await Lead.findById(order.leadId);
@@ -155,7 +169,7 @@ router.post('/cashfree/webhook', async (req, res) => {
       const order = await Order.findOne({ order_id: orderId });
       if (order) {
         if (status === 'SUCCESS' || status === 'PAID') {
-          await markPaid(order, data.payment?.cf_payment_id);
+          await markPaid(order, data.payment?.cf_payment_id, data.payment);
         } else if ((status === 'FAILED' || status === 'USER_DROPPED') && order.status === 'CREATED') {
           order.status = 'FAILED';
           await order.save();

@@ -115,6 +115,73 @@ export async function getCashfreeLinkOrders(linkId) {
 
 const isSuccess = (p) => String(p?.payment_status || '').toUpperCase() === 'SUCCESS';
 
+/* How a payment was actually made.
+ *
+ * `payment_group` is the field that separates an EMI from an outright card
+ * payment, and it is the one thing about a payment that nothing else records:
+ * the amount, the payer and the date all reach us by other routes, but whether
+ * someone spread ₹59,999 over six months is only ever in here. Cashfree spells
+ * the group several ways (card_emi, credit_card_emi, cardless_emi, emi), so
+ * anything with "emi" in it counts.
+ *
+ * The details sit under payment_method, keyed by instrument — one key, whose
+ * name is the instrument. Read that way rather than by checking for each
+ * instrument in turn, so a method Cashfree adds later still comes through
+ * labelled instead of blank. */
+const GROUP_LABELS = {
+  credit_card: 'Credit card',
+  debit_card: 'Debit card',
+  net_banking: 'Net banking',
+  upi: 'UPI',
+  wallet: 'Wallet',
+  pay_later: 'Pay later',
+  paypal: 'PayPal',
+  bank_transfer: 'Bank transfer',
+};
+
+const titleise = (s) => String(s || '')
+  .replace(/[_-]+/g, ' ')
+  .replace(/\b\w/g, (c) => c.toUpperCase())
+  .trim();
+
+export function describePayment(payment) {
+  if (!payment) return null;
+  const group = String(payment.payment_group || '').toLowerCase();
+  const method = payment.payment_method && typeof payment.payment_method === 'object'
+    ? payment.payment_method
+    : {};
+  const kind = Object.keys(method)[0] || '';
+  const d = method[kind] && typeof method[kind] === 'object' ? method[kind] : {};
+  const emi = /emi/.test(group) || /emi/.test(kind);
+
+  /* A card carries its issuer, net banking its bank, and a cardless EMI a
+   * provider instead. Bank names are passed through exactly as Cashfree sends
+   * them — they arrive shouty ("STATE BANK OF INDIA") but title-casing them
+   * turns HDFC into "Hdfc", and a mangled bank name is worse than a loud one.
+   * Providers are lowercase slugs, so those do get tidied. */
+  const bank = String(d.card_bank_name || d.netbanking_bank_name || '').trim()
+    || (d.provider ? titleise(d.provider) : '');
+  const bits = [
+    bank,
+    d.card_network && `${titleise(d.card_network)}${d.card_type ? ` ${d.card_type.replace(/_/g, ' ')}` : ''}`,
+    d.card_number && `••${String(d.card_number).slice(-4)}`,
+    d.upi_id,
+  ].filter(Boolean);
+
+  return {
+    group: group || kind || '',
+    // EMI first: someone paying by card EMI shows as credit_card in the group
+    // on some flows, and "Credit card" would hide the thing worth knowing.
+    label: emi
+      ? (/cardless/.test(group) || /cardless/.test(kind) ? 'Cardless EMI' : 'EMI')
+      : (GROUP_LABELS[group] || titleise(kind) || 'Cashfree'),
+    emi,
+    detail: bits.join(' · '),
+    bank,
+    reference: payment.bank_reference ? String(payment.bank_reference) : '',
+  };
+}
+
 /**
  * Try to fetch a payment from its cf_payment_id alone.
  *
@@ -146,6 +213,9 @@ function normalise(order, payment) {
     amount: Number(payment?.payment_amount ?? order?.order_amount ?? 0),
     status: String(payment?.payment_status || order?.order_status || '').toUpperCase(),
     method: payment?.payment_group || (payment?.payment_method && Object.keys(payment.payment_method)[0]) || '',
+    // The readable form of the same thing — kept beside `method` rather than
+    // replacing it, because `method` is already stored on existing orders.
+    methodInfo: describePayment(payment),
     paid_at: payment?.payment_time || order?.created_at || null,
     customer: {
       name: order?.customer_details?.customer_name || '',

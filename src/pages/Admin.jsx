@@ -13,13 +13,49 @@ import AttendanceTab from '../components/admin/AttendanceTab';
  * just get a wrong month picked to clear the form. */
 /** "2026-08" -> "Aug 2026". Falls back to the raw value rather than crashing. */
 const monthLabel = (m) => {
-  if (!/^d{4}-d{2}$/.test(m || '')) return m || '—';
+  if (!/^\d{4}-\d{2}$/.test(m || '')) return m || '—';
   const [y, mo] = m.split('-');
   return new Date(Number(y), Number(mo) - 1, 1)
     .toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
 };
 
 const COHORT_COURSES = new Set(['kickstarter', 'generalist', 'generalist-6w', 'engineering']);
+
+/* How the money arrived, in a couple of words.
+ *
+ * `extra.payment` is filled by the webhook and backfilled from Cashfree; the
+ * older `extra.payment_method` is whatever earlier code stored, which was
+ * sometimes Cashfree's raw group ("credit_card"). Falling back to it and
+ * tidying it means rows recorded before any of this existed still read
+ * properly instead of showing a blank where every other row has a method. */
+const methodLabel = (r) => {
+  const info = r.extra?.payment;
+  if (info?.label) return info.label;
+  const raw = r.extra?.payment_method;
+  if (!raw) return '';
+  return String(raw).replace(/[_-]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+};
+
+/* The most specific thing known about where a buyer came from, skipping
+ * anything the row already says.
+ *
+ * For a ₹99 workshop pack the programme IS the campaign slug, so leading with
+ * the campaign would print the same string twice on nearly every row. What's
+ * genuinely new there is the channel — whether that signup came from the
+ * WhatsApp list or a paid Facebook ad — so a repeat is dropped and the next
+ * most specific thing takes its place. */
+const originOf = (r) => {
+  const a = r.attribution;
+  if (!a) return '';
+  const prog = String(r.program || '').trim().toLowerCase();
+  const isRepeat = (v) => String(v || '').trim().toLowerCase() === prog;
+
+  if (a.campaign && !isRepeat(a.campaign)) return a.campaign;
+  if (a.utm_source) return `${a.utm_source}${a.utm_medium ? ` / ${a.utm_medium}` : ''}`;
+  if (a.utm_campaign && !isRepeat(a.utm_campaign)) return a.utm_campaign;
+  if (a.page && !isRepeat(a.page)) return a.page;
+  return isRepeat(a.source) ? '' : (a.source || '');
+};
 
 const COURSE_OPTIONS = [
   { key: 'kickstarter', label: 'Gen AI Kickstarter', amount: 4999 },
@@ -150,10 +186,14 @@ function Drawer({ title, fields, onClose }) {
           <h2>{title}</h2>
           <button className="admin-drawer-close" onClick={onClose} aria-label="Close">×</button>
         </div>
+        {/* A field is [label, value]; { heading } starts a group. Long detail
+            panels read as one undifferentiated list otherwise — the payment
+            facts and the attribution facts answer different questions and
+            shouldn't have to be told apart by reading every label. */}
         <div className="admin-drawer-body">
-          {fields.map(([label, value]) => (
-            <Row key={label} label={label} value={value} />
-          ))}
+          {fields.filter(Boolean).map((f, i) => (Array.isArray(f)
+            ? <Row key={`${f[0]}-${i}`} label={f[0]} value={f[1]} />
+            : <p key={`h-${i}`} className="admin-detail-head">{f.heading}</p>))}
         </div>
       </aside>
     </div>
@@ -992,7 +1032,13 @@ function UsersTab() {
                 <td>{dash(r.customer_name)}</td>
                 <td>{dash(r.customer_email)}</td>
                 <td>{dash(r.customer_phone)}</td>
-                <td><span className="admin-pill">{dash(r.program)}</span></td>
+                <td>
+                  <span className="admin-pill">{dash(r.program)}</span>
+                  {/* Which campaign or page sold it, under the thing it sold.
+                      A row that says only "generalist · ₹59,999" can't tell
+                      you which ad paid for itself. */}
+                  {originOf(r) && <span className="admin-subline" title="Where this buyer came from">{originOf(r)}</span>}
+                </td>
                 <td>
                   {/* Editable in place: the website never asks which cohort
                       someone is joining, so gateway rows arrive without one. */}
@@ -1008,7 +1054,15 @@ function UsersTab() {
                     }}
                   />
                 </td>
-                <td><b>₹{r.amount}</b></td>
+                <td>
+                  <b>₹{r.amount.toLocaleString('en-IN')}</b>
+                  {/* How it was paid, under what was paid. EMI is called out
+                      rather than left as one label among several: it's the
+                      one that means the money arrives in instalments. */}
+                  {r.extra?.payment?.emi
+                    ? <span className="admin-emi" title={r.extra.payment.detail || 'Paid in instalments'}>EMI</span>
+                    : methodLabel(r) && <span className="admin-subline" title={r.extra?.payment?.detail || ''}>{methodLabel(r)}</span>}
+                </td>
                 <td>
                   {/* Only programmes that ship files can be undelivered. */}
                   {!r.packExpected ? <span className="admin-muted">—</span>
@@ -1073,10 +1127,52 @@ function UsersTab() {
               : 'Cashfree (paid on the website)'],
             ['Order ID', selected.order_id],
             ['Transaction ID', selected.extra?.cf_payment_id || selected.extra?.txn_id || '—'],
-            ['Payment method', selected.extra?.payment_method || '—'],
             ['Paid at', fmtDate(selected.paid_at || selected.createdAt)],
             ...(selected.extra?.verified_at ? [['Verified on', fmtDate(selected.extra.verified_at)]] : []),
-            ...(selected.extra?.note ? [['Note', selected.extra.note]] : []),
+
+            { heading: 'How it was paid' },
+            ['Method', methodLabel(selected) || '—'],
+            ['Instalments (EMI)', selected.extra?.payment
+              ? (selected.extra.payment.emi ? 'Yes — paid in instalments' : 'No — paid in full')
+              : 'Not recorded'],
+            ...(selected.extra?.payment?.detail ? [['Card / account', selected.extra.payment.detail]] : []),
+            ...(selected.extra?.payment?.bank ? [['Bank', selected.extra.payment.bank]] : []),
+            ...(selected.extra?.payment?.reference ? [['Bank reference', selected.extra.payment.reference]] : []),
+
+            { heading: 'Where they came from' },
+            ...(selected.attribution ? [
+              // Always shown, blank or not: an empty "Campaign" is itself the
+              // answer to "which campaign was this?".
+              ['Campaign', selected.attribution.campaign],
+              ['Landing page', selected.attribution.page],
+              ['Lead source', selected.attribution.source],
+              ['Background', selected.attribution.background],
+              /* The rest only appear when they carry something. Most sales
+                 have no ad tags at all, and thirteen rows of "—" bury the
+                 four lines above that always do say something. */
+              ...([
+                ['UTM source', selected.attribution.utm_source],
+                ['UTM medium', selected.attribution.utm_medium],
+                ['UTM campaign', selected.attribution.utm_campaign],
+                ['UTM content', selected.attribution.utm_content],
+                ['UTM term', selected.attribution.utm_term],
+                ['Google Click ID', selected.attribution.gclid],
+                ['Facebook Click ID', selected.attribution.fbclid],
+                ['Referrer', selected.attribution.referrer],
+                ['CTA / button', selected.attribution.cta_label],
+                ['Section', selected.attribution.section],
+              ].filter(([, v]) => v)),
+              // The gap between this and "Paid at" is how long they took to
+              // decide — the one figure here that isn't on the lead itself.
+              ['First seen', selected.attribution.first_seen ? fmtDate(selected.attribution.first_seen) : '—'],
+            ] : [
+              // Say which of the two it is. "No attribution" reads as "this
+              // person came from nowhere", when usually it means the payment
+              // was recorded by hand and never had a form behind it.
+              ['Attribution', 'No matching lead — this payment has no signup form behind it, so where they came from was never captured.'],
+            ]),
+
+            ...(selected.extra?.note ? [{ heading: 'Note' }, ['Note', selected.extra.note]] : []),
           ]}
         />
       )}
