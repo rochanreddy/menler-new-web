@@ -36,6 +36,16 @@
      by the rails themselves. */
 }
 
+/* Kickstarter's amber, matching /kickstarter. Only the accent moves — body
+   copy, the text over ink, the borders and the plan card stay as they are on
+   the Fellowship page, because the programme page uses amber for labels,
+   headings and tags and nothing else. */
+.gcamp--kick {
+  --gc-accent: #BA7517;
+  --gc-accent-rgb: 186, 117, 23;
+  --gc-accent-soft: #FAEEDA;
+}
+
 /* ── Shared section shell + header ── */
 .gcamp-sec { padding: var(--gc-y) var(--gc-x); }
 .gcamp-sec--parchment { background: var(--parchment); }
