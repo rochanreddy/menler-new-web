@@ -100,7 +100,16 @@ export default function PlaybookModal({ item, onClose }) {
     }
     setSubmitting(true);
     try {
-      const order = await createEnrolOrder({ program: 'library', name: form.name.trim(), email: form.email.trim(), phone: phoneDigits });
+      const order = await createEnrolOrder({
+        program: 'library',
+        name: form.name.trim(),
+        email: form.email.trim(),
+        phone: phoneDigits,
+        // Say what is being bought before paying for it — the server stores it
+        // on the order and the webhook delivers it, whatever this tab does next.
+        pdf: item.pdf,
+        resource: item.title,
+      });
       const result = await openCashfreeCheckout(order.payment_session_id, order.mode);
       if (result && result.error) {
         setErr(result.error.message || 'Payment was cancelled.');

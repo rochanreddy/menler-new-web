@@ -11,7 +11,7 @@ import { requireAdmin } from '../middleware/adminAuth.js';
 import { buildCertificatePdf, buildCertificateEmail } from '../utils/certificate.js';
 import { sendMail, isMailConfigured, verifyMailer } from '../utils/email.js';
 import { cashfreeConfigured, describePayment, findCashfreePayment, getCashfreePayments } from '../utils/cashfree.js';
-import { deliverPackForOrder } from '../utils/packDelivery.js';
+import { deliverPackForOrder, deliverLibraryForOrder } from '../utils/packDelivery.js';
 import { zoomConfigured, meetingIdFromLink, pastInstances, latestInstanceUuid, pastMeeting, pastMeetings, meetingParticipants, explainZoomError } from '../utils/zoom.js';
 import { RESOURCE_PACKS } from '../../src/data/resourceCatalog.js';
 import {
@@ -604,14 +604,20 @@ router.get('/paid-users', requireAdmin, async (req, res) => {
         || null;
       r.attribution = attributionOf(lead);
 
-      // Whether each buyer actually got their pack. Orders paid before delivery
-      // moved server-side have no marker of their own, so fall back to the
-      // lead's resource list, which is where the browser used to record it.
+      /* Whether each buyer actually got what they paid for — a campaign's
+       * playbook pack, or the single Library resource a ₹49 order buys.
+       *
+       * Library orders were showing a dash here, so a paid one that never got
+       * its email looked like a row with nothing owed on it, which is how one
+       * went unnoticed. Orders paid before delivery moved server-side have no
+       * marker of their own, so those fall back to the lead's resource list,
+       * which is where the browser used to record it. */
       const hasPack = Boolean(RESOURCE_PACKS[String(r.program || '').toLowerCase()]);
-      r.packExpected = hasPack;
-      r.packSent = hasPack
-        ? Boolean(r.extra?.resources_sent_at || lead?.resource)
-        : null;
+      const isLibrary = String(r.program || '').toLowerCase() === 'library';
+      r.packExpected = hasPack || isLibrary;
+      if (hasPack) r.packSent = Boolean(r.extra?.resources_sent_at || lead?.resource);
+      else if (isLibrary) r.packSent = Boolean(r.extra?.delivered_pdf);
+      else r.packSent = null;
     }
 
     res.json({
@@ -860,7 +866,15 @@ router.post('/paid-users/:id/resend-pack', requireAdmin, async (req, res) => {
     if (!order) return res.status(404).json({ error: 'Not found.' });
     if (order.status !== 'PAID') return res.status(400).json({ error: 'That order is not paid.' });
 
-    const out = await deliverPackForOrder(order, { force: true });
+    /* A ₹49 Library order buys one named resource, not the pack. Which one is
+     * read off the order — the admin cannot pick, because picking would mean a
+     * button that hands out any playbook to anyone. If nothing is recorded the
+     * error says so, which is the honest answer for the orders taken before
+     * the choice was stored. */
+    const isLibrary = String(order.program || '').toLowerCase() === 'library';
+    const out = isLibrary
+      ? await deliverLibraryForOrder(order, { force: true })
+      : await deliverPackForOrder(order, { force: true });
     if (!out.sent) return res.status(400).json({ error: out.reason || 'Nothing to send.' });
     res.json({ ok: true, sent: out.sent, to: out.to });
   } catch (err) {

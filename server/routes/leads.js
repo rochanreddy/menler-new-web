@@ -7,6 +7,7 @@ import { Lead } from '../models/Lead.js';
 import { Order } from '../models/Order.js';
 import { sendMail } from '../utils/email.js';
 import { pdfAttachments, isAllowedPdf } from '../utils/pdfAttachments.js';
+import { deliverLibraryForOrder } from '../utils/packDelivery.js';
 import { verifyResourceToken } from '../utils/token.js';
 import { validateEmail } from '../utils/emailValidation.js';
 
@@ -444,56 +445,34 @@ router.get('/resource/:token', async (req, res) => {
   return res.redirect(302, `${front}/resources?resource=emailed`);
 });
 
-// ── Paid Library delivery ──────────────────────────────────────────────────
-// After a ₹49 Cashfree payment for a Library resource, email that PDF to the
-// buyer using its per-resource template. Gated on a confirmed-PAID order so the
-// email can't be triggered without paying, and bound to one resource per order.
+/* ── Paid Library delivery ──────────────────────────────────────────────────
+ *
+ * The webhook already sends this the moment Cashfree confirms the payment.
+ * This route stays as the fast path: the buyer's browser calls it as soon as
+ * checkout closes, which usually lands first and makes the email feel instant.
+ * It is no longer the only route, so a closed tab costs nothing.
+ *
+ * Both go through deliverLibraryForOrder, which reads the resource from the
+ * order and is idempotent on `delivered_pdf` — so whichever arrives second
+ * sends nothing rather than a duplicate. */
 router.post('/library-deliver', async (req, res) => {
   try {
-    const body = req.body || {};
-    const orderId = String(body.orderId || '').trim();
-    const pdf = String(body.pdf || '').trim();
-
-    if (!isAllowedPdf(pdf)) return res.status(400).json({ error: 'Invalid resource.' });
+    const orderId = String(req.body?.orderId || '').trim();
     if (!orderId) return res.status(400).json({ error: 'Missing order id.' });
 
     const order = await Order.findOne({ order_id: orderId });
     if (!order || order.status !== 'PAID') {
       return res.status(402).json({ error: 'Payment not confirmed yet.' });
     }
-    // One paid order buys one resource (all Library items are the same price).
-    const delivered = order.extra?.delivered_pdf;
-    if (delivered && delivered !== pdf) {
-      return res.status(403).json({ error: 'This payment was already used for another resource.' });
+
+    /* The PDF comes from the order, not the request. Taking it from the body
+     * meant a paid ₹49 order could be replayed with a different filename to
+     * collect a second playbook for free. */
+    const result = await deliverLibraryForOrder(order);
+    if (!result.sent && result.reason !== 'already delivered') {
+      return res.status(422).json({ error: result.reason });
     }
-
-    const to = order.customer_email || String(body.email || '').trim();
-    if (!to) return res.status(400).json({ error: 'No email on the order.' });
-    const first = String(order.customer_name || body.name || '').trim().split(/\s+/)[0] || 'there';
-
-    // Template file is named to match the PDF basename.
-    const tplBase = pdf.split('/').pop().replace(/\.pdf$/i, '');
-    let html;
-    try {
-      html = await fsp.readFile(path.join(LIB_TPL_DIR, `${tplBase}.html`), 'utf8');
-    } catch {
-      return res.status(404).json({ error: 'No email template for this resource.' });
-    }
-    html = html.replace(/\{\{\s*first_name\s*\}\}/gi, first);
-    const subject = (html.match(/<title>([^<]*)<\/title>/i) || [])[1]?.trim() || 'Your Menler resource';
-
-    await sendMail({
-      to,
-      subject,
-      text: `Hi ${first},\n\nThanks for your purchase — your resource is attached to this email.\n\n— Team Menler\nmenler.in`,
-      html,
-      attachments: pdfAttachments([pdf]),
-    });
-
-    order.extra = { ...(order.extra || {}), delivered_pdf: pdf, delivered_at: new Date() };
-    await order.save();
-
-    res.json({ ok: true });
+    res.json({ ok: true, alreadySent: result.reason === 'already delivered' });
   } catch (err) {
     console.error('library-deliver error', err.message);
     res.status(500).json({ error: 'Could not send the resource email.' });

@@ -10,11 +10,14 @@ async function readError(res, fallback) {
 // Create a Cashfree order for a paid program or paid campaign.
 // Pass leadId when the registrant already exists (campaign checkout).
 // Returns { order_id, payment_session_id, mode }.
-export async function createEnrolOrder({ program, leadId, name, email, phone, city, background, track }) {
+// `pdf` / `resource` name the single Library item a ₹49 order buys. They are
+// sent when the order is CREATED, not after payment, so delivery no longer
+// depends on this browser coming back from checkout to say what to send.
+export async function createEnrolOrder({ program, leadId, name, email, phone, city, background, track, pdf, resource }) {
   const res = await fetch(`${API_URL}/payments/cashfree/order`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ program, leadId, name, email, phone, city, background, track }),
+    body: JSON.stringify({ program, leadId, name, email, phone, city, background, track, pdf, resource }),
   });
   if (!res.ok) throw new Error(await readError(res, 'Could not start the payment.'));
   return res.json();

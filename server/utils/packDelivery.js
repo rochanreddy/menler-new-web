@@ -1,7 +1,64 @@
+import fsp from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { Lead } from '../models/Lead.js';
 import { pdfAttachments, isAllowedPdf } from './pdfAttachments.js';
 import { sendMail } from './email.js';
 import { RESOURCE_PACKS } from '../../src/data/resourceCatalog.js';
+
+const LIB_TPL_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'emails', 'library');
+
+/**
+ * Send a single paid Library resource for an order.
+ *
+ * Which PDF was bought is read from the ORDER, not from the request, so this
+ * works when nobody is asking — the webhook calls it the moment Cashfree
+ * confirms the payment. Delivery used to depend on the buyer's browser coming
+ * back from checkout and telling us what to send, which meant a closed tab
+ * produced a paid order that nothing could fulfil: the choice existed only in
+ * that tab.
+ *
+ * Idempotent on `delivered_pdf`, so the webhook firing twice — or the browser
+ * also asking — cannot send the same resource twice.
+ */
+export async function deliverLibraryForOrder(order, { force = false } = {}) {
+  if (!order) return { sent: 0, reason: 'no order' };
+  if (!force && order.extra?.delivered_pdf) return { sent: 0, reason: 'already delivered' };
+
+  const pdf = String(order.extra?.pdf || '').trim();
+  if (!pdf) return { sent: 0, reason: 'no resource recorded on this order' };
+  if (!isAllowedPdf(pdf)) return { sent: 0, reason: 'resource is not a deliverable file' };
+
+  const to = String(order.customer_email || '').trim();
+  if (!to) return { sent: 0, reason: 'no email address on the order' };
+  const first = String(order.customer_name || '').trim().split(/\s+/)[0] || 'there';
+
+  // Template file is named to match the PDF basename.
+  const tplBase = pdf.split('/').pop().replace(/\.pdf$/i, '');
+  let html;
+  try {
+    html = await fsp.readFile(path.join(LIB_TPL_DIR, `${tplBase}.html`), 'utf8');
+  } catch {
+    return { sent: 0, reason: `no email template for ${tplBase}` };
+  }
+  html = html.replace(/\{\{\s*first_name\s*\}\}/gi, first);
+  const subject = (html.match(/<title>([^<]*)<\/title>/i) || [])[1]?.trim() || 'Your Menler resource';
+
+  await sendMail({
+    to,
+    subject,
+    text: `Hi ${first},\n\nThanks for your purchase — your resource is attached to this email.\n\n— Team Menler\nmenler.in`,
+    html,
+    attachments: pdfAttachments([pdf]),
+  });
+
+  order.extra = { ...(order.extra || {}), delivered_pdf: pdf, delivered_at: new Date() };
+  order.markModified('extra');
+  await order.save();
+
+  return { sent: 1, to, pdf };
+}
 
 /**
  * Send a paid campaign's resource pack, from the server.

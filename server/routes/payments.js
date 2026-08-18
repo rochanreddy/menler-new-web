@@ -13,7 +13,8 @@ import {
   CASHFREE_MODE,
 } from '../utils/cashfree.js';
 import { forwardLeadToCrm } from './leads.js';
-import { deliverPackForOrder } from '../utils/packDelivery.js';
+import { deliverPackForOrder, deliverLibraryForOrder } from '../utils/packDelivery.js';
+import { isAllowedPdf } from '../utils/pdfAttachments.js';
 import { validateEmail } from '../utils/emailValidation.js';
 
 const router = Router();
@@ -79,6 +80,26 @@ router.post('/cashfree/order', async (req, res) => {
       forwardLeadToCrm(lead);
     }
 
+    /* Which Library resource this ₹49 buys.
+     *
+     * Recorded on the ORDER, at the moment the order is created. It used to
+     * exist only in the buyer's tab, which was handed back to the server after
+     * checkout to trigger the email — so a closed tab or a redirect that never
+     * completed left a paid order that nothing could fulfil, because nothing
+     * anywhere knew which of the six playbooks had been bought. Stored here,
+     * the webhook can deliver it without the browser taking part. */
+    const wantsPdf = String(body.pdf || '').trim();
+    const libraryPdf = wantsPdf && isAllowedPdf(wantsPdf) ? wantsPdf : '';
+    /* Not rejected when it is missing. Vercel ships the browser in seconds and
+     * Render takes minutes, so for a few minutes after a deploy this server
+     * will be asked for orders by a page that predates the field. Refusing
+     * those would turn a delivery bug into a checkout outage; instead the
+     * order is taken as before and the browser's own delivery call still
+     * covers it, exactly as it does today. */
+    if (program === 'library' && !libraryPdf) {
+      console.warn(`[library] order for ${email} has no resource recorded — delivery will depend on the buyer's browser`);
+    }
+
     const orderId = `MNLR_${program.replace(/-/g, '_')}_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`;
     const notifyBase = API_PUBLIC_BASE();
     const returnPath = leadId ? '/checkout' : `/${program}`;
@@ -99,7 +120,16 @@ router.post('/cashfree/order', async (req, res) => {
       cf_payment_session_id: cf.payment_session_id || '',
       leadId: lead._id,
       customer_name: name, customer_email: email, customer_phone: phone,
+      ...(libraryPdf ? { extra: { pdf: libraryPdf, resource: String(body.resource || '').trim() } } : {}),
     });
+
+    // Mirror it onto the lead too, so the admin's Resource column says which
+    // one was bought rather than leaving the row unexplained.
+    if (libraryPdf && !lead.resource_pdf) {
+      lead.resource_pdf = libraryPdf;
+      if (body.resource) lead.resource = String(body.resource).trim();
+      await lead.save();
+    }
 
     res.status(201).json({
       order_id: orderId,
@@ -145,13 +175,18 @@ async function markPaid(order, cfPaymentId, payment) {
     }
   }
 
-  // Deliver the paid resource pack from here rather than from the buyer's
-  // browser. Deliberately not awaited into the caller's failure path: a mail
+  // Deliver whatever this payment bought from here rather than from the
+  // buyer's browser — a campaign's playbook pack, or a single Library
+  // resource. Deliberately not awaited into the caller's failure path: a mail
   // problem must never make the webhook look unhandled to Cashfree, or it will
   // retry the whole payment event.
   deliverPackForOrder(order)
     .then((r) => { if (r.sent) console.log(`[pack] sent ${r.sent} files to ${r.to} for ${order.order_id}`); })
     .catch((e) => console.error(`[pack] delivery failed for ${order.order_id}:`, e.message));
+
+  deliverLibraryForOrder(order)
+    .then((r) => { if (r.sent) console.log(`[library] sent ${r.pdf} to ${r.to} for ${order.order_id}`); })
+    .catch((e) => console.error(`[library] delivery failed for ${order.order_id}:`, e.message));
 }
 
 /* Webhook — Cashfree posts payment events here. Verify on the RAW body. */
