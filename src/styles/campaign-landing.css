@@ -85,6 +85,11 @@
    read as a caption underneath the headline rather than the other half of it. */
 .gcamp-master span { display: block; margin-top: 4px; }
 
+/* Sub-line under the headline, above the fact pills — deliberately muted (not
+   the ink-black serif of the headline above it) so it reads as supporting
+   copy, the way the pills below it do. */
+.gcamp-hero-sub { margin: 0 auto 22px; max-width: 50ch; }
+
 /* Fact pills under the headline */
 .gcamp-facts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 24px; }
 .gcamp-fact { font-size: 12px; font-weight: 600; color: var(--ink); background: var(--white); border: 1px solid var(--gc-border); border-radius: 999px; padding: 7px 13px; }
@@ -346,7 +351,19 @@
 
 /* ── Footer ── */
 .gcamp-foot { background: var(--ink); color: var(--gc-on-dark); padding: 26px var(--gc-x) calc(var(--gc-bar) + 12px); border-top: 1px solid rgba(var(--gc-on-dark-rgb),0.16); text-align: center; }
-.gcamp-foot-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 18px; margin: 14px 0 12px; }
+/* Brand block — same wordmark tagline, description, social row and support
+   email as the main site Footer (see src/components/layout/Footer.jsx and
+   src/data/socialLinks.js), restyled to fit this footer's compact, centred,
+   single-column shape instead of Footer's left-aligned grid column. */
+.gcamp-foot-desc { font-size: 12px; line-height: 1.5; color: rgba(var(--gc-on-dark-rgb),0.75); max-width: 260px; margin: 10px auto 0; }
+.gcamp-foot-social { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 16px 0 0; }
+.gcamp-foot-social-link { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(var(--gc-on-dark-rgb),0.3); color: var(--gc-on-dark); text-decoration: none; transition: color .15s, border-color .15s, background .15s; }
+.gcamp-foot-social-link:hover { color: var(--white); border-color: rgba(var(--gc-on-dark-rgb),0.5); background: rgba(var(--gc-on-dark-rgb),0.12); }
+.gcamp-foot-social-link svg { width: 15px; height: 15px; fill: currentColor; }
+.gcamp-foot-support { display: inline-flex; align-items: center; gap: 7px; margin-top: 16px; font-size: 12.5px; color: rgba(var(--gc-on-dark-rgb),0.85); text-decoration: none; transition: color .15s; }
+.gcamp-foot-support:hover { color: var(--white); }
+.gcamp-foot-support-icon { width: 15px; height: 15px; flex-shrink: 0; color: var(--gc-on-dark); }
+.gcamp-foot-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 18px; margin: 22px 0 12px; }
 .gcamp-foot-links a { font-size: 12px; color: var(--gc-on-dark); text-decoration: none; }
 .gcamp-foot-links a:hover { color: var(--white); text-decoration: underline; }
 .gcamp-foot-copy { font-size: 11.5px; line-height: 1.6; color: rgba(var(--gc-on-dark-rgb),0.7); }
@@ -384,6 +401,7 @@
   .gcamp-title { margin-bottom: 0; }
   .gcamp-heroart { max-width: 100%; margin-bottom: 0; }
   .gcamp-master { margin-bottom: 22px; }
+  .gcamp-hero-sub { margin: 0 0 26px; max-width: 54ch; }
   .gcamp-facts { justify-content: flex-start; gap: 10px; margin-bottom: 26px; }
   .gcamp-fact { font-size: 13px; padding: 8px 15px; }
   .gcamp-cta { width: auto; min-width: 260px; }
