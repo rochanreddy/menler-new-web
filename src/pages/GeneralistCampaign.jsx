@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import MenlerWordmark from '../components/common/MenlerWordmark';
 import Reveal from '../components/common/Reveal';
 import AccredSection from '../components/common/AccredSection';
@@ -7,15 +7,12 @@ import ToolStack from '../components/common/ToolStack';
 import MentorsRail from '../components/common/MentorsRail';
 import HiringRail from '../components/common/HiringRail';
 import { HIRING_COMPANIES } from '../data/hiringCompanies';
-import { visibleRaf } from '../lib/visibleRaf';
 import Seo from '../components/common/Seo';
 import PricingCard from '../components/common/PricingCard';
-import { useToast } from '../components/common/Toast';
-import { verifyAndDownloadBrochure } from '../lib/brochure';
-import { verifySmsOtp, verifyEmailOtp } from '../lib/amplifeedOtp';
-import { COUNTRY_CODES } from '../data/countryCodes';
-import { submitLead } from '../services/leadService';
-import '../styles/generalist-campaign.css';
+import CampaignRail from '../components/campaign/CampaignRail';
+import CampaignDownload from '../components/campaign/CampaignDownload';
+import ApplyModal, { ThankYou } from '../components/campaign/CampaignApply';
+import '../styles/campaign-landing.css';
 
 // ── /campaign/ai-claude-generalist — ad landing page for the Generalist ──
 // Chrome-free (no global nav/footer), noindex, mobile-first: ad traffic is
@@ -227,398 +224,6 @@ const WEEKS = [
   },
 ];
 
-// Each week gets one screen; the first screen is the pin itself, so the
-// section reserves 100vh + one TRAVEL_VH block per hand-off after it.
-const TRAVEL_VH = 70;
-
-/**
- * Curriculum rail — the six week cards sit side by side and the page's VERTICAL
- * scroll drives them HORIZONTALLY: the section pins while the track slides
- * left, so six weeks cost far less page height than six stacked cards.
- *
- * Reduced-motion (and any browser where the pin can't run) falls back to a
- * plain swipeable, scroll-snapping row — same content, no hijacked scrolling.
- */
-function CurriculumRail() {
-  const wrapRef = useRef(null);
-  const trackRef = useRef(null);
-  const [active, setActive] = useState(0);
-  const [pinned, setPinned] = useState(false);
-  const n = WEEKS.length;
-
-  useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    setPinned(true);
-    const wrap = wrapRef.current;
-    const track = trackRef.current;
-    if (!wrap || !track) return;
-
-    let last = -1;
-    return visibleRaf(wrap, () => {
-      const rect = wrap.getBoundingClientRect();
-      const travel = rect.height - window.innerHeight;
-      if (travel <= 0) return;
-      // 0 → first week fully in view, 1 → last week fully in view.
-      const p = Math.min(1, Math.max(0, -rect.top / travel));
-      if (Math.abs(p - last) < 0.0005) return;
-      last = p;
-      track.style.transform = `translate3d(-${(p * (n - 1) * 100) / n}%, 0, 0)`;
-      setActive(Math.round(p * (n - 1)));
-    });
-  }, [n]);
-
-  return (
-    <section
-      className={`gcamp-curric${pinned ? ' is-pinned' : ''}`}
-      ref={wrapRef}
-      style={pinned ? { height: `calc(100vh + ${(n - 1) * TRAVEL_VH}vh)` } : undefined}
-      aria-label="The 6-week curriculum"
-    >
-      <div className="gcamp-curric-sticky">
-        <div className="gcamp-curric-head">
-          <p className="gcamp-eyebrow">The curriculum</p>
-          <h2 className="gcamp-h2">Six weeks. <em>Six builds.</em></h2>
-          <p className="gcamp-curric-count">
-            {String(active + 1).padStart(2, '0')} / {String(n).padStart(2, '0')}
-          </p>
-        </div>
-
-        <div className="gcamp-curric-track" ref={trackRef} style={{ width: `${n * 100}%` }}>
-          {WEEKS.map((w) => (
-            <article className="gcamp-wcard" key={w.n} style={{ width: `${100 / n}%` }}>
-              <div className="gcamp-wcard-in">
-                <div className="gcamp-wcard-top">
-                  <span className="gcamp-wcard-n">{w.n}</span>
-                  <span className="gcamp-wcard-phase">{w.phase}</span>
-                </div>
-                <h3 className="gcamp-wcard-t">{w.t}</h3>
-
-                <p className="gcamp-wcard-h">Lesson plan</p>
-                <ul className="gcamp-wcard-list">
-                  {w.lessons.map((l) => <li key={l}>{l}</li>)}
-                </ul>
-
-                {w.projects && (
-                  <>
-                    <p className="gcamp-wcard-h">
-                      {w.projects.length > 1 ? "Projects you'll build" : "Project you'll build"}
-                    </p>
-                    <ul className="gcamp-wcard-list gcamp-wcard-list--proj">
-                      {w.projects.map((p) => <li key={p}>{p}</li>)}
-                    </ul>
-                  </>
-                )}
-              </div>
-            </article>
-          ))}
-        </div>
-
-        <div className="gcamp-curric-dots" aria-hidden="true">
-          {WEEKS.map((w, i) => (
-            <span className={`gcamp-dot${i === active ? ' is-on' : ''}`} key={w.n} />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/**
- * Curriculum download — verifies the email by OTP, hands over the brochure PDF
- * as an on-site download, and records the lead in the background. Same helper
- * the /generalist page uses, so the file and CRM fields stay in one place.
- */
-function CurriculumDownload() {
-  const toast = useToast();
-  const [email, setEmail] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [done, setDone] = useState(false);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      await verifyAndDownloadBrochure({
-        email: email.trim(),
-        program: 'generalist',
-        resource: 'Generalist Fellowship Curriculum',
-        source: 'campaign-ai-claude-generalist',
-        cta_label: 'Download curriculum',
-        section: 'Curriculum',
-      });
-      setDone(true);
-      toast.success('Curriculum downloaded — check your downloads folder.');
-    } catch {
-      toast.error("Couldn't send that just now. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <section className="gcamp-sec gcamp-dl">
-      <Reveal className="gcamp-dl-card">
-        <div className="gcamp-dl-txt">
-          <p className="gcamp-eyebrow">Full syllabus</p>
-          <h2 className="gcamp-h2">Take the curriculum with you.</h2>
-          <p className="gcamp-sub">
-            Every week, lesson and build in one PDF — including the domain
-            tracks, tools and certification details.
-          </p>
-        </div>
-
-        {done ? (
-          <p className="gcamp-dl-done">
-            Sent — your curriculum PDF has been downloaded.
-          </p>
-        ) : (
-          <form className="gcamp-dl-form" onSubmit={handleSubmit}>
-            <input
-              required
-              type="email"
-              aria-label="Email address"
-              placeholder="Your email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <button type="submit" className="gcamp-cta" disabled={loading}>
-              {loading ? 'Verifying…' : 'Download curriculum'}
-            </button>
-            <p className="gcamp-dl-note">PDF · no spam, we verify your email once.</p>
-          </form>
-        )}
-      </Reveal>
-    </section>
-  );
-}
-
-/**
- * Apply form — verifies the email by OTP, records the lead, then hands the
- * visitor somewhere useful instead of a dead end: upcoming events and the
- * resource library, both open to them while admissions gets in touch.
- */
-/* The confirmation, as its own screen.
- *
- * It replaces the landing page rather than sitting inside the dialog that
- * opened the form, which is how the workshop checkout ends too: the page you
- * applied from is no longer the page you want, and a panel inside a dialog
- * leaves the whole advert still sitting behind it. */
-function ThankYou({ applicant }) {
-  const navigate = useNavigate();
-
-  // The page under this one is where the reader had scrolled to. Start at the
-  // top, or the confirmation appears already scrolled past.
-  useEffect(() => {
-    if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true });
-    else window.scrollTo(0, 0);
-  }, []);
-
-  return (
-    <div className="gcamp gcamp-thanks">
-      <Seo title="You're registered | Menler" noindex />
-      <header className="gcamp-top">
-        <MenlerWordmark />
-        <span className="gcamp-top-tag">
-          <span className="gcamp-top-dot" aria-hidden="true" />
-          Admissions open
-        </span>
-      </header>
-
-      <div className="gcamp-thanks-inner">
-        {/* The ring pops, then the check draws itself. An SVG path rather than
-            a "✓" character because a stroke can be drawn; a glyph can only
-            appear. */}
-        <span className="gcamp-done-tick" aria-hidden="true">
-          <svg viewBox="0 0 52 52">
-            <circle className="gcamp-tick-ring" cx="26" cy="26" r="24" />
-            <path className="gcamp-tick-path" d="M15.5 26.5 L23 34 L37 19" />
-          </svg>
-        </span>
-
-        <h1 className="gcamp-thanks-h">You're registered!</h1>
-        <p className="gcamp-thanks-p">
-          {applicant.name ? `Thanks, ${applicant.name.split(/\s+/)[0]} — you're` : "You're"} all set for the{' '}
-          <b>Claude AI Generalist Fellowship</b>. Admissions will call you on{' '}
-          <b>{applicant.phone}</b> within 24 hours to walk you through the six
-          weeks and confirm your seat.
-        </p>
-
-        <p className="gcamp-thanks-label">Open to you already</p>
-        <div className="gcamp-thanks-links">
-          <Link className="gcamp-cta" to="/events">Upcoming events</Link>
-          <Link className="gcamp-cta gcamp-cta--light" to="/resources">Resource library</Link>
-        </div>
-
-        <button type="button" className="gcamp-thanks-back" onClick={() => navigate('/')}>
-          Back to Home
-        </button>
-      </div>
-    </div>
-  );
-}
-
-/* The form, in a dialog over the page.
- *
- * Escape and a click on the backdrop close it, and the page behind stays put
- * while it is open. body{overflow:hidden} alone is not enough on this site —
- * Lenis drives scrolling from wheel events and keeps going regardless, so it
- * has to be stopped explicitly, and the panel carries data-lenis-prevent so
- * the wheel still reaches its own scrollbar. */
-function ApplyModal({ onClose, onDone }) {
-  useEffect(() => {
-    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    window.__lenis?.stop();
-    window.addEventListener('keydown', onKey);
-    return () => {
-      window.removeEventListener('keydown', onKey);
-      document.body.style.overflow = prev;
-      window.__lenis?.start();
-    };
-  }, [onClose]);
-
-  return (
-    <div className="gcamp-modal-back" onClick={onClose} role="presentation" data-lenis-prevent>
-      <div
-        className="gcamp-modal"
-        onClick={(e) => e.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Apply for the AI Generalist Fellowship"
-      >
-        <button type="button" className="gcamp-modal-x" onClick={onClose} aria-label="Close">×</button>
-        <ApplyForm onDone={onDone} />
-      </div>
-    </div>
-  );
-}
-
-/* Admissions form → one-time code → thank-you.
- *
- * The code goes by SMS to Indian numbers and by email to everyone else. That
- * split is not a preference: the SMS gateway only delivers to +91, so an
- * international applicant sending themselves an SMS code would wait for one
- * that never arrives. Email reaches all of them, which is why the address is
- * required rather than optional. */
-function ApplyForm({ onDone }) {
-  const toast = useToast();
-  const [form, setForm] = useState({ name: '', email: '', countryCode: '+91', phone: '' });
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState('');
-
-  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
-  const indian = form.countryCode === '+91';
-  const minLen = indian ? 10 : 8;
-
-  const onPhone = (raw) => {
-    const digits = raw.replace(/\D/g, '').slice(0, indian ? 10 : 15);
-    set('phone', digits);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setErr('');
-    if (form.phone.length < minLen) {
-      setErr(`Enter a valid ${indian ? '10-digit ' : ''}phone number.`);
-      return;
-    }
-    setLoading(true);
-    try {
-      const digits = `${form.countryCode}${form.phone}`.replace(/\D/g, '');
-      const otp = indian
-        ? await verifySmsOtp(digits)
-        : await verifyEmailOtp(form.email.trim());
-      await submitLead({
-        name: form.name.trim(),
-        email: form.email.trim(),
-        phone: `${form.countryCode} ${form.phone}`,
-        program: 'Claude AI Generalist',
-        ...otp,
-        source: 'campaign-ai-claude-generalist',
-        cta_label: 'Apply Now',
-        section: 'Campaign apply',
-      });
-      // Hands the page the confirmed details and steps aside — the thank-you
-      // is a page of its own, not a panel inside the dialog that opened it.
-      onDone({ name: form.name.trim(), phone: `${form.countryCode} ${form.phone}` });
-      toast.success("You're verified — our admissions team will call you shortly.");
-    } catch (e2) {
-      setErr(e2?.message || "Couldn't verify that just now. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <>
-      <p className="gcamp-formcard-t">Request a callback</p>
-      <p className="gcamp-formcard-d">Takes under a minute.</p>
-      <form className="gcamp-applyform" onSubmit={handleSubmit}>
-        <input
-          required
-          type="text"
-          aria-label="Full name"
-          placeholder="Full name"
-          autoComplete="name"
-          value={form.name}
-          onChange={(e) => set('name', e.target.value)}
-          disabled={loading}
-        />
-        <input
-          required
-          type="email"
-          aria-label="Email address"
-          placeholder="Email address"
-          autoComplete="email"
-          value={form.email}
-          onChange={(e) => set('email', e.target.value)}
-          disabled={loading}
-        />
-        <div className="gcamp-phonerow">
-          <select
-            className="gcamp-dial"
-            aria-label="Country code"
-            value={form.countryCode}
-            onChange={(e) => { set('countryCode', e.target.value); set('phone', ''); }}
-            disabled={loading}
-          >
-            {COUNTRY_CODES.map(({ code, label }) => (
-              <option key={label} value={code}>{label}</option>
-            ))}
-          </select>
-          <input
-            required
-            type="tel"
-            inputMode="numeric"
-            aria-label="Phone number"
-            placeholder={indian ? '10-digit mobile' : 'Phone number'}
-            autoComplete="tel"
-            value={form.phone}
-            onChange={(e) => onPhone(e.target.value)}
-            disabled={loading}
-          />
-        </div>
-        {/* Said before they submit, not after — someone abroad who expects an
-            SMS will otherwise sit waiting for one that cannot arrive. */}
-        <p className="gcamp-formnote gcamp-formnote--tight">
-          {indian
-            ? "We'll text a one-time code to this number."
-            : "We'll email your one-time code — SMS only works for Indian numbers."}
-        </p>
-        {err && <p className="gcamp-formerr">{err}</p>}
-        <button type="submit" disabled={loading}>
-          {loading ? 'Verifying…' : 'Apply Now'}
-        </button>
-      </form>
-      <p className="gcamp-formnote">
-        We'll only contact you about this fellowship. No spam, ever.
-      </p>
-    </>
-  );
-}
-
 export default function GeneralistCampaign() {
   const heroRef = useRef(null);
   const [showBar, setShowBar] = useState(false);
@@ -641,7 +246,15 @@ export default function GeneralistCampaign() {
 
   const openApply = () => setApplyOpen(true);
 
-  if (applicant) return <ThankYou applicant={applicant} />;
+  if (applicant) {
+    return (
+      <ThankYou
+        applicant={applicant}
+        programTitle="Claude AI Generalist Fellowship"
+        followUp="walk you through the six weeks"
+      />
+    );
+  }
 
   return (
     <div className="gcamp">
@@ -724,9 +337,19 @@ export default function GeneralistCampaign() {
         </div>
       </section>
 
-      <CurriculumRail />
+      <CampaignRail
+        eyebrow="The curriculum"
+        title={<>Six weeks. <em>Six builds.</em></>}
+        cards={WEEKS}
+        label="The 6-week curriculum"
+      />
 
-      <CurriculumDownload />
+      <CampaignDownload
+        program="generalist"
+        resource="Generalist Fellowship Curriculum"
+        source="campaign-ai-claude-generalist"
+        sub="Every week, lesson and build in one PDF — including the domain tracks, tools and certification details."
+      />
 
       <ToolStack sub="Get hands on with every tool in the fellowship — from your first prompt to your first shipped build." />
 
@@ -757,7 +380,16 @@ export default function GeneralistCampaign() {
         </Reveal>
       </section>
 
-      {applyOpen && <ApplyModal onClose={() => setApplyOpen(false)} onDone={setApplicant} />}
+      {applyOpen && (
+        <ApplyModal
+          onClose={() => setApplyOpen(false)}
+          onDone={setApplicant}
+          program="Claude AI Generalist"
+          source="campaign-ai-claude-generalist"
+          label="Apply for the AI Generalist Fellowship"
+          noteProgram="fellowship"
+        />
+      )}
 
       <footer className="gcamp-foot">
         <MenlerWordmark theme="dark" size={20} />

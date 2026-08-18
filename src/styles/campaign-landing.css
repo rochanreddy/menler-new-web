@@ -1,6 +1,8 @@
-/* ── /campaign/ai-claude-generalist — ad landing page (mobile-first) ──
-   Every rule is written for phones first; the single min-width query at the
-   bottom widens things for desktop.
+/* ── Campaign ad landing pages (mobile-first) ──
+   Shared by /campaign/ai-claude-generalist and /campaign/ai-kickstarter, which
+   are the same page with different content. Every rule is written for phones
+   first; the single min-width query at the bottom widens things for desktop.
+   The .gcamp- prefix is the shared campaign-landing prefix, not a per-page one.
 
    Page rhythm: one shared section shell (.gcamp-sec) sets the vertical and
    horizontal padding, and one shared header block (.gcamp-head) sets the
@@ -13,6 +15,17 @@
   --gc-x: 20px;          /* section side gutter */
   --gc-bar: 76px;        /* height reserved for the sticky mobile CTA */
   --gc-nav: 58px;        /* height of the pinned top bar */
+
+  /* Accent tokens. Every colour on these pages goes through them, so a
+     programme can be re-themed by overriding this block alone — see
+     .gcamp--kick below, which carries /kickstarter's amber. */
+  --gc-accent: #534AB7;          /* eyebrows, italics, CTAs */
+  --gc-accent-rgb: 83, 74, 183;  /* same, for translucent fills */
+  --gc-accent-soft: #EEEDFE;     /* pale accent background */
+  --gc-on-dark: #AFA9EC;         /* text and lines over ink */
+  --gc-on-dark-rgb: 175, 169, 236;
+  --gc-border: rgba(175, 169, 236, 0.25);
+
   background: var(--white);
   color: var(--ink);
   min-height: 100vh;
@@ -29,34 +42,34 @@
 .gcamp-sec--ink { background: var(--ink); color: var(--parchment); }
 
 .gcamp-head { margin-bottom: 24px; }
-.gcamp-eyebrow { font-size: 10.5px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--specialist); margin-bottom: 10px; }
-.gcamp-sec--ink .gcamp-eyebrow { color: var(--lavender); }
+.gcamp-eyebrow { font-size: 10.5px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gc-accent); margin-bottom: 10px; }
+.gcamp-sec--ink .gcamp-eyebrow { color: var(--gc-on-dark); }
 .gcamp-h2 { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: clamp(27px, 7.4vw, 38px); line-height: 1.16; color: var(--ink); }
-.gcamp-h2 em { display: block; font-style: italic; color: var(--specialist); }
+.gcamp-h2 em { display: block; font-style: italic; color: var(--gc-accent); }
 .gcamp-sec--ink .gcamp-h2 { color: var(--parchment); }
-.gcamp-sec--ink .gcamp-h2 em { color: var(--lavender); }
+.gcamp-sec--ink .gcamp-h2 em { color: var(--gc-on-dark); }
 .gcamp-sub { font-size: 14.5px; line-height: 1.6; color: var(--text-muted); margin-top: 12px; max-width: 54ch; }
-.gcamp-sec--ink .gcamp-sub { color: var(--lavender); }
+.gcamp-sec--ink .gcamp-sub { color: var(--gc-on-dark); }
 
 /* ── Top bar (the global navbar is hidden on this route) ── */
 /* Pinned to the top of the window. It carries the wordmark and the "admissions
    open" status, which are worth having on screen the whole way down an ad
    landing page rather than only at the very top of it. */
-.gcamp-top { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px var(--gc-x); background: var(--white); border-bottom: 1px solid var(--border); }
-.gcamp-top-tag { display: inline-flex; align-items: center; gap: 7px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--specialist); }
+.gcamp-top { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px var(--gc-x); background: var(--white); border-bottom: 1px solid var(--gc-border); }
+.gcamp-top-tag { display: inline-flex; align-items: center; gap: 7px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gc-accent); }
 .gcamp-top-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--placed); box-shadow: 0 0 0 3px rgba(29, 158, 117, 0.16); }
 
 /* ── Hero ── */
-.gcamp-hero { position: relative; padding: 34px var(--gc-x) 40px; text-align: center; background: radial-gradient(120% 70% at 50% 0%, var(--cloud) 0%, rgba(255, 255, 255, 0) 62%); }
-.gcamp-badge { display: inline-block; font-size: 10.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--specialist); background: rgba(83, 74, 183, 0.09); border: 1px solid rgba(83, 74, 183, 0.22); border-radius: 999px; padding: 6px 14px; margin-bottom: 16px; }
+.gcamp-hero { position: relative; padding: 34px var(--gc-x) 40px; text-align: center; background: radial-gradient(120% 70% at 50% 0%, var(--gc-accent-soft) 0%, rgba(255, 255, 255, 0) 62%); }
+.gcamp-badge { display: inline-block; font-size: 10.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gc-accent); background: rgba(var(--gc-accent-rgb),0.09); border: 1px solid rgba(var(--gc-accent-rgb),0.22); border-radius: 999px; padding: 6px 14px; margin-bottom: 16px; }
 .gcamp-title { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: clamp(30px, 8.6vw, 44px); line-height: 1.12; letter-spacing: -0.01em; margin-bottom: 18px; }
-.gcamp-title em { font-style: italic; color: var(--specialist); }
+.gcamp-title em { font-style: italic; color: var(--gc-accent); }
 
 .gcamp-heroart { display: block; width: 100%; max-width: 430px; height: auto; margin: 0 auto 22px; filter: drop-shadow(0 14px 30px rgba(38, 33, 92, 0.1)); }
 
 /* "Master Claude AI. / Transform your domain." */
 .gcamp-master { font-family: 'DM Serif Display', serif; font-size: clamp(23px, 6.4vw, 30px); line-height: 1.24; margin-bottom: 20px; }
-.gcamp-master em { font-style: italic; color: var(--specialist); }
+.gcamp-master em { font-style: italic; color: var(--gc-accent); }
 /* Second line of the same statement, so it is set like the first — the serif,
    the size and the ink are all inherited. It was a small grey sans line, which
    read as a caption underneath the headline rather than the other half of it. */
@@ -64,14 +77,14 @@
 
 /* Fact pills under the headline */
 .gcamp-facts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 24px; }
-.gcamp-fact { font-size: 12px; font-weight: 600; color: var(--ink); background: var(--white); border: 1px solid var(--border); border-radius: 999px; padding: 7px 13px; }
+.gcamp-fact { font-size: 12px; font-weight: 600; color: var(--ink); background: var(--white); border: 1px solid var(--gc-border); border-radius: 999px; padding: 7px 13px; }
 
 /* ── Buttons ── */
 .gcamp-cta { display: inline-flex; align-items: center; justify-content: center; width: 100%; max-width: 430px; padding: 16px 28px; border: none; border-radius: 999px; background: var(--ink); color: var(--white); font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; text-decoration: none; box-shadow: 0 10px 24px rgba(38, 33, 92, 0.18); transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease; }
-.gcamp-cta:hover { background: var(--specialist); transform: translateY(-1px); box-shadow: 0 14px 28px rgba(83, 74, 183, 0.26); }
+.gcamp-cta:hover { background: var(--gc-accent); transform: translateY(-1px); box-shadow: 0 14px 28px rgba(var(--gc-accent-rgb),0.26); }
 .gcamp-cta:active { transform: translateY(0); }
-.gcamp-cta--light { background: var(--lavender); color: var(--ink); box-shadow: none; }
-.gcamp-cta--light:hover { background: var(--cloud); }
+.gcamp-cta--light { background: var(--gc-on-dark); color: var(--ink); box-shadow: none; }
+.gcamp-cta--light:hover { background: var(--gc-accent-soft); }
 .gcamp-cta-note { margin-top: 12px; font-size: 12px; color: var(--text-muted); }
 
 /* ── Numbers band ── */
@@ -83,7 +96,7 @@
 .gcamp-stats-row { display: flex; gap: 8px; justify-content: space-between; }
 .gcamp-stat { flex: none; white-space: nowrap; }
 .gcamp-stat-n { display: block; font-family: 'DM Serif Display', serif; font-size: clamp(19px, 5.6vw, 34px); line-height: 1; color: var(--parchment); margin-bottom: 7px; }
-.gcamp-stat-l { display: block; font-size: clamp(8.5px, 2.5vw, 12.5px); line-height: 1.35; color: var(--lavender); }
+.gcamp-stat-l { display: block; font-size: clamp(8.5px, 2.5vw, 12.5px); line-height: 1.35; color: var(--gc-on-dark); }
 
 /* ── Accreditation strip — one continuously scrolling row ──
    Four logos in a two-by-two grid took the height of a small section to say
@@ -101,7 +114,7 @@
 /* Two to a row on phones. One-up made six short cards into six screenfuls of
    scrolling for a section whose whole job is to be skimmed. */
 .gcamp-who-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.gcamp-who-card { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; background: var(--white); border: 1px solid rgba(175, 169, 236, 0.22); border-radius: 16px; padding: 16px 14px; box-shadow: 0 6px 18px rgba(38, 33, 92, 0.04); }
+.gcamp-who-card { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; background: var(--white); border: 1px solid rgba(var(--gc-on-dark-rgb),0.22); border-radius: 16px; padding: 16px 14px; box-shadow: 0 6px 18px rgba(38, 33, 92, 0.04); }
 .gcamp-who-num { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; font-size: 14px; font-weight: 700; }
 .gcamp-who-t { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
 .gcamp-who-d { font-size: 12.5px; line-height: 1.45; color: var(--text-muted); }
@@ -127,7 +140,7 @@
    dots is shared above and below the group, which at this size is a few tens of
    pixels rather than the band of empty page it used to be. */
 .gcamp-curric-head { padding: 0 var(--gc-x); margin-bottom: 20px; }
-.gcamp-curric-count { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: var(--specialist); margin-top: 10px; }
+.gcamp-curric-count { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: var(--gc-accent); margin-top: 10px; }
 
 /* Cards keep a common height. Sizing each to its own content leaves the
    shorter weeks — the last one especially, which is the one on screen as you
@@ -146,31 +159,31 @@
    screen allows, and no week fills it, so top-aligning left the shorter weeks
    with a third of a card of empty navy hanging below the last line. */
 .gcamp-wcard-in { position: relative; display: flex; flex-direction: column; justify-content: center; background: var(--ink); border-radius: 20px; padding: 24px 22px; height: 100%; overflow: hidden; }
-.gcamp-wcard-in::after { content: ''; position: absolute; inset: 0; border-radius: 20px; border: 1px solid rgba(175, 169, 236, 0.16); pointer-events: none; }
+.gcamp-wcard-in::after { content: ''; position: absolute; inset: 0; border-radius: 20px; border: 1px solid rgba(var(--gc-on-dark-rgb),0.16); pointer-events: none; }
 .gcamp-wcard-top { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-.gcamp-wcard-n { flex: none; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: var(--ink); background: var(--lavender); border-radius: 8px; padding: 5px 9px; }
-.gcamp-wcard-phase { font-size: 10.5px; font-weight: 600; line-height: 1.3; color: rgba(175, 169, 236, 0.85); }
+.gcamp-wcard-n { flex: none; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: var(--ink); background: var(--gc-on-dark); border-radius: 8px; padding: 5px 9px; }
+.gcamp-wcard-phase { font-size: 10.5px; font-weight: 600; line-height: 1.3; color: rgba(var(--gc-on-dark-rgb),0.85); }
 .gcamp-wcard-t { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: 22px; line-height: 1.22; color: var(--parchment); margin-bottom: 20px; }
 .gcamp-wcard-h { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--white); margin-bottom: 12px; }
-.gcamp-wcard-h::after { content: ''; flex: 1; height: 1px; background: rgba(175, 169, 236, 0.2); }
+.gcamp-wcard-h::after { content: ''; flex: 1; height: 1px; background: rgba(var(--gc-on-dark-rgb),0.2); }
 .gcamp-wcard-list { list-style: none; display: grid; gap: 9px; margin-bottom: 20px; }
-.gcamp-wcard-list li { position: relative; padding-left: 17px; font-size: 12.5px; line-height: 1.45; color: var(--lavender); }
-.gcamp-wcard-list li::before { content: ''; position: absolute; left: 0; top: 7px; width: 5px; height: 5px; border-radius: 50%; background: rgba(175, 169, 236, 0.55); }
+.gcamp-wcard-list li { position: relative; padding-left: 17px; font-size: 12.5px; line-height: 1.45; color: var(--gc-on-dark); }
+.gcamp-wcard-list li::before { content: ''; position: absolute; left: 0; top: 7px; width: 5px; height: 5px; border-radius: 50%; background: rgba(var(--gc-on-dark-rgb),0.55); }
 .gcamp-wcard-list--proj { margin-bottom: 0; }
 .gcamp-wcard-list--proj li { color: var(--parchment); }
 .gcamp-wcard-list--proj li::before { background: var(--placed); }
 
 .gcamp-curric-dots { display: flex; justify-content: center; gap: 7px; margin-top: 20px; }
 .gcamp-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(38, 33, 92, 0.16); transition: background 0.25s ease, width 0.25s ease; }
-.gcamp-dot.is-on { width: 22px; border-radius: 4px; background: var(--specialist); }
+.gcamp-dot.is-on { width: 22px; border-radius: 4px; background: var(--gc-accent); }
 
 /* ── Curriculum download — sits right after the rail ── */
 .gcamp-dl { background: var(--white); padding-top: 6px; }
-.gcamp-dl-card { background: var(--cloud); border: 1px solid rgba(175, 169, 236, 0.4); border-radius: 20px; padding: 26px 22px; }
+.gcamp-dl-card { background: var(--gc-accent-soft); border: 1px solid rgba(var(--gc-on-dark-rgb),0.4); border-radius: 20px; padding: 26px 22px; }
 .gcamp-dl-txt .gcamp-sub { margin-bottom: 20px; }
 .gcamp-dl-form { display: grid; gap: 10px; }
-.gcamp-dl-form input { width: 100%; font-family: inherit; font-size: 14px; padding: 14px 15px; border-radius: 999px; border: 1px solid rgba(83, 74, 183, 0.25); background: var(--white); color: var(--ink); outline: none; transition: border-color 0.15s ease; }
-.gcamp-dl-form input:focus { border-color: var(--specialist); }
+.gcamp-dl-form input { width: 100%; font-family: inherit; font-size: 14px; padding: 14px 15px; border-radius: 999px; border: 1px solid rgba(var(--gc-accent-rgb),0.25); background: var(--white); color: var(--ink); outline: none; transition: border-color 0.15s ease; }
+.gcamp-dl-form input:focus { border-color: var(--gc-accent); }
 .gcamp-dl-form .gcamp-cta { max-width: none; }
 .gcamp-dl-form .gcamp-cta:disabled { opacity: 0.65; cursor: default; transform: none; }
 .gcamp-dl-note { font-size: 11.5px; color: var(--text-muted); text-align: center; }
@@ -236,8 +249,8 @@
 /* Centred card, not a sheet from the bottom edge. `dvh` rather than `vh` so the
    mobile browser's own chrome cannot push the bottom of the dialog off-screen
    the moment the keyboard opens over a field. */
-.gcamp-modal { position: relative; width: 100%; max-width: 384px; max-height: calc(100dvh - 36px); overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; background: var(--ink); color: var(--parchment); border: 1px solid rgba(175, 169, 236, 0.24); border-radius: 20px; padding: 22px 18px 20px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45); animation: gcamp-pop 0.2s cubic-bezier(0.22, 1, 0.36, 1); }
-.gcamp-modal-x { position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border: none; border-radius: 50%; background: rgba(255, 255, 255, 0.08); color: var(--lavender); font-size: 17px; line-height: 1; cursor: pointer; transition: background 0.15s ease, color 0.15s ease; }
+.gcamp-modal { position: relative; width: 100%; max-width: 384px; max-height: calc(100dvh - 36px); overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; background: var(--ink); color: var(--parchment); border: 1px solid rgba(var(--gc-on-dark-rgb),0.24); border-radius: 20px; padding: 22px 18px 20px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45); animation: gcamp-pop 0.2s cubic-bezier(0.22, 1, 0.36, 1); }
+.gcamp-modal-x { position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border: none; border-radius: 50%; background: rgba(255, 255, 255, 0.08); color: var(--gc-on-dark); font-size: 17px; line-height: 1; cursor: pointer; transition: background 0.15s ease, color 0.15s ease; }
 .gcamp-modal-x:hover { background: rgba(255, 255, 255, 0.18); color: var(--parchment); }
 @keyframes gcamp-fade { from { opacity: 0; } }
 @keyframes gcamp-pop { from { transform: scale(0.97); opacity: 0; } }
@@ -248,25 +261,25 @@
 /* Serif title, matching every other heading on the page — the dialog is part
    of the page, not a system prompt bolted onto it. */
 .gcamp-formcard-t { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: 21px; line-height: 1.15; color: var(--parchment); margin-bottom: 4px; padding-right: 28px; }
-.gcamp-formcard-d { font-size: 12.5px; line-height: 1.45; color: rgba(175, 169, 236, 0.85); margin-bottom: 14px; }
+.gcamp-formcard-d { font-size: 12.5px; line-height: 1.45; color: rgba(var(--gc-on-dark-rgb),0.85); margin-bottom: 14px; }
 .gcamp-applyform { display: grid; gap: 8px; }
-.gcamp-applyform input { width: 100%; font-family: inherit; font-size: 14px; padding: 12px 13px; border-radius: 11px; border: 1px solid rgba(175, 169, 236, 0.28); background: rgba(255, 255, 255, 0.055); color: var(--parchment); outline: none; transition: border-color 0.15s ease, background 0.15s ease; }
-.gcamp-applyform input::placeholder { color: rgba(175, 169, 236, 0.7); }
-.gcamp-applyform input:focus { border-color: var(--lavender); background: rgba(255, 255, 255, 0.1); }
-.gcamp-applyform button { margin-top: 4px; padding: 13px; border: none; border-radius: 999px; background: var(--lavender); color: var(--ink); font-family: inherit; font-size: 14.5px; font-weight: 700; cursor: pointer; transition: background 0.15s ease; }
-.gcamp-applyform button:hover { background: var(--cloud); }
+.gcamp-applyform input { width: 100%; font-family: inherit; font-size: 14px; padding: 12px 13px; border-radius: 11px; border: 1px solid rgba(var(--gc-on-dark-rgb),0.28); background: rgba(255, 255, 255, 0.055); color: var(--parchment); outline: none; transition: border-color 0.15s ease, background 0.15s ease; }
+.gcamp-applyform input::placeholder { color: rgba(var(--gc-on-dark-rgb),0.7); }
+.gcamp-applyform input:focus { border-color: var(--gc-on-dark); background: rgba(255, 255, 255, 0.1); }
+.gcamp-applyform button { margin-top: 4px; padding: 13px; border: none; border-radius: 999px; background: var(--gc-on-dark); color: var(--ink); font-family: inherit; font-size: 14.5px; font-weight: 700; cursor: pointer; transition: background 0.15s ease; }
+.gcamp-applyform button:hover { background: var(--gc-accent-soft); }
 .gcamp-applyform button:disabled { opacity: 0.65; cursor: default; }
 /* Dial code beside the number. Wide enough for the longest label in the list —
    "AE +971" — plus the native dropdown arrow. */
 .gcamp-phonerow { display: flex; gap: 8px; }
-.gcamp-phonerow .gcamp-dial { flex: 0 0 100px; width: 100px; font-family: inherit; font-size: 14px; padding: 12px 22px 12px 11px; border-radius: 11px; border: 1px solid rgba(175, 169, 236, 0.28); background: rgba(255, 255, 255, 0.055); color: var(--parchment); outline: none; cursor: pointer; }
+.gcamp-phonerow .gcamp-dial { flex: 0 0 100px; width: 100px; font-family: inherit; font-size: 14px; padding: 12px 22px 12px 11px; border-radius: 11px; border: 1px solid rgba(var(--gc-on-dark-rgb),0.28); background: rgba(255, 255, 255, 0.055); color: var(--parchment); outline: none; cursor: pointer; }
 /* The options render on the OS's own menu, which is light — inheriting the
    card's parchment text would leave them white on white. */
 .gcamp-phonerow .gcamp-dial option { color: #1b1b1b; }
-.gcamp-phonerow .gcamp-dial:focus { border-color: var(--lavender); }
+.gcamp-phonerow .gcamp-dial:focus { border-color: var(--gc-on-dark); }
 .gcamp-phonerow input { flex: 1 1 0; min-width: 0; }
 
-.gcamp-formnote { margin-top: 12px; font-size: 11.5px; line-height: 1.5; color: rgba(175, 169, 236, 0.75); }
+.gcamp-formnote { margin-top: 12px; font-size: 11.5px; line-height: 1.5; color: rgba(var(--gc-on-dark-rgb),0.75); }
 .gcamp-formnote--tight { margin-top: 0; }
 .gcamp-formerr { font-size: 12px; line-height: 1.5; color: #ffb4ab; }
 
@@ -279,7 +292,7 @@
 .gcamp-thanks-h { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: clamp(28px, 8vw, 40px); line-height: 1.14; color: var(--ink); margin-bottom: 12px; }
 .gcamp-thanks-p { font-size: 14.5px; line-height: 1.65; color: var(--text-muted); margin-bottom: 30px; }
 .gcamp-thanks-p b { color: var(--ink); font-weight: 600; }
-.gcamp-thanks-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--specialist); margin-bottom: 12px; }
+.gcamp-thanks-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gc-accent); margin-bottom: 12px; }
 .gcamp-thanks-links { display: grid; gap: 10px; width: 100%; }
 .gcamp-thanks-links .gcamp-cta { width: 100%; max-width: none; font-size: 14.5px; padding: 14px 20px; }
 .gcamp-thanks-back { margin-top: 22px; background: none; border: none; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
@@ -308,20 +321,20 @@
   .gcamp-tick-path { animation: none; stroke-dashoffset: 0; }
 }
 .gcamp-done-t { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--parchment); margin-bottom: 8px; }
-.gcamp-done-d { font-size: 13.5px; line-height: 1.6; color: var(--lavender); margin-bottom: 20px; }
+.gcamp-done-d { font-size: 13.5px; line-height: 1.6; color: var(--gc-on-dark); margin-bottom: 20px; }
 .gcamp-done-d b { color: var(--parchment); font-weight: 600; }
 .gcamp-done-links { display: grid; gap: 10px; }
 .gcamp-done-links .gcamp-cta { width: 100%; max-width: none; font-size: 14px; padding: 13px 20px; }
 
 /* ── Footer ── */
-.gcamp-foot { background: var(--ink); color: var(--lavender); padding: 26px var(--gc-x) calc(var(--gc-bar) + 12px); border-top: 1px solid rgba(175, 169, 236, 0.16); text-align: center; }
+.gcamp-foot { background: var(--ink); color: var(--gc-on-dark); padding: 26px var(--gc-x) calc(var(--gc-bar) + 12px); border-top: 1px solid rgba(var(--gc-on-dark-rgb),0.16); text-align: center; }
 .gcamp-foot-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 18px; margin: 14px 0 12px; }
-.gcamp-foot-links a { font-size: 12px; color: var(--lavender); text-decoration: none; }
+.gcamp-foot-links a { font-size: 12px; color: var(--gc-on-dark); text-decoration: none; }
 .gcamp-foot-links a:hover { color: var(--white); text-decoration: underline; }
-.gcamp-foot-copy { font-size: 11.5px; line-height: 1.6; color: rgba(175, 169, 236, 0.7); }
+.gcamp-foot-copy { font-size: 11.5px; line-height: 1.6; color: rgba(var(--gc-on-dark-rgb),0.7); }
 
 /* ── Sticky mobile CTA — appears once the hero scrolls away ── */
-.gcamp-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; display: flex; align-items: center; gap: 12px; padding: 11px 16px calc(11px + env(safe-area-inset-bottom)); background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(10px); border-top: 1px solid var(--border); transform: translateY(110%); transition: transform 0.28s ease; }
+.gcamp-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; display: flex; align-items: center; gap: 12px; padding: 11px 16px calc(11px + env(safe-area-inset-bottom)); background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(10px); border-top: 1px solid var(--gc-border); transform: translateY(110%); transition: transform 0.28s ease; }
 .gcamp-bar.is-on { transform: none; }
 .gcamp-bar-txt { flex: 1; min-width: 0; text-align: left; }
 .gcamp-bar-t { font-size: 13px; font-weight: 700; color: var(--ink); line-height: 1.2; }
@@ -362,7 +375,7 @@
      layout's space-between left huge gaps at this width. */
   .gcamp-stats { padding: 24px var(--gc-x) 26px; }
   .gcamp-stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; }
-  .gcamp-stat { padding-left: 30px; border-left: 1px solid rgba(175, 169, 236, 0.18); }
+  .gcamp-stat { padding-left: 30px; border-left: 1px solid rgba(var(--gc-on-dark-rgb),0.18); }
   .gcamp-stat:first-child { padding-left: 0; border-left: none; }
   .gcamp-stat-n { font-size: 42px; }
   .gcamp-stat-l { font-size: 13.5px; }
