@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import MenlerWordmark from '../components/common/MenlerWordmark';
 import Reveal from '../components/common/Reveal';
 import AccredSection from '../components/common/AccredSection';
@@ -398,6 +398,66 @@ function CurriculumDownload() {
  * visitor somewhere useful instead of a dead end: upcoming events and the
  * resource library, both open to them while admissions gets in touch.
  */
+/* The confirmation, as its own screen.
+ *
+ * It replaces the landing page rather than sitting inside the dialog that
+ * opened the form, which is how the workshop checkout ends too: the page you
+ * applied from is no longer the page you want, and a panel inside a dialog
+ * leaves the whole advert still sitting behind it. */
+function ThankYou({ applicant }) {
+  const navigate = useNavigate();
+
+  // The page under this one is where the reader had scrolled to. Start at the
+  // top, or the confirmation appears already scrolled past.
+  useEffect(() => {
+    if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true });
+    else window.scrollTo(0, 0);
+  }, []);
+
+  return (
+    <div className="gcamp gcamp-thanks">
+      <Seo title="You're registered | Menler" noindex />
+      <header className="gcamp-top">
+        <MenlerWordmark />
+        <span className="gcamp-top-tag">
+          <span className="gcamp-top-dot" aria-hidden="true" />
+          Admissions open
+        </span>
+      </header>
+
+      <div className="gcamp-thanks-inner">
+        {/* The ring pops, then the check draws itself. An SVG path rather than
+            a "✓" character because a stroke can be drawn; a glyph can only
+            appear. */}
+        <span className="gcamp-done-tick" aria-hidden="true">
+          <svg viewBox="0 0 52 52">
+            <circle className="gcamp-tick-ring" cx="26" cy="26" r="24" />
+            <path className="gcamp-tick-path" d="M15.5 26.5 L23 34 L37 19" />
+          </svg>
+        </span>
+
+        <h1 className="gcamp-thanks-h">You're registered!</h1>
+        <p className="gcamp-thanks-p">
+          {applicant.name ? `Thanks, ${applicant.name.split(/\s+/)[0]} — you're` : "You're"} all set for the{' '}
+          <b>Claude AI Generalist Fellowship</b>. Admissions will call you on{' '}
+          <b>{applicant.phone}</b> within 24 hours to walk you through the six
+          weeks and confirm your seat.
+        </p>
+
+        <p className="gcamp-thanks-label">Open to you already</p>
+        <div className="gcamp-thanks-links">
+          <Link className="gcamp-cta" to="/events">Upcoming events</Link>
+          <Link className="gcamp-cta gcamp-cta--light" to="/resources">Resource library</Link>
+        </div>
+
+        <button type="button" className="gcamp-thanks-back" onClick={() => navigate('/')}>
+          Back to Home
+        </button>
+      </div>
+    </div>
+  );
+}
+
 /* The form, in a dialog over the page.
  *
  * Escape and a click on the backdrop close it, and the page behind stays put
@@ -405,7 +465,7 @@ function CurriculumDownload() {
  * Lenis drives scrolling from wheel events and keeps going regardless, so it
  * has to be stopped explicitly, and the panel carries data-lenis-prevent so
  * the wheel still reaches its own scrollbar. */
-function ApplyModal({ onClose }) {
+function ApplyModal({ onClose, onDone }) {
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
     const prev = document.body.style.overflow;
@@ -429,7 +489,7 @@ function ApplyModal({ onClose }) {
         aria-label="Apply for the AI Generalist Fellowship"
       >
         <button type="button" className="gcamp-modal-x" onClick={onClose} aria-label="Close">×</button>
-        <ApplyForm />
+        <ApplyForm onDone={onDone} />
       </div>
     </div>
   );
@@ -442,12 +502,11 @@ function ApplyModal({ onClose }) {
  * international applicant sending themselves an SMS code would wait for one
  * that never arrives. Email reaches all of them, which is why the address is
  * required rather than optional. */
-function ApplyForm() {
+function ApplyForm({ onDone }) {
   const toast = useToast();
   const [form, setForm] = useState({ name: '', email: '', countryCode: '+91', phone: '' });
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState('');
-  const [done, setDone] = useState(false);
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
   const indian = form.countryCode === '+91';
@@ -481,7 +540,9 @@ function ApplyForm() {
         cta_label: 'Apply Now',
         section: 'Campaign apply',
       });
-      setDone(true);
+      // Hands the page the confirmed details and steps aside — the thank-you
+      // is a page of its own, not a panel inside the dialog that opened it.
+      onDone({ name: form.name.trim(), phone: `${form.countryCode} ${form.phone}` });
       toast.success("You're verified — our admissions team will call you shortly.");
     } catch (e2) {
       setErr(e2?.message || "Couldn't verify that just now. Please try again.");
@@ -489,32 +550,6 @@ function ApplyForm() {
       setLoading(false);
     }
   };
-
-  if (done) {
-    return (
-      <div className="gcamp-done">
-        {/* The ring pops, then the check draws itself. An SVG path rather than
-            a "✓" character because a stroke can be drawn; a glyph can only
-            appear. */}
-        <span className="gcamp-done-tick" aria-hidden="true">
-          <svg viewBox="0 0 52 52">
-            <circle className="gcamp-tick-ring" cx="26" cy="26" r="24" />
-            <path className="gcamp-tick-path" d="M15.5 26.5 L23 34 L37 19" />
-          </svg>
-        </span>
-        <p className="gcamp-done-t">You're registered!</p>
-        <p className="gcamp-done-d">
-          We've got your details. Admissions will call you on{' '}
-          <b>{form.countryCode} {form.phone}</b> shortly — until then, these are
-          already open to you.
-        </p>
-        <div className="gcamp-done-links">
-          <Link className="gcamp-cta gcamp-cta--light" to="/events">Upcoming events</Link>
-          <Link className="gcamp-cta gcamp-cta--light" to="/resources">Resource library</Link>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -588,6 +623,9 @@ export default function GeneralistCampaign() {
   const heroRef = useRef(null);
   const [showBar, setShowBar] = useState(false);
   const [applyOpen, setApplyOpen] = useState(false);
+  // Set once the application is verified; the confirmation screen replaces the
+  // landing page from then on.
+  const [applicant, setApplicant] = useState(null);
 
   // The sticky CTA only appears once the hero (and its own button) is gone.
   useEffect(() => {
@@ -602,6 +640,8 @@ export default function GeneralistCampaign() {
   }, []);
 
   const openApply = () => setApplyOpen(true);
+
+  if (applicant) return <ThankYou applicant={applicant} />;
 
   return (
     <div className="gcamp">
@@ -717,7 +757,7 @@ export default function GeneralistCampaign() {
         </Reveal>
       </section>
 
-      {applyOpen && <ApplyModal onClose={() => setApplyOpen(false)} />}
+      {applyOpen && <ApplyModal onClose={() => setApplyOpen(false)} onDone={setApplicant} />}
 
       <footer className="gcamp-foot">
         <MenlerWordmark theme="dark" size={20} />
