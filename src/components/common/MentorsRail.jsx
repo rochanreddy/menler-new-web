@@ -3,7 +3,7 @@ import { useContent } from '../../lib/useContent';
 import { visibleRaf } from '../../lib/visibleRaf';
 
 // Fallback content — used until Sanity is configured/populated (see useContent).
-const MENTORS = [
+export const MENTORS = [
   { name: 'Anuttam G', role: 'Product Manager', company: 'Flipkart, Ex-BigBasket', img: '/mentors/Anuttam.webp' },
   { name: 'Shashank Kumar', role: 'Technical Operations & Analytics Lead', company: 'Equifax', img: '/mentors/Shashank.webp' },
   { name: 'Abhinay Kumar', role: 'CTO', company: 'Kernel Theory', img: '/mentors/Abhinay.webp' },
@@ -98,12 +98,16 @@ function CaptainRow({ list, dir, tint }) {
   );
 }
 
-export default function MentorsRail({ style, className = '', rows = 2, bare = false, labelStyle = {}, titleStyle = {} } = {}) {
+export default function MentorsRail({ style, className = '', rows = 2, bare = false, labelStyle = {}, titleStyle = {}, mentors: mentorsProp } = {}) {
   // `rows` caps how many scrolling rows render (default: all). `bare` skips the
   // section wrapper + heading so the rail can sit inside another section.
   // A single row has no "above/below" twin to worry about, so show every mentor
   // there; multi-row uses split halves so no face lines up with itself.
-  const mentors = useContent(MENTORS_QUERY, MENTORS);
+  // `mentors` lets a page override the Sanity/fallback roster with its own
+  // fixed list (e.g. the campaign pages, which show a curated subset) without
+  // touching what every other page renders.
+  const contentMentors = useContent(MENTORS_QUERY, MENTORS);
+  const mentors = mentorsProp || contentMentors;
   const half = Math.ceil(mentors.length / 2);
   const shown = rows === 1
     ? [{ list: mentors, dir: 'rtl', tint: 0 }]

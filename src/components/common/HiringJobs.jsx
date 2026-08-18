@@ -59,6 +59,9 @@ export default function HiringJobs({
   engRoles = DEFAULT_ENG_ROLES,
   companies = DEFAULT_COMPANIES,
   partnersLabel = 'Hiring associations · India · 25+ companies',
+  // Some pages already show a hiring-associations logo strip elsewhere and
+  // don't need this section's own copy of it.
+  showPartners = true,
   sectionStyle = {},
   labelStyle = {},
   titleStyle = {},
@@ -75,7 +78,9 @@ export default function HiringJobs({
           <p className="role-card-program">{genLabel}</p>
           <div className="role-list">
             {genRoles.map(r => (
-              <div key={r.name} className="role-row"><p className="role-name">{r.name}</p><p className="role-band">{r.band}</p></div>
+              r.isMore
+                ? <div key={r.name} className="role-row role-row--more"><p className="role-more-n">{r.name}</p><p className="role-band">{r.band}</p></div>
+                : <div key={r.name} className="role-row"><p className="role-name">{r.name}</p><p className="role-band">{r.band}</p></div>
             ))}
           </div>
         </div>
@@ -83,16 +88,20 @@ export default function HiringJobs({
           <p className="role-card-program">{engLabel}</p>
           <div className="role-list">
             {engRoles.map(r => (
-              <div key={r.name} className="role-row"><p className="role-name">{r.name}</p><p className="role-band">{r.band}</p></div>
+              r.isMore
+                ? <div key={r.name} className="role-row role-row--more"><p className="role-more-n">{r.name}</p><p className="role-band">{r.band}</p></div>
+                : <div key={r.name} className="role-row"><p className="role-name">{r.name}</p><p className="role-band">{r.band}</p></div>
             ))}
           </div>
         </div>
       </div>
       <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 18, fontStyle: 'italic', lineHeight: 1.6 }}>Salary bands sourced from fellowship partner intake. Updated quarterly.</p>
-      <div className="partners-strip">
-        <p className="partners-label">{partnersLabel}</p>
-        <HiringRail companies={companies} />
-      </div>
+      {showPartners && (
+        <div className="partners-strip">
+          <p className="partners-label">{partnersLabel}</p>
+          <HiringRail companies={companies} />
+        </div>
+      )}
     </section>
   );
 }

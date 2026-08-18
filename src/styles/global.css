@@ -1138,6 +1138,15 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .role-name { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 2px; }
 .role-band { font-size: 11px; color: var(--text-muted); }
 .role-card.eng-side .role-name { color: var(--forest); }
+/* The "+N more" tile (role.isMore) — sits as the 4th cell of a 3-role list,
+   completing the 2×2 grid instead of trailing off as a caption underneath
+   it. Dashed top border marks it as "not a role" at a glance, same accent
+   colour as its side so it still reads as part of that column. */
+.role-row--more .role-more-n { font-size: 13px; font-weight: 700; }
+.role-card.gen-side .role-row--more { border-top-style: dashed; border-top-color: rgba(83,74,183,0.4); }
+.role-card.eng-side .role-row--more { border-top-style: dashed; border-top-color: rgba(93,202,165,0.4); }
+.role-card.gen-side .role-more-n { color: var(--specialist); }
+.role-card.eng-side .role-more-n { color: var(--forest); }
 /* Mobile: stack the two cards (full width each) and keep roles 2 per row, with
    smaller text so they sit neatly. */
 @media (max-width: 640px) {

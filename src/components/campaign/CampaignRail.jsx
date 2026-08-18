@@ -67,7 +67,7 @@ export default function CampaignRail({ eyebrow, title, cards, label = 'The curri
               <div className="gcamp-wcard-in">
                 <div className="gcamp-wcard-top">
                   <span className="gcamp-wcard-n">{c.n}</span>
-                  <span className="gcamp-wcard-phase">{c.phase}</span>
+                  {c.phase && <span className="gcamp-wcard-phase">{c.phase}</span>}
                 </div>
                 <h3 className="gcamp-wcard-t">{c.t}</h3>
 
