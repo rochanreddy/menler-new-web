@@ -12,6 +12,7 @@ const KickstarterLanding = lazy(() => import('./pages/KickstarterLanding'));
 const Checkout = lazy(() => import('./pages/Checkout'));
 const Generalist = lazy(() => import('./pages/Generalist'));
 const GeneralistCampaign = lazy(() => import('./pages/GeneralistCampaign'));
+const KickstarterCampaign = lazy(() => import('./pages/KickstarterCampaign'));
 const Engineering = lazy(() => import('./pages/Engineering'));
 const Projects = lazy(() => import('./pages/Projects'));
 const Outcomes = lazy(() => import('./pages/Outcomes'));
@@ -92,6 +93,7 @@ export default function App() {
             <Route path="/ai-kickstarter" element={<KickstarterLanding />} />
             {/* Before /campaign/:slug — this page is its own route, not a slug. */}
             <Route path="/campaign/ai-claude-generalist" element={<GeneralistCampaign />} />
+            <Route path="/campaign/ai-kickstarter" element={<KickstarterCampaign />} />
             <Route path="/campaign/:slug" element={<KickstarterLanding />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/generalist" element={<Generalist />} />
