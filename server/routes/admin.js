@@ -13,7 +13,7 @@ import { sendMail, isMailConfigured, verifyMailer } from '../utils/email.js';
 import { cashfreeConfigured, describePayment, findCashfreePayment, getCashfreePayments } from '../utils/cashfree.js';
 import { deliverPackForOrder, deliverLibraryForOrder } from '../utils/packDelivery.js';
 import { zoomConfigured, meetingIdFromLink, pastInstances, latestInstanceUuid, pastMeeting, pastMeetings, meetingParticipants, explainZoomError } from '../utils/zoom.js';
-import { RESOURCE_PACKS } from '../../src/data/resourceCatalog.js';
+import { RESOURCE_PACKS, CLAUDE_PLAYBOOK_PACK } from '../../src/data/resourceCatalog.js';
 import {
   ADMIN_COOKIE_NAME,
   signAdmin,
@@ -866,15 +866,23 @@ router.post('/paid-users/:id/resend-pack', requireAdmin, async (req, res) => {
     if (!order) return res.status(404).json({ error: 'Not found.' });
     if (order.status !== 'PAID') return res.status(400).json({ error: 'That order is not paid.' });
 
-    /* A ₹49 Library order buys one named resource, not the pack. Which one is
-     * read off the order — the admin cannot pick, because picking would mean a
-     * button that hands out any playbook to anyone. If nothing is recorded the
-     * error says so, which is the honest answer for the orders taken before
-     * the choice was stored. */
+    /* A ₹49 Library order buys one named resource, not the pack, and which one
+     * is read off the order — the admin cannot pick, because picking would
+     * mean a button that hands out any playbook to anyone.
+     *
+     * Orders taken before the choice was recorded have nothing to read, and
+     * there is no way to recover it: it only ever existed in the buyer's tab.
+     * Those get every playbook instead. It over-delivers on a ₹49 purchase,
+     * which is the cheaper mistake when the buyer paid and we lost the order
+     * detail. Only legacy orders can reach this — every order created since
+     * records its resource — and it still takes an admin pressing Send. */
     const isLibrary = String(order.program || '').toLowerCase() === 'library';
-    const out = isLibrary
-      ? await deliverLibraryForOrder(order, { force: true })
-      : await deliverPackForOrder(order, { force: true });
+    const libraryUnknown = isLibrary && !order.extra?.pdf;
+    const out = libraryUnknown
+      ? await deliverPackForOrder(order, { force: true, pack: CLAUDE_PLAYBOOK_PACK })
+      : isLibrary
+        ? await deliverLibraryForOrder(order, { force: true })
+        : await deliverPackForOrder(order, { force: true });
     if (!out.sent) return res.status(400).json({ error: out.reason || 'Nothing to send.' });
     res.json({ ok: true, sent: out.sent, to: out.to });
   } catch (err) {

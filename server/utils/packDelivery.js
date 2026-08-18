@@ -73,13 +73,13 @@ export async function deliverLibraryForOrder(order, { force = false } = {}) {
  * Safe to call more than once: an order that already recorded a delivery is
  * skipped, so the webhook firing twice can't send the pack twice.
  */
-export async function deliverPackForOrder(order, { force = false } = {}) {
+export async function deliverPackForOrder(order, { force = false, pack: override = null } = {}) {
   if (!order) return { sent: 0, reason: 'no order' };
   if (!force && order.extra?.resources_sent_at) {
     return { sent: 0, reason: 'already delivered' };
   }
 
-  const pack = RESOURCE_PACKS[String(order.program || '').toLowerCase()];
+  const pack = override || RESOURCE_PACKS[String(order.program || '').toLowerCase()];
   if (!pack) return { sent: 0, reason: 'this programme has no resource pack' };
 
   const to = String(order.customer_email || '').trim();

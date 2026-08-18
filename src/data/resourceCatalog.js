@@ -32,7 +32,7 @@ export const CHECKOUT_CATALOG = [
 // here (display only) in sync with the server amount for that slug.
 // Registration itself stays free; the pack is an optional paid upsell, and its
 // PDFs are only emailed after the payment succeeds.
-const CLAUDE_PLAYBOOK_PACK = {
+export const CLAUDE_PLAYBOOK_PACK = {
   price: 99,
   title: 'Complete Claude Playbook Pack',
   desc: 'All 6 Menler Claude playbooks — delivered straight to your inbox.',
