@@ -145,6 +145,12 @@
 /* Pins below the top bar, not under it — both are sticky to the same window,
    so without the offset the week heading scrolls beneath the wordmark. */
 .gcamp-curric.is-pinned .gcamp-curric-sticky { position: sticky; top: var(--gc-nav); height: calc(100vh - var(--gc-nav)); display: flex; flex-direction: column; justify-content: center; overflow: hidden; padding: 16px 0 calc(var(--gc-bar) - 4px); }
+/* Generalist only: with no section directly under the rail to absorb it, the
+   full-screen sticky's leftover slack (see above) read as a band of dead
+   white space between the dots and the next section. Sizing the sticky to
+   its own content removes that slack; the horizontal pin/scroll math lives on
+   the outer .gcamp-curric wrapper's fixed height, so it is unaffected. */
+.gcamp:not(.gcamp--kick) .gcamp-curric.is-pinned .gcamp-curric-sticky { height: auto; justify-content: flex-start; }
 /* The card is the height of the fullest week and no bigger — it does not grow
    to fill the pinned screen. What is left after the heading, the card and the
    dots is shared above and below the group, which at this size is a few tens of
@@ -165,10 +171,12 @@
 
 /* One card per week */
 .gcamp-wcard { flex: none; min-width: 0; padding: 0 var(--gc-x); }
-/* Content sits in the middle of the card. The card is as tall as the pinned
-   screen allows, and no week fills it, so top-aligning left the shorter weeks
-   with a third of a card of empty navy hanging below the last line. */
-.gcamp-wcard-in { position: relative; display: flex; flex-direction: column; justify-content: center; background: var(--ink); border-radius: 20px; padding: 24px 22px; height: 100%; overflow: hidden; }
+/* Content top-aligns. Centering looked tidy for any one card on its own, but
+   side by side the shorter weeks (fewer lessons) started their "Lesson plan"
+   heading lower than the fuller weeks — every card reading from a different
+   vertical position as the rail moved. Top-aligning keeps that start line
+   fixed; a shorter week just ends with a little more navy below it. */
+.gcamp-wcard-in { position: relative; display: flex; flex-direction: column; justify-content: flex-start; background: var(--ink); border-radius: 20px; padding: 24px 22px; height: 100%; overflow: hidden; }
 .gcamp-wcard-in::after { content: ''; position: absolute; inset: 0; border-radius: 20px; border: 1px solid rgba(var(--gc-on-dark-rgb),0.16); pointer-events: none; }
 .gcamp-wcard-top { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
 .gcamp-wcard-n { flex: none; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: var(--ink); background: var(--gc-on-dark); border-radius: 8px; padding: 5px 9px; }
