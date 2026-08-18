@@ -43,17 +43,10 @@ const GEN_MENTOR_NAMES = ['Nitin K Sethi', 'Sachin Roy', 'Sridevi Edupuganti', '
 const GEN_MENTORS_BY_NAME = { ...Object.fromEntries(MENTORS.map((m) => [m.name, m])), 'Sridevi Edupuganti': SRIDEVI_MENTOR };
 const GEN_MENTORS = GEN_MENTOR_NAMES.map((n) => GEN_MENTORS_BY_NAME[n]);
 
-// Jobs section: both columns stay (AI-Native Roles, Domain Roles), each cut
-// to its top 3 of GEN_HIRING's 6 — but a bare "top 3" reads as the whole
-// list, so the 4th cell of each 3-role grid is a "+3 more" tile instead of a
-// caption underneath. Same shape as a real role (name + line), styled with a
-// dashed rule so it reads as "there's more here", not as a fourth role.
-const genMore = GEN_HIRING.genRoles.length - 3;
-const engMore = GEN_HIRING.engRoles.length - 3;
-const GEN_HIRING_ROLES = {
-  genRoles: [...GEN_HIRING.genRoles.slice(0, 3), { name: `+${genMore} more`, band: 'Across every domain track', isMore: true }],
-  engRoles: [...GEN_HIRING.engRoles.slice(0, 3), { name: `+${engMore} more`, band: 'Across every domain track', isMore: true }],
-};
+// Jobs section: both columns stay (AI-Native Roles, Domain Roles), each
+// collapsed to its top 3 of GEN_HIRING's 6 with a "+3 more" tile filling the
+// grid's last cell — clicking it expands that column in place (HiringJobs'
+// genPreview/engPreview props).
 
 // Hero art: Nitin (left) and Sridevi (right) framing the Claude mark and the
 // fellowship's domain tags — the domains "Transform your domain." refers to.
@@ -448,7 +441,8 @@ export default function GeneralistCampaign() {
 
       <HiringJobs
         {...GEN_HIRING}
-        {...GEN_HIRING_ROLES}
+        genPreview={3}
+        engPreview={3}
         showPartners={false}
       />
 

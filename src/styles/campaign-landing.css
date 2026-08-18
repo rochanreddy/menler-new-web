@@ -90,9 +90,12 @@
    copy, the way the pills below it do. */
 .gcamp-hero-sub { margin: 0 auto 22px; max-width: 50ch; }
 
-/* Fact pills under the headline */
-.gcamp-facts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 24px; }
-.gcamp-fact { font-size: 12px; font-weight: 600; color: var(--ink); background: var(--white); border: 1px solid var(--gc-border); border-radius: 999px; padding: 7px 13px; }
+/* Fact pills under the headline — three in a row, never wrapping. Sized down
+   just enough that "Live online" / "CapStone Project" / "Certification" all
+   fit one line on a narrow phone; padding/gap scale back up at the desktop
+   breakpoint below. */
+.gcamp-facts { display: flex; flex-wrap: nowrap; justify-content: center; gap: 6px; margin-bottom: 24px; }
+.gcamp-fact { flex: 0 1 auto; min-width: 0; font-size: 10.5px; font-weight: 600; color: var(--ink); background: var(--white); border: 1px solid var(--gc-border); border-radius: 999px; padding: 6px 9px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
 
 /* ── Buttons ── */
 .gcamp-cta { display: inline-flex; align-items: center; justify-content: center; width: 100%; max-width: 430px; padding: 16px 28px; border: none; border-radius: 999px; background: var(--ink); color: var(--white); font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; text-decoration: none; box-shadow: 0 10px 24px rgba(38, 33, 92, 0.18); transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease; }
