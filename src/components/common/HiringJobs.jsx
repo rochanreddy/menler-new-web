@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import HiringRail from './HiringRail';
 
 const DEFAULT_GEN_ROLES = [
@@ -46,6 +47,30 @@ const DEFAULT_COMPANIES = [
   { name: 'PhysicsWallah', domain: 'pw.live' },
 ];
 
+// One side's role list. When `preview` is set and shorter than the full
+// list, it starts collapsed to that many roles with a clickable "+N more"
+// tile filling the grid's last cell; clicking it reveals the rest in place
+// (and turns into a "Show fewer" tile so it can be collapsed again).
+function RoleList({ roles, preview }) {
+  const [open, setOpen] = useState(false);
+  const truncated = preview && preview < roles.length;
+  const shown = truncated && !open ? roles.slice(0, preview) : roles;
+  const hiddenCount = roles.length - preview;
+  return (
+    <div className="role-list">
+      {shown.map(r => (
+        <div key={r.name} className="role-row"><p className="role-name">{r.name}</p><p className="role-band">{r.band}</p></div>
+      ))}
+      {truncated && (
+        <button type="button" className="role-row role-row--more" onClick={() => setOpen(o => !o)}>
+          <p className="role-more-n">{open ? 'Show fewer' : `+${hiddenCount} more`}</p>
+          <p className="role-band">{open ? 'Back to the shortlist' : 'Across every domain track'}</p>
+        </button>
+      )}
+    </div>
+  );
+}
+
 // All content is prop-driven (defaults below), so each page can pass its own
 // roles, companies and headings without affecting the others.
 export default function HiringJobs({
@@ -57,6 +82,11 @@ export default function HiringJobs({
   engLabel = 'tech',
   genRoles = DEFAULT_GEN_ROLES,
   engRoles = DEFAULT_ENG_ROLES,
+  // Optional: collapse each side to this many roles with a "+N more" tile
+  // that expands in place on click. Omitted (default) shows every role, same
+  // as before.
+  genPreview,
+  engPreview,
   companies = DEFAULT_COMPANIES,
   partnersLabel = 'Hiring associations · India · 25+ companies',
   // Some pages already show a hiring-associations logo strip elsewhere and
@@ -76,23 +106,11 @@ export default function HiringJobs({
       <div className="jobs-roles">
         <div className="role-card gen-side">
           <p className="role-card-program">{genLabel}</p>
-          <div className="role-list">
-            {genRoles.map(r => (
-              r.isMore
-                ? <div key={r.name} className="role-row role-row--more"><p className="role-more-n">{r.name}</p><p className="role-band">{r.band}</p></div>
-                : <div key={r.name} className="role-row"><p className="role-name">{r.name}</p><p className="role-band">{r.band}</p></div>
-            ))}
-          </div>
+          <RoleList roles={genRoles} preview={genPreview} />
         </div>
         <div className="role-card eng-side">
           <p className="role-card-program">{engLabel}</p>
-          <div className="role-list">
-            {engRoles.map(r => (
-              r.isMore
-                ? <div key={r.name} className="role-row role-row--more"><p className="role-more-n">{r.name}</p><p className="role-band">{r.band}</p></div>
-                : <div key={r.name} className="role-row"><p className="role-name">{r.name}</p><p className="role-band">{r.band}</p></div>
-            ))}
-          </div>
+          <RoleList roles={engRoles} preview={engPreview} />
         </div>
       </div>
       <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 18, fontStyle: 'italic', lineHeight: 1.6 }}>Salary bands sourced from fellowship partner intake. Updated quarterly.</p>
