@@ -3,91 +3,56 @@ import { Link } from 'react-router-dom';
 import MenlerWordmark from '../components/common/MenlerWordmark';
 import Reveal from '../components/common/Reveal';
 import AccredSection from '../components/common/AccredSection';
+import { BrandLogo } from '../components/common/PartnersMarquee';
 import ToolStack from '../components/common/ToolStack';
-import MentorsRail from '../components/common/MentorsRail';
+import MentorsRail, { MENTORS } from '../components/common/MentorsRail';
+import HiringJobs from '../components/common/HiringJobs';
 import HiringRail from '../components/common/HiringRail';
 import { HIRING_COMPANIES } from '../data/hiringCompanies';
 import Seo from '../components/common/Seo';
 import PricingCard from '../components/common/PricingCard';
 import CampaignRail from '../components/campaign/CampaignRail';
-import CampaignDownload from '../components/campaign/CampaignDownload';
 import ApplyModal, { ThankYou } from '../components/campaign/CampaignApply';
+import { getFeaturedMentors } from '../data/featuredMentors';
+import { SOCIAL_LINKS, SUPPORT_EMAIL, SUPPORT_MAIL_HREF } from '../data/socialLinks';
 import '../styles/campaign-landing.css';
 
 // ── /campaign/ai-kickstarter — ad landing page for the Gen AI Kickstarter ──
 // The same page as /campaign/ai-claude-generalist with different content: it
-// shares the stylesheet and the rail / download / apply components, so a fix
-// to one lands on both. Chrome-free, noindex, phone-first.
+// shares the stylesheet and the rail / apply components, so a fix to one
+// lands on both. Chrome-free, noindex, phone-first.
 //
 // Content comes from /kickstarter: the 14-day syllabus, the four modules, the
 // hero numbers, the audiences and the pricing card (shown without a price).
 
-// Hero art — the same composition as the Fellowship's: a mentor either side of
-// the Claude mark, with the programme's own tags stacked down the middle. Here
-// the tags are the Claude OS modules rather than the Fellowship's domains.
-// Swap the two mentors by editing HERO_MENTORS.
-const HERO_MENTORS = [
-  { name: 'Deepak', img: '/mentors/Deepak.webp', x: 14, cx: 65, clip: 'kcamp-ph-l' },
-  { name: 'Sridevi', img: '/mentors/sridevi.png', x: 244, cx: 295, clip: 'kcamp-ph-r' },
-];
-
-const HERO_MODULES = [
-  { t: 'Foundations', w: 84, r: -3, dx: -8 },
-  { t: 'Power Layers', w: 88, r: 2.5, dx: 10 },
-  { t: 'Automation', w: 82, r: -2, dx: -6 },
-  { t: 'Vibe Coding', w: 82, r: 3, dx: 9 },
-  { t: 'Demo Day', w: 74, r: -2.5, dx: 0 },
-];
-
+// Hero art — a real HTML banner (not an SVG card): Deepak's photo bleeding
+// off the edge, a badge, a two-line highlighted headline and his mentor
+// credit, in the same visual grammar as the masterclass banners
+// (see .lp2-banner in global.css) but recoloured to this page's amber
+// accent. This is the ad's hook, so the copy carries the weight — kept to
+// the same "outcome in N days" shape the masterclass banners use.
 function HeroArt() {
   return (
-    <svg
-      className="gcamp-heroart"
-      viewBox="0 0 360 224"
-      role="img"
-      aria-label="Mentors Deepak and Sridevi with Claude OS and the Kickstarter modules: Foundations, Power Layers, Automation, Vibe Coding, Demo Day"
-    >
-      <defs>
-        {HERO_MENTORS.map((m) => (
-          <clipPath id={m.clip} key={m.clip}>
-            <rect x={m.x} y="16" width="102" height="156" rx="16" />
-          </clipPath>
-        ))}
-        <linearGradient id="kcamp-card-bg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#EEEDFE" />
-          <stop offset="1" stopColor="#F8F7FE" />
-        </linearGradient>
-      </defs>
-
-      {/* Card */}
-      <rect x="0" y="0" width="360" height="224" rx="22" fill="url(#kcamp-card-bg)" />
-      <rect x="0.75" y="0.75" width="358.5" height="222.5" rx="21.25" fill="none" stroke="#AFA9EC" strokeOpacity="0.4" strokeWidth="1.5" />
-
-      {/* A mentor either side */}
-      {HERO_MENTORS.map((m) => (
-        <g key={m.name}>
-          <image
-            href={m.img}
-            x={m.x} y="16" width="102" height="156"
-            preserveAspectRatio="xMidYMid slice"
-            clipPath={`url(#${m.clip})`}
-          />
-          <rect x={m.x} y="16" width="102" height="156" rx="16" fill="none" stroke="#AFA9EC" strokeWidth="1.5" />
-          <text x={m.cx} y="196" textAnchor="middle" fontFamily="'DM Sans', sans-serif" fontSize="12" fontWeight="600" fill="#26215C">{m.name}</text>
-          <text x={m.cx} y="210" textAnchor="middle" fontFamily="'DM Sans', sans-serif" fontSize="9.5" fill="#888780">Mentor</text>
-        </g>
-      ))}
-
-      {/* Centre column — Claude mark over the Kickstarter modules */}
-      <image href="/logos/claude.svg" x="164" y="26" width="32" height="32" />
-      <text x="180" y="76" textAnchor="middle" fontFamily="'DM Sans', sans-serif" fontSize="10" fontWeight="700" letterSpacing="1.2" fill="#BA7517">CLAUDE OS</text>
-      {HERO_MODULES.map((m, i) => (
-        <g key={m.t} transform={`translate(${180 + m.dx} ${102 + i * 26}) rotate(${m.r})`}>
-          <rect x={-m.w / 2} y="-11" width={m.w} height="22" rx="11" fill={i % 2 ? '#26215C' : '#ffffff'} stroke="#AFA9EC" strokeOpacity={i % 2 ? 0 : 0.7} strokeWidth="1" />
-          <text x="0" y="3.5" textAnchor="middle" fontFamily="'DM Sans', sans-serif" fontSize="10.5" fontWeight="600" fill={i % 2 ? '#F1EFE8' : '#26215C'}>{m.t}</text>
-        </g>
-      ))}
-    </svg>
+    <div className="kick-hero-banner">
+      <div className="kick-hero-banner-body">
+        <div className="kick-hero-banner-logo"><MenlerWordmark size={16} /></div>
+        <span className="kick-hero-banner-badge">✦⚡ THE 14-DAY AI SPRINT</span>
+        <h2 className="kick-hero-banner-title">
+          <mark>Become AI-Fluent</mark>
+          <mark>In Just 14 Days</mark>
+        </h2>
+        <p className="kick-hero-banner-tag">Two weeks. Real AI advantage.</p>
+        <p className="kick-hero-banner-credit">By <b>Deepak K</b> — AI Operations Lead, Testbook</p>
+        <div className="kick-hero-banner-creds" aria-label="Testbook, MyCaptain, Imarticus">
+          <BrandLogo name="Testbook" domain="testbook.com" />
+          <BrandLogo name="MyCaptain" logo="/logos/mycaptain.jpg" />
+          <BrandLogo name="Imarticus" logo="/logos/imarticus.jpg" />
+        </div>
+      </div>
+      <div className="kick-hero-banner-photo">
+        <img src="/mentors/Deepak.webp" alt="Deepak K" />
+      </div>
+    </div>
   );
 }
 
@@ -106,7 +71,7 @@ const STATS = [
 const PLAN = {
   pill: 'Entry Programme',
   name: 'AI Kickstarter',
-  tagline: '4 live sessions across 2 weekends — build a real Claude OS and ship 4 portfolio projects.',
+  
   features: [
     ['4 live sessions across 2 weekends', 'Sat + Sun · 2 hrs each · Bengaluru or online'],
     ['Claude OS hands-on build', 'Projects, Skills, Connectors, Routines — live'],
@@ -116,15 +81,15 @@ const PLAN = {
     ['AI resource library access', 'Prompt packs, templates, and tool guides'],
   ],
   chips: [
-    { label: 'Duration', value: '2 Weekends' },
-    { label: 'Sessions', value: '4 Live · 8 hrs' },
+    { label: 'Duration', value: '2 Weeks' },
+    { label: 'Sessions', value: '4 · 8 hrs' },
     { label: 'Format', value: 'Live online' },
-    { label: 'Starts', value: 'August 30, 2026' },
+    { label: 'Starts', value: 'Aug 30, 2026' },
   ],
 };
 
 // Hero fact pills.
-const FACTS = ['14 days', '4 live sessions', 'Live online', 'No prerequisites'];
+const FACTS = [  'Live online','Cap Stone Project', 'Certification'];
 
 // "Who this is for" — the five /kickstarter audiences, with the same tints.
 const AUDIENCE = [
@@ -136,10 +101,13 @@ const AUDIENCE = [
 ];
 
 // ── The syllabus — one card per module, lessons verbatim from /kickstarter.
-// Four modules over two weekends: two live sessions each weekend.
+// Four modules over two weekends: two live sessions each weekend. The first
+// module of each weekend carries the weekend badge + name; the second just
+// shows its own module number, so the weekend isn't repeated on every card
+// (same pattern as the Fellowship's phase badges).
 const MODULES = [
   {
-    n: 'Module 1', phase: 'Weekend 1 · Live',
+    n: 'Weekend 1', phase: 'Live sessions',
     t: 'AI Foundations + Claude OS',
     lessons: [
       'The AI Landscape : what you actually need to know',
@@ -150,7 +118,7 @@ const MODULES = [
     projects: ['Build 1 : Personal AI Operating System'],
   },
   {
-    n: 'Module 2', phase: 'Weekend 1 · Live',
+    n: 'Module 2',
     t: 'Claude Power Layers',
     lessons: [
       'Claude Skills : teaching Claude to behave differently',
@@ -162,7 +130,7 @@ const MODULES = [
     projects: ['Build 2 : Study planner agent', 'Build 3 : Content engine'],
   },
   {
-    n: 'Module 3', phase: 'Weekend 2 · Live',
+    n: 'Weekend 2', phase: 'Live sessions',
     t: 'Automation Systems',
     lessons: [
       'Claude Schedules : time-triggered intelligence',
@@ -173,7 +141,7 @@ const MODULES = [
     projects: ['Build 4 : Automation Suite'],
   },
   {
-    n: 'Module 4', phase: 'Weekend 2 · Live',
+    n: 'Module 4',
     t: 'Vibe Coding & Demo Day',
     lessons: [
       'Vibe Coding : build real things without writing code',
@@ -186,7 +154,10 @@ const MODULES = [
 ];
 
 // The tools taught on this programme (from /kickstarter) — a different set to
-// the Fellowship's, so the shared stack takes this list.
+// the Fellowship's, so the shared stack takes this list. Same gap as the
+// Fellowship's list had: 15 tools on a 4-per-row grid leaves the last row
+// three wide. Midjourney fills it — image generation was the one category
+// missing here too, and it already has a logo in /public/logos.
 const KS_TOOLS = [
   { name: 'Claude', logo: '/logos/claude.svg' },
   { name: 'ChatGPT', logo: '/logos/chatgpt.webp' },
@@ -203,7 +174,13 @@ const KS_TOOLS = [
   { name: 'Lovable', logo: '/logos/lovable-logo.webp' },
   { name: 'Emergent', logo: '/logos/emergent.webp' },
   { name: 'Lyzr', logo: '/logos/lyzr.webp' },
+  { name: 'Midjourney', logo: '/logos/midjourney.webp' },
 ];
+
+// One curated row of mentors, not the full roster — see
+// src/data/featuredMentors.js for the shared lineup (also used by the
+// Generalist campaign page).
+const KICK_MENTORS = getFeaturedMentors(MENTORS);
 
 export default function KickstarterCampaign() {
   const heroRef = useRef(null);
@@ -256,9 +233,9 @@ export default function KickstarterCampaign() {
 
       <section className="gcamp-hero" ref={heroRef}>
         <Reveal>
-          <span className="gcamp-badge">Entry programme</span>
+          <span className="gcamp-badge">NO coding required</span>
           <h1 className="gcamp-title">
-            Gen AI <em>Kickstarter</em>
+             AI <em>Kickstarter</em>
           </h1>
         </Reveal>
 
@@ -267,7 +244,11 @@ export default function KickstarterCampaign() {
         <Reveal delay={140}>
           <p className="gcamp-master">
             14 days. <em>4 builds.</em>
-            <span>AI-fluent — no coding required.</span>
+            <span>Your turning point in AI-era .</span>
+          </p>
+
+          <p className="gcamp-sub gcamp-hero-sub">
+            Build real AI fluency in just two weeks — hands-on projects, mentor-led, taught by AI leaders and builders shaping the industry today.
           </p>
 
           <div className="gcamp-facts">
@@ -277,7 +258,7 @@ export default function KickstarterCampaign() {
           <button type="button" className="gcamp-cta" onClick={openApply}>
             Apply Now
           </button>
-          <p className="gcamp-cta-note">Limited seats · Talk to admissions first</p>
+          <p className="gcamp-cta-note">Limited seats · Apply Now</p>
         </Reveal>
       </section>
 
@@ -326,19 +307,24 @@ export default function KickstarterCampaign() {
         label="The Kickstarter syllabus"
       />
 
-      <CampaignDownload
-        program="kickstarter"
-        resource="AI Kickstarter Curriculum"
-        source="campaign-ai-kickstarter"
-        sub="All 14 days, every lesson and build in one PDF — including the tools, the projects and the certificate."
-      />
-
       <ToolStack
         tools={KS_TOOLS}
         sub="Get hands on with every tool in the programme — from your first prompt to your first shipped build."
       />
 
-      <MentorsRail labelStyle={{ color: '#854F0B' }} titleStyle={{ color: '#854F0B' }} />
+      <MentorsRail rows={1} mentors={KICK_MENTORS} labelStyle={{ color: '#854F0B' }} titleStyle={{ color: '#854F0B' }} />
+
+      <HiringJobs
+        label="Internship opportunities"
+        title="The internships"
+        titleEm="AI fluent are landing."
+        genPreview={3}
+        engPreview={3}
+        labelStyle={{ color: '#854F0B' }}
+        titleStyle={{ color: '#854F0B' }}
+        titleEmStyle={{ color: '#BA7517' }}
+        showPartners={false}
+      />
 
       <section className="gcamp-hiring">
         <Reveal className="gcamp-head">
@@ -377,7 +363,29 @@ export default function KickstarterCampaign() {
       )}
 
       <footer className="gcamp-foot">
-        <MenlerWordmark theme="dark" size={20} />
+        <MenlerWordmark theme="dark" size={20} tagline />
+        <p className="gcamp-foot-desc">AI learning, built for the people doing the work.</p>
+        <div className="gcamp-foot-social">
+          {SOCIAL_LINKS.map((s) => (
+            <a
+              key={s.label}
+              className="gcamp-foot-social-link"
+              href={s.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Menler on ${s.label}`}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d={s.path} /></svg>
+            </a>
+          ))}
+        </div>
+        <a className="gcamp-foot-support" href={SUPPORT_MAIL_HREF} target="_blank" rel="noopener noreferrer">
+          <svg className="gcamp-foot-support-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" />
+          </svg>
+          {SUPPORT_EMAIL}
+        </a>
+
         <div className="gcamp-foot-links">
           <Link to="/policy/privacy">Privacy</Link>
           <Link to="/policy/terms">Terms</Link>

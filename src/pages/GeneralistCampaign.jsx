@@ -14,6 +14,7 @@ import CampaignRail from '../components/campaign/CampaignRail';
 import ApplyModal, { ThankYou } from '../components/campaign/CampaignApply';
 import { GEN_HIRING } from '../data/genHiring';
 import { SOCIAL_LINKS, SUPPORT_EMAIL, SUPPORT_MAIL_HREF } from '../data/socialLinks';
+import { getFeaturedMentors } from '../data/featuredMentors';
 import '../styles/campaign-landing.css';
 
 // ── /campaign/ai-claude-generalist — ad landing page for the Generalist ──
@@ -33,15 +34,10 @@ import '../styles/campaign-landing.css';
 // Local to this page only; the shared TECH list (Home, Kickstarter) is untouched.
 const GEN_TOOLS = [...TECH, { name: 'Midjourney', logo: '/logos/midjourney.webp' }];
 
-// This page shows one curated row of mentors, not the full roster — Nitin and
-// Sridevi are pulled out first since they're already the hero's named mentors,
-// then the rest in the requested order. Sridevi isn't in the shared MENTORS
-// list (she's normally only in the hero card), so her entry is added here
-// with the same photo/credit used in the hero.
-const SRIDEVI_MENTOR = { name: 'Sridevi Edupuganti', role: 'Co-Founder', company: 'Zenithworks AI', img: '/mentors/sridevi.png' };
-const GEN_MENTOR_NAMES = ['Nitin K Sethi', 'Sachin Roy', 'Sridevi Edupuganti', 'Deepak K', 'Anuttam G', 'Shashank Kumar', 'Manish Yadav'];
-const GEN_MENTORS_BY_NAME = { ...Object.fromEntries(MENTORS.map((m) => [m.name, m])), 'Sridevi Edupuganti': SRIDEVI_MENTOR };
-const GEN_MENTORS = GEN_MENTOR_NAMES.map((n) => GEN_MENTORS_BY_NAME[n]);
+// This page shows one curated row of mentors, not the full roster — see
+// src/data/featuredMentors.js for the shared lineup (also used by the
+// Kickstarter campaign page).
+const GEN_MENTORS = getFeaturedMentors(MENTORS);
 
 // Jobs section: both columns stay (AI-Native Roles, Domain Roles), each
 // collapsed to its top 3 of GEN_HIRING's 6 with a "+3 more" tile filling the
@@ -383,7 +379,7 @@ export default function GeneralistCampaign() {
           <button type="button" className="gcamp-cta" onClick={openApply}>
             Apply Now
           </button>
-          <p className="gcamp-cta-note">Limited seats · Apply now</p>
+          <p className="gcamp-cta-note">Limited seats · Apply Now</p>
         </Reveal>
       </section>
 

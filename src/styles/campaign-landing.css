@@ -77,6 +77,36 @@
 
 .gcamp-heroart { display: block; width: 100%; max-width: 430px; height: auto; margin: 0 auto 22px; filter: drop-shadow(0 14px 30px rgba(38, 33, 92, 0.1)); }
 
+/* Kickstarter's hero art — a real HTML banner card (Deepak's photo, badge,
+   highlighted headline, mentor credit), not the SVG mentor-pair composition
+   the Fellowship uses. Same visual grammar as the masterclass banner (see
+   .lp2-banner) — wordmark, badge pill, two full-width highlighted headline
+   bars, tagline, credit, credential logos, photo bleeding off the edge —
+   recoloured to the amber accent and sized to fill the hero the way the
+   masterclass banner fills its own page, rather than sitting as a small
+   card off to one side. */
+.kick-hero-banner { position: relative; overflow: hidden; display: flex; min-height: 280px; border-radius: 22px; background: linear-gradient(120deg, var(--gc-accent-soft) 0%, #FFFDF8 100%); border: 1px solid rgba(175,169,236,0.35); box-shadow: 0 14px 30px rgba(38,33,92,0.1); margin: 0 auto 22px; max-width: 100%; }
+.kick-hero-banner-body { position: relative; z-index: 2; padding: 20px 18px 22px; max-width: 64%; display: flex; flex-direction: column; }
+.kick-hero-banner-logo { margin-bottom: 10px; }
+.kick-hero-banner-badge { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; font-size: 10.5px; font-weight: 700; color: var(--gc-accent); background: rgba(255,255,255,0.9); border: 1px solid rgba(var(--gc-accent-rgb),0.22); padding: 7px 13px; border-radius: 999px; }
+/* Each line is its own full block, not just tight-fit text — matching the
+   masterclass banner's chunky highlight bars rather than an inline <mark>. */
+.kick-hero-banner-title { margin: 14px 0 0; font-family: 'DM Sans', sans-serif; font-weight: 800; font-size: clamp(19px, 6.4vw, 26px); line-height: 1.2; letter-spacing: -0.01em; display: flex; flex-direction: column; align-items: flex-start; gap: 7px; }
+.kick-hero-banner-title mark { display: block; width: fit-content; background: var(--gc-accent); color: #fff; padding: 6px 16px; border-radius: 8px; white-space: nowrap; }
+.kick-hero-banner-tag { margin-top: 14px; font-size: 13px; font-weight: 700; color: #6B4A12; }
+.kick-hero-banner-credit { margin-top: auto; padding-top: 16px; font-size: 11.5px; line-height: 1.45; color: var(--ink); }
+.kick-hero-banner-credit b { font-weight: 700; }
+/* Deepak's credentials — Testbook, MyCaptain, Imarticus — via the shared
+   BrandLogo chip (local logo → Clearbit → favicon → text), rescaled down
+   from its default card size to a small inline mark, same idea as, and
+   sized closer to, .lp2-banner-creds. */
+.kick-hero-banner-creds { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-top: 10px; }
+.kick-hero-banner-creds .partner-chip { padding: 0; background: none; border: none; min-width: 0; height: auto; }
+.kick-hero-banner-creds .partner-logo-img { height: 20px; width: auto; max-width: 74px; object-fit: contain; opacity: 0.92; }
+.kick-hero-banner-creds .partner-name { font-size: 9.5px; font-weight: 700; color: var(--ink); }
+.kick-hero-banner-photo { position: absolute; right: 0; bottom: 0; top: 0; width: 38%; z-index: 1; }
+.kick-hero-banner-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 15%; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 24%); mask-image: linear-gradient(90deg, transparent 0%, #000 24%); }
+
 /* "Master Claude AI. / Transform your domain." */
 .gcamp-master { font-family: 'DM Serif Display', serif; font-size: clamp(23px, 6.4vw, 30px); line-height: 1.24; margin-bottom: 20px; }
 .gcamp-master em { font-style: italic; color: var(--gc-accent); }
@@ -142,23 +172,16 @@
    motion / no JS) the track stays a plain swipeable snapping row. */
 .gcamp-curric { background: var(--white); }
 .gcamp-curric-sticky { padding: var(--gc-y) 0; }
-/* The sticky is a full screen tall and its content is shorter, so there is
-   always slack. Centring the whole block put all of it above the heading and
-   below the dots — from the page those read as a gap after the section before
-   and a gap before the section after, which is exactly what they were.
-   Spacing it out instead pins the heading to the top and the dots to the
-   bottom, so the same slack sits around the card and reads as one deliberate
-   full-screen slide. Not `flex: 1` on the track: that stretches the card to
-   fill, and the shorter weeks then show a screen of empty navy. */
 /* Pins below the top bar, not under it — both are sticky to the same window,
-   so without the offset the week heading scrolls beneath the wordmark. */
-.gcamp-curric.is-pinned .gcamp-curric-sticky { position: sticky; top: var(--gc-nav); height: calc(100vh - var(--gc-nav)); display: flex; flex-direction: column; justify-content: center; overflow: hidden; padding: 16px 0 calc(var(--gc-bar) - 4px); }
-/* Generalist only: with no section directly under the rail to absorb it, the
-   full-screen sticky's leftover slack (see above) read as a band of dead
-   white space between the dots and the next section. Sizing the sticky to
-   its own content removes that slack; the horizontal pin/scroll math lives on
-   the outer .gcamp-curric wrapper's fixed height, so it is unaffected. */
-.gcamp:not(.gcamp--kick) .gcamp-curric.is-pinned .gcamp-curric-sticky { height: auto; justify-content: flex-start; }
+   so without the offset the week heading scrolls beneath the wordmark. The
+   sticky sizes to its own content (not a forced 100vh) and top-aligns it:
+   neither campaign page has a section directly under the rail to absorb a
+   fixed-height box's leftover slack any more (both dropped their
+   curriculum-PDF download block), so a forced height read as a band of dead
+   white space between the dots and the next section. The horizontal
+   pin/scroll math lives on the outer .gcamp-curric wrapper's fixed height,
+   so sizing this one to content doesn't affect it. */
+.gcamp-curric.is-pinned .gcamp-curric-sticky { position: sticky; top: var(--gc-nav); display: flex; flex-direction: column; justify-content: flex-start; overflow: hidden; padding: 16px 0 calc(var(--gc-bar) - 4px); }
 /* The card is the height of the fullest week and no bigger — it does not grow
    to fill the pinned screen. What is left after the heading, the card and the
    dots is shared above and below the group, which at this size is a few tens of
@@ -403,6 +426,14 @@
   .gcamp-hero > .reveal:nth-child(3) { grid-column: 1; grid-row: 2; align-self: start; padding-top: 20px; }
   .gcamp-title { margin-bottom: 0; }
   .gcamp-heroart { max-width: 100%; margin-bottom: 0; }
+  .kick-hero-banner { max-width: 100%; min-height: 320px; margin-bottom: 0; }
+  .kick-hero-banner-body { padding: 30px 26px 34px; }
+  .kick-hero-banner-title { font-size: clamp(22px, 2.4vw, 28px); }
+  .kick-hero-banner-tag { font-size: 13.5px; }
+  .kick-hero-banner-credit { font-size: 12px; }
+  .kick-hero-banner-creds { gap: 10px 16px; margin-top: 10px; }
+  .kick-hero-banner-creds .partner-logo-img { height: 26px; max-width: 100px; }
+  .kick-hero-banner-creds .partner-name { font-size: 11px; }
   .gcamp-master { margin-bottom: 22px; }
   .gcamp-hero-sub { margin: 0 0 26px; max-width: 54ch; }
   .gcamp-facts { justify-content: flex-start; gap: 10px; margin-bottom: 26px; }
