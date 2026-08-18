@@ -398,6 +398,8 @@
   .gcamp .accred-section--rail .logorail-track .partner-logo-img[alt="Startup India"] { max-height: 46px; }
 
   .gcamp-who-grid { grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  /* The Kickstarter has five audiences — one row of five rather than 4 + 1. */
+  .gcamp-who-grid--5 { grid-template-columns: repeat(5, 1fr); gap: 14px; }
   .gcamp-who-card { flex-direction: column; gap: 16px; padding: 26px 22px; }
 
   /* Centring is the base rule now; this only opens the card up a little where
