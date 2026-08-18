@@ -13,7 +13,7 @@ import { submitLead } from '../../services/leadService';
  * opened the form, which is how the workshop checkout ends too: the page you
  * applied from is no longer the page you want, and a panel inside a dialog
  * leaves the whole advert still sitting behind it. */
-export function ThankYou({ applicant, programTitle, followUp }) {
+export function ThankYou({ applicant, programTitle, followUp, theme = '' }) {
   const navigate = useNavigate();
 
   // The page under this one is where the reader had scrolled to. Start at the
@@ -24,7 +24,7 @@ export function ThankYou({ applicant, programTitle, followUp }) {
   }, []);
 
   return (
-    <div className="gcamp gcamp-thanks">
+    <div className={`gcamp gcamp-thanks${theme ? ` ${theme}` : ''}`}>
       <Seo title="You're registered | Menler" noindex />
       <header className="gcamp-top">
         <MenlerWordmark />
