@@ -274,9 +274,9 @@ export default function GeneralistCampaign() {
 
       <section className="gcamp-hero" ref={heroRef}>
         <Reveal>
-          <span className="gcamp-badge">Flagship fellowship</span>
+          <span className="gcamp-badge">No Coding required</span>
           <h1 className="gcamp-title">
-            Claude AI <em>Generalist</em> Fellowship
+             AI <em>Generalist</em><br></br>Fellowship
           </h1>
         </Reveal>
 
