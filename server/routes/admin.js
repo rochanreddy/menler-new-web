@@ -616,7 +616,12 @@ router.get('/paid-users', requireAdmin, async (req, res) => {
       const isLibrary = String(r.program || '').toLowerCase() === 'library';
       r.packExpected = hasPack || isLibrary;
       if (hasPack) r.packSent = Boolean(r.extra?.resources_sent_at || lead?.resource);
-      else if (isLibrary) r.packSent = Boolean(r.extra?.delivered_pdf);
+      /* Either marker counts. A Library order normally stamps delivered_pdf,
+       * but one whose resource was never recorded is made good with the whole
+       * pack, and that path stamps resources_sent_at instead. Reading only the
+       * first left a row saying "Not sent" after the email had gone — which is
+       * worse than the dash it replaced, because it invites sending again. */
+      else if (isLibrary) r.packSent = Boolean(r.extra?.delivered_pdf || r.extra?.resources_sent_at);
       else r.packSent = null;
     }
 
