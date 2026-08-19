@@ -251,12 +251,38 @@
    rather than left hanging against one edge — fifteen tools four-up leaves a
    row of three, and in a grid that row would sit off to the left with a hole
    beside it. */
-.gcamp .toolstack-grid { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 7px; }
+/* Tools as a flowing set of pills, not a grid of tiles.
+ *
+ * Sixteen equal boxes in fixed columns read as an app launcher — a wall of
+ * identical rectangles you scan rather than take in. Set as inline pills that
+ * wrap and centre, the block reads as one sentence of tools: each name sits
+ * beside its mark, the lines are ragged rather than ruled, and the whole thing
+ * is shorter for it.
+ *
+ * The animated ring around every chip goes with the tiles. Sixteen conic
+ * gradients rotating forever is a lot of compositing for decoration nobody
+ * looks at, and on a pill it would trace a racetrack. */
+.gcamp .toolstack-grid { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 680px; margin: 0 auto; }
 .gcamp .toolstack-row { display: contents; }
-.gcamp .toolstack-chip { flex: 0 1 calc(25% - 6px); min-width: 72px; width: auto; flex-direction: column; justify-content: center; gap: 5px; padding: 9px 4px; text-align: center; border-radius: 12px; }
-.gcamp .toolstack-chip::before { border-radius: 12px; }
-.gcamp .toolstack-logo { height: 20px; max-width: 24px; padding: 3px; border-radius: 6px; }
-.gcamp .toolstack-name { font-size: 10.5px; line-height: 1.2; }
+.gcamp .toolstack-chip {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 0;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 6px 13px 6px 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(175, 169, 236, 0.2);
+  box-shadow: none;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+.gcamp .toolstack-chip::before { content: none; }
+.gcamp .toolstack-chip:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(175, 169, 236, 0.42); transform: translateY(-1px); }
+.gcamp .toolstack-logo { height: 22px; width: 22px; max-width: none; padding: 3px; border-radius: 999px; object-fit: contain; background: #fff; }
+.gcamp .toolstack-name { font-size: 12.5px; font-weight: 600; line-height: 1; color: var(--parchment); }
 .gcamp .captains-section { padding: var(--gc-y) var(--gc-x); }
 .gcamp .captains-head { margin-bottom: 26px; }
 
@@ -511,12 +537,12 @@
   /* Back to the shared 5/6/5 rows of wide chips. The four-column grid above is
      a phone layout — at this width there is room for the logo and the name on
      one line, which is what the rest of the site shows. */
-  .gcamp .toolstack-grid { display: flex; flex-direction: column; gap: 12px; }
-  .gcamp .toolstack-row { display: flex; flex-wrap: nowrap; gap: 12px; }
-  .gcamp .toolstack-chip { flex: 0 0 172px; flex-direction: row; gap: 10px; padding: 14px 16px; text-align: left; border-radius: 16px; }
-  .gcamp .toolstack-chip::before { border-radius: 16px; }
-  .gcamp .toolstack-logo { height: 26px; max-width: 30px; padding: 5px; border-radius: 8px; }
-  .gcamp .toolstack-name { font-size: 15px; }
+  /* Same pills, a size up. The rows stay ragged rather than snapping back to
+     fixed columns — that shape is the point of the treatment. */
+  .gcamp .toolstack-grid { max-width: 860px; gap: 10px; }
+  .gcamp .toolstack-chip { gap: 9px; padding: 7px 17px 7px 7px; }
+  .gcamp .toolstack-logo { height: 28px; width: 28px; padding: 4px; }
+  .gcamp .toolstack-name { font-size: 14px; }
 
   .gcamp-plan .kp-card { padding: 40px 44px; }
   .gcamp-plan .kp-head { flex-direction: row; gap: 28px; }
