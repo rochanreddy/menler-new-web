@@ -533,11 +533,12 @@
 
   /* Two columns on desktop: the pitch on the left, the art on the right.
      Stacking them centred (the phone layout) left a tall, empty hero. */
-  .gcamp-hero { display: grid; grid-template-columns: 1.05fr 1fr; column-gap: 60px; align-items: center; padding: 64px var(--gc-x) 56px; text-align: left; }
+  .gcamp-hero { display: grid; grid-template-columns: 1.05fr 1fr; grid-template-rows: auto auto; column-gap: 60px; align-items: center; align-content: center; padding: 64px var(--gc-x) 56px; text-align: left; }
   .gcamp-hero > .reveal:nth-child(1) { grid-column: 1; grid-row: 1; align-self: end; }
+  .gcamp-hero > .reveal:nth-child(2) { align-self: center; }
   .gcamp-hero > .reveal:nth-child(2) { grid-column: 2; grid-row: 1 / span 2; }
-  .gcamp-hero > .reveal:nth-child(3) { grid-column: 1; grid-row: 2; align-self: start; padding-top: 20px; }
-  .gcamp-title { margin-bottom: 0; }
+  .gcamp-hero > .reveal:nth-child(3) { grid-column: 1; grid-row: 2; align-self: start; padding-top: 14px; }
+  .gcamp-title { margin-bottom: 0; letter-spacing: -0.015em; }
   .gcamp-heroart { max-width: 100%; margin-bottom: 0; }
   .kick-hero-banner { max-width: 100%; min-height: 320px; margin-bottom: 0; }
   .kick-hero-banner-body { padding: 30px 26px 34px; }
@@ -547,8 +548,9 @@
   .kick-hero-banner-creds { gap: 10px 16px; margin-top: 10px; }
   .kick-hero-banner-creds .partner-logo-img { height: 26px; max-width: 100px; }
   .kick-hero-banner-creds .partner-name { font-size: 11px; }
-  .gcamp-master { margin-bottom: 22px; }
-  .gcamp-hero-sub { margin: 0 0 26px; max-width: 54ch; }
+  .gcamp-master { font-size: 22px; line-height: 1.32; margin-bottom: 20px; }
+  .gcamp-master span { margin-top: 2px; }
+  .gcamp-hero-sub { margin: 0 0 24px; max-width: 46ch; font-size: 15px; line-height: 1.65; }
   .gcamp-facts { justify-content: flex-start; gap: 10px; margin-bottom: 26px; }
   .gcamp-fact { font-size: 13px; padding: 8px 15px; }
   .gcamp-cta { width: auto; min-width: 260px; }
