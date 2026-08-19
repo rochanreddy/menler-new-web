@@ -287,8 +287,11 @@
 .gcamp-hiring { background: var(--parchment); padding: var(--gc-y) var(--gc-x); }
 .gcamp-hiring .partners-strip { margin-top: 0; }
 
-.gcamp-people { background: var(--parchment); padding: var(--gc-y) 0; }
-.gcamp-people .gcamp-head { padding: 0 var(--gc-x); margin-bottom: 16px; }
+/* Tighter than a normal band because it carries three blocks and has to land
+   in one screen. Everything below is spacing, not content — the roles, the
+   faces and the logos are all still here. */
+.gcamp-people { background: var(--parchment); padding: 30px 0 26px; }
+.gcamp-people .gcamp-head { padding: 0 var(--gc-x); margin-bottom: 10px; }
 /* Smaller than a section head elsewhere: this one is the lid on a band that
    has a second heading inside it, and at the page's full h2 size it took two
    lines to say four words. */
@@ -298,8 +301,12 @@
    section chrome comes off: no second background, no second top padding, and
    its heading drops to the size of a sub-head under the one already above.
    The rails keep their bleed to the screen edge; only text is inset. */
-.gcamp-people .jobs-section { background: none; padding: 26px var(--gc-x) 0; }
-.gcamp-people .jobs-section .section-label { margin-bottom: 8px; }
+.gcamp-people .jobs-section { background: none; padding: 18px var(--gc-x) 0; }
+/* The band's own header already reads "Mentors & hiring", and the strip at the
+   foot says "Hiring associations · 25+ companies" — a third label between them
+   was the same words a third time, for the height of a line. Desktop keeps it;
+   there is room there. */
+.gcamp-people .jobs-section .section-label { display: none; }
 .gcamp-people .jobs-section .section-h2 { font-size: clamp(21px, 5.6vw, 26px); line-height: 1.2; }
 /* One line, not two: "The jobs" and its second half read fine side by side at
    this size, and the break was costing a whole line of a band that has to fit. */
@@ -308,10 +315,55 @@
 /* Shorter mentor cards here than on the pages where the rail is the section.
    The faces are still the point and still legible; 300px of card was buying
    background, not recognition. */
-.gcamp-people .captain-card { height: 208px; flex-basis: 250px; width: 250px; }
+.gcamp-people .captain-card { height: 164px; flex-basis: 208px; width: 208px; }
 .gcamp-people .jobs-section .section-sub { font-size: 13.5px; margin-top: 8px; }
-.gcamp-people .jobs-roles { margin-top: 18px; }
-.gcamp-people .partners-strip { margin-top: 22px; padding: 18px 14px; }
+/* Both role cards on one row, phones included. Stacked they cost 316px of a
+   band that has to fit a screen — and a real phone browser shows about 745px
+   of an 844px viewport once its own chrome is up, so "fits" has to mean fits
+   with room, not by five pixels. */
+.gcamp-people .jobs-roles { margin-top: 12px; grid-template-columns: 1fr 1fr; gap: 8px; }
+.gcamp-people .role-card { padding: 12px 10px; }
+.gcamp-people .role-name { font-size: 12.5px; }
+.gcamp-people .role-band { font-size: 10.5px; line-height: 1.35; }
+.gcamp-people .role-card-program { font-size: 9px; letter-spacing: 0.08em; }
+/* One role per line inside each card. With the two cards side by side, the
+   card's own two-column list made four narrow columns across the screen and
+   broke "AI Specialist" over two lines. Stacked, each name gets the full card
+   width and sits on one. */
+.gcamp-people .role-list { grid-template-columns: 1fr; gap: 0; }
+.gcamp-people .role-row:nth-child(2) { border-top: 0.5px solid rgba(var(--gc-on-dark-rgb), 0.18); padding-top: 10px; }
+.gcamp-people .role-row:first-child { border-top: none; padding-top: 0; }
+/* The provenance line stays — it is what makes the salary numbers credible —
+   but at one line rather than two, and closer to the bands it explains. */
+.gcamp-people .jobs-section > p:last-of-type { font-size: 10px !important; margin-top: 10px !important; }
+.gcamp-people .partners-strip { margin-top: 14px; padding: 14px 12px; }
+
+/* Short screens — an iPhone SE is 667px tall, an older Android 640px, and the
+   band as sized above needs about 740px. Rather than shrink it for everyone to
+   suit the shortest phone, this trims only where the screen is actually short.
+   Keyed on height, not width: a 375px-wide phone with a tall screen does not
+   need it. */
+@media (max-height: 720px) {
+  .gcamp-people { padding: 20px 0 18px; }
+  .gcamp-people .gcamp-head { margin-bottom: 8px; }
+  .gcamp-people .gcamp-h2 { font-size: 21px; }
+  .gcamp-people .gcamp-sub { font-size: 12.5px; margin-top: 5px; }
+  .gcamp-people .captain-card { height: 104px; flex-basis: 132px; width: 132px; }
+  .gcamp-people .jobs-section { padding-top: 12px; }
+  .gcamp-people .jobs-section .section-h2 { font-size: 19px; }
+  .gcamp-people .jobs-roles { margin-top: 8px; }
+  .gcamp-people .role-card { padding: 9px 8px; }
+  .gcamp-people .role-name { font-size: 11.5px; }
+  .gcamp-people .role-band { font-size: 9.5px; }
+  /* The provenance note goes only on the shortest screens, where the choice is
+     between it and the logos. The salary figures still carry it everywhere a
+     phone has room. */
+  .gcamp-people .jobs-section > p:last-of-type { display: none; }
+  .gcamp-people .partners-strip { margin-top: 10px; padding: 10px 10px; }
+  .gcamp-people .partners-label { margin-bottom: 8px; font-size: 9px; }
+  .gcamp-people .partners-strip .logorail-track .partner-chip { height: 44px; min-width: 68px; }
+  .gcamp-people .partners-strip .logorail-track .partner-logo-img { height: 18px; max-width: 52px; }
+}
 /* Four logos across a phone rather than two and a sliver. The rail still
    scrolls — this only sizes the chips so a whole row's worth is legible at
    once instead of the fourth being cut off mid-mark. */
@@ -599,6 +651,8 @@
   .gcamp .toolstack-chip::before { border-radius: 16px; }
   .gcamp .toolstack-logo { height: 26px; width: auto; max-width: 30px; padding: 5px; border-radius: 8px; }
   .gcamp .toolstack-name { font-size: 15px; overflow: visible; }
+
+  .gcamp-people .jobs-section .section-label { display: block; }
 
   .gcamp-plan .kp-card { padding: 40px 44px; }
   .gcamp-plan .kp-head { flex-direction: row; gap: 28px; }
