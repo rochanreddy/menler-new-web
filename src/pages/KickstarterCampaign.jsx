@@ -392,7 +392,7 @@ export default function KickstarterCampaign() {
           <Link to="/policy/refund">Refunds</Link>
         </div>
         <p className="gcamp-foot-copy">
-          © {new Date().getFullYear()} Menler · An initiative by Meridian Edutech
+          © {new Date().getFullYear()} Menler Learning Systems pvt ltd
         </p>
       </footer>
 

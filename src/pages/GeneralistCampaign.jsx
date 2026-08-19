@@ -177,8 +177,8 @@ const STATS = [
   { n: '90%', l1: 'Interview', l2: 'Pipeline Target' },
   { n: '25+', l1: 'Hiring', l2: 'Associations' },
   { n: '20+', l1: 'AI Builders', l2: '& Operators' },
-  { n: '6', l1: 'Weeks Intensive', l2: 'Fellowship' },
   { n: '6+', l1: 'Domain', l2: 'Tracks' },
+  { n: '6', l1: 'Weeks Intensive', l2: 'Fellowship' },
 ];
 
 // Plan card — the /generalist pricing card, restated for the 6-week cohort and
@@ -531,7 +531,7 @@ export default function GeneralistCampaign() {
           <Link to="/policy/refund">Refunds</Link>
         </div>
         <p className="gcamp-foot-copy">
-          © {new Date().getFullYear()} Menler · An initiative by Meridian Edutech
+          © {new Date().getFullYear()} Menler Learning Systems pvt ltd
         </p>
       </footer>
 

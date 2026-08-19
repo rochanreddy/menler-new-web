@@ -588,7 +588,10 @@
   .gcamp-wcard-in { max-width: 1120px; margin: 0 auto; padding: 38px 42px; }
   .gcamp-wcard-t { font-size: 30px; margin-bottom: 24px; }
   /* Two columns of lessons so the wide card reads as a plan, not a long list */
-  .gcamp-wcard-list { grid-template-columns: 1fr 1fr; gap: 12px 34px; }
+  /* One column. Two made each lesson a short line with a long gap beside it,
+     and the eye had to go down the left, back up, and down the right to read
+     six bullets — the card is wide, the list is not. */
+  .gcamp-wcard-list { grid-template-columns: 1fr; gap: 10px; }
   .gcamp-wcard-list li { font-size: 14px; padding-left: 20px; }
 
   .gcamp-dl-card { display: flex; align-items: center; justify-content: space-between; gap: 48px; padding: 36px 40px; }
