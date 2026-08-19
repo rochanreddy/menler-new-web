@@ -314,8 +314,8 @@
 .gcamp-hiring { background: var(--parchment); padding: var(--gc-y) var(--gc-x); }
 .gcamp-hiring .partners-strip { margin-top: 0; }
 
-.gcamp-people { background: var(--parchment); padding: var(--gc-y) 0; }
-.gcamp-people .gcamp-head { padding: 0 var(--gc-x); margin-bottom: 16px; }
+.gcamp-people { background: var(--parchment); padding: var(--gc-y) var(--gc-x); }
+.gcamp-people .gcamp-head { padding: 0; margin-bottom: 16px; }
 /* Smaller than a section head elsewhere: this one is the lid on a band that
    has a second heading inside it, and at the page's full h2 size it took two
    lines to say four words. */
@@ -325,7 +325,10 @@
    section chrome comes off: no second background, no second top padding, and
    its heading drops to the size of a sub-head under the one already above.
    The rails keep their bleed to the screen edge; only text is inset. */
-.gcamp-people .jobs-section { background: none; padding: 26px var(--gc-x) 0; }
+.gcamp-people .jobs-section { background: none; padding: 26px 0 0; }
+/* .captains-rail bleeds to the screen by design where the rail is the whole
+   section; inside this band the column edge is the point. */
+.gcamp-people .captains-rail { margin: 0; padding: 0; border-radius: 14px; }
 .gcamp-people .jobs-section .section-label { margin-bottom: 8px; }
 .gcamp-people .jobs-section .section-h2 { font-size: clamp(21px, 5.6vw, 26px); line-height: 1.2; }
 /* One line, not two: "The jobs" and its second half read fine side by side at
@@ -356,7 +359,9 @@
    border instead: the same travelling arc the tool chips carry, driven by the
    same --ts-angle and ts-rotate, so the two lit things on the page are lit one
    way. Scoped here; /generalist and /kickstarter keep the halo. */
-.gcamp-plan .kp-card { padding: 26px 22px; box-shadow: 0 24px 60px -28px rgba(38, 33, 92, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06); }
+/* The shared card caps at 1040px, which left it 40px narrower each side than
+   every other band on this page. It takes the column here. */
+.gcamp-plan .kp-card { max-width: 100%; padding: 26px 22px; box-shadow: 0 24px 60px -28px rgba(38, 33, 92, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06); }
 .gcamp-plan .kp-card::before { content: none; }
 .gcamp-plan .kp-card::after {
   padding: 1.5px;
