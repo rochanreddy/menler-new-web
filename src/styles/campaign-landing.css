@@ -268,11 +268,6 @@
    the longest name clears a 360px phone and is cut off on a 320px one. */
 .gcamp .toolstack-name { font-size: clamp(9px, 2.7vw, 10.5px); line-height: 1.2; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
 
-/* Below 900px the chip is 87px wide, and the rotating ring around it is a
-   1.5px racetrack nobody can read — sixteen of them compositing forever for
-   an effect that only lands at desktop size. Kept there, dropped here. */
-.gcamp .toolstack-chip::before { animation: none; opacity: 0.5; }
-
 /* The tools themselves are otherwise NOT restyled — the chip's fill, border,
    radius and glow come straight from .toolstack-* in global.css, so
    these pages show the same stack as the home page. Only the section's padding
@@ -532,9 +527,7 @@
   .gcamp .toolstack-grid { display: flex; flex-direction: column; gap: 12px; }
   .gcamp .toolstack-row { display: flex; flex-wrap: nowrap; gap: 12px; }
   .gcamp .toolstack-chip { flex: 0 0 172px; flex-direction: row; justify-content: center; gap: 10px; padding: 14px 16px; text-align: left; border-radius: 16px; }
-  /* The ring runs again at this size, where it is a border on a 172px card
-     rather than a hairline round an 87px one. */
-  .gcamp .toolstack-chip::before { border-radius: 16px; animation: ts-rotate 4s linear infinite; opacity: 1; }
+  .gcamp .toolstack-chip::before { border-radius: 16px; }
   .gcamp .toolstack-logo { height: 26px; width: auto; max-width: 30px; padding: 5px; border-radius: 8px; }
   .gcamp .toolstack-name { font-size: 15px; overflow: visible; }
 
