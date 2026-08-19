@@ -10,6 +10,8 @@ import HiringRail from '../components/common/HiringRail';
 import { HIRING_COMPANIES } from '../data/hiringCompanies';
 import Seo from '../components/common/Seo';
 import PricingCard from '../components/common/PricingCard';
+import FaqList from '../components/common/FaqList';
+import { GENERALIST_FAQS } from '../data/faqData';
 import CampaignRail from '../components/campaign/CampaignRail';
 import ApplyModal, { ThankYou } from '../components/campaign/CampaignApply';
 import { GEN_HIRING } from '../data/genHiring';
@@ -203,7 +205,7 @@ const PLAN = {
 };
 
 // Hero fact pills.
-const FACTS = [ 'Live online', 'CapStone Project', 'Certification'];
+const FACTS = ['Live online', 'Mentor-led', 'Capstone Project', 'Certification'];
 
 /* The offer, written once. It sits beside every Apply button — the hero, the
    plan card and the sticky bar — and a figure repeated in three places is a
@@ -370,7 +372,7 @@ export default function GeneralistCampaign() {
         <Reveal delay={140}>
           <p className="gcamp-master">
             India’s First-Ever
-            <span> <em>Claude AI.</em>Fellowship</span>
+            <span> <em>Claude AI</em> Fellowship</span>
           </p>
 
           <p className="gcamp-sub gcamp-hero-sub">
@@ -386,7 +388,7 @@ export default function GeneralistCampaign() {
           </button>
           <p className="gcamp-cta-note">
             <span className="gcamp-schol">{SCHOLARSHIP}</span>
-            Limited seats · Apply Now
+            Limited seats
           </p>
         </Reveal>
       </section>
@@ -441,7 +443,21 @@ export default function GeneralistCampaign() {
         sub="Get hands on with every tool in the fellowship — from your first prompt to your first shipped build."
       />
 
-      <MentorsRail rows={1} mentors={GEN_MENTORS} />
+      {/* Who teaches it and who hires from it, in one screen. They answer the
+          same question — is this worth my time — and split across two bands
+          the reader had to scroll past one to reach the other. */}
+      <section className="gcamp-people">
+        <Reveal className="gcamp-head">
+          <p className="gcamp-eyebrow">Mentors &amp; hiring</p>
+          <h2 className="gcamp-h2">The People Behind Menler</h2>
+          <p className="gcamp-sub">Industry leaders who teach it — and the teams that hire from it.</p>
+        </Reveal>
+        <MentorsRail bare rows={1} mentors={GEN_MENTORS} />
+        <div className="gcamp-people-hiring">
+          <p className="partners-label">Hiring associations · 25+ companies</p>
+          <HiringRail companies={HIRING_COMPANIES} rows={2} />
+        </div>
+      </section>
 
       <HiringJobs
         {...GEN_HIRING}
@@ -450,21 +466,6 @@ export default function GeneralistCampaign() {
         showPartners={false}
       />
 
-      <section className="gcamp-hiring">
-        <Reveal className="gcamp-head">
-          <p className="gcamp-eyebrow">Where our fellows land</p>
-          <h2 className="gcamp-h2">Hiring associations.</h2>
-          <p className="gcamp-sub">
-            Founder's offices, VC-backed startups, agencies and AI-native teams
-            actively hiring people who can operate with AI.
-          </p>
-        </Reveal>
-        <div className="partners-strip">
-          <p className="partners-label">Hiring associations · 25+ companies</p>
-          <HiringRail companies={HIRING_COMPANIES} rows={2} />
-        </div>
-      </section>
-
       <section className="gcamp-sec gcamp-plan">
         <Reveal className="gcamp-head">
           <p className="gcamp-eyebrow">What's included</p>
@@ -472,6 +473,18 @@ export default function GeneralistCampaign() {
         </Reveal>
         <Reveal delay={80}>
           <PricingCard {...PLAN} ctaLabel="Apply Now" ctaNote={SCHOLARSHIP} onCta={openApply} />
+        </Reveal>
+      </section>
+
+      {/* The questions that stop someone applying, answered where they stop —
+          right after the price card, not below the footer. */}
+      <section className="gcamp-sec gcamp-faq">
+        <Reveal className="gcamp-head">
+          <p className="gcamp-eyebrow">Before you apply</p>
+          <h2 className="gcamp-h2">Questions, <em>answered.</em></h2>
+        </Reveal>
+        <Reveal delay={80}>
+          <FaqList items={GENERALIST_FAQS} />
         </Reveal>
       </section>
 

@@ -124,8 +124,11 @@
    just enough that "Live online" / "CapStone Project" / "Certification" all
    fit one line on a narrow phone; padding/gap scale back up at the desktop
    breakpoint below. */
-.gcamp-facts { display: flex; flex-wrap: nowrap; justify-content: center; gap: 6px; margin-bottom: 24px; }
-.gcamp-fact { flex: 0 1 auto; min-width: 0; font-size: 10.5px; font-weight: 600; color: var(--ink); background: var(--white); border: 1px solid var(--gc-border); border-radius: 999px; padding: 6px 9px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+/* Four pills wrap rather than share one line. Forced onto a single row they
+   were ellipsised to "Live onli…" and "Capstone Proj…" — a pill that cannot
+   be read is worse than a second row. */
+.gcamp-facts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 24px; }
+.gcamp-fact { flex: 0 0 auto; font-size: 11.5px; font-weight: 600; color: var(--ink); background: var(--white); border: 1px solid var(--gc-border); border-radius: 999px; padding: 7px 12px; white-space: nowrap; }
 
 /* ── Buttons ── */
 .gcamp-cta { display: inline-flex; align-items: center; justify-content: center; width: 100%; max-width: 430px; padding: 16px 28px; border: none; border-radius: 999px; background: var(--ink); color: var(--white); font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; text-decoration: none; box-shadow: 0 10px 24px rgba(38, 33, 92, 0.18); transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease; }
@@ -275,8 +278,22 @@
 .gcamp .captains-section { padding: var(--gc-y) var(--gc-x); }
 .gcamp .captains-head { margin-bottom: 26px; }
 
+/* ── Mentors + hiring associations, one band ──
+   Two sections that answered the same question — is this worth my time — and
+   made the reader scroll past one to reach the other. The mentor rail keeps
+   its own bleed to the screen edge, so only the label under it is inset. */
+/* Still used by the Kickstarter campaign, which keeps hiring as its own band. */
 .gcamp-hiring { background: var(--parchment); padding: var(--gc-y) var(--gc-x); }
 .gcamp-hiring .partners-strip { margin-top: 0; }
+
+.gcamp-people { background: var(--parchment); padding: var(--gc-y) 0; }
+.gcamp-people .gcamp-head { padding: 0 var(--gc-x); margin-bottom: 20px; }
+.gcamp-people-hiring { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--gc-border); }
+.gcamp-people-hiring .partners-label { padding: 0 var(--gc-x); margin-bottom: 12px; }
+
+/* ── FAQs, straight after the plan card ── */
+.gcamp-faq { background: var(--white); }
+.gcamp-faq .faq-list { max-width: 760px; margin: 0 auto; }
 
 /* ── Plan card (shared PricingCard, no price on this page) ── */
 .gcamp-plan { background: var(--white); }
@@ -327,6 +344,13 @@
 .gcamp-formcard-t { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: 21px; line-height: 1.15; color: var(--parchment); margin-bottom: 4px; padding-right: 28px; }
 .gcamp-formcard-d { font-size: 12.5px; line-height: 1.45; color: rgba(var(--gc-on-dark-rgb),0.85); margin-bottom: 14px; }
 .gcamp-applyform { display: grid; gap: 8px; }
+/* The background question's controls are plain selects and an input with no
+   class of their own, so they are styled here rather than by BackgroundField —
+   which is what lets the same field sit on a light form elsewhere. */
+.gcamp-applyform select { width: 100%; font-family: inherit; font-size: 14px; padding: 12px 30px 12px 13px; border-radius: 11px; border: 1px solid rgba(var(--gc-on-dark-rgb),0.28); background: rgba(255, 255, 255, 0.055); color: var(--parchment); outline: none; cursor: pointer; transition: border-color 0.15s ease, background 0.15s ease; }
+.gcamp-applyform select:focus { border-color: var(--gc-on-dark); background: rgba(255, 255, 255, 0.1); }
+/* The list renders on the OS's own light menu — parchment on white is invisible. */
+.gcamp-applyform select option { color: #1b1b1b; }
 .gcamp-applyform input { width: 100%; font-family: inherit; font-size: 14px; padding: 12px 13px; border-radius: 11px; border: 1px solid rgba(var(--gc-on-dark-rgb),0.28); background: rgba(255, 255, 255, 0.055); color: var(--parchment); outline: none; transition: border-color 0.15s ease, background 0.15s ease; }
 .gcamp-applyform input::placeholder { color: rgba(var(--gc-on-dark-rgb),0.7); }
 .gcamp-applyform input:focus { border-color: var(--gc-on-dark); background: rgba(255, 255, 255, 0.1); }

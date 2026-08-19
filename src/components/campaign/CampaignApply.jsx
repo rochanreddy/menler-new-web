@@ -6,6 +6,7 @@ import { useToast } from '../common/Toast';
 import { verifySmsOtp, verifyEmailOtp } from '../../lib/amplifeedOtp';
 import { COUNTRY_CODES } from '../../data/countryCodes';
 import { submitLead } from '../../services/leadService';
+import BackgroundField from '../forms/BackgroundField';
 
 /* The confirmation, as its own screen.
  *
@@ -76,7 +77,7 @@ export function ThankYou({ applicant, programTitle, followUp, theme = '' }) {
  * required rather than optional. */
 function ApplyForm({ onDone, program, source, noteProgram }) {
   const toast = useToast();
-  const [form, setForm] = useState({ name: '', email: '', countryCode: '+91', phone: '' });
+  const [form, setForm] = useState({ name: '', email: '', countryCode: '+91', phone: '', background: '' });
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState('');
 
@@ -106,6 +107,7 @@ function ApplyForm({ onDone, program, source, noteProgram }) {
         name: form.name.trim(),
         email: form.email.trim(),
         phone: `${form.countryCode} ${form.phone}`,
+        background: form.background,
         program,
         ...otp,
         source,
@@ -172,6 +174,14 @@ function ApplyForm({ onDone, program, source, noteProgram }) {
             disabled={loading}
           />
         </div>
+        {/* Who they are, asked the same two-step way as every other form on
+            the site so admissions reads one vocabulary, not a per-page one. */}
+        <BackgroundField
+          label="Your background"
+          mutedColor="rgba(175, 169, 236, 0.7)"
+          disabled={loading}
+          onChange={(v) => set('background', v)}
+        />
         {/* Said before they submit, not after — someone abroad who expects an
             SMS will otherwise sit waiting for one that cannot arrive. */}
         <p className="gcamp-formnote gcamp-formnote--tight">
