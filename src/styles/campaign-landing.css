@@ -251,38 +251,73 @@
    rather than left hanging against one edge — fifteen tools four-up leaves a
    row of three, and in a grid that row would sit off to the left with a hole
    beside it. */
-/* Tools as a flowing set of pills, not a grid of tiles.
+/* Tools as a dense index, not tiles and not floating pills.
  *
- * Sixteen equal boxes in fixed columns read as an app launcher — a wall of
- * identical rectangles you scan rather than take in. Set as inline pills that
- * wrap and centre, the block reads as one sentence of tools: each name sits
- * beside its mark, the lines are ragged rather than ruled, and the whole thing
- * is shorter for it.
+ * The tiles were a wall of identical rectangles with each name pushed onto its
+ * own line under its mark. Wrapping pills fixed the reading but wasted the
+ * sides: centred ragged rows leave a different margin on every line and only
+ * two or three tools fit on each.
  *
- * The animated ring around every chip goes with the tiles. Sixteen conic
+ * A fixed grid uses the whole width — every row is full, every column the same,
+ * nothing floats. The chrome comes off each cell and goes onto the block as
+ * hairline rules, so what is left is the mark, the name, and the space they
+ * need. Sixteen tools cost six rows on a phone instead of six ragged lines,
+ * and about half the height they did as tiles.
+ *
+ * The animated ring around every chip goes with the tiles: sixteen conic
  * gradients rotating forever is a lot of compositing for decoration nobody
- * looks at, and on a pill it would trace a racetrack. */
-.gcamp .toolstack-grid { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 680px; margin: 0 auto; }
+ * looks at. */
+/* Four across, name under the mark.
+ *
+ * Beside the mark, a cell needs 120px for the longest name ("NotebookLM" is
+ * 71px, plus 49px of mark, gap and padding), so a 350px phone fits two columns
+ * and sixteen tools cost eight rows — the tallest arrangement of the lot.
+ * Under the mark the name gets the whole cell width, which is what buys four
+ * columns and four rows. Four also divides sixteen exactly; three left a last
+ * row holding a single tool.
+ *
+ * What changes from the tiles this started as is the chrome, not the shape:
+ * no card per tool, no shadow, no rotating ring — one bordered block with
+ * hairlines between the cells. */
+.gcamp .toolstack-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  max-width: 620px;
+  margin: 0 auto;
+  border: 1px solid rgba(175, 169, 236, 0.16);
+  border-radius: 14px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03);
+}
 .gcamp .toolstack-row { display: contents; }
 .gcamp .toolstack-chip {
   flex: 0 0 auto;
   width: auto;
   min-width: 0;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 7px;
-  padding: 6px 13px 6px 6px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.055);
-  border: 1px solid rgba(175, 169, 236, 0.2);
+  gap: 6px;
+  padding: 11px 4px;
+  text-align: center;
+  border: none;
+  border-radius: 0;
+  background: none;
   box-shadow: none;
-  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+  /* Hairlines between cells, drawn with a ring so no cell needs to know
+     whether it is the last in its row or column. */
+  outline: 0.5px solid rgba(175, 169, 236, 0.14);
+  outline-offset: -0.25px;
+  transition: background 0.16s ease;
 }
 .gcamp .toolstack-chip::before { content: none; }
-.gcamp .toolstack-chip:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(175, 169, 236, 0.42); transform: translateY(-1px); }
-.gcamp .toolstack-logo { height: 22px; width: 22px; max-width: none; padding: 3px; border-radius: 999px; object-fit: contain; background: #fff; }
-.gcamp .toolstack-name { font-size: 12.5px; font-weight: 600; line-height: 1; color: var(--parchment); }
+.gcamp .toolstack-chip:hover { background: rgba(255, 255, 255, 0.06); }
+.gcamp .toolstack-logo { height: 22px; width: 22px; max-width: none; flex: none; padding: 3px; border-radius: 7px; object-fit: contain; background: #fff; }
+/* Scales with the cell rather than sitting at one size, because the cell is a
+   quarter of the screen: at 10.5px "NotebookLM" clears a 360px phone and is
+   cut off on a 320px one. */
+.gcamp .toolstack-name { font-size: clamp(9.5px, 2.7vw, 10.5px); font-weight: 600; line-height: 1.2; color: var(--parchment); max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
 .gcamp .captains-section { padding: var(--gc-y) var(--gc-x); }
 .gcamp .captains-head { margin-bottom: 26px; }
 
@@ -537,12 +572,14 @@
   /* Back to the shared 5/6/5 rows of wide chips. The four-column grid above is
      a phone layout — at this width there is room for the logo and the name on
      one line, which is what the rest of the site shows. */
-  /* Same pills, a size up. The rows stay ragged rather than snapping back to
-     fixed columns — that shape is the point of the treatment. */
-  .gcamp .toolstack-grid { max-width: 860px; gap: 10px; }
-  .gcamp .toolstack-chip { gap: 9px; padding: 7px 17px 7px 7px; }
-  .gcamp .toolstack-logo { height: 28px; width: 28px; padding: 4px; }
-  .gcamp .toolstack-name { font-size: 14px; }
+  /* Eight across — there is room for the name beside the mark at this width,
+     and eight divides sixteen, so the whole stack is two rows. */
+  /* Name beside the mark from here up, four to a row. Eight only fits once
+     there is more width — see the query below. */
+  .gcamp .toolstack-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 1120px; border-radius: 16px; }
+  .gcamp .toolstack-chip { flex-direction: row; justify-content: flex-start; text-align: left; gap: 9px; padding: 13px 14px; }
+  .gcamp .toolstack-logo { height: 24px; width: 24px; padding: 3px; }
+  .gcamp .toolstack-name { font-size: 12.5px; }
 
   .gcamp-plan .kp-card { padding: 40px 44px; }
   .gcamp-plan .kp-head { flex-direction: row; gap: 28px; }
@@ -564,4 +601,14 @@
 
   .gcamp-foot { padding: 34px var(--gc-x) 40px; }
   .gcamp-bar { display: none; }
+}
+
+/* Eight tools to a row — the whole stack in two. Held back to 1160px because
+   below that the page gutter leaves under 1000px for the grid, and an eighth
+   of that is too narrow for "NotebookLM" beside its mark. Eight and four are
+   both divisors of sixteen, so neither leaves a stranded last row. */
+@media (min-width: 1160px) {
+  .gcamp .toolstack-grid { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+  .gcamp .toolstack-chip { padding: 13px 11px; }
+  .gcamp .toolstack-name { font-size: 11.5px; }
 }
