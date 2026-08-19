@@ -6,7 +6,6 @@ import AccredSection from '../components/common/AccredSection';
 import ToolStack, { TECH } from '../components/common/ToolStack';
 import MentorsRail, { MENTORS } from '../components/common/MentorsRail';
 import HiringJobs from '../components/common/HiringJobs';
-import HiringRail from '../components/common/HiringRail';
 import { HIRING_COMPANIES } from '../data/hiringCompanies';
 import Seo from '../components/common/Seo';
 import PricingCard from '../components/common/PricingCard';
@@ -443,28 +442,32 @@ export default function GeneralistCampaign() {
         sub="Get hands on with every tool in the fellowship — from your first prompt to your first shipped build."
       />
 
-      {/* Who teaches it and who hires from it, in one screen. They answer the
-          same question — is this worth my time — and split across two bands
-          the reader had to scroll past one to reach the other. */}
+      {/* Who teaches it, what it leads to, and who hires from it — one band.
+          They answer the same question, and split apart the reader had to
+          scroll past each to reach the next. The roles come before the
+          companies: the job is the point, the logos are the proof. */}
       <section className="gcamp-people">
         <Reveal className="gcamp-head">
           <p className="gcamp-eyebrow">Mentors &amp; hiring</p>
           <h2 className="gcamp-h2">The People Behind Menler</h2>
-          <p className="gcamp-sub">Industry leaders who teach it — and the teams that hire from it.</p>
+          <p className="gcamp-sub">Who teaches it — and who hires from it.</p>
         </Reveal>
         <MentorsRail bare rows={1} mentors={GEN_MENTORS} />
-        <div className="gcamp-people-hiring">
-          <p className="partners-label">Hiring associations · 25+ companies</p>
-          <HiringRail companies={HIRING_COMPANIES} rows={2} />
-        </div>
-      </section>
 
-      <HiringJobs
-        {...GEN_HIRING}
-        genPreview={3}
-        engPreview={3}
-        showPartners={false}
-      />
+        {/* showPartners puts the company rail directly under the roles, which
+            is where it belongs — this page no longer renders its own copy.
+            sub="" because the band's own standfirst sits just above this, and
+            a second one-liner there said the same thing twice. */}
+        <HiringJobs
+          {...GEN_HIRING}
+          sectionStyle={{}}
+          sub=""
+          genPreview={2}
+          engPreview={2}
+          companies={HIRING_COMPANIES}
+          partnersLabel="Hiring associations · 25+ companies"
+        />
+      </section>
 
       <section className="gcamp-sec gcamp-plan">
         <Reveal className="gcamp-head">

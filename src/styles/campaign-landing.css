@@ -278,18 +278,40 @@
 .gcamp .captains-section { padding: var(--gc-y) var(--gc-x); }
 .gcamp .captains-head { margin-bottom: 26px; }
 
-/* ── Mentors + hiring associations, one band ──
-   Two sections that answered the same question — is this worth my time — and
-   made the reader scroll past one to reach the other. The mentor rail keeps
-   its own bleed to the screen edge, so only the label under it is inset. */
+/* ── Mentors, roles and hiring companies — one band ──
+   Three sections that answered the same question: is this worth my time. Split
+   apart, the reader had to scroll past each to reach the next. Order is who
+   teaches it → what it leads to → who hires from it, because the job is the
+   point and the logos are the proof of it. */
 /* Still used by the Kickstarter campaign, which keeps hiring as its own band. */
 .gcamp-hiring { background: var(--parchment); padding: var(--gc-y) var(--gc-x); }
 .gcamp-hiring .partners-strip { margin-top: 0; }
 
 .gcamp-people { background: var(--parchment); padding: var(--gc-y) 0; }
-.gcamp-people .gcamp-head { padding: 0 var(--gc-x); margin-bottom: 20px; }
-.gcamp-people-hiring { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--gc-border); }
-.gcamp-people-hiring .partners-label { padding: 0 var(--gc-x); margin-bottom: 12px; }
+.gcamp-people .gcamp-head { padding: 0 var(--gc-x); margin-bottom: 16px; }
+/* Smaller than a section head elsewhere: this one is the lid on a band that
+   has a second heading inside it, and at the page's full h2 size it took two
+   lines to say four words. */
+.gcamp-people .gcamp-h2 { font-size: clamp(24px, 6.4vw, 32px); }
+.gcamp-people .gcamp-sub { margin-top: 8px; font-size: 13.5px; }
+/* The jobs block sits inside this band rather than being its own, so its
+   section chrome comes off: no second background, no second top padding, and
+   its heading drops to the size of a sub-head under the one already above.
+   The rails keep their bleed to the screen edge; only text is inset. */
+.gcamp-people .jobs-section { background: none; padding: 26px var(--gc-x) 0; }
+.gcamp-people .jobs-section .section-label { margin-bottom: 8px; }
+.gcamp-people .jobs-section .section-h2 { font-size: clamp(21px, 5.6vw, 26px); line-height: 1.2; }
+/* One line, not two: "The jobs" and its second half read fine side by side at
+   this size, and the break was costing a whole line of a band that has to fit. */
+.gcamp-people .jobs-section .section-h2 br { display: none; }
+.gcamp-people .jobs-section .section-h2 em { margin-left: 0.3em; }
+/* Shorter mentor cards here than on the pages where the rail is the section.
+   The faces are still the point and still legible; 300px of card was buying
+   background, not recognition. */
+.gcamp-people .captain-card { height: 208px; flex-basis: 250px; width: 250px; }
+.gcamp-people .jobs-section .section-sub { font-size: 13.5px; margin-top: 8px; }
+.gcamp-people .jobs-roles { margin-top: 18px; }
+.gcamp-people .partners-strip { margin-top: 22px; }
 
 /* ── FAQs, straight after the plan card ── */
 .gcamp-faq { background: var(--white); }
