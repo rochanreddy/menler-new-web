@@ -311,7 +311,12 @@
 .gcamp-people .captain-card { height: 208px; flex-basis: 250px; width: 250px; }
 .gcamp-people .jobs-section .section-sub { font-size: 13.5px; margin-top: 8px; }
 .gcamp-people .jobs-roles { margin-top: 18px; }
-.gcamp-people .partners-strip { margin-top: 22px; }
+.gcamp-people .partners-strip { margin-top: 22px; padding: 18px 14px; }
+/* Four logos across a phone rather than two and a sliver. The rail still
+   scrolls — this only sizes the chips so a whole row's worth is legible at
+   once instead of the fourth being cut off mid-mark. */
+.gcamp-people .partners-strip .logorail-track .partner-chip { min-width: 78px; height: 54px; margin-right: 8px; }
+.gcamp-people .partners-strip .logorail-track .partner-logo-img { height: 22px; max-width: 62px; }
 
 /* ── FAQs, straight after the plan card ── */
 .gcamp-faq { background: var(--white); }
@@ -517,6 +522,9 @@
   .gcamp-stat-l { font-size: 13.5px; }
 
   .gcamp .accred-section { padding: 32px var(--gc-x); }
+  .gcamp-people .partners-strip .logorail-track .partner-chip { min-width: 150px; height: 66px; margin-right: 14px; }
+  .gcamp-people .partners-strip .logorail-track .partner-logo-img { height: 30px; max-width: 118px; }
+
   .gcamp .accred-section--rail .logorail-track .partner-chip { min-width: 210px; height: 96px; margin-right: 16px; padding: 14px 20px; }
   .gcamp .accred-section--rail .logorail-track .partner-logo-img { max-height: 54px; max-width: 160px; }
   .gcamp .accred-section--rail .logorail-track .partner-logo-img[alt="Anthropic"] { max-height: 76px; }

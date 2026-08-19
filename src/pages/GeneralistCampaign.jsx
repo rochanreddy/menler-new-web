@@ -190,7 +190,7 @@ const PLAN = {
   features: [
     ['30 hrs live instruction over 6 weeks', 'Instructor led · real questions in real time'],
     ['Build live projects with mentors', 'Portfolio ready deliverables every week'],
-    ['LMS + community · 1-year access', 'Recordings, resources, and cohort community'],
+    ['LMS + community', 'Recordings, resources, and cohort community'],
     ['1:1 doubt-solving sessions', 'Direct mentor access · no question left behind'],
     ['Interview pipeline + placement support', "LinkedIn review · Menler's hiring network"],
     ['Claude Specialist Certification', 'Menler-certified · LinkedIn shareable'],
@@ -413,8 +413,7 @@ export default function GeneralistCampaign() {
             <em>Any domain. Zero code.</em>
           </h2>
           <p className="gcamp-sub">
-            The AI Native workforce won't be made up of engineers alone.
-            It will be built by professionals across every domain.
+            Build an AI-native portfolio in six weeks.
           </p>
         </Reveal>
         <div className="gcamp-who-grid">
