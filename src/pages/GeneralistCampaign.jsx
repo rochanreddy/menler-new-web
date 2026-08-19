@@ -461,8 +461,8 @@ export default function GeneralistCampaign() {
           {...GEN_HIRING}
           sectionStyle={{}}
           sub=""
-          genPreview={2}
-          engPreview={2}
+          genPreview={4}
+          engPreview={4}
           companies={HIRING_COMPANIES}
           partnersLabel="Hiring associations · 25+ companies"
         />
