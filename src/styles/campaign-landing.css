@@ -324,7 +324,22 @@
 
 /* ── Plan card (shared PricingCard, no price on this page) ── */
 .gcamp-plan { background: var(--white); }
-.gcamp-plan .kp-card { padding: 26px 22px; }
+/* The card wore a blurred conic aura — a neon halo bleeding out past its
+   edges. Off here, and the light moves onto the border instead: the same
+   travelling arc the tool chips carry, driven by the same --ts-angle and
+   ts-rotate, so the two lit things on the page are lit the same way.
+   Scoped to the campaign; /generalist and /kickstarter keep the halo. */
+.gcamp-plan .kp-card { padding: 26px 22px; box-shadow: 0 24px 60px -28px rgba(38, 33, 92, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06); }
+.gcamp-plan .kp-card::before { content: none; }
+.gcamp-plan .kp-card::after {
+  padding: 1.5px;
+  background: conic-gradient(from var(--ts-angle), transparent 60%, rgba(94, 200, 255, 0.9) 80%, #d7f1ff 88%, rgba(94, 200, 255, 0.9) 95%, transparent 100%);
+  animation: ts-rotate 4s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  /* Still lit, just not travelling — a border that never appears is worse. */
+  .gcamp-plan .kp-card::after { animation: none; }
+}
 .gcamp-plan .kp-head { flex-direction: column; gap: 18px; }
 .gcamp-plan .kp-name { font-size: 25px; margin: 12px 0 8px; }
 .gcamp-plan .kp-tagline { max-width: none; }
