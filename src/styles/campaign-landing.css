@@ -194,7 +194,12 @@
    white space between the dots and the next section. The horizontal
    pin/scroll math lives on the outer .gcamp-curric wrapper's fixed height,
    so sizing this one to content doesn't affect it. */
-.gcamp-curric.is-pinned .gcamp-curric-sticky { position: sticky; top: var(--gc-nav); display: flex; flex-direction: column; justify-content: flex-start; overflow: hidden; padding: 16px 0 calc(var(--gc-bar) - 4px); }
+/* The pinned panel is the height of the window, less the bar it pins under.
+   Without a height it was sized by its content — a fixed 726px whatever the
+   window was — so its bottom sat at 784px and on any window shorter than that
+   the end of the card and the dots fell below the fold. dvh, not vh, so a
+   phone's own chrome counts. */
+.gcamp-curric.is-pinned .gcamp-curric-sticky { position: sticky; top: var(--gc-nav); height: calc(100dvh - var(--gc-nav)); display: flex; flex-direction: column; justify-content: center; overflow: hidden; padding: 16px 0 calc(var(--gc-bar) - 4px); }
 /* The card is the height of the fullest week and no bigger — it does not grow
    to fill the pinned screen. What is left after the heading, the card and the
    dots is shared above and below the group, which at this size is a few tens of
@@ -237,6 +242,21 @@
 .gcamp-wcard-list--proj { margin-bottom: 0; }
 .gcamp-wcard-list--proj li { color: var(--parchment); }
 .gcamp-wcard-list--proj li::before { background: var(--placed); }
+
+/* Short phone screens. The mobile week card is ~530px and a 360x640 handset
+   leaves about 582px of panel once the top bar is out — enough to clip the
+   dots. Keyed on height so a tall phone is untouched. */
+@media (max-height: 700px) and (max-width: 899px) {
+  .gcamp-curric-head { margin-bottom: 10px; }
+  .gcamp-curric-head .gcamp-h2 { font-size: 22px; }
+  .gcamp-curric-count { margin-top: 5px; }
+  .gcamp-wcard-in { padding: 16px 16px; }
+  .gcamp-wcard-t { font-size: 18px; margin-bottom: 10px; }
+  .gcamp-wcard-list { gap: 5px; margin-bottom: 10px; }
+  .gcamp-wcard-list li { font-size: 11.5px; line-height: 1.35; }
+  .gcamp-wcard-h { margin-bottom: 7px; }
+  .gcamp-curric-dots { margin-top: 10px; }
+}
 
 .gcamp-curric-dots { display: flex; justify-content: center; gap: 7px; margin-top: 20px; }
 .gcamp-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(38, 33, 92, 0.16); transition: background 0.25s ease, width 0.25s ease; }
@@ -575,6 +595,45 @@
   .gcamp-thanks .gcamp-done-tick { width: 60px; height: 60px; margin-bottom: 24px; }
 
   .gcamp-curric.is-pinned .gcamp-curric-sticky { padding: 40px 0; }
+
+  /* Short windows. A laptop browser is often 640-700px of viewport once its
+     chrome is up, and the fullest week needs about 620px of panel. Rather than
+     shrink the slide for everyone with a tall screen, this trims only where
+     the window is actually short — keyed on height, not width. */
+  @media (max-height: 780px) and (min-height: 661px) {
+    .gcamp-curric.is-pinned .gcamp-curric-sticky { padding: 20px 0; }
+    .gcamp-curric-head { margin-bottom: 12px; }
+    .gcamp-curric-head .gcamp-h2 { font-size: 26px; }
+    .gcamp-curric-count { margin-top: 6px; }
+    .gcamp-wcard-in { padding: 22px 30px; }
+    .gcamp-wcard-t { font-size: 22px; margin-bottom: 12px; }
+    .gcamp-wcard-list { gap: 6px; margin-bottom: 12px; }
+    .gcamp-wcard-list li { font-size: 13px; }
+    .gcamp-wcard-h { margin-bottom: 8px; }
+    .gcamp-curric-dots { margin-top: 12px; }
+  }
+
+  /* Shorter again — a 1366x768 laptop is about 640px of viewport with chrome
+     up, and it is still the commonest screen there is. */
+  @media (max-height: 660px) {
+    .gcamp-curric.is-pinned .gcamp-curric-sticky { padding: 14px 0; }
+    .gcamp-curric-head { margin-bottom: 6px; }
+    .gcamp-curric-head .gcamp-h2 { font-size: 21px; }
+    .gcamp-curric-head .gcamp-eyebrow { margin-bottom: 6px; }
+    .gcamp-curric-count { margin-top: 4px; font-size: 10px; }
+    .gcamp-wcard-in { padding: 14px 24px; }
+    .gcamp-wcard-t { font-size: 18px; margin-bottom: 6px; }
+    .gcamp-wcard-list { gap: 4px; margin-bottom: 8px; }
+    .gcamp-wcard-list li { font-size: 11.5px; padding-left: 15px; line-height: 1.35; }
+    .gcamp-wcard-h { margin-bottom: 6px; font-size: 10px; }
+    .gcamp-curric-dots { margin-top: 6px; }
+  }
+
+  /* A window shrunk to 600px or so. The "01 / 06" counter goes — the dots
+     under the card already say which slide this is. */
+  @media (max-height: 615px) {
+    .gcamp-curric-count { display: none; }
+  }
   /* Content sits at the top of the card here. There is enough width at this
      size that the fullest week nearly fills its card, so centring would only
      shift the heading around between slides. */
