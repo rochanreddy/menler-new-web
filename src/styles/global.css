@@ -3898,6 +3898,9 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .kp-price-sym { font-size: 20px; font-weight: 700; color: #AFA9EC; margin-top: 8px; }
 .kp-price-num { font-family: 'DM Serif Display', serif; font-size: 54px; line-height: .9; color: #fff; letter-spacing: -.02em; }
 .kp-price-sub { font-size: 11px; color: rgba(175,169,236,.6); margin-top: 8px; letter-spacing: .01em; }
+/* Optional line under the card's button — a scholarship, a deadline. Brighter
+   than .kp-price-sub because it is an offer, not a footnote. */
+.kp-cta-note { margin-top: 10px; font-size: 12px; font-weight: 700; color: #B9F3DC; text-align: center; }
 .kp-cta { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 800; letter-spacing: .04em; padding: 13px 22px; border-radius: 11px; color: #26215C; background: linear-gradient(180deg, #c4bff5 0%, #AFA9EC 100%); box-shadow: 0 14px 28px -10px rgba(175,169,236,.7); transition: transform .15s ease, box-shadow .15s ease; }
 .kp-cta svg { width: 17px; height: 17px; transition: transform .15s ease; }
 .kp-cta:hover { transform: translateY(-1px); box-shadow: 0 18px 32px -10px rgba(175,169,236,.85); }
@@ -3923,6 +3926,9 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
   .kp-head { flex-direction: column; gap: 18px; }
   .kp-price { align-items: flex-start; text-align: left; width: 100%; }
   .kp-price-sub { order: 3; }
+  /* After the button, which is order 2 by source here — without this the note
+     would jump above the price when the column reorders. */
+  .kp-cta-note { order: 4; width: 100%; }
   .kp-cta { width: 100%; justify-content: center; margin-top: 16px; box-shadow: none; }
   .kp-cta:hover { box-shadow: none; }
   .kp-name { font-size: 28px; }

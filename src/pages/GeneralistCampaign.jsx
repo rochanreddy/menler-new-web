@@ -205,6 +205,11 @@ const PLAN = {
 // Hero fact pills.
 const FACTS = [ 'Live online', 'CapStone Project', 'Certification'];
 
+/* The offer, written once. It sits beside every Apply button — the hero, the
+   plan card and the sticky bar — and a figure repeated in three places is a
+   figure that gets changed in two. */
+const SCHOLARSHIP = 'Up to 40% scholarship';
+
 // "Who this is for" — audience cards with tinted number badges.
 const AUDIENCE = [
   { n: 1, t: 'Students', d: 'Any discipline. Enter the job market as AI Native.', bg: '#E6E3F9', fg: '#534AB7' },
@@ -379,7 +384,10 @@ export default function GeneralistCampaign() {
           <button type="button" className="gcamp-cta" onClick={openApply}>
             Apply Now
           </button>
-          <p className="gcamp-cta-note">Limited seats · Apply Now</p>
+          <p className="gcamp-cta-note">
+            <span className="gcamp-schol">{SCHOLARSHIP}</span>
+            Limited seats · Apply Now
+          </p>
         </Reveal>
       </section>
 
@@ -463,7 +471,7 @@ export default function GeneralistCampaign() {
           <h2 className="gcamp-h2">One fellowship. <em>Everything in it.</em></h2>
         </Reveal>
         <Reveal delay={80}>
-          <PricingCard {...PLAN} ctaLabel="Apply Now" onCta={openApply} />
+          <PricingCard {...PLAN} ctaLabel="Apply Now" ctaNote={SCHOLARSHIP} onCta={openApply} />
         </Reveal>
       </section>
 
@@ -515,7 +523,7 @@ export default function GeneralistCampaign() {
       <div className={`gcamp-bar${showBar ? ' is-on' : ''}`}>
         <div className="gcamp-bar-txt">
           <p className="gcamp-bar-t">Claude AI Generalist</p>
-          <p className="gcamp-bar-d">6 weeks · Live · Limited seats</p>
+          <p className="gcamp-bar-d"><span className="gcamp-schol">{SCHOLARSHIP}</span></p>
         </div>
         <button type="button" className="gcamp-cta" onClick={openApply}>
           Apply Now

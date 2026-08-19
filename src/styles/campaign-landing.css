@@ -134,6 +134,12 @@
 .gcamp-cta--light { background: var(--gc-on-dark); color: var(--ink); box-shadow: none; }
 .gcamp-cta--light:hover { background: var(--gc-accent-soft); }
 .gcamp-cta-note { margin-top: 12px; font-size: 12px; color: var(--text-muted); }
+/* The scholarship, beside every Apply button. Carries the page accent rather
+   than a colour of its own, so it turns amber on the Kickstarter page with the
+   rest of the theme. Its own block on a phone: inline after "Limited seats" it
+   would wrap mid-offer on a narrow screen. */
+.gcamp-schol { display: block; margin-bottom: 4px; font-weight: 700; color: var(--gc-accent); }
+.gcamp-bar-d .gcamp-schol { display: inline; margin: 0; font-size: 11px; }
 
 /* ── Numbers band ── */
 /* The hairline sits on the numbers row itself and shares the page gutter, so

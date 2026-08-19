@@ -12,6 +12,9 @@ export default function PricingCard({
   origPrice,
   priceSub,
   ctaLabel = 'Enroll Now',
+  // A line under the button — a scholarship, a deadline, whatever the page is
+  // offering. Optional, so the pages that don't offer anything render as before.
+  ctaNote,
   onCta,
   features = [],
   chips = [],
@@ -35,6 +38,7 @@ export default function PricingCard({
             {ctaLabel}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
           </button>
+          {ctaNote && <p className="kp-cta-note">{ctaNote}</p>}
         </div>
       </div>
 
