@@ -538,7 +538,11 @@
   .gcamp-hero > .reveal:nth-child(2) { align-self: center; }
   .gcamp-hero > .reveal:nth-child(2) { grid-column: 2; grid-row: 1 / span 2; }
   .gcamp-hero > .reveal:nth-child(3) { grid-column: 1; grid-row: 2; align-self: start; padding-top: 14px; }
-  .gcamp-title { margin-bottom: 0; letter-spacing: -0.015em; }
+  /* One line. The column is 1.05fr of a 1120px content width, so the type has
+     to scale with the viewport to stay inside it — a fixed 44px fits at 1280
+     and up and wraps below that. nowrap holds the line; the fluid size is what
+     stops it running past the column. */
+  .gcamp-title { margin-bottom: 0; letter-spacing: -0.015em; white-space: nowrap; font-size: clamp(28px, 3.3vw, 44px); }
   .gcamp-heroart { max-width: 100%; margin-bottom: 0; }
   .kick-hero-banner { max-width: 100%; min-height: 320px; margin-bottom: 0; }
   .kick-hero-banner-body { padding: 30px 26px 34px; }

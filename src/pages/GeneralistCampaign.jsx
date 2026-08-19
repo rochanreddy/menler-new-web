@@ -362,7 +362,7 @@ export default function GeneralistCampaign() {
         <Reveal>
           <span className="gcamp-badge">No Coding required</span>
           <h1 className="gcamp-title">
-             AI <em>Generalist</em><br></br>Fellowship
+            AI <em>Generalist</em> Fellowship
           </h1>
         </Reveal>
 
@@ -375,7 +375,8 @@ export default function GeneralistCampaign() {
           </p>
 
           <p className="gcamp-sub gcamp-hero-sub">
-            Build AI agents that automate 90% of your work, create no-code AI apps, and deploy live projects trained by McKinsey, Flipkart, Adobe & PwC AI builders and leaders.
+            Automate 90% of your work with AI agents, build no-code apps, and ship
+            live projects — trained by builders from McKinsey, Flipkart, Adobe &amp; PwC.
           </p>
 
           <div className="gcamp-facts">
