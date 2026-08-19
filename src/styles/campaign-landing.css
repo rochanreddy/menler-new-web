@@ -127,8 +127,12 @@
 /* Four pills wrap rather than share one line. Forced onto a single row they
    were ellipsised to "Live onli…" and "Capstone Proj…" — a pill that cannot
    be read is worse than a second row. */
-.gcamp-facts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 24px; }
-.gcamp-fact { flex: 0 0 auto; font-size: 11.5px; font-weight: 600; color: var(--ink); background: var(--white); border: 1px solid var(--gc-border); border-radius: 999px; padding: 7px 12px; white-space: nowrap; }
+/* One row, always. Four pills only fit a 320px phone at this size — measured,
+   the row comes to 274px of the 280px available, and "Capstone Project" is the
+   one that decides it. min-width:0 lets the row shrink rather than push the
+   page sideways if a label ever grows. */
+.gcamp-facts { display: flex; flex-wrap: nowrap; justify-content: center; gap: 4px; margin-bottom: 24px; min-width: 0; }
+.gcamp-fact { flex: 0 0 auto; font-size: clamp(8.5px, 2.45vw, 11px); font-weight: 600; color: var(--ink); background: var(--white); border: 1px solid var(--gc-border); border-radius: 999px; padding: 6px 7px; white-space: nowrap; min-width: 0; }
 
 /* ── Buttons ── */
 .gcamp-cta { display: inline-flex; align-items: center; justify-content: center; width: 100%; max-width: 430px; padding: 16px 28px; border: none; border-radius: 999px; background: var(--ink); color: var(--white); font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; text-decoration: none; box-shadow: 0 10px 24px rgba(38, 33, 92, 0.18); transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease; }
@@ -218,9 +222,12 @@
    fixed; a shorter week just ends with a little more navy below it. */
 .gcamp-wcard-in { position: relative; display: flex; flex-direction: column; justify-content: flex-start; background: var(--ink); border-radius: 20px; padding: 24px 22px; height: 100%; overflow: hidden; }
 .gcamp-wcard-in::after { content: ''; position: absolute; inset: 0; border-radius: 20px; border: 1px solid rgba(var(--gc-on-dark-rgb),0.16); pointer-events: none; }
-.gcamp-wcard-top { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+/* The phase drops below the week badge rather than sitting alongside it. Beside
+   it, a long phase name squeezed the badge and read as part of it; on its own
+   line the badge says which week and the line under says which phase. */
+.gcamp-wcard-top { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-bottom: 12px; }
 .gcamp-wcard-n { flex: none; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: var(--ink); background: var(--gc-on-dark); border-radius: 8px; padding: 5px 9px; }
-.gcamp-wcard-phase { font-size: 10.5px; font-weight: 600; line-height: 1.3; color: rgba(var(--gc-on-dark-rgb),0.85); }
+.gcamp-wcard-phase { flex: 0 0 100%; font-size: 10.5px; font-weight: 600; line-height: 1.3; color: rgba(var(--gc-on-dark-rgb),0.85); }
 .gcamp-wcard-t { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: 22px; line-height: 1.22; color: var(--parchment); margin-bottom: 20px; }
 .gcamp-wcard-h { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--white); margin-bottom: 12px; }
 .gcamp-wcard-h::after { content: ''; flex: 1; height: 1px; background: rgba(var(--gc-on-dark-rgb),0.2); }
@@ -324,7 +331,22 @@
 
 /* ── Plan card (shared PricingCard, no price on this page) ── */
 .gcamp-plan { background: var(--white); }
-.gcamp-plan .kp-card { padding: 26px 22px; }
+/* The card wore a blurred conic aura — a neon halo bleeding past its edges,
+   with purple and green outer shadows behind it. Off. The light moves onto the
+   border instead: the same travelling arc the tool chips carry, driven by the
+   same --ts-angle and ts-rotate, so the two lit things on the page are lit one
+   way. Scoped here; /generalist and /kickstarter keep the halo. */
+.gcamp-plan .kp-card { padding: 26px 22px; box-shadow: 0 24px 60px -28px rgba(38, 33, 92, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06); }
+.gcamp-plan .kp-card::before { content: none; }
+.gcamp-plan .kp-card::after {
+  padding: 1.5px;
+  background: conic-gradient(from var(--ts-angle), transparent 60%, rgba(94, 200, 255, 0.9) 80%, #d7f1ff 88%, rgba(94, 200, 255, 0.9) 95%, transparent 100%);
+  animation: ts-rotate 4s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  /* Still lit, just not travelling — a border that never appears is worse. */
+  .gcamp-plan .kp-card::after { animation: none; }
+}
 .gcamp-plan .kp-head { flex-direction: column; gap: 18px; }
 .gcamp-plan .kp-name { font-size: 25px; margin: 12px 0 8px; }
 .gcamp-plan .kp-tagline { max-width: none; }

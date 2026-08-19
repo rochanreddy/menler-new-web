@@ -241,7 +241,7 @@ const PHASE_2_PROJECTS = [
 ];
 const WEEKS = [
   {
-    n: 'Phase 1', phase: 'AI Foundations & Claude Mastery',
+    n: 'Week 1', phase: 'Phase 1 · AI Foundations & Claude Mastery',
     t: 'Understand AI: See the Landscape Clearly',
     lessons: [
       'How LLMs work: next token prediction, tokens, parameters, RLHF',
@@ -276,7 +276,7 @@ const WEEKS = [
     projects: PHASE_1_PROJECTS,
   },
   {
-    n: 'Phase 2', phase: 'Automate, Build & Ship',
+    n: 'Week 4', phase: 'Phase 2 · Automate, Build & Ship',
     t: 'Automate with AI: Voice Agents, Routines & Workflows',
     lessons: [
       'STT/TTS from scratch; voice cloning',
