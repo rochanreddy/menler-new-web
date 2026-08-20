@@ -287,6 +287,18 @@
 .gcamp .captains-section { padding: var(--gc-y) var(--gc-x); }
 .gcamp .captains-head { margin-bottom: 26px; }
 
+/* The home page's testimonials section, between the price card and the FAQs.
+   Only the shell is retuned: it pads to this page's gutter instead of the main
+   site's, so its head lines up with every other band's. The cards, columns and
+   marquee come straight from .tmc-* in global.css. */
+.gcamp .tmc-section { padding: var(--gc-y) var(--gc-x); }
+.gcamp .tmc-head { margin: 0 0 28px; }
+/* The label and the heading's italic are set in the site purple, which IS the
+   Fellowship's accent; the Kickstarter page turns them amber with the rest of
+   its theme. */
+.gcamp--kick .tmc-section .section-label { color: var(--gc-accent); }
+.gcamp--kick .tmc-section .section-h2 em { color: var(--gc-accent); }
+
 /* ── Mentors, roles and hiring companies — one band ──
    Three sections that answered the same question: is this worth my time. Split
    apart, the reader had to scroll past each to reach the next. Order is who

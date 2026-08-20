@@ -13,6 +13,7 @@ import PricingCard from '../components/common/PricingCard';
 import FaqList from '../components/common/FaqList';
 import { KICKSTARTER_FAQS } from '../data/faqData';
 import CampaignRail from '../components/campaign/CampaignRail';
+import TestimonialsColumns from '../components/common/TestimonialsColumns';
 import ApplyModal, { ThankYou } from '../components/campaign/CampaignApply';
 import { getFeaturedMentors } from '../data/featuredMentors';
 import { SOCIAL_LINKS, SUPPORT_EMAIL, SUPPORT_MAIL_HREF } from '../data/socialLinks';
@@ -375,6 +376,10 @@ export default function KickstarterCampaign() {
           <PricingCard {...PLAN} ctaLabel="Apply Now" onCta={openApply} />
         </Reveal>
       </section>
+
+      {/* Social proof between the price and the questions — same placement as
+          the Fellowship page; the home page's section verbatim. */}
+      <TestimonialsColumns />
 
       {/* The questions that stop someone applying, answered where they stop. */}
       <section className="gcamp-sec gcamp-faq">

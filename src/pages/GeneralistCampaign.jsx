@@ -12,6 +12,7 @@ import PricingCard from '../components/common/PricingCard';
 import FaqList from '../components/common/FaqList';
 import { GENERALIST_FAQS } from '../data/faqData';
 import CampaignRail from '../components/campaign/CampaignRail';
+import TestimonialsColumns from '../components/common/TestimonialsColumns';
 import ApplyModal, { ThankYou } from '../components/campaign/CampaignApply';
 import { GEN_HIRING } from '../data/genHiring';
 import { SOCIAL_LINKS, SUPPORT_EMAIL, SUPPORT_MAIL_HREF } from '../data/socialLinks';
@@ -391,6 +392,12 @@ export default function GeneralistCampaign() {
           <PricingCard {...PLAN} ctaLabel="Apply Now" ctaNote={SCHOLARSHIP} onCta={openApply} />
         </Reveal>
       </section>
+
+      {/* Social proof between the price and the questions — the reader has
+          just seen what it costs, so what others got out of it goes here,
+          before the doubts get their turn. The home page's section verbatim
+          (data and marquee included); .gcamp retunes only its padding. */}
+      <TestimonialsColumns />
 
       {/* The questions that stop someone applying, answered where they stop —
           right after the price card, not below the footer. */}
