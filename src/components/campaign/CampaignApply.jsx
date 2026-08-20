@@ -75,7 +75,7 @@ export function ThankYou({ applicant, programTitle, followUp, theme = '' }) {
  * international applicant sending themselves an SMS code would wait for one
  * that never arrives. Email reaches all of them, which is why the address is
  * required rather than optional. */
-function ApplyForm({ onDone, program, source, noteProgram }) {
+function ApplyForm({ onDone, program, source, section, noteProgram }) {
   const toast = useToast();
   const [form, setForm] = useState({ name: '', email: '', countryCode: '+91', phone: '', background: '' });
   const [loading, setLoading] = useState(false);
@@ -112,7 +112,7 @@ function ApplyForm({ onDone, program, source, noteProgram }) {
         ...otp,
         source,
         cta_label: 'Apply Now',
-        section: 'Campaign apply',
+        section: section || program || 'Campaign apply',
       });
       // Hands the page the confirmed details and steps aside — the thank-you
       // is a page of its own, not a panel inside the dialog that opened it.
@@ -208,7 +208,7 @@ function ApplyForm({ onDone, program, source, noteProgram }) {
  * Lenis drives scrolling from wheel events and keeps going regardless, so it
  * has to be stopped explicitly, and the panel carries data-lenis-prevent so
  * the wheel still reaches its own scrollbar. */
-export default function ApplyModal({ onClose, onDone, program, source, label, noteProgram = 'programme' }) {
+export default function ApplyModal({ onClose, onDone, program, section, source, label, noteProgram = 'programme' }) {
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
     const prev = document.body.style.overflow;
@@ -232,7 +232,7 @@ export default function ApplyModal({ onClose, onDone, program, source, label, no
         aria-label={label}
       >
         <button type="button" className="gcamp-modal-x" onClick={onClose} aria-label="Close">×</button>
-        <ApplyForm onDone={onDone} program={program} source={source} noteProgram={noteProgram} />
+        <ApplyForm onDone={onDone} program={program} source={source} section={section} noteProgram={noteProgram} />
       </div>
     </div>
   );

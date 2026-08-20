@@ -370,6 +370,7 @@ export default function KickstarterCampaign() {
           onDone={setApplicant}
           program="Gen AI Kickstarter"
           source="campaign-ai-kickstarter"
+          section="Gen AI Kickstarter"
           label="Apply for the Gen AI Kickstarter"
           noteProgram="programme"
         />

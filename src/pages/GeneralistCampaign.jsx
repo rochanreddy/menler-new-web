@@ -498,6 +498,7 @@ export default function GeneralistCampaign() {
           onDone={setApplicant}
           program="Claude AI Generalist"
           source="campaign-ai-claude-generalist"
+          section="Claude AI Generalist Fellowship"
           label="Apply for the AI Generalist Fellowship"
           noteProgram="fellowship"
         />
