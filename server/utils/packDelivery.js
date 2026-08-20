@@ -5,10 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { Lead } from '../models/Lead.js';
 import { pdfAttachments, isAllowedPdf } from './pdfAttachments.js';
 import { sendMail } from './email.js';
-// Delivery asks what the ORDER contains, not what checkout sells today, so it
-// reads the deliverable map — retired packs stay sendable to the people who
-// already paid for them.
-import { DELIVERABLE_PACKS } from '../../src/data/resourceCatalog.js';
+import { RESOURCE_PACKS } from '../../src/data/resourceCatalog.js';
 
 const LIB_TPL_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'emails', 'library');
 
@@ -82,7 +79,7 @@ export async function deliverPackForOrder(order, { force = false, pack: override
     return { sent: 0, reason: 'already delivered' };
   }
 
-  const pack = override || DELIVERABLE_PACKS[String(order.program || '').toLowerCase()];
+  const pack = override || RESOURCE_PACKS[String(order.program || '').toLowerCase()];
   if (!pack) return { sent: 0, reason: 'this programme has no resource pack' };
 
   const to = String(order.customer_email || '').trim();

@@ -13,7 +13,7 @@ import { sendMail, isMailConfigured, verifyMailer } from '../utils/email.js';
 import { cashfreeConfigured, describePayment, findCashfreePayment, getCashfreePayments } from '../utils/cashfree.js';
 import { deliverPackForOrder, deliverLibraryForOrder } from '../utils/packDelivery.js';
 import { zoomConfigured, meetingIdFromLink, pastInstances, latestInstanceUuid, pastMeeting, pastMeetings, meetingParticipants, explainZoomError } from '../utils/zoom.js';
-import { DELIVERABLE_PACKS, CLAUDE_PLAYBOOK_PACK } from '../../src/data/resourceCatalog.js';
+import { RESOURCE_PACKS, CLAUDE_PLAYBOOK_PACK } from '../../src/data/resourceCatalog.js';
 import {
   ADMIN_COOKIE_NAME,
   signAdmin,
@@ -612,10 +612,7 @@ router.get('/paid-users', requireAdmin, async (req, res) => {
        * went unnoticed. Orders paid before delivery moved server-side have no
        * marker of their own, so those fall back to the lead's resource list,
        * which is where the browser used to record it. */
-      /* Read from the DELIVERABLE map, not the sell-it-today one: a retired
-       * pack still owes its buyers their email, and answering "no pack" here
-       * would hide those rows behind a dash again. */
-      const hasPack = Boolean(DELIVERABLE_PACKS[String(r.program || '').toLowerCase()]);
+      const hasPack = Boolean(RESOURCE_PACKS[String(r.program || '').toLowerCase()]);
       const isLibrary = String(r.program || '').toLowerCase() === 'library';
       r.packExpected = hasPack || isLibrary;
       if (hasPack) r.packSent = Boolean(r.extra?.resources_sent_at || lead?.resource);

@@ -39,22 +39,7 @@ export const CLAUDE_PLAYBOOK_PACK = {
   items: CHECKOUT_CATALOG,
 };
 
-// EMPTY — the playbooks are free. Every campaign now falls through to the free
-// individual add-ons at checkout (tick what you want, ₹0, emailed on submit),
-// so nothing reaches Cashfree. The pack machinery above is kept intact: listing
-// a slug here again is all it takes to sell a paid pack later, and it must be
-// priced under the same slug in server/config/pricing.js to actually charge.
-export const RESOURCE_PACKS = {};
-
-// What a PAST order contains, which is not the same question as what we sell
-// today. People bought the ₹99 pack under these slugs, and their orders still
-// have to be deliverable — an admin pressing Resend on one must still send the
-// six playbooks. Emptying RESOURCE_PACKS alone would have answered "no pack for
-// this programme" and left paid buyers with nothing.
-//
-// So: RESOURCE_PACKS drives what checkout SELLS; this drives what delivery can
-// SEND. Retiring a pack removes it from the first map only.
-export const DELIVERABLE_PACKS = {
+export const RESOURCE_PACKS = {
   'build-ai-automation-with-claude': CLAUDE_PLAYBOOK_PACK,
   'program-and-ops-with-ai': CLAUDE_PLAYBOOK_PACK,
   'build-claude-skills-and-schedules': CLAUDE_PLAYBOOK_PACK,
@@ -62,7 +47,7 @@ export const DELIVERABLE_PACKS = {
   'build-your-first-webapp-with-claude': CLAUDE_PLAYBOOK_PACK,
 };
 
-/** The paid resource pack a campaign SELLS at checkout, or null if it has none. */
+/** The paid resource pack for a campaign slug, or null if it has none. */
 export function resourcePackFor(campaign) {
   return campaign ? RESOURCE_PACKS[String(campaign).toLowerCase()] || null : null;
 }
