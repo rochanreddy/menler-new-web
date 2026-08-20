@@ -103,13 +103,12 @@ const AUDIENCE = [
 ];
 
 // ── The syllabus — one card per module, lessons verbatim from /kickstarter.
-// Four modules over two weekends: two live sessions each weekend. The first
-// module of each weekend carries the weekend badge + name; the second just
-// shows its own module number, so the weekend isn't repeated on every card
-// (same pattern as the Fellowship's phase badges).
+// Four modules over two weekends, numbered straight through 1-4. The two that
+// open a weekend say "Live sessions" on their own subtitle, so the badge stays
+// a plain module number (same pattern as the Fellowship's phase badges).
 const MODULES = [
   {
-    n: 'Weekend 1', phase: 'Live sessions',
+    n: 'Module 1', phase: 'Live sessions',
     t: 'AI Foundations + Claude OS',
     lessons: [
       'The AI Landscape : what you actually need to know',
@@ -132,7 +131,7 @@ const MODULES = [
     projects: ['Build 2 : Study planner agent', 'Build 3 : Content engine'],
   },
   {
-    n: 'Weekend 2', phase: 'Live sessions',
+    n: 'Module 3', phase: 'Live sessions',
     t: 'Automation Systems',
     lessons: [
       'Claude Schedules : time-triggered intelligence',
