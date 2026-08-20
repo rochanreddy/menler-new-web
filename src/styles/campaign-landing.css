@@ -85,27 +85,12 @@
    recoloured to the amber accent and sized to fill the hero the way the
    masterclass banner fills its own page, rather than sitting as a small
    card off to one side. */
-.kick-hero-banner { position: relative; overflow: hidden; display: flex; aspect-ratio: 3 / 2; min-height: 0; border-radius: 22px; background: linear-gradient(120deg, var(--gc-accent-soft) 0%, #FFFDF8 100%); border: 1px solid rgba(175,169,236,0.35); box-shadow: 0 14px 30px rgba(38,33,92,0.1); margin: 0 auto 22px; max-width: 100%; }
-.kick-hero-banner-body { position: relative; z-index: 2; padding: 13px 13px 14px; max-width: 61%; display: flex; flex-direction: column; }
-.kick-hero-banner-logo { margin-bottom: 7px; transform: scale(0.82); transform-origin: left center; }
-.kick-hero-banner-badge { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; font-size: 8.5px; font-weight: 700; color: var(--gc-accent); background: rgba(255,255,255,0.9); border: 1px solid rgba(var(--gc-accent-rgb),0.22); padding: 5px 9px; border-radius: 999px; }
 /* Each line is its own full block, not just tight-fit text — matching the
    masterclass banner's chunky highlight bars rather than an inline <mark>. */
-.kick-hero-banner-title { margin: 8px 0 0; font-family: 'DM Sans', sans-serif; font-weight: 800; font-size: clamp(14px, 4.7vw, 19px); line-height: 1.2; letter-spacing: -0.01em; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
-.kick-hero-banner-title mark { display: block; width: fit-content; background: var(--gc-accent); color: #fff; padding: 4px 10px; border-radius: 7px; white-space: nowrap; }
-.kick-hero-banner-tag { margin-top: 8px; font-size: 10.5px; font-weight: 700; color: #6B4A12; }
-.kick-hero-banner-credit { margin-top: auto; padding-top: 8px; font-size: 9.5px; line-height: 1.4; color: var(--ink); }
-.kick-hero-banner-credit b { font-weight: 700; }
 /* Deepak's credentials — Testbook, MyCaptain, Imarticus — via the shared
    BrandLogo chip (local logo → Clearbit → favicon → text), rescaled down
    from its default card size to a small inline mark, same idea as, and
    sized closer to, .lp2-banner-creds. */
-.kick-hero-banner-creds { display: flex; flex-wrap: nowrap; align-items: center; gap: 8px 10px; margin-top: 7px; }
-.kick-hero-banner-creds .partner-chip { padding: 0; background: none; border: none; min-width: 0; height: auto; }
-.kick-hero-banner-creds .partner-logo-img { height: 18px; width: auto; max-width: 58px; object-fit: contain; opacity: 0.92; }
-.kick-hero-banner-creds .partner-name { font-size: 8px; font-weight: 700; color: var(--ink); }
-.kick-hero-banner-photo { position: absolute; right: 0; bottom: 0; top: 0; width: 43%; z-index: 1; }
-.kick-hero-banner-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 15%; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 24%); mask-image: linear-gradient(90deg, transparent 0%, #000 24%); }
 
 /* "Master Claude AI. / Transform your domain." */
 .gcamp-master { font-family: 'DM Serif Display', serif; font-size: clamp(23px, 6.4vw, 30px); line-height: 1.24; margin-bottom: 20px; }
@@ -572,18 +557,6 @@
      stops it running past the column. */
   .gcamp-title { margin-bottom: 0; letter-spacing: -0.015em; white-space: nowrap; font-size: clamp(28px, 3.3vw, 44px); }
   .gcamp-heroart { max-width: 100%; margin-bottom: 0; }
-  .kick-hero-banner { max-width: 100%; aspect-ratio: auto; min-height: 320px; margin-bottom: 0; }
-  .kick-hero-banner-body { padding: 30px 26px 34px; max-width: 64%; }
-  .kick-hero-banner-logo { margin-bottom: 10px; transform: none; }
-  .kick-hero-banner-badge { font-size: 10.5px; padding: 7px 13px; }
-  .kick-hero-banner-title { margin-top: 14px; font-size: clamp(22px, 2.4vw, 28px); gap: 7px; }
-  .kick-hero-banner-title mark { padding: 6px 16px; border-radius: 8px; }
-  .kick-hero-banner-photo { width: 38%; }
-  .kick-hero-banner-tag { margin-top: 14px; font-size: 13.5px; }
-  .kick-hero-banner-credit { padding-top: 16px; font-size: 12px; }
-  .kick-hero-banner-creds { flex-wrap: wrap; gap: 10px 16px; margin-top: 10px; }
-  .kick-hero-banner-creds .partner-logo-img { height: 26px; max-width: 100px; }
-  .kick-hero-banner-creds .partner-name { font-size: 11px; }
   .gcamp-master { font-size: 22px; line-height: 1.32; margin-bottom: 20px; }
   .gcamp-master span { margin-top: 2px; }
   .gcamp-hero-sub { margin: 0 0 24px; max-width: 46ch; font-size: 15px; line-height: 1.65; text-align-last: left; -moz-text-align-last: left; }

@@ -34,25 +34,38 @@ import '../styles/campaign-landing.css';
 // the same "outcome in N days" shape the masterclass banners use.
 function HeroArt() {
   return (
-    <div className="kick-hero-banner">
-      <div className="kick-hero-banner-body">
-        <div className="kick-hero-banner-logo"><MenlerWordmark size={16} /></div>
-        <span className="kick-hero-banner-badge">✦⚡ THE 14-DAY AI SPRINT</span>
-        <h2 className="kick-hero-banner-title">
-          <mark>Become AI-Fluent</mark>
-          <mark>In Just 14 Days</mark>
-        </h2>
-        <p className="kick-hero-banner-tag">Two weeks. Real AI advantage.</p>
-        <p className="kick-hero-banner-credit">By <b>Deepak K</b> — AI Operations Lead, Testbook</p>
-        <div className="kick-hero-banner-creds" aria-label="Testbook, MyCaptain, Imarticus">
-          <BrandLogo name="Testbook" domain="testbook.com" />
-          <BrandLogo name="MyCaptain" logo="/logos/mycaptain.jpg" />
-          <BrandLogo name="Imarticus" logo="/logos/imarticus.jpg" />
+    <div className="gcamp-kick-banner">
+      <section className="lp2-banner">
+        <div className="lp2-banner-body">
+          <div className="lp2-banner-logo" style={{ marginBottom: '14px' }}>
+            <MenlerWordmark size={22} theme="light" />
+          </div>
+          <span className="lp2-banner-badge">✦⚡ The 14-Day AI Sprint</span>
+          <h2 className="lp2-banner-title">
+            <mark>Become AI-Fluent</mark>
+            <mark>In Just 14 Days</mark>
+          </h2>
+          <p className="lp2-banner-tag">Two weeks. Real AI advantage.</p>
+          <div className="lp2-banner-brand">
+            <span className="lp2-banner-credit">By <b>Deepak K</b> — AI Operations Lead, Testbook</span>
+          </div>
+          <div className="lp2-banner-creds" aria-label="Testbook, MyCaptain, Imarticus">
+            <BrandLogo name="Testbook" domain="testbook.com" />
+            <BrandLogo name="MyCaptain" logo="/logos/mycaptain.jpg" />
+            <BrandLogo name="Imarticus" logo="/logos/imarticus.jpg" />
+          </div>
         </div>
-      </div>
-      <div className="kick-hero-banner-photo">
-        <img src="/mentors/Deepak.webp" alt="Deepak K" />
-      </div>
+        <div className="lp2-banner-photo">
+          <img src="/mentors/Deepak.webp" alt="Deepak K" />
+        </div>
+        {/* The body reserves 64px at its foot for this strip; without one the
+            banner would carry that as dead space. */}
+        <div className="lp2-banner-strip">
+          <span><b>Starts 30 August 2026</b></span>
+          <span className="lp2-strip-dot" aria-hidden="true" />
+          <span>Live online · 2 weeks</span>
+        </div>
+      </section>
     </div>
   );
 }

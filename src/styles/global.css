@@ -1888,6 +1888,19 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 @media (prefers-reduced-motion: reduce) { .lp2-skel { animation: none; } }
 .lp2-banner-strip { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; display: flex; align-items: center; gap: 14px; padding: 13px 28px; background: linear-gradient(90deg, var(--ink), #3a3470); color: #fff; font-size: 13px; letter-spacing: .015em; }
 .lp2-banner-strip b { font-weight: 700; }
+
+/* The Kickstarter campaign's hero banner IS a Sanity landing banner — it uses
+   the .lp2-banner classes rather than a copy of them, so the two cannot drift.
+   Only the palette is redeclared: .lp2 carries it on the landing page, but that
+   selector is a whole-page shell (white ground, 100vh) and can't wrap a section.
+   The values are .lp2's own defaults, which is what Sanity would render with
+   nothing overridden. */
+.gcamp-kick-banner { --a: #BA7517; --a-dark: #854F0B; --banner-from: #FFF1CC; --banner-to: #F6D77E; --hl-bg: #C7F24D; --hl-text: #1c2400; text-align: left; }
+/* Its credential marks come from BrandLogo, which renders a chip; a Sanity
+   banner passes bare images. Strip the chip so both read the same. */
+.gcamp-kick-banner .lp2-banner-creds .partner-chip { padding: 0; background: none; border: none; min-width: 0; height: auto; }
+.gcamp-kick-banner .lp2-banner-creds .partner-logo-img { height: 20px; width: auto; max-width: 74px; object-fit: contain; }
+.gcamp-kick-banner .lp2-banner-creds .partner-name { font-size: 9.5px; font-weight: 700; color: var(--ink); }
 .lp2-banner-strip span:first-child::before { content: '📅'; margin-right: 8px; }
 .lp2-strip-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--lavender); }
 @media (max-width: 560px) {
@@ -1914,6 +1927,8 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .lp2-banner-cred-mck { font-size: 8px; }
   .lp2-banner-photo { width: 44%; }
   .lp2-banner-strip { padding: 7px 12px; font-size: 9.5px; gap: 7px; }
+  .gcamp-kick-banner .lp2-banner-creds .partner-logo-img { height: 15px; max-width: 52px; }
+  .gcamp-kick-banner .lp2-banner-creds .partner-name { font-size: 8px; }
   .lp2-banner-strip span:first-child::before { margin-right: 5px; }
 }
 
