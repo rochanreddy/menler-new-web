@@ -177,19 +177,16 @@ const CAMPAIGN_LOGOS = {
 // The institutions behind this campaign's mentor. UT Austin exists in the repo
 // only as a white mark (it lives on the navy trust bar), so it is inverted to
 // sit on the banner's cream — hence the flag rather than a second file.
-// The same three marks the navy trust bar carries, so the two agree. They are
-// the white originals and stay that way — the row sits on the same navy as the
-// strip under the registration form. Inverting them to ink turned the Texas
-// shield into a solid black block, which is what that treatment cost.
-// McKinsey has no file in either place; it is set in serif.
+// The same three marks the navy trust bar carries, so the two agree — but drawn
+// for a light ground, not the bar's navy. MIT is an ink copy of the SVG; Texas
+// is the real burnt-orange mark. McKinsey has no file in either place and is
+// set in serif. NB: the Texas PNG carries wide transparent padding, so its
+// height is set well above the others to land at the same visual size.
 const NITIN_CREDS = [
   { name: 'McKinsey & Company', mark: 'mck' },
-  { name: 'MIT', logo: '/logos/mit-white.svg' },
-  { name: 'The University of Texas at Austin', logo: '/logos/ut-austin-white.svg' },
+  { name: 'MIT', logo: '/logos/mit-ink.svg' },
+  { name: 'The University of Texas at Austin', logo: '/logos/texas-uni-removebg-preview.png' },
 ];
-
-// Slugs whose banner cred row carries white marks and so needs the navy plate.
-const BANNER_CREDS_ON_DARK = new Set(['build-ai-agents-lightning-fast']);
 
 const BANNER_CRED_LOGOS = {
   'build-your-portfolio-with-claude': SRIDEVI_CREDS,
@@ -313,7 +310,6 @@ export default function KickstarterLanding() {
   // Extra "College / University" field — only on the career-advantage campaign.
   const showCollege = activeSlug === 'turn-ai-into-your-career-advantage';
   const bannerCredLogos = (d.showCredLogosInBanner && sanityLogos) || BANNER_CRED_LOGOS[activeSlug];
-  const credsOnDark = BANNER_CREDS_ON_DARK.has(activeSlug);
   const certTitle = has(d.certificateTitle) ? d.certificateTitle : (CERT_TITLES[activeSlug] || heading);
   // Signature line on the certificate mock-up. "|" separates the designation
   // from the employer ("AI Educator | AI Future Skills Specialist"), and only
@@ -442,7 +438,7 @@ export default function KickstarterLanding() {
                 {!contentLoading && <span className="lp2-banner-credit">By <b>{d.mentorName}</b> — {d.mentorRole}</span>}
               </div>
               {!contentLoading && bannerCredLogos && (
-                <div className={credsOnDark ? 'lp2-banner-creds lp2-banner-creds--dark' : 'lp2-banner-creds'} aria-label={bannerCredLogos.map((l) => l.name).join(', ')}>
+                <div className="lp2-banner-creds" aria-label={bannerCredLogos.map((l) => l.name).join(', ')}>
                   {bannerCredLogos.map((l) => (l.mark === 'mck'
                     ? <span key={l.name} className="lp2-banner-cred-mck">McKinsey<br />&amp; Company</span>
                     : <img key={l.name} src={l.logo} alt={l.name} decoding="async" style={{ ...(bannerLogoH ? { height: `${bannerLogoH}px` } : null), ...(l.invert ? { filter: 'brightness(0)' } : null) }} />
