@@ -322,7 +322,7 @@ export default function KickstarterCampaign() {
         <Reveal className="gcamp-head">
           <p className="gcamp-eyebrow">Mentors &amp; internships</p>
           <h2 className="gcamp-h2">The People Behind Menler</h2>
-          <p className="gcamp-sub">Leaders and mentors from industry who shape what you learn and how you grow.</p>
+          <p className="gcamp-sub">Industry leaders and mentors who shape what you learn and how you grow.</p>
         </Reveal>
         <MentorsRail bare rows={1} mentors={KICK_MENTORS} />
 
