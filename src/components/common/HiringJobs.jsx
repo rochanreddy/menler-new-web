@@ -51,8 +51,12 @@ const DEFAULT_COMPANIES = [
 // list, it starts collapsed to that many roles with a clickable "+N more"
 // tile filling the grid's last cell; clicking it reveals the rest in place
 // (and turns into a "Show fewer" tile so it can be collapsed again).
-function RoleList({ roles, preview }) {
-  const [open, setOpen] = useState(false);
+function RoleList({ roles, preview, open: openProp }) {
+  const [openLocal, setOpenLocal] = useState(false);
+  // Controlled when a parent passes `open` — the single-box variant drives
+  // both lists from one toggle instead of each keeping its own.
+  const controlled = openProp !== undefined;
+  const open = controlled ? openProp : openLocal;
   const truncated = preview && preview < roles.length;
   const shown = truncated && !open ? roles.slice(0, preview) : roles;
   const hiddenCount = roles.length - preview;
@@ -61,8 +65,8 @@ function RoleList({ roles, preview }) {
       {shown.map(r => (
         <div key={r.name} className="role-row"><p className="role-name">{r.name}</p><p className="role-band">{r.band}</p></div>
       ))}
-      {truncated && (
-        <button type="button" className="role-row role-row--more" onClick={() => setOpen(o => !o)}>
+      {truncated && !controlled && (
+        <button type="button" className="role-row role-row--more" onClick={() => setOpenLocal(o => !o)}>
           <p className="role-more-n">{open ? 'Show fewer' : `+${hiddenCount} more`}</p>
           <p className="role-band">{open ? 'Back to the shortlist' : 'Across every domain track'}</p>
         </button>
@@ -87,6 +91,9 @@ export default function HiringJobs({
   // as before.
   genPreview,
   engPreview,
+  // One box holding both role groups, closed by a single "& many more"
+  // instead of a "+N more" tile per group. Default keeps the two cards.
+  singleBox = false,
   companies = DEFAULT_COMPANIES,
   partnersLabel = 'Hiring associations · India · 25+ companies',
   // Where the pay figures come from. A prop because it is not always salary
@@ -101,21 +108,43 @@ export default function HiringJobs({
   titleEmStyle = {},
   subStyle = {},
 } = {}) {
+  const [allOpen, setAllOpen] = useState(false);
+  const anyHidden = (genPreview && genPreview < genRoles.length) || (engPreview && engPreview < engRoles.length);
   return (
     <section className="section jobs-section" style={sectionStyle}>
       <p className="section-label" style={labelStyle}>{label}</p>
       <h2 className="section-h2" style={titleStyle}>{title}<br /><em style={titleEmStyle}>{titleEm}</em></h2>
       <p className="section-sub section-sub--1line" style={subStyle}>{sub}</p>
-      <div className="jobs-roles">
-        <div className="role-card gen-side">
-          <p className="role-card-program">{genLabel}</p>
-          <RoleList roles={genRoles} preview={genPreview} />
+      {singleBox ? (
+        <div className="jobs-roles jobs-roles--single">
+          <div className="role-card role-card--single">
+            <div className="role-group role-group--gen">
+              <p className="role-card-program">{genLabel}</p>
+              <RoleList roles={genRoles} preview={genPreview} open={allOpen} />
+            </div>
+            <div className="role-group role-group--eng">
+              <p className="role-card-program">{engLabel}</p>
+              <RoleList roles={engRoles} preview={engPreview} open={allOpen} />
+            </div>
+            {anyHidden && (
+              <button type="button" className="role-more-all" onClick={() => setAllOpen(o => !o)}>
+                {allOpen ? 'Show fewer' : '& many more'}
+              </button>
+            )}
+          </div>
         </div>
-        <div className="role-card eng-side">
-          <p className="role-card-program">{engLabel}</p>
-          <RoleList roles={engRoles} preview={engPreview} />
+      ) : (
+        <div className="jobs-roles">
+          <div className="role-card gen-side">
+            <p className="role-card-program">{genLabel}</p>
+            <RoleList roles={genRoles} preview={genPreview} />
+          </div>
+          <div className="role-card eng-side">
+            <p className="role-card-program">{engLabel}</p>
+            <RoleList roles={engRoles} preview={engPreview} />
+          </div>
         </div>
-      </div>
+      )}
       <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 18, fontStyle: 'italic', lineHeight: 1.6 }}>{footnote}</p>
       {showPartners && (
         <div className="partners-strip">

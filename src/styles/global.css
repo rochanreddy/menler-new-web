@@ -1150,6 +1150,17 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .role-row--more:hover .role-more-n { text-decoration: underline; }
 .role-card.gen-side .role-more-n { color: var(--specialist); }
 .role-card.eng-side .role-more-n { color: var(--forest); }
+
+/* One box holding both role groups (HiringJobs singleBox). The groups keep
+   their two colours — that distinction is the point of splitting them — but
+   share one border and one closing line. */
+.jobs-roles--single { grid-template-columns: 1fr; }
+.role-group + .role-group { margin-top: 18px; padding-top: 16px; border-top: 0.5px solid rgba(175,169,236,0.18); }
+.role-group--gen .role-card-program { color: var(--specialist); }
+.role-group--eng .role-card-program { color: var(--forest); }
+.role-group--eng .role-name { color: var(--forest); }
+.role-more-all { display: block; width: 100%; margin-top: 16px; padding-top: 12px; background: none; border: none; border-top: 0.5px dashed rgba(175,169,236,0.4); font: inherit; font-size: 13px; font-weight: 700; color: var(--specialist); text-align: left; cursor: pointer; }
+.role-more-all:hover { text-decoration: underline; }
 /* Mobile: stack the two cards (full width each) and keep roles 2 per row, with
    smaller text so they sit neatly. */
 @media (max-width: 640px) {

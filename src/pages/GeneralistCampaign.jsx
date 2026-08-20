@@ -464,6 +464,7 @@ export default function GeneralistCampaign() {
           sub=""
           genPreview={2}
           engPreview={2}
+          singleBox
           companies={HIRING_COMPANIES}
           partnersLabel="Hiring associations · 25+ companies"
         />

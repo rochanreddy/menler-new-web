@@ -333,6 +333,7 @@ export default function KickstarterCampaign() {
           sub=""
           genPreview={2}
           engPreview={2}
+          singleBox
           labelStyle={{ color: '#854F0B' }}
           titleStyle={{ color: '#854F0B' }}
           titleEmStyle={{ color: '#BA7517' }}
