@@ -186,7 +186,7 @@ const STATS = [
 const PLAN = {
   pill: 'Flagship Programme',
   name: 'AI Generalist Fellowship',
-  
+  tagline: 'Build an AI-native portfolio in just 6 weeks.',
   features: [
     ['30 hrs live instruction over 6 weeks', 'Instructor led · real questions in real time'],
     ['Build live projects with mentors', 'Portfolio ready deliverables every week'],
