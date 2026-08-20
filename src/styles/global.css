@@ -2029,7 +2029,11 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
    sides. Name, rule and role all start flush at the same left edge instead —
    no left padding, so nothing floats further right than it has to. */
 .lp2-cert-sign--left { align-items: flex-start; text-align: left; max-width: 268px; }
-.lp2-cert-sign--left .lp2-cert-sign-name { padding-left: 0; }
+/* The signature rule sizes to the NAME here, not to the block. Inheriting the
+   centred variant's width:100% stretched it the full width of the role line
+   below — a rule far wider than the name it underlines reads as an empty
+   fill-in blank. width:auto shrinks it to the name plus a short right lead. */
+.lp2-cert-sign--left .lp2-cert-sign-name { width: auto; padding: 0 14px 4px 0; }
 .lp2-cert-sign-name { font-family: 'DM Serif Display', serif; font-size: 17px; color: var(--ink); border-bottom: 1px solid rgba(38,33,92,0.3); padding: 0 10px 4px; width: 100%; box-sizing: border-box; }
 .lp2-cert-sign-role { font-size: 10.5px; line-height: 1.4; color: var(--text-muted); margin-top: 5px; }
 .lp2-cert-note { font-size: 12.5px; color: var(--text-muted); }

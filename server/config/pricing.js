@@ -12,6 +12,7 @@ export const PROGRAM_PRICES = {
   'build-claude-skills-and-schedules': { amount: 99, label: 'Build Claude Skills and Schedules' },
   'crack-your-next-high-paying-job-with-ai': { amount: 99, label: 'Crack Your Next High-Paying Job with AI' },
   'build-your-first-webapp-with-claude': { amount: 99, label: 'Build Your First Webapp with Claude' },
+  'build-ai-agents-lightning-fast': { amount: 99, label: 'Build AI Agents Lightning Fast' },
   // Menler Library — ₹49 per playbook/resource download (menler.in/resources).
   library: { amount: 49, label: 'Menler Library' },
   // Internal gateway test — a live ₹5 charge via /pay-test. Remove after testing.

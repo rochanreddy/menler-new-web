@@ -370,7 +370,7 @@ export default function GeneralistCampaign() {
 
         <Reveal delay={140}>
           <p className="gcamp-master">
-            India’s First-Ever
+            India’s Only-Ever
             <span> <em>Claude AI</em> Fellowship</span>
           </p>
 
