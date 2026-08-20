@@ -100,7 +100,6 @@ const AUDIENCE = [
   { n: 2, t: 'College students', d: 'Any discipline. Stand out at internships and placements.', bg: '#E6E3F9', fg: '#534AB7' },
   { n: 3, t: 'Professionals new to AI', d: 'Catch up fast. Without coding. Without overwhelm.', bg: '#DCF0E7', fg: '#1D9E75' },
   { n: 4, t: "Founders' AI hires", d: 'First AI person at a startup? Get the toolkit fast.', bg: '#F9DFDF', fg: '#B0484F' },
-  { n: 5, t: 'Parents & educators', d: 'Be the AI guide for your kids and your classroom.', bg: '#EDECE6', fg: '#5F5E5A' },
 ];
 
 // ── The syllabus — one card per module, lessons verbatim from /kickstarter.
