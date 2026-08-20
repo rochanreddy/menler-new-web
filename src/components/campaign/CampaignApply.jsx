@@ -113,6 +113,8 @@ function ApplyForm({ onDone, program, source, section, noteProgram }) {
         source,
         cta_label: 'Apply Now',
         section: section || program || 'Campaign apply',
+        // Tells the API to send the application acknowledgement.
+        apply: true,
       });
       // Hands the page the confirmed details and steps aside — the thank-you
       // is a page of its own, not a panel inside the dialog that opened it.

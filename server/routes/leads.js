@@ -10,6 +10,7 @@ import { pdfAttachments, isAllowedPdf } from '../utils/pdfAttachments.js';
 import { deliverLibraryForOrder } from '../utils/packDelivery.js';
 import { verifyResourceToken } from '../utils/token.js';
 import { validateEmail } from '../utils/emailValidation.js';
+import { sendApplicationEmail } from '../utils/applicationEmail.js';
 
 const router = Router();
 
@@ -217,7 +218,9 @@ router.post('/', async (req, res) => {
 
     const doc = { extra: {} };
     for (const [key, value] of Object.entries(body)) {
-      if (key === 'hp_field') continue;
+      // `apply` only decides whether to acknowledge; it is not lead data, so it
+      // is not stored and does not reach the CRM as a stray custom field.
+      if (key === 'hp_field' || key === 'apply') continue;
       if (KNOWN_FIELDS.has(key)) doc[key] = value;
       else doc.extra[key] = value;
     }
@@ -230,6 +233,15 @@ router.post('/', async (req, res) => {
     const lead = await Lead.create(doc);
     // Push to Amplifeed CRM (non-blocking — don't await; failures are logged only).
     forwardLeadToCrm(lead);
+    // Acknowledge applications. Gated on an explicit flag from the form, not on
+    // the source, because this same route also takes newsletter sign-ups,
+    // playbook downloads, brochure requests and aptitude reports — none of
+    // which should be told their application is in.
+    if (body.apply === true) {
+      sendApplicationEmail(lead)
+        .then((r) => { if (!r.sent) console.warn('[apply-email] not sent:', r.reason); })
+        .catch((e) => console.error('[apply-email] failed:', e.message));
+    }
     res.status(201).json({ ok: true, id: lead._id.toString() });
   } catch (err) {
     console.error('lead capture error', err);

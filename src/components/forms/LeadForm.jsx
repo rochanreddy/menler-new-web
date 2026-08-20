@@ -28,7 +28,7 @@ export default function LeadForm({ defaultProgram = '', showProgram = true, ctaL
     try {
       // Verify the email via OTP before capturing the lead.
       const otp = await verifyEmailOtp(form.email.trim());
-      await submitLead({ ...form, ...otp, source, hp_field: hp, cta_label: ctaLabel, section: section || form.program || ctaLabel });
+      await submitLead({ ...form, ...otp, source, hp_field: hp, cta_label: ctaLabel, section: section || form.program || ctaLabel, apply: true });
       setSubmitted(true);
       toast.success("Application received — we'll be in touch within 48 hours.");
     } catch (err) {
