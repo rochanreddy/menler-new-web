@@ -174,8 +174,18 @@ const CAMPAIGN_LOGOS = {
 // Small credential marks shown IN THE BANNER under the mentor credit. Sized
 // separately (see .lp2-banner-creds) from the form strip, which is why this
 // is its own map — turn-messy shows its logos only under the form, not here.
+// The institutions behind this campaign's mentor. UT Austin exists in the repo
+// only as a white mark (it lives on the navy trust bar), so it is inverted to
+// sit on the banner's cream — hence the flag rather than a second file.
+const NITIN_CREDS = [
+  { name: 'McKinsey & Company', logo: '/logos/mckinsey.webp' },
+  { name: 'MIT', logo: '/logos/MIT_logo_2003-2023.svg.png' },
+  { name: 'UT Austin', logo: '/logos/ut-austin-white.svg', invert: true },
+];
+
 const BANNER_CRED_LOGOS = {
   'build-your-portfolio-with-claude': SRIDEVI_CREDS,
+  'build-ai-agents-lightning-fast': NITIN_CREDS,
 };
 
 // Certificate wording per campaign, for when the certificate names the course
@@ -426,7 +436,7 @@ export default function KickstarterLanding() {
               {!contentLoading && bannerCredLogos && (
                 <div className="lp2-banner-creds" aria-label={bannerCredLogos.map((l) => l.name).join(', ')}>
                   {bannerCredLogos.map((l) => (
-                    <img key={l.name} src={l.logo} alt={l.name} decoding="async" style={bannerLogoH ? { height: `${bannerLogoH}px` } : undefined} />
+                    <img key={l.name} src={l.logo} alt={l.name} decoding="async" style={{ ...(bannerLogoH ? { height: `${bannerLogoH}px` } : null), ...(l.invert ? { filter: 'brightness(0)' } : null) }} />
                   ))}
                 </div>
               )}
