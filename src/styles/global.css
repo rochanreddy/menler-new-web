@@ -2019,9 +2019,6 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
    longer overhangs a too-short underline. The blocks themselves stay pinned
    left/right by the foot's space-between. */
 .lp2-cert-sign { display: inline-flex; flex-direction: column; align-items: center; text-align: center; max-width: 230px; }
-/* The handwritten signature replaces the printed name: ink on the signature
-   line (same rule the name variant carries), role beneath. */
-.lp2-cert-sign-img { height: 30px; max-width: 140px; object-fit: contain; align-self: center; border-bottom: 1px solid rgba(38,33,92,0.3); padding: 0 10px 5px; box-sizing: content-box; }
 .lp2-cert-sign-name { font-family: 'DM Serif Display', serif; font-size: 17px; color: var(--ink); border-bottom: 1px solid rgba(38,33,92,0.3); padding: 0 10px 4px; width: 100%; box-sizing: border-box; }
 .lp2-cert-sign-role { font-size: 10.5px; line-height: 1.4; color: var(--text-muted); margin-top: 5px; }
 .lp2-cert-note { font-size: 12.5px; color: var(--text-muted); }
@@ -2046,7 +2043,6 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   /* Repeated inside the query — the .lp2-cert-foot rule above resets it. */
   .lp2-cert-foot--solo { justify-content: center; }
   .lp2-cert-foot--solo .lp2-cert-sign { max-width: 80%; }
-  .lp2-cert-sign-img { height: 20px; max-width: 92px; padding: 0 6px 3px; }
   .lp2-cert-sign-name { font-size: 10.5px; padding: 0 6px 3px; }
   .lp2-cert-sign-role { font-size: 8px; margin-top: 3px; }
   .lp2-cert-mock-top .menler-wm { font-size: 15px !important; }
