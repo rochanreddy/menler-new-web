@@ -204,7 +204,7 @@ const PLAN = {
 };
 
 // Hero fact pills.
-const FACTS = ['Live online', 'Mentor-led', 'Capstone Project', 'Certification'];
+const FACTS = ['Live Online', 'Mentor-Led', 'Capstone Project', 'Certification'];
 
 /* The offer, written once. It sits beside every Apply button — the hero, the
    plan card and the sticky bar — and a figure repeated in three places is a
@@ -375,8 +375,8 @@ export default function GeneralistCampaign() {
           </p>
 
           <p className="gcamp-sub gcamp-hero-sub">
-            Automate 90% of your work with AI agents, build no-code apps, and ship
-            live projects — trained by builders from McKinsey, Flipkart, Adobe &amp; PwC.
+           Automate your work with AI, build AI-powered solutions, and solve real-world problems across tech, non-tech, business, and every major 
+           function trained by AI experts from McKinsey, Microsoft, Zendesk, Adobe, Flipkart and more.
           </p>
 
           <div className="gcamp-facts">
