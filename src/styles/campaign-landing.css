@@ -65,7 +65,7 @@
 /* Pinned to the top of the window. It carries the wordmark and the "admissions
    open" status, which are worth having on screen the whole way down an ad
    landing page rather than only at the very top of it. */
-.gcamp-top { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px var(--gc-x); background: var(--white); border-bottom: 1px solid var(--gc-border); }
+.gcamp-top { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px var(--gc-x); background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(10px); border-bottom: 1px solid var(--gc-border); }
 .gcamp-top-tag { display: inline-flex; align-items: center; gap: 7px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gc-accent); }
 .gcamp-top-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--placed); box-shadow: 0 0 0 3px rgba(29, 158, 117, 0.16); }
 
@@ -75,7 +75,13 @@
 .gcamp-title { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: clamp(30px, 8.6vw, 44px); line-height: 1.12; letter-spacing: -0.01em; margin-bottom: 18px; }
 .gcamp-title em { font-style: italic; color: var(--gc-accent); }
 
-.gcamp-heroart { display: block; width: 100%; max-width: 430px; height: auto; margin: 0 auto 22px; filter: drop-shadow(0 14px 30px rgba(38, 33, 92, 0.1)); }
+/* The Fellowship's hero art is a flat export with no alpha: its four corners
+   are black behind the card's own rounded edge. Clipping the img to that same
+   radius takes them off — 29px on a 1482×1061 export, so ~2% of the width and
+   ~2.7% of the height, rounded up so antialiasing leaves no dark rim. Set as
+   percentages, not pixels, so the clip tracks the image at any width. The
+   drop-shadow then follows the rounded shape rather than a rectangle. */
+.gcamp-heroart { display: block; width: 100%; max-width: 430px; height: auto; margin: 0 auto 22px; border-radius: 2.2% / 3.1%; filter: drop-shadow(0 14px 30px rgba(38, 33, 92, 0.1)); }
 
 /* Kickstarter's hero art — a real HTML banner card (Deepak's photo, badge,
    highlighted headline, mentor credit), not the SVG mentor-pair composition
@@ -538,15 +544,28 @@
   /* One content column for the whole page: every band pads to the same
      gutter, so all sections share a left and right edge. --gc-x resolves
      against .gcamp (viewport width), which is why sections can use it but
-     the curriculum cards — inside a six-viewport track — cannot. */
-  .gcamp { --gc-y: 64px; --gc-x: max(32px, calc((100% - 1120px) / 2)); --gc-bar: 0px; }
+     the curriculum cards — inside a six-viewport track — cannot.
+     1240px, matching the main site's inner content cap (its toolstack grid
+     is the reference) — at 1120 these pages sat in a visibly narrower
+     column than every other page on the site. */
+  .gcamp { --gc-y: 72px; --gc-x: max(32px, calc((100% - 1240px) / 2)); --gc-bar: 0px; }
 
   .gcamp-head { margin-bottom: 34px; }
   .gcamp-sub { font-size: 16px; }
 
   /* Two columns on desktop: the pitch on the left, the art on the right.
-     Stacking them centred (the phone layout) left a tall, empty hero. */
-  .gcamp-hero { display: grid; grid-template-columns: 1.05fr 1fr; grid-template-rows: auto auto; column-gap: 60px; align-items: center; align-content: center; padding: 64px var(--gc-x) 56px; text-align: left; }
+     Stacking them centred (the phone layout) left a tall, empty hero.
+     A second, quieter glow sits behind the art so the right column has its
+     own light the way the home hero's visual does — one wash across the top
+     read as a band, not a composition. */
+  .gcamp-hero {
+    display: grid; grid-template-columns: 1.05fr 1fr; grid-template-rows: auto auto;
+    column-gap: 72px; align-items: center; align-content: center;
+    padding: 76px var(--gc-x) 68px; text-align: left;
+    background:
+      radial-gradient(46% 60% at 76% 42%, rgba(var(--gc-accent-rgb), 0.09) 0%, rgba(255, 255, 255, 0) 72%),
+      radial-gradient(120% 70% at 50% 0%, var(--gc-accent-soft) 0%, rgba(255, 255, 255, 0) 62%);
+  }
   .gcamp-hero > .reveal:nth-child(1) { grid-column: 1; grid-row: 1; align-self: end; }
   .gcamp-hero > .reveal:nth-child(2) { align-self: center; }
   .gcamp-hero > .reveal:nth-child(2) { grid-column: 2; grid-row: 1 / span 2; }
@@ -557,18 +576,19 @@
      stops it running past the column. */
   .gcamp-title { margin-bottom: 0; letter-spacing: -0.015em; white-space: nowrap; font-size: clamp(28px, 3.3vw, 44px); }
   .gcamp-heroart { max-width: 100%; margin-bottom: 0; }
-  .gcamp-master { font-size: 22px; line-height: 1.32; margin-bottom: 20px; }
+  .gcamp-badge { font-size: 11px; padding: 7px 16px; }
+  .gcamp-master { font-size: 24px; line-height: 1.3; margin-bottom: 20px; }
   .gcamp-master span { margin-top: 2px; }
-  .gcamp-hero-sub { margin: 0 0 24px; max-width: 46ch; font-size: 15px; line-height: 1.65; text-align-last: left; -moz-text-align-last: left; }
+  .gcamp-hero-sub { margin: 0 0 26px; max-width: 48ch; font-size: 15.5px; line-height: 1.7; text-align-last: left; -moz-text-align-last: left; }
   .gcamp--kick .gcamp-hero-sub { max-width: none; }
-  .gcamp-facts { justify-content: flex-start; gap: 10px; margin-bottom: 26px; }
-  .gcamp-fact { font-size: 13px; padding: 8px 15px; }
-  .gcamp-cta { width: auto; min-width: 260px; }
-  .gcamp-cta-note { text-align: left; }
+  .gcamp-facts { justify-content: flex-start; gap: 12px; margin-bottom: 28px; }
+  .gcamp-fact { font-size: 13.5px; padding: 9px 16px; }
+  .gcamp-cta { width: auto; min-width: 280px; }
+  .gcamp-cta-note { text-align: left; font-size: 12.5px; }
 
   /* Even columns with hairline separators read as a designed band; the phone
      layout's space-between left huge gaps at this width. */
-  .gcamp-stats { padding: 24px var(--gc-x) 26px; }
+  .gcamp-stats { padding: 30px var(--gc-x) 32px; }
   .gcamp-stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; }
   .gcamp-stat { padding-left: 30px; border-left: 1px solid rgba(var(--gc-on-dark-rgb),0.18); }
   .gcamp-stat:first-child { padding-left: 0; border-left: none; }
@@ -588,7 +608,12 @@
   .gcamp-who-grid { grid-template-columns: repeat(4, 1fr); gap: 18px; }
   /* The Kickstarter has five audiences — one row of five rather than 4 + 1. */
   .gcamp-who-grid--5 { grid-template-columns: repeat(5, 1fr); gap: 14px; }
-  .gcamp-who-card { flex-direction: column; gap: 16px; padding: 26px 22px; }
+  .gcamp-who-card { flex-direction: column; gap: 16px; padding: 28px 24px; border-radius: 18px; }
+  /* Phone sizes on a desktop card read as fine print — the card grew, the
+     type didn't. */
+  .gcamp-who-num { width: 36px; height: 36px; font-size: 15px; }
+  .gcamp-who-t { font-size: 16px; margin-bottom: 6px; }
+  .gcamp-who-d { font-size: 13.5px; line-height: 1.55; }
 
   /* Centring is the base rule now; this only opens the card up a little where
      there is room for it. */
@@ -623,7 +648,9 @@
      block off the page's centre line — the head above it is centred on the
      same axis. The dots and counter carry the "there are more" job here. */
   .gcamp-wcard { flex-basis: 100%; width: 100%; padding: 0 32px; scroll-snap-align: start; }
-  .gcamp-wcard-in { max-width: 1120px; margin: 0 auto; padding: 38px 42px; }
+  /* Caps to the page column (1240) so the card's edges line up with every
+     other band's. */
+  .gcamp-wcard-in { max-width: 1240px; margin: 0 auto; padding: 40px 46px; }
   .gcamp-wcard-t { font-size: 30px; margin-bottom: 24px; }
   /* Two columns of lessons so the wide card reads as a plan, not a long list */
   /* One column. Two made each lesson a short line with a long gap beside it,
@@ -638,15 +665,15 @@
   .gcamp-dl-form { flex: none; width: 340px; }
   .gcamp-dl-form .gcamp-cta { min-width: 0; width: 100%; }
 
-  /* The home page's rows, at the only size that fits: six chips must clear the
-     1120px column here (6×172 + 5×12 = 1092), and home's 188px chips would
-     overflow it. Same shape, same ring, three points narrower. */
+  /* The home page's rows at the home page's size: the column is 1240 now, so
+     six of home's 188px chips clear it (6×188 + 5×12 = 1188) and the stack
+     here is the same stack, chip for chip. */
   .gcamp .toolstack-grid { display: flex; flex-direction: column; gap: 12px; }
   .gcamp .toolstack-row { display: flex; flex-wrap: nowrap; gap: 12px; }
-  .gcamp .toolstack-chip { flex: 0 0 172px; flex-direction: row; justify-content: center; gap: 10px; padding: 14px 16px; text-align: left; border-radius: 16px; }
+  .gcamp .toolstack-chip { flex: 0 0 188px; flex-direction: row; justify-content: center; gap: 10px; padding: 14px 16px; text-align: left; border-radius: 16px; }
   .gcamp .toolstack-chip::before { border-radius: 16px; }
   .gcamp .toolstack-logo { height: 26px; width: auto; max-width: 30px; padding: 5px; border-radius: 8px; }
-  .gcamp .toolstack-name { font-size: 15px; overflow: visible; }
+  .gcamp .toolstack-name { font-size: 16px; overflow: visible; }
 
   .gcamp-plan .kp-card { padding: 40px 44px; }
   .gcamp-plan .kp-head { flex-direction: row; gap: 28px; }
@@ -666,6 +693,35 @@
 
   .gcamp-done-links { grid-template-columns: 1fr 1fr; }
 
-  .gcamp-foot { padding: 34px var(--gc-x) 40px; }
+  /* ── Mentors band ──
+     Phone-sized cards (250×208) in a 1240px band read as thumbnails; the main
+     page runs 360×300. These sit between — big enough that the faces carry
+     the band, small enough that a whole row's worth is on screen at once. */
+  .gcamp-mentors .gcamp-h2 { font-size: 34px; }
+  .gcamp-mentors .gcamp-sub { font-size: 15px; }
+  .gcamp-mentors .captain-card { height: 250px; flex-basis: 300px; width: 300px; }
+  .gcamp-mentors .captain-overlay { padding: 22px 22px 20px; }
+  .gcamp-mentors .captain-name { font-size: 19px; }
+  .gcamp-mentors .captain-role { font-size: 12.5px; margin-top: 5px; }
+  .gcamp-mentors .captain-company { font-size: 10.5px; margin-top: 7px; }
+
+  /* ── Jobs band ──
+     Its heading is a full section head here, not the sub-head it is on a
+     phone, so it takes the size the other bands' heads carry. */
+  .gcamp-people--jobs .jobs-section .section-h2 { font-size: 32px; }
+  .gcamp-people--jobs .jobs-section .section-sub { font-size: 15px; margin-top: 10px; }
+  .gcamp-people--jobs .jobs-roles { margin-top: 26px; }
+  .gcamp-people--jobs .role-card--single { padding: 30px 34px; }
+  /* Three columns, not two: the single merged list is five roles plus the
+     "& many more" tile — six cells, a perfect 3×2 — and at two columns the
+     box was mostly the gap between them. */
+  .gcamp-people--jobs .role-list { grid-template-columns: repeat(3, 1fr); gap: 14px 28px; }
+  .gcamp-people--jobs .role-row:nth-child(3) { border-top: none; padding-top: 0; }
+  .gcamp-people--jobs .role-name { font-size: 14px; }
+  .gcamp-people--jobs .role-band { font-size: 11.5px; }
+  .gcamp-people--jobs .partners-strip { margin-top: 26px; padding: 22px 20px; }
+
+  .gcamp-foot { padding: 44px var(--gc-x) 48px; }
+  .gcamp-foot-desc { font-size: 12.5px; max-width: 300px; }
   .gcamp-bar { display: none; }
 }

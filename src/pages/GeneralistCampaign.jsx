@@ -50,129 +50,30 @@ const GEN_MENTORS = getFeaturedMentors(MENTORS);
 const GEN_ROLES_TOP = [...GEN_HIRING.genRoles.slice(0, 2), ...GEN_HIRING.engRoles.slice(0, 3)];
 const GEN_ROLES = [...GEN_ROLES_TOP, ...GEN_HIRING.genRoles.slice(2), ...GEN_HIRING.engRoles.slice(3)];
 
-// Hero art: Nitin (left) and Sridevi (right) framing the Claude mark and the
-// fellowship's domain tags — the domains "Transform your domain." refers to.
-// Inline SVG so the composition scales as one unit on any phone width.
-// The "Master Claude AI." message lives BELOW this card as real HTML text.
-const HERO_DOMAINS = [
-  { t: 'Marketing', w: 78, r: -3, dx: -8 },
-  { t: 'Finance', w: 68, r: 2.5, dx: 10 },
-  { t: 'Product', w: 68, r: -2, dx: -6 },
-  { t: 'Analyst', w: 64, r: 3, dx: 9 },
-  { t: "Founder's Office", w: 104, r: -2.5, dx: 0 },
-];
-
-// Each mentor's accreditation marks — the same credibility cue the masterclass
-// banners carry under the mentor credit (.lp2-banner-creds), except here they
-// sit inside the card so the hero stays one composition. Real logo files, never
-// baked into a screenshot; a brand with no local file falls back to its
-// wordmark set as text.
-const MENTOR_CREDS = {
-  nitin: [
-    { name: 'McKinsey & Company', logo: '/logos/mckinsey.webp' },
-    { name: 'Rio Tinto', logo: '/logos/rio-tinto.jpg' },
-    { name: 'Al Yusr Leasing & Financing', logo: '/logos/al-yusr.jpg' },
-  ],
-  sridevi: [
-    { name: 'Microsoft', logo: '/logos/microsoft.webp' },
-    { name: 'IIT Guwahati', logo: '/logos/iitg.png' },
-    { name: 'ISB', logo: '/logos/isb.png' },
-  ],
-};
-
-// The two photo columns. `cx` centres the name, role and credential panel on
-// the portrait above them; each mentor's marks live in ONE panel no wider than
-// their own column, so the wide gap down the middle keeps the two sets visibly
-// separate — a single full-width strip read as if it belonged to both.
-const HERO_MENTORS = [
-  {
-    key: 'nitin', name: 'Nitin K Sethi', role: ['AI Engineer', 'Ex-McKinsey'],
-    img: '/mentors/Nitin.webp', clip: 'gcamp-ph-l', x: 14, cx: 65, panelX: 8,
-  },
-  {
-    key: 'sridevi', name: 'Sridevi Edupuganti', role: ['Co-Founder', 'Zenithworks AI'],
-    img: '/mentors/sridevi.png', clip: 'gcamp-ph-r', x: 244, cx: 295, panelX: 238,
-  },
-];
-
-const PANEL_W = 114;
-const PANEL_H = 24;
-const PANEL_Y = 218;
-const SLOT = PANEL_W / 3;
-
+// Hero art: the finished composition, exported as one image — Nitin and
+// Sridevi either side of the Claude mark, the fellowship domains between them,
+// and both mentors' credentials on the navy strip beneath. It was built here as
+// inline SVG (portrait masks, bottom scrim, credential strip, domain pills);
+// the artwork is authored outside the codebase now, so the page just places it.
+// The "Master Claude AI." message still lives BELOW this card as real HTML.
+//
+// The export carries no alpha and its four corners are black behind the card's
+// own rounded edge, so .gcamp-heroart clips the img to that radius — 29px of a
+// 1482×1061 export. Re-export it with transparency and the clip can come off.
+//
+// width/height are the export's own, so the box is reserved before it loads and
+// the hero doesn't jump; fetchPriority high because this is the hero's LCP.
 function HeroArt() {
-  const credsLabel = HERO_MENTORS
-    .map((m) => `${m.name}, ${m.role.join(', ')} (${MENTOR_CREDS[m.key].map((c) => c.name).join(', ')})`)
-    .join(' and ');
   return (
-    <svg
+    <img
       className="gcamp-heroart"
-      viewBox="0 0 360 258"
-      role="img"
-      aria-label={`Mentors ${credsLabel} with Claude AI and the fellowship domains: Marketing, Finance, Product, Analyst, Founder's Office`}
-    >
-      <defs>
-        <clipPath id="gcamp-ph-l">
-          <rect x="14" y="16" width="102" height="156" rx="16" />
-        </clipPath>
-        <clipPath id="gcamp-ph-r">
-          <rect x="244" y="16" width="102" height="156" rx="16" />
-        </clipPath>
-        <linearGradient id="gcamp-card-bg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#EEEDFE" />
-          <stop offset="1" stopColor="#F8F7FE" />
-        </linearGradient>
-      </defs>
-
-      {/* Card */}
-      <rect x="0" y="0" width="360" height="258" rx="22" fill="url(#gcamp-card-bg)" />
-      <rect x="0.75" y="0.75" width="358.5" height="256.5" rx="21.25" fill="none" stroke="#AFA9EC" strokeOpacity="0.4" strokeWidth="1.5" />
-
-      {/* Mentors — portrait, name, role, then the accreditation chips */}
-      {HERO_MENTORS.map((m) => (
-        <g key={m.key}>
-          <image
-            href={m.img}
-            x={m.x} y="16" width="102" height="156"
-            preserveAspectRatio="xMidYMid slice"
-            clipPath={`url(#${m.clip})`}
-          />
-          <rect x={m.x} y="16" width="102" height="156" rx="16" fill="none" stroke="#AFA9EC" strokeWidth="1.5" />
-          <text x={m.cx} y="186" textAnchor="middle" fontFamily="'DM Sans', sans-serif" fontSize="11.5" fontWeight="600" fill="#26215C">{m.name}</text>
-          {m.role.map((line, i) => (
-            <text key={line} x={m.cx} y={198 + i * 10} textAnchor="middle" fontFamily="'DM Sans', sans-serif" fontSize="8.5" fill="#888780">{line}</text>
-          ))}
-          <rect x={m.panelX} y={PANEL_Y} width={PANEL_W} height={PANEL_H} rx="8" fill="#ffffff" stroke="#AFA9EC" strokeOpacity="0.55" strokeWidth="1" />
-          {MENTOR_CREDS[m.key].map((c, i) => {
-            const sx = m.panelX + i * SLOT;
-            return (
-              <g key={c.name}>
-                {i > 0 && <line x1={sx} y1={PANEL_Y + 6} x2={sx} y2={PANEL_Y + PANEL_H - 6} stroke="#AFA9EC" strokeOpacity="0.4" strokeWidth="1" />}
-                {c.logo ? (
-                  <image
-                    href={c.logo}
-                    x={sx + 4} y={PANEL_Y + 5} width={SLOT - 8} height={PANEL_H - 10}
-                    preserveAspectRatio="xMidYMid meet"
-                  />
-                ) : (
-                  <text x={sx + SLOT / 2} y={PANEL_Y + 15} textAnchor="middle" fontFamily="'DM Sans', sans-serif" fontSize="7.5" fontWeight="700" fill="#26215C">{c.text}</text>
-                )}
-              </g>
-            );
-          })}
-        </g>
-      ))}
-
-      {/* Centre column — Claude mark over the specialisation domains */}
-      <image href="/logos/claude.svg" x="166" y="28" width="28" height="28" />
-      <text x="180" y="74" textAnchor="middle" fontFamily="'DM Sans', sans-serif" fontSize="10" fontWeight="700" letterSpacing="1.2" fill="#534AB7">CLAUDE AI</text>
-      {HERO_DOMAINS.map((d, i) => (
-        <g key={d.t} transform={`translate(${180 + d.dx} ${96 + i * 25}) rotate(${d.r})`}>
-          <rect x={-d.w / 2} y="-11" width={d.w} height="22" rx="11" fill={i % 2 ? '#26215C' : '#ffffff'} stroke="#AFA9EC" strokeOpacity={i % 2 ? 0 : 0.7} strokeWidth="1" />
-          <text x="0" y="3.5" textAnchor="middle" fontFamily="'DM Sans', sans-serif" fontSize="10.5" fontWeight="600" fill={i % 2 ? '#F1EFE8' : '#26215C'}>{d.t}</text>
-        </g>
-      ))}
-    </svg>
+      src="/campign_genralist.png"
+      width="1482"
+      height="1061"
+      alt="Nitin K Sethi, AI Engineer, Ex-McKinsey and MIT mentor, and Sridevi Edupuganti, AI Generalist, Ex-Microsoft and ISB EE mentor, either side of the Claude AI mark and the fellowship domains: Marketing, Finance, Product, Analyst, Founder's Office and HR Operations. Accredited by McKinsey & Company, MIT, The University of Texas at Austin, Microsoft, IIT Guwahati and ISB."
+      fetchPriority="high"
+      decoding="async"
+    />
   );
 }
 

@@ -6,7 +6,7 @@ import AccredSection from '../components/common/AccredSection';
 import { BrandLogo } from '../components/common/PartnersMarquee';
 import ToolStack from '../components/common/ToolStack';
 import MentorsRail, { MENTORS } from '../components/common/MentorsRail';
-import HiringJobs from '../components/common/HiringJobs';
+import HiringJobs, { DEFAULT_GEN_ROLES, DEFAULT_ENG_ROLES } from '../components/common/HiringJobs';
 import { HIRING_COMPANIES } from '../data/hiringCompanies';
 import Seo from '../components/common/Seo';
 import PricingCard from '../components/common/PricingCard';
@@ -99,13 +99,13 @@ const PLAN = {
   chips: [
     { label: 'Duration', value: '2 Weeks' },
     { label: 'Sessions', value: '4 · 8 hrs' },
-    { label: 'Format', value: 'Live online' },
+    { label: 'Format', value: 'Live Online' },
     { label: 'Starts', value: 'Aug 30, 2026' },
   ],
 };
 
 // Hero fact pills.
-const FACTS = ['Live online', 'Mentor-led', 'Capstone Project', 'Certification'];
+const FACTS = ['Live Online', 'AI Career Opportunities', 'Capstone Project', 'Certification'];
 
 // "Who this is for" — the five /kickstarter audiences, with the same tints.
 const AUDIENCE = [
@@ -116,12 +116,14 @@ const AUDIENCE = [
 ];
 
 // ── The syllabus — one card per module, lessons verbatim from /kickstarter.
-// Four modules over two weekends, numbered straight through 1-4. The two that
-// open a weekend say "Live sessions" on their own subtitle, so the badge stays
-// a plain module number (same pattern as the Fellowship's phase badges).
+// Four modules over two weekends, numbered straight through 1-4. No subtitle
+// line on the badge row: it appeared on only the two modules that open a
+// weekend, so those two cards started their title lower than the other two and
+// the heading moved as you swiped. Same reason the Fellowship dropped its
+// phase badges.
 const MODULES = [
   {
-    n: 'Module 1', phase: 'Live sessions',
+    n: 'Module 1',
     t: 'AI Foundations + Claude OS',
     lessons: [
       'The AI Landscape : what you actually need to know',
@@ -144,7 +146,7 @@ const MODULES = [
     projects: ['Build 2 : Study planner agent', 'Build 3 : Content engine'],
   },
   {
-    n: 'Module 3', phase: 'Live sessions',
+    n: 'Module 3',
     t: 'Automation Systems',
     lessons: [
       'Claude Schedules : time-triggered intelligence',
@@ -195,6 +197,15 @@ const KS_TOOLS = [
 // src/data/featuredMentors.js for the shared lineup (also used by the
 // Generalist campaign page).
 const KICK_MENTORS = getFeaturedMentors(MENTORS);
+
+// Internships: ONE list under one heading, not two columns. Same reasoning as
+// the Fellowship page — two headings on an ad landing page made the reader
+// sort the roles into buckets before reading any of them, and "non tech" vs
+// "tech" was a distinction only we could see. The second group is dropped as a
+// *heading*; its roles stay, merged in. The first five show; "& many more"
+// expands the same box to all twelve.
+const KICK_ROLES_TOP = [...DEFAULT_GEN_ROLES.slice(0, 2), ...DEFAULT_ENG_ROLES.slice(0, 3)];
+const KICK_ROLES = [...KICK_ROLES_TOP, ...DEFAULT_GEN_ROLES.slice(2), ...DEFAULT_ENG_ROLES.slice(3)];
 
 export default function KickstarterCampaign() {
   const heroRef = useRef(null);
@@ -326,26 +337,32 @@ export default function KickstarterCampaign() {
         sub="Get hands on with every tool in the programme — from your first prompt to your first shipped build."
       />
 
-      {/* Who teaches it, what it leads to, and who hires from it — one band,
-          the same as the Fellowship page. Split apart the reader had to
-          scroll past each to reach the next, and the roles come before the
-          companies: the internship is the point, the logos are the proof. */}
-      <section className="gcamp-people">
+      {/* Who teaches it — its own white band, the same as the Fellowship page.
+          Sharing one parchment band with the internships below it ran two
+          different claims together; the change of ground is what tells the
+          reader the second one has started. */}
+      <section className="gcamp-mentors">
         <Reveal className="gcamp-head">
-          <p className="gcamp-eyebrow">Mentors &amp; internships</p>
+          <p className="gcamp-eyebrow">Mentors</p>
           <h2 className="gcamp-h2">The People Behind Menler</h2>
-          <p className="gcamp-sub">Industry leaders and mentors who shape what you learn and how you grow.</p>
+          <p className="gcamp-sub">AI Leaders who shape what you learn and how you grow.</p>
         </Reveal>
         <MentorsRail bare rows={1} mentors={KICK_MENTORS} />
+      </section>
 
-        {/* showPartners puts the company rail directly under the roles. */}
+      {/* What it leads to, and who hires from it. The roles come before the
+          companies: the internship is the point, the logos are the proof.
+          showPartners puts the company rail directly under the roles. */}
+      <section className="gcamp-people gcamp-people--jobs">
         <HiringJobs
           label="Internship opportunities"
           title="The internships"
           titleEm="AI fluent are landing."
-          sub=""
-          genPreview={2}
-          engPreview={2}
+          sub="Menler Kickstarter prepares learners to contribute from day one."
+          genLabel="AI-Native Internships"
+          genRoles={KICK_ROLES}
+          genPreview={KICK_ROLES_TOP.length}
+          engRoles={[]}
           singleBox
           labelStyle={{ color: '#854F0B' }}
           titleStyle={{ color: '#854F0B' }}

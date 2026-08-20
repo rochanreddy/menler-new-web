@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import HiringRail from './HiringRail';
 
-const DEFAULT_GEN_ROLES = [
+// Exported so a page can compose its own single merged list out of them (the
+// campaign pages run one list under one heading rather than two columns)
+// without restating the roles.
+export const DEFAULT_GEN_ROLES = [
   { name: 'AI Research', band: '₹10k–25k/month · Research & Strategy teams' },
   { name: 'Founders Office ', band: '₹10K–25K/month · Startups & venture-backed companies' },
   { name: "Marketing AI", band: '₹8K–20K/month · Brand & growth teams' },
@@ -10,7 +13,7 @@ const DEFAULT_GEN_ROLES = [
   { name: 'Customer Success', band: '₹8K–15K/month · SaaS & support teams' },
 ];
 
-const DEFAULT_ENG_ROLES = [
+export const DEFAULT_ENG_ROLES = [
   { name: 'Prompt Engineering', band: '₹10K–25K/month · AI-first startups' },
   { name: 'AI Automation', band: '₹12K–25K/month · No-code & operations teams' },
   { name: 'AI Workflow', band: '₹10K–20K/month · Internal automation teams' },
