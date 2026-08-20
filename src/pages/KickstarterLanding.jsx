@@ -322,7 +322,9 @@ export default function KickstarterLanding() {
   // UI) → submit the lead → go straight to checkout.
   const register = async (e) => {
     e.preventDefault();
-    if (!form.name.trim() || !form.email.trim() || !form.city.trim() || !form.background) {
+    // City is optional — it's useful for cohort planning, not for registering,
+    // so a blank one never blocks a signup.
+    if (!form.name.trim() || !form.email.trim() || !form.background) {
       setErr('Please fill in all fields before verifying.');
       return;
     }
@@ -610,7 +612,8 @@ export default function KickstarterLanding() {
                       We’ll email your verification code — SMS only works for Indian numbers.
                     </p>
                   )}
-                  <input className="lp2-input" type="text" required placeholder="City" value={form.city} onChange={(e) => set('city', e.target.value)} disabled={busy || otpBusy} />
+                  {/* Optional — labelled as such, since every other field here is required. */}
+                  <input className="lp2-input" type="text" placeholder="City (optional)" value={form.city} onChange={(e) => set('city', e.target.value)} disabled={busy || otpBusy} />
                   {showCollege && (
                     <input className="lp2-input" type="text" required placeholder="College / University" value={form.college} onChange={(e) => set('college', e.target.value)} disabled={busy || otpBusy} />
                   )}
