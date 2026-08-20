@@ -2019,6 +2019,13 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
    longer overhangs a too-short underline. The blocks themselves stay pinned
    left/right by the foot's space-between. */
 .lp2-cert-sign { display: inline-flex; flex-direction: column; align-items: center; text-align: center; max-width: 230px; }
+/* The mentor block is the exception: its role is a credential LIST ("AI
+   Generalist, Ex-McKinsey, MIT & UT Mentor"), long enough that centring drags
+   the name inward, away from the card's left edge, and wraps ragged on both
+   sides. Name, rule and role all start flush at the same left edge instead —
+   no left padding, so nothing floats further right than it has to. */
+.lp2-cert-sign--left { align-items: flex-start; text-align: left; max-width: 268px; }
+.lp2-cert-sign--left .lp2-cert-sign-name { padding-left: 0; }
 .lp2-cert-sign-name { font-family: 'DM Serif Display', serif; font-size: 17px; color: var(--ink); border-bottom: 1px solid rgba(38,33,92,0.3); padding: 0 10px 4px; width: 100%; box-sizing: border-box; }
 .lp2-cert-sign-role { font-size: 10.5px; line-height: 1.4; color: var(--text-muted); margin-top: 5px; }
 .lp2-cert-note { font-size: 12.5px; color: var(--text-muted); }
@@ -2040,6 +2047,9 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .lp2-cert-mock-for b { font-size: 12px; }
   .lp2-cert-foot { flex-direction: row; align-items: flex-end; justify-content: space-between; gap: 10px; margin-top: 14px; }
   .lp2-cert-sign { max-width: 46%; }
+  /* The credential list needs the wider share; these are max-widths on
+     shrink-to-fit blocks, so the founder still takes only what it needs. */
+  .lp2-cert-sign--left { max-width: 54%; }
   /* Repeated inside the query — the .lp2-cert-foot rule above resets it. */
   .lp2-cert-foot--solo { justify-content: center; }
   .lp2-cert-foot--solo .lp2-cert-sign { max-width: 80%; }

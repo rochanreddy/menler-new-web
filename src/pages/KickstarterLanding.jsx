@@ -306,15 +306,14 @@ export default function KickstarterLanding() {
   const showCollege = activeSlug === 'turn-ai-into-your-career-advantage';
   const bannerCredLogos = (d.showCredLogosInBanner && sanityLogos) || BANNER_CRED_LOGOS[activeSlug];
   const certTitle = has(d.certificateTitle) ? d.certificateTitle : (CERT_TITLES[activeSlug] || heading);
-  // Signature line on the certificate mock-up: a real signature carries a short
-  // designation, not the full marketing credential ("AI Program & Ops Manager ,
-  // Interview Kickstart" → "AI Program & Ops Manager"). Take the part before
-  // the "|"; if that's still long, stop at the comma too. The full role stays
-  // everywhere else (banner, mentor section).
-  const certRole = (() => {
-    const r = String(d.mentorRole || '').split('|')[0].trim();
-    return r.length > 28 ? r.split(',')[0].trim() : r;
-  })();
+  // Signature line on the certificate mock-up. "|" separates the designation
+  // from the employer ("AI Educator | AI Future Skills Specialist"), and only
+  // the designation belongs on a signature line — so take the part before it.
+  //
+  // Commas do NOT separate that way: they list credentials that are all part of
+  // the designation ("AI Generalist, Ex-McKinsey, MIT & UT Mentor"), so the line
+  // keeps every one of them. Stray space-before-comma from the CMS is tidied.
+  const certRole = String(d.mentorRole || '').split('|')[0].replace(/\s+,/g, ',').trim();
   // Both signature blocks print the signer's NAME — no handwritten scan. The
   // certificate people actually receive is generated name-only (see the server's
   // certificate builder), so a mock signed in scanned ink promised a document
