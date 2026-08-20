@@ -1159,6 +1159,15 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .role-group--gen .role-card-program { color: var(--specialist); }
 .role-group--eng .role-card-program { color: var(--forest); }
 .role-group--eng .role-name { color: var(--forest); }
+/* Single-list box: the toggle rides in the grid as the cell beside the last
+   role, so it needs the tile treatment the two-card layout gives its own —
+   dashed rule above it, and set in the green that marks it as the way into
+   the rest of the list rather than another role. */
+.role-card--single .role-row--more { border-top-style: dashed; border-top-color: rgba(93,202,165,0.45); }
+.role-card--single .role-more-n { color: var(--forest); }
+/* No underline on hover here — it sits in the grid among the role names, and
+   an underline read as a link into a job page. It dims instead. */
+.role-card--single .role-row--more:hover .role-more-n { text-decoration: none; opacity: 0.72; }
 .role-more-all { display: block; width: 100%; margin-top: 16px; padding-top: 12px; background: none; border: none; border-top: 0.5px dashed rgba(175,169,236,0.4); font: inherit; font-size: 13px; font-weight: 700; color: var(--specialist); text-align: left; cursor: pointer; }
 .role-more-all:hover { text-decoration: underline; }
 /* Mobile: stack the two cards (full width each) and keep roles 2 per row, with

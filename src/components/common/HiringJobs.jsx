@@ -51,7 +51,7 @@ const DEFAULT_COMPANIES = [
 // list, it starts collapsed to that many roles with a clickable "+N more"
 // tile filling the grid's last cell; clicking it reveals the rest in place
 // (and turns into a "Show fewer" tile so it can be collapsed again).
-function RoleList({ roles, preview, open: openProp }) {
+function RoleList({ roles, preview, open: openProp, onToggle }) {
   const [openLocal, setOpenLocal] = useState(false);
   // Controlled when a parent passes `open` — the single-box variant drives
   // both lists from one toggle instead of each keeping its own.
@@ -60,15 +60,20 @@ function RoleList({ roles, preview, open: openProp }) {
   const truncated = preview && preview < roles.length;
   const shown = truncated && !open ? roles.slice(0, preview) : roles;
   const hiddenCount = roles.length - preview;
+  // A controlled list normally has no tile of its own — the box's own closing
+  // line carries the toggle. `onToggle` hands that toggle back to the list so
+  // it can sit in the free cell beside the last role instead, which is where
+  // it belongs when the box holds one list and that cell is empty.
+  const inline = controlled && onToggle;
   return (
     <div className="role-list">
       {shown.map(r => (
         <div key={r.name} className="role-row"><p className="role-name">{r.name}</p><p className="role-band">{r.band}</p></div>
       ))}
-      {truncated && !controlled && (
-        <button type="button" className="role-row role-row--more" onClick={() => setOpenLocal(o => !o)}>
-          <p className="role-more-n">{open ? 'Show fewer' : `+${hiddenCount} more`}</p>
-          <p className="role-band">{open ? 'Back to the shortlist' : 'Across every domain track'}</p>
+      {truncated && (inline || !controlled) && (
+        <button type="button" className="role-row role-row--more" onClick={inline ? onToggle : () => setOpenLocal(o => !o)}>
+          <p className="role-more-n">{open ? 'Show fewer' : inline ? '& many more' : `+${hiddenCount} more`}</p>
+          {!inline && <p className="role-band">{open ? 'Back to the shortlist' : 'Across every domain track'}</p>}
         </button>
       )}
     </div>
@@ -110,6 +115,9 @@ export default function HiringJobs({
 } = {}) {
   const [allOpen, setAllOpen] = useState(false);
   const anyHidden = (genPreview && genPreview < genRoles.length) || (engPreview && engPreview < engRoles.length);
+  // One list in the box (no second group): the toggle goes inside the grid,
+  // in the cell the last row leaves empty, rather than on a line of its own.
+  const oneGroup = singleBox && engRoles.length === 0;
   return (
     <section className="section jobs-section" style={sectionStyle}>
       <p className="section-label" style={labelStyle}>{label}</p>
@@ -120,13 +128,22 @@ export default function HiringJobs({
           <div className="role-card role-card--single">
             <div className="role-group role-group--gen">
               <p className="role-card-program">{genLabel}</p>
-              <RoleList roles={genRoles} preview={genPreview} open={allOpen} />
+              <RoleList
+                roles={genRoles}
+                preview={genPreview}
+                open={allOpen}
+                onToggle={oneGroup ? () => setAllOpen(o => !o) : undefined}
+              />
             </div>
-            <div className="role-group role-group--eng">
-              <p className="role-card-program">{engLabel}</p>
-              <RoleList roles={engRoles} preview={engPreview} open={allOpen} />
-            </div>
-            {anyHidden && (
+            {/* An empty engRoles means the page runs one merged list under the
+                first heading — no second group, no second heading. */}
+            {engRoles.length > 0 && (
+              <div className="role-group role-group--eng">
+                <p className="role-card-program">{engLabel}</p>
+                <RoleList roles={engRoles} preview={engPreview} open={allOpen} />
+              </div>
+            )}
+            {anyHidden && !oneGroup && (
               <button type="button" className="role-more-all" onClick={() => setAllOpen(o => !o)}>
                 {allOpen ? 'Show fewer' : '& many more'}
               </button>

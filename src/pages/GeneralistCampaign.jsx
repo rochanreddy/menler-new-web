@@ -40,10 +40,15 @@ const GEN_TOOLS = [...TECH, { name: 'Midjourney', logo: '/logos/midjourney.webp'
 // Kickstarter campaign page).
 const GEN_MENTORS = getFeaturedMentors(MENTORS);
 
-// Jobs section: both columns stay (AI-Native Roles, Domain Roles), each
-// collapsed to its top 3 of GEN_HIRING's 6 with a "+3 more" tile filling the
-// grid's last cell — clicking it expands that column in place (HiringJobs'
-// genPreview/engPreview props).
+// Jobs section: ONE list under the "AI-Native Roles" heading, not two columns.
+// Two headings on an ad landing page made the reader sort the roles into
+// buckets before reading any of them, and "Domain Roles" was a distinction
+// only we could see. So the second group is dropped as a *heading* — its roles
+// stay, merged into one list that opens with two AI-native roles and three
+// from the old domain set. That five is what shows; "& many more" expands the
+// same box to all twelve, the remaining roles from both lists in order.
+const GEN_ROLES_TOP = [...GEN_HIRING.genRoles.slice(0, 2), ...GEN_HIRING.engRoles.slice(0, 3)];
+const GEN_ROLES = [...GEN_ROLES_TOP, ...GEN_HIRING.genRoles.slice(2), ...GEN_HIRING.engRoles.slice(3)];
 
 // Hero art: Nitin (left) and Sridevi (right) framing the Claude mark and the
 // fellowship's domain tags — the domains "Transform your domain." refers to.
@@ -197,9 +202,9 @@ const PLAN = {
   ],
   chips: [
     { label: 'Duration', value: '6 Weeks' },
-    { label: 'Live hours', value: '30 hrs' },
-    { label: 'Sessions', value: '18 Live' },
-    { label: 'Format', value: 'Live online' },
+    { label: 'Live hours', value: '30 hours' },
+    { label: 'Format', value: 'Live Online' },
+    { label: 'Projects', value: '5+ Builds' },
   ],
 };
 
@@ -241,7 +246,7 @@ const PHASE_2_PROJECTS = [
 ];
 const WEEKS = [
   {
-    n: 'Week 1', phase: 'Phase 1 · AI Foundations & Claude Mastery',
+    n: 'Week 1',
     t: 'Understand AI: See the Landscape Clearly',
     lessons: [
       'How LLMs work: next token prediction, tokens, parameters, RLHF',
@@ -276,7 +281,7 @@ const WEEKS = [
     projects: PHASE_1_PROJECTS,
   },
   {
-    n: 'Week 4', phase: 'Phase 2 · Automate, Build & Ship',
+    n: 'Week 4',
     t: 'Automate with AI: Voice Agents, Routines & Workflows',
     lessons: [
       'STT/TTS from scratch; voice cloning',
@@ -414,7 +419,7 @@ export default function GeneralistCampaign() {
             <em>Any domain. Zero code.</em>
           </h2>
           <p className="gcamp-sub">
-            Build an AI-native portfolio in six weeks.
+            Build an AI-native portfolio in just six weeks.
           </p>
         </Reveal>
         <div className="gcamp-who-grid">
@@ -442,28 +447,34 @@ export default function GeneralistCampaign() {
         sub="Get hands on with every tool in the fellowship — from your first prompt to your first shipped build."
       />
 
-      {/* Who teaches it, what it leads to, and who hires from it — one band.
-          They answer the same question, and split apart the reader had to
-          scroll past each to reach the next. The roles come before the
-          companies: the job is the point, the logos are the proof. */}
-      <section className="gcamp-people">
+      {/* Who teaches it — its own white band. Sharing one parchment band with
+          the jobs below it ran two different claims together; the change of
+          ground is what tells the reader the second one has started. */}
+      <section className="gcamp-mentors">
         <Reveal className="gcamp-head">
-          <p className="gcamp-eyebrow">Mentors &amp; hiring</p>
+          <p className="gcamp-eyebrow">Mentors </p>
           <h2 className="gcamp-h2">The People Behind Menler</h2>
-          <p className="gcamp-sub">Industry leaders and mentors who shape what you learn and how you grow.</p>
+          <p className="gcamp-sub"> AI Leaders who shape what you learn and how you grow.</p>
         </Reveal>
         <MentorsRail bare rows={1} mentors={GEN_MENTORS} />
+      </section>
 
-        {/* showPartners puts the company rail directly under the roles, which
-            is where it belongs — this page no longer renders its own copy.
-            sub="" because the band's own standfirst sits just above this, and
-            a second one-liner there said the same thing twice. */}
+      {/* What it leads to, and who hires from it. The roles come before the
+          companies: the job is the point, the logos are the proof.
+          showPartners puts the company rail directly under the roles, which
+          is where it belongs — this page no longer renders its own copy. */}
+      <section className="gcamp-people gcamp-people--jobs">
         <HiringJobs
           {...GEN_HIRING}
           sectionStyle={{}}
-          sub=""
-          genPreview={2}
-          engPreview={2}
+          /* Straight to the claim that carries the section. "AI adoption is
+             accelerating" is the premise everyone already grants; the demand
+             line is the one that argues for the fellowship. Page-local so
+             /generalist keeps the fuller two-sentence version. */
+          sub="Demand for AI Native professionals is accelerating faster."
+          genRoles={GEN_ROLES}
+          genPreview={GEN_ROLES_TOP.length}
+          engRoles={[]}
           singleBox
           companies={HIRING_COMPANIES}
           partnersLabel="Hiring associations · 25+ companies"

@@ -1,57 +1,49 @@
 import { useEffect, useRef, useState } from 'react';
-import { visibleRaf } from '../../lib/visibleRaf';
-
-// Each card gets one screen; the first screen is the pin itself, so the
-// section reserves 100vh + one TRAVEL_VH block per hand-off after it.
-const TRAVEL_VH = 70;
 
 /**
- * Syllabus rail — the cards sit side by side and the page's VERTICAL scroll
- * drives them HORIZONTALLY: the section pins while the track slides left, so a
- * whole syllabus costs far less page height than the same cards stacked.
+ * Syllabus rail — the cards sit side by side in a row the reader SWIPES. It
+ * used to pin the section and drive the track sideways off the page's vertical
+ * scroll; that took the scroll away from the reader for six screens and gave
+ * no way to go back a card without scrolling up. Now it is an ordinary
+ * scroll-snapping row: swipe (or trackpad-scroll) to move, at whatever pace
+ * and in whichever direction you like, and the page scrolls as a page again.
  *
- * Reduced-motion (and any browser where the pin can't run) falls back to a
- * plain swipeable, scroll-snapping row — same content, no hijacked scrolling.
+ * The counter and dots follow the track's own scroll position.
  *
  * Shared by the campaign landing pages; `cards` carries whatever that
  * programme calls its units (weeks for the Fellowship, modules for the
  * Kickstarter), so only the content differs between them.
  */
 export default function CampaignRail({ eyebrow, title, cards, label = 'The curriculum' }) {
-  const wrapRef = useRef(null);
   const trackRef = useRef(null);
   const [active, setActive] = useState(0);
-  const [pinned, setPinned] = useState(false);
   const n = cards.length;
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    setPinned(true);
-    const wrap = wrapRef.current;
     const track = trackRef.current;
-    if (!wrap || !track) return;
-
-    let last = -1;
-    return visibleRaf(wrap, () => {
-      const rect = wrap.getBoundingClientRect();
-      const travel = rect.height - window.innerHeight;
-      if (travel <= 0) return;
-      // 0 → first card fully in view, 1 → last card fully in view.
-      const p = Math.min(1, Math.max(0, -rect.top / travel));
-      if (Math.abs(p - last) < 0.0005) return;
-      last = p;
-      track.style.transform = `translate3d(-${(p * (n - 1) * 100) / n}%, 0, 0)`;
-      setActive(Math.round(p * (n - 1)));
-    });
+    if (!track) return;
+    // Which card is under the snap point, from the scroll offset — one card is
+    // one card-width of travel, so the index is the offset over that width.
+    const onScroll = () => {
+      const step = track.firstElementChild?.offsetWidth;
+      if (!step) return;
+      setActive(Math.max(0, Math.min(n - 1, Math.round(track.scrollLeft / step))));
+    };
+    track.addEventListener('scroll', onScroll, { passive: true });
+    return () => track.removeEventListener('scroll', onScroll);
   }, [n]);
 
+  // The dots double as the control for anyone who can't swipe — a mouse with
+  // a plain wheel has no way to move a horizontal scroller.
+  const goTo = (i) => {
+    const track = trackRef.current;
+    const step = track?.firstElementChild?.offsetWidth;
+    if (!step) return;
+    track.scrollTo({ left: i * step, behavior: 'smooth' });
+  };
+
   return (
-    <section
-      className={`gcamp-curric${pinned ? ' is-pinned' : ''}`}
-      ref={wrapRef}
-      style={pinned ? { height: `calc(100vh + ${(n - 1) * TRAVEL_VH}vh)` } : undefined}
-      aria-label={label}
-    >
+    <section className="gcamp-curric" aria-label={label}>
       <div className="gcamp-curric-sticky">
         <div className="gcamp-curric-head">
           <p className="gcamp-eyebrow">{eyebrow}</p>
@@ -61,9 +53,9 @@ export default function CampaignRail({ eyebrow, title, cards, label = 'The curri
           </p>
         </div>
 
-        <div className="gcamp-curric-track" ref={trackRef} style={{ width: `${n * 100}%` }}>
+        <div className="gcamp-curric-track" ref={trackRef}>
           {cards.map((c) => (
-            <article className="gcamp-wcard" key={c.n} style={{ width: `${100 / n}%` }}>
+            <article className="gcamp-wcard" key={c.n}>
               <div className="gcamp-wcard-in">
                 <div className="gcamp-wcard-top">
                   <span className="gcamp-wcard-n">{c.n}</span>
@@ -91,9 +83,16 @@ export default function CampaignRail({ eyebrow, title, cards, label = 'The curri
           ))}
         </div>
 
-        <div className="gcamp-curric-dots" aria-hidden="true">
+        <div className="gcamp-curric-dots">
           {cards.map((c, i) => (
-            <span className={`gcamp-dot${i === active ? ' is-on' : ''}`} key={c.n} />
+            <button
+              type="button"
+              className={`gcamp-dot${i === active ? ' is-on' : ''}`}
+              key={c.n}
+              aria-label={c.n}
+              aria-current={i === active ? 'true' : undefined}
+              onClick={() => goTo(i)}
+            />
           ))}
         </div>
       </div>
