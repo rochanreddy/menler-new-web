@@ -159,12 +159,15 @@ export default function Checkout() {
             );
           })()}
 
-          {/* Follows the campaign's "Show community section" toggle in Sanity. */}
+          {/* Follows the campaign's "Show community section" toggle in Sanity.
+              Always WhatsApp, whichever platform the campaign page shows:
+              Instagram is a follow, but the joining link, the reminders and the
+              questions all happen in the group — and this is the screen where
+              someone has just registered and is ready to join it. */}
           {reg.showCommunity && (
             <MenlerCommunitySection
               className="menler-community--confirm"
-              whatsappUrl={reg.communityInstagramUrl ? undefined : (reg.whatsappUrl || MENLER_WHATSAPP_URL)}
-              instagramUrl={reg.communityInstagramUrl}
+              whatsappUrl={reg.whatsappUrl || MENLER_WHATSAPP_URL}
               communityText={reg.whatsappText || reg.communityText}
             />
           )}

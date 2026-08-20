@@ -411,7 +411,6 @@ export default function KickstarterLanding() {
           whatsappText: d.whatsappText,
           communityText: d.communityText,
           showCommunity: d.showCommunity,
-          communityInstagramUrl: useInstagramCommunity ? (d.instagramUrl || MENLER_INSTAGRAM_URL) : undefined,
         },
       });
     } catch (e2) {
