@@ -59,11 +59,13 @@ function HeroArt() {
 
 // Numbers band — the /kickstarter hero stats. Labels are split into two fixed
 // lines so all five share the same shape and baseline.
+// Largest first. The band reads left to right, so the numbers should descend
+// with it — 20+, 14, 10+, 4, 1 — rather than jumping about.
 const STATS = [
-  { n: '14', l1: 'Days', l2: 'Of curriculum' },
-  { n: '4', l1: 'Mini-builds', l2: 'You ship' },
-  { n: '10+', l1: 'AI Tools', l2: 'Hands-on' },
   { n: '20+', l1: 'AI Builders', l2: '& Operators' },
+  { n: '14', l1: 'Days', l2: 'Of curriculum' },
+  { n: '10+', l1: 'AI Tools', l2: 'Hands-on' },
+  { n: '4', l1: 'Mini-builds', l2: 'You ship' },
   { n: '1', l1: 'Fluency', l2: 'Certificate' },
 ];
 
