@@ -74,7 +74,7 @@ const STATS = [
 const PLAN = {
   pill: 'Entry Programme',
   name: 'AI Kickstarter',
-  
+  tagline: 'Turn AI into your career advantage in just 14 days.',
   features: [
     ['4 live sessions across 2 weekends', 'Sat + Sun · 2 hrs each · Bengaluru or online'],
     ['Claude OS hands-on build', 'Projects, Skills, Connectors, Routines — live'],

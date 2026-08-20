@@ -375,7 +375,7 @@
 }
 .gcamp-plan .kp-head { flex-direction: column; gap: 18px; }
 .gcamp-plan .kp-name { font-size: 25px; margin: 12px 0 8px; }
-.gcamp-plan .kp-tagline { max-width: none; }
+.gcamp-plan .kp-tagline { max-width: none; text-wrap: balance; }
 .gcamp-plan .kp-price { align-items: stretch; text-align: left; width: 100%; }
 .gcamp-plan .kp-cta { margin-top: 0; justify-content: center; width: 100%; }
 .gcamp-plan .kp-divider { margin: 18px 0 14px; }
