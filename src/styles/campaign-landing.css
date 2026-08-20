@@ -118,8 +118,10 @@
 
 /* Sub-line under the headline, above the fact pills — deliberately muted (not
    the ink-black serif of the headline above it) so it reads as supporting
-   copy, the way the pills below it do. */
-.gcamp-hero-sub { margin: 0 auto 22px; max-width: 50ch; }
+   copy, the way the pills below it do. Justified so every line shares the same
+   left and right edge instead of each one starting at a different point; the
+   last line stays centred (left on desktop) so it doesn't stretch. */
+.gcamp-hero-sub { margin: 0 auto 22px; max-width: 50ch; text-align: justify; text-align-last: center; -moz-text-align-last: center; hyphens: none; }
 
 /* Fact pills under the headline — three in a row, never wrapping. Sized down
    just enough that "Live online" / "CapStone Project" / "Certification" all
@@ -564,7 +566,7 @@
   .kick-hero-banner-creds .partner-name { font-size: 11px; }
   .gcamp-master { font-size: 22px; line-height: 1.32; margin-bottom: 20px; }
   .gcamp-master span { margin-top: 2px; }
-  .gcamp-hero-sub { margin: 0 0 24px; max-width: 46ch; font-size: 15px; line-height: 1.65; }
+  .gcamp-hero-sub { margin: 0 0 24px; max-width: 46ch; font-size: 15px; line-height: 1.65; text-align-last: left; -moz-text-align-last: left; }
   .gcamp--kick .gcamp-hero-sub { max-width: none; }
   .gcamp-facts { justify-content: flex-start; gap: 10px; margin-bottom: 26px; }
   .gcamp-fact { font-size: 13px; padding: 8px 15px; }
