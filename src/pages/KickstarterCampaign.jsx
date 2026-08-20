@@ -58,13 +58,6 @@ function HeroArt() {
         <div className="lp2-banner-photo">
           <img src="/mentors/Deepak.webp" alt="Deepak K" />
         </div>
-        {/* The body reserves 64px at its foot for this strip; without one the
-            banner would carry that as dead space. */}
-        <div className="lp2-banner-strip">
-          <span><b>Starts 30 August 2026</b></span>
-          <span className="lp2-strip-dot" aria-hidden="true" />
-          <span>Live online · 2 weeks</span>
-        </div>
       </section>
     </div>
   );

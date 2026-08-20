@@ -1896,6 +1896,23 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
    The values are .lp2's own defaults, which is what Sanity would render with
    nothing overridden. */
 .gcamp-kick-banner { --a: #BA7517; --a-dark: #854F0B; --banner-from: #FFF1CC; --banner-to: #F6D77E; --hl-bg: #C7F24D; --hl-text: #1c2400; text-align: left; }
+/* A landscape thumbnail rather than a page banner: the Sanity original is
+   sized by its content and ran to 4:3 here. No date strip, so the body's 64px
+   foot — which existed only to clear it — comes off too.
+
+   Phones take 16:10 as-is. Desktop needed 351px of content in a 345px box, so
+   the vertical rhythm is tightened to fit 3:2 with room to spare: an exact fit
+   would clip the credential logos the moment a credit line ran long. Scoped
+   above 560px because these selectors outrank the phone block below. */
+.gcamp-kick-banner .lp2-banner { aspect-ratio: 16 / 10; min-height: 0; }
+.gcamp-kick-banner .lp2-banner-body { padding-bottom: 12px; }
+@media (min-width: 561px) {
+  .gcamp-kick-banner .lp2-banner { aspect-ratio: 3 / 2; }
+  .gcamp-kick-banner .lp2-banner-body { padding-bottom: 20px; }
+  .gcamp-kick-banner .lp2-banner-tag { margin-top: 12px; }
+  .gcamp-kick-banner .lp2-banner-brand { margin-top: 16px; }
+  .gcamp-kick-banner .lp2-banner-creds { margin-top: 8px; }
+}
 /* Its credential marks come from BrandLogo, which renders a chip; a Sanity
    banner passes bare images. Strip the chip so both read the same. */
 .gcamp-kick-banner .lp2-banner-creds .partner-chip { padding: 0; background: none; border: none; min-width: 0; height: auto; }
