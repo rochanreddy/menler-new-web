@@ -110,6 +110,7 @@
 /* "Master Claude AI. / Transform your domain." */
 .gcamp-master { font-family: 'DM Serif Display', serif; font-size: clamp(23px, 6.4vw, 30px); line-height: 1.24; margin-bottom: 20px; }
 .gcamp-master em { font-style: italic; color: var(--gc-accent); }
+.gcamp-master b { font-weight: inherit; color: var(--gc-accent); }
 /* Second line of the same statement, so it is set like the first — the serif,
    the size and the ink are all inherited. It was a small grey sans line, which
    read as a caption underneath the headline rather than the other half of it. */
@@ -560,6 +561,7 @@
   .gcamp-master { font-size: 22px; line-height: 1.32; margin-bottom: 20px; }
   .gcamp-master span { margin-top: 2px; }
   .gcamp-hero-sub { margin: 0 0 24px; max-width: 46ch; font-size: 15px; line-height: 1.65; }
+  .gcamp--kick .gcamp-hero-sub { max-width: none; }
   .gcamp-facts { justify-content: flex-start; gap: 10px; margin-bottom: 26px; }
   .gcamp-fact { font-size: 13px; padding: 8px 15px; }
   .gcamp-cta { width: auto; min-width: 260px; }

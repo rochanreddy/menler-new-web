@@ -246,11 +246,11 @@ export default function KickstarterCampaign() {
         <Reveal delay={140}>
           <p className="gcamp-master">
             14 days. <em>4 builds.</em>
-            <span>Your turning point in the AI era.</span>
+            <span>Your turning point in <b>the AI era</b>.</span>
           </p>
 
           <p className="gcamp-sub gcamp-hero-sub">
-            Build real AI fluency in just two weeks — hands-on projects, mentor-led, taught by AI leaders and builders shaping the industry today.
+            Build real AI fluency in two weeks — hands-on and mentor-led.
           </p>
 
           <div className="gcamp-facts">
