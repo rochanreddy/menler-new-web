@@ -1899,7 +1899,7 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 /* Left column */
 .lp2-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--a-dark); margin-bottom: 14px; }
 .lp2-title { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: clamp(28px, 5.4vw, 48px); line-height: 1.1; color: var(--ink); margin-bottom: 16px; }
-.lp2-subtitle { font-size: clamp(15px, 2.3vw, 17px); line-height: 1.6; color: var(--text-muted); max-width: 620px; }
+.lp2-subtitle { font-size: clamp(15px, 2.3vw, 17px); line-height: 1.6; color: var(--text-muted); max-width: 680px; }
 .lp2-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
 .lp2-meta-pill { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 500; color: var(--ink); background: var(--cream); border: 1px solid rgba(186,117,23,0.18); padding: 8px 14px; border-radius: 10px; }
 .lp2-meta-pill b { font-weight: 400; }
