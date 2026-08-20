@@ -7,10 +7,11 @@ import { BrandLogo } from '../components/common/PartnersMarquee';
 import ToolStack from '../components/common/ToolStack';
 import MentorsRail, { MENTORS } from '../components/common/MentorsRail';
 import HiringJobs from '../components/common/HiringJobs';
-import HiringRail from '../components/common/HiringRail';
 import { HIRING_COMPANIES } from '../data/hiringCompanies';
 import Seo from '../components/common/Seo';
 import PricingCard from '../components/common/PricingCard';
+import FaqList from '../components/common/FaqList';
+import { KICKSTARTER_FAQS } from '../data/faqData';
 import CampaignRail from '../components/campaign/CampaignRail';
 import ApplyModal, { ThankYou } from '../components/campaign/CampaignApply';
 import { getFeaturedMentors } from '../data/featuredMentors';
@@ -89,7 +90,7 @@ const PLAN = {
 };
 
 // Hero fact pills.
-const FACTS = [  'Live online','Cap Stone Project', 'Certification'];
+const FACTS = ['Live online', 'Mentor-led', 'Capstone Project', 'Certification'];
 
 // "Who this is for" — the five /kickstarter audiences, with the same tints.
 const AUDIENCE = [
@@ -244,7 +245,7 @@ export default function KickstarterCampaign() {
         <Reveal delay={140}>
           <p className="gcamp-master">
             14 days. <em>4 builds.</em>
-            <span>Your turning point in AI-era .</span>
+            <span>Your turning point in the AI era.</span>
           </p>
 
           <p className="gcamp-sub gcamp-hero-sub">
@@ -258,7 +259,7 @@ export default function KickstarterCampaign() {
           <button type="button" className="gcamp-cta" onClick={openApply}>
             Apply Now
           </button>
-          <p className="gcamp-cta-note">Limited seats · Apply Now</p>
+          <p className="gcamp-cta-note">Limited seats</p>
         </Reveal>
       </section>
 
@@ -312,33 +313,33 @@ export default function KickstarterCampaign() {
         sub="Get hands on with every tool in the programme — from your first prompt to your first shipped build."
       />
 
-      <MentorsRail rows={1} mentors={KICK_MENTORS} labelStyle={{ color: '#854F0B' }} titleStyle={{ color: '#854F0B' }} />
-
-      <HiringJobs
-        label="Internship opportunities"
-        title="The internships"
-        titleEm="AI fluent are landing."
-        genPreview={3}
-        engPreview={3}
-        labelStyle={{ color: '#854F0B' }}
-        titleStyle={{ color: '#854F0B' }}
-        titleEmStyle={{ color: '#BA7517' }}
-        showPartners={false}
-      />
-
-      <section className="gcamp-hiring">
+      {/* Who teaches it, what it leads to, and who hires from it — one band,
+          the same as the Fellowship page. Split apart the reader had to
+          scroll past each to reach the next, and the roles come before the
+          companies: the internship is the point, the logos are the proof. */}
+      <section className="gcamp-people">
         <Reveal className="gcamp-head">
-          <p className="gcamp-eyebrow">The network behind it</p>
-          <h2 className="gcamp-h2">Hiring associations.</h2>
-          <p className="gcamp-sub">
-            Menler's mentors and hiring network come from founder's offices,
-            VC-backed startups, agencies and AI-native teams.
-          </p>
+          <p className="gcamp-eyebrow">Mentors &amp; internships</p>
+          <h2 className="gcamp-h2">The People Behind Menler</h2>
+          <p className="gcamp-sub">Who teaches it — and who hires from it.</p>
         </Reveal>
-        <div className="partners-strip">
-          <p className="partners-label">Hiring associations · 25+ companies</p>
-          <HiringRail companies={HIRING_COMPANIES} rows={2} />
-        </div>
+        <MentorsRail bare rows={1} mentors={KICK_MENTORS} />
+
+        {/* showPartners puts the company rail directly under the roles. */}
+        <HiringJobs
+          label="Internship opportunities"
+          title="The internships"
+          titleEm="AI fluent are landing."
+          sub=""
+          genPreview={2}
+          engPreview={2}
+          labelStyle={{ color: '#854F0B' }}
+          titleStyle={{ color: '#854F0B' }}
+          titleEmStyle={{ color: '#BA7517' }}
+          companies={HIRING_COMPANIES}
+          partnersLabel="Hiring associations · 25+ companies"
+          footnote="Stipend ranges sourced from internship partner intake. Updated quarterly."
+        />
       </section>
 
       <section className="gcamp-sec gcamp-plan">
@@ -348,6 +349,17 @@ export default function KickstarterCampaign() {
         </Reveal>
         <Reveal delay={80}>
           <PricingCard {...PLAN} ctaLabel="Apply Now" onCta={openApply} />
+        </Reveal>
+      </section>
+
+      {/* The questions that stop someone applying, answered where they stop. */}
+      <section className="gcamp-sec gcamp-faq">
+        <Reveal className="gcamp-head">
+          <p className="gcamp-eyebrow">Before you apply</p>
+          <h2 className="gcamp-h2">Questions, <em>answered.</em></h2>
+        </Reveal>
+        <Reveal delay={80}>
+          <FaqList items={KICKSTARTER_FAQS} />
         </Reveal>
       </section>
 

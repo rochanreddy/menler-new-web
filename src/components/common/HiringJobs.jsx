@@ -89,6 +89,9 @@ export default function HiringJobs({
   engPreview,
   companies = DEFAULT_COMPANIES,
   partnersLabel = 'Hiring associations · India · 25+ companies',
+  // Where the pay figures come from. A prop because it is not always salary
+  // and not always the fellowship — the Kickstarter lists internship stipends.
+  footnote = 'Salary bands sourced from fellowship partner intake. Updated quarterly.',
   // Some pages already show a hiring-associations logo strip elsewhere and
   // don't need this section's own copy of it.
   showPartners = true,
@@ -113,7 +116,7 @@ export default function HiringJobs({
           <RoleList roles={engRoles} preview={engPreview} />
         </div>
       </div>
-      <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 18, fontStyle: 'italic', lineHeight: 1.6 }}>Salary bands sourced from fellowship partner intake. Updated quarterly.</p>
+      <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 18, fontStyle: 'italic', lineHeight: 1.6 }}>{footnote}</p>
       {showPartners && (
         <div className="partners-strip">
           <p className="partners-label">{partnersLabel}</p>
