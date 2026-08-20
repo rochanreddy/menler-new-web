@@ -1847,11 +1847,11 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-banner-creds img[alt="Microsoft"]    { height: 18px; }
 .lp2-banner-creds img[alt="IIT Guwahati"] { height: 26px; }
 .lp2-banner-creds img[alt="ISB"]          { height: 19px; }
-.lp2-banner-creds img[alt="MIT"]          { height: 18px; }
-.lp2-banner-creds img[alt^="The University of Texas"] { height: 46px; margin: -12px 0; }
+.lp2-banner-creds img[alt="MIT"]          { height: 23px; }
+.lp2-banner-creds img[alt^="The University of Texas"] { height: 58px; margin: -16px 0; }
 /* McKinsey has no logo file — the trust bar sets it in serif and so does this,
    so the two rows carry the same mark rather than two different McKinseys. */
-.lp2-banner-cred-mck { font-family: Georgia, 'Times New Roman', serif; font-size: 10.5px; font-weight: 500; letter-spacing: .01em; line-height: 1.14; color: var(--ink); opacity: 0.92; }
+.lp2-banner-cred-mck { font-family: Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: 500; letter-spacing: .01em; line-height: 1.14; color: var(--ink); opacity: 0.92; }
 .lp2-banner-free { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--a-dark); border: 1px solid var(--a); border-radius: 5px; padding: 2px 7px; margin-right: 8px; }
 .lp2-banner-photo { position: absolute; right: 0; bottom: 0; top: 0; width: 42%; z-index: 1; }
 .lp2-banner-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 22%); mask-image: linear-gradient(90deg, transparent 0%, #000 22%); }
@@ -1883,9 +1883,9 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .lp2-banner-creds img[alt="Microsoft"]    { height: 13px; }
   .lp2-banner-creds img[alt="IIT Guwahati"] { height: 18px; }
   .lp2-banner-creds img[alt="ISB"]          { height: 13px; }
-  .lp2-banner-creds img[alt="MIT"]          { height: 13px; }
-  .lp2-banner-creds img[alt^="The University of Texas"] { height: 33px; margin: -8px 0; }
-  .lp2-banner-cred-mck { font-size: 7.5px; }
+  .lp2-banner-creds img[alt="MIT"]          { height: 16px; }
+  .lp2-banner-creds img[alt^="The University of Texas"] { height: 41px; margin: -11px 0; }
+  .lp2-banner-cred-mck { font-size: 9px; }
   .lp2-banner-photo { width: 44%; }
   .lp2-banner-strip { padding: 7px 12px; font-size: 9.5px; gap: 7px; }
   .lp2-banner-strip span:first-child::before { margin-right: 5px; }
