@@ -177,10 +177,13 @@ const CAMPAIGN_LOGOS = {
 // The institutions behind this campaign's mentor. UT Austin exists in the repo
 // only as a white mark (it lives on the navy trust bar), so it is inverted to
 // sit on the banner's cream — hence the flag rather than a second file.
+// The same three marks the navy trust bar carries, so the two agree. That set
+// is white — McKinsey is set in serif rather than being an image at all — so
+// here the SVGs invert to ink and McKinsey renders as text.
 const NITIN_CREDS = [
-  { name: 'McKinsey & Company', logo: '/logos/mckinsey.webp' },
-  { name: 'MIT', logo: '/logos/MIT_logo_2003-2023.svg.png' },
-  { name: 'UT Austin', logo: '/logos/ut-austin-white.svg', invert: true },
+  { name: 'McKinsey & Company', mark: 'mck' },
+  { name: 'MIT', logo: '/logos/mit-white.svg', invert: true },
+  { name: 'The University of Texas at Austin', logo: '/logos/ut-austin-white.svg', invert: true },
 ];
 
 const BANNER_CRED_LOGOS = {
@@ -434,8 +437,9 @@ export default function KickstarterLanding() {
               </div>
               {!contentLoading && bannerCredLogos && (
                 <div className="lp2-banner-creds" aria-label={bannerCredLogos.map((l) => l.name).join(', ')}>
-                  {bannerCredLogos.map((l) => (
-                    <img key={l.name} src={l.logo} alt={l.name} decoding="async" style={{ ...(bannerLogoH ? { height: `${bannerLogoH}px` } : null), ...(l.invert ? { filter: 'brightness(0)' } : null) }} />
+                  {bannerCredLogos.map((l) => (l.mark === 'mck'
+                    ? <span key={l.name} className="lp2-banner-cred-mck">McKinsey<br />&amp; Company</span>
+                    : <img key={l.name} src={l.logo} alt={l.name} decoding="async" style={{ ...(bannerLogoH ? { height: `${bannerLogoH}px` } : null), ...(l.invert ? { filter: 'brightness(0)' } : null) }} />
                   ))}
                 </div>
               )}
