@@ -101,7 +101,7 @@ function ApplyForm({ onDone, program, source, section, noteProgram }) {
     try {
       const digits = `${form.countryCode}${form.phone}`.replace(/\D/g, '');
       const otp = indian
-        ? await verifySmsOtp(digits)
+        ? await verifySmsOtp(digits, { email: form.email.trim() })
         : await verifyEmailOtp(form.email.trim());
       await submitLead({
         name: form.name.trim(),

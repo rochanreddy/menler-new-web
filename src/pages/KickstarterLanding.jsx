@@ -380,7 +380,7 @@ export default function KickstarterLanding() {
       // those by email instead — same proof of a real person, and every other
       // form on the site already verifies that way.
       const otp = indianNumber
-        ? await verifySmsOtp(phoneDigits)
+        ? await verifySmsOtp(phoneDigits, { email: form.email.trim() })
         : await verifyEmailOtp(form.email.trim());
       setOtpBusy(false);
       setBusy(true);

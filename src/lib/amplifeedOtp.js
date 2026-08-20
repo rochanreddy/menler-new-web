@@ -58,22 +58,86 @@ export function loadOtpProvider() {
 const tokenFrom = (data) =>
   (data && typeof data === 'object' && data.message) ? data.message : data;
 
-// Send an OTP to `identifier` over `channel` ("sms" | "email"). Resolves with the
-// verified access token once the user enters the correct code; rejects on
-// failure/cancel.
-export function sendOtp(identifier, channel) {
+// The widget's own "Use <channel> instead" link calls retryOtp against the SAME
+// identifier it was opened with. When that identifier is a phone number, the
+// switch asks the API to email a phone number: it answers RESEND_TOO_SOON while
+// the cooldown is running, and fails outright after it. The link cannot work as
+// shipped, on any campaign.
+//
+// So we rebind it. The visitor has already typed an email address into the form
+// above; the link now closes the widget and reopens it against that address,
+// which is a verification that can actually be delivered.
+//
+// Everything here is defensive: the widget is a third party's markup, and if any
+// piece of it moves, the watcher simply never matches and the link behaves as it
+// did before.
+const CHANNEL_LABELS = { sms: 'phone number', email: 'email', whatsapp: 'WhatsApp number', voice: 'phone number' };
+const HOST_SELECTOR = '#amplifeed-otp-host';
+
+const otpShadow = () => {
+  const host = typeof document !== 'undefined' && document.querySelector(HOST_SELECTOR);
+  return (host && host.shadowRoot) || null;
+};
+
+// Their closeModal() also clears the countdown timer, so click their button
+// rather than removing the host ourselves.
+function closeOtpWidget() {
+  try {
+    const btn = otpShadow()?.querySelector('button.close');
+    if (btn) btn.click();
+  } catch { /* widget already gone */ }
+}
+
+// Watch the widget's shadow root for the switch link and hand it a new handler.
+// Returns a stop function.
+function watchForSwitchLink(channel, onSwitch) {
+  if (typeof MutationObserver === 'undefined') return () => {};
+  const wanted = `use ${CHANNEL_LABELS[channel] || channel} instead`;
+  let patched = false;
+  const tryPatch = () => {
+    if (patched) return;
+    const root = otpShadow();
+    if (!root) return;
+    const link = Array.from(root.querySelectorAll('button.link'))
+      .find((b) => (b.textContent || '').trim().toLowerCase() === wanted);
+    if (!link) return;
+    patched = true;
+    // Cloning drops the widget's own listener; ours is the only one left.
+    const fresh = link.cloneNode(true);
+    link.replaceWith(fresh);
+    fresh.addEventListener('click', (e) => { e.preventDefault(); onSwitch(); });
+  };
+  const obs = new MutationObserver(tryPatch);
+  try {
+    obs.observe(document.body, { childList: true, subtree: true });
+  } catch { /* no body yet */ }
+  tryPatch();
+  const poll = setInterval(tryPatch, 300);
+  return () => { clearInterval(poll); obs.disconnect(); };
+}
+
+// Open the widget for one identifier on one channel. Resolves with the token,
+// the channel it was actually verified on, and the identifier used — the last
+// two matter because the visitor may have switched channels mid-flow, and the
+// lead must record what really happened.
+export function sendOtpFull(identifier, channel, alt) {
   return new Promise((resolve, reject) => {
     const init = getInit();
     if (!init) {
       reject(new Error('Verification service is not ready. Please try again.'));
       return;
     }
+    let stop = () => {};
+    const done = (fn) => (v) => { stop(); fn(v); };
+    const ok = done(resolve);
+    const bad = done(reject);
+
     init({
       widgetId: WIDGET_ID,
       tokenAuth: TOKEN_AUTH,
       identifier,
       ...(channel ? { channel } : {}),
-      success: (data) => resolve(tokenFrom(data)),
+      success: (data) => ok({ token: tokenFrom(data), channel, identifier }),
       failure: (err) => {
         // Surface Amplifeed's real reason instead of a generic message.
         // eslint-disable-next-line no-console
@@ -81,10 +145,27 @@ export function sendOtp(identifier, channel) {
         const msg =
           (err && (err.message || err.msg || err.error || err.code || err.type ||
             (typeof err === 'string' ? err : ''))) || 'OTP verification failed.';
-        reject(new Error(typeof msg === 'string' ? msg : 'OTP verification failed.'));
+        bad(new Error(typeof msg === 'string' ? msg : 'OTP verification failed.'));
       },
     });
+
+    if (alt && alt.identifier) {
+      stop = watchForSwitchLink(alt.channel, () => {
+        stop();
+        closeOtpWidget();
+        // Reopen on the other channel, offering the way back as its own switch.
+        sendOtpFull(alt.identifier, alt.channel, { channel, identifier })
+          .then(resolve, reject);
+      });
+    }
   });
+}
+
+// Send an OTP to `identifier` over `channel` ("sms" | "email"). Resolves with the
+// verified access token once the user enters the correct code; rejects on
+// failure/cancel.
+export function sendOtp(identifier, channel) {
+  return sendOtpFull(identifier, channel).then((r) => r.token);
 }
 
 // Verify an EMAIL via OTP and return the CRM fields to spread onto the lead
@@ -105,11 +186,20 @@ export async function verifyEmailOtp(email) {
 // Verify a PHONE via SMS OTP (replaces the old WhatsApp channel). The identifier
 // must be digits only — country code, NO "+" — per the widget (e.g. the +91
 // number +91 99999 99999 becomes "919999999999").
-export async function verifySmsOtp(phone) {
-  const digits = String(phone || '').replace(/\D/g, '');
+//
+// Pass `email` to make the widget's "Use email instead" link work: without it
+// that link retries the phone number over email and always fails.
+export async function verifySmsOtp(phone, { email } = {}) {
+  const digits = String(phone || '').replace(/D/g, '');
+  const clean = String(email || '').trim();
   await loadOtpProvider();
-  const token = await sendOtp(digits, 'sms');
-  return { otp_token: token, otp_channel: 'sms', otp_identifier: digits };
+  const r = await sendOtpFull(digits, 'sms', clean ? { channel: 'email', identifier: clean } : null);
+  // If they switched, the lead must say email — not the sms we opened with.
+  if (r.channel === 'email') {
+    saveVerifiedLead({ email: r.identifier, otp_token: r.token, otp_channel: 'email', otp_identifier: r.identifier });
+    return { otp_token: r.token, otp_channel: 'email', otp_identifier: r.identifier };
+  }
+  return { otp_token: r.token, otp_channel: 'sms', otp_identifier: digits };
 }
 
 // Back-compat alias: any caller still importing verifyWhatsappOtp now gets SMS.
