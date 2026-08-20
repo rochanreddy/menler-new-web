@@ -1791,6 +1791,13 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-logochip img[alt="Alkemmy"],
 .lp2-logochip img[alt="Brand For You"],
 .lp2-logochip img[alt="AstroNext"]     { height: 56px; border-radius: 10px; }
+/* Same ink-matching as the banner row, at the chip's larger scale. 24px is the
+   ceiling here: McKinsey is the widest mark per unit of ink, and past this its
+   box hits the chip's ~105px of inner width and max-width clamps it, which
+   would pull it back out of step with the other two. */
+.lp2-logochip img.lp2-cred--mck { height: 66px; margin: -21px 0; }
+.lp2-logochip img.lp2-cred--tex { height: 55px; margin: -14px 0 -17px; }
+.lp2-logochip img.lp2-cred--mit { height: 24px; margin: 0; }
 @media (max-width: 560px) {
   .lp2-logostrip { gap: 8px; padding: 10px; border-radius: 14px; }
   .lp2-logochip { padding: 10px 6px; border-radius: 10px; }
@@ -1804,6 +1811,9 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .lp2-logochip img[alt="Alkemmy"],
   .lp2-logochip img[alt="Brand For You"],
   .lp2-logochip img[alt="AstroNext"]     { height: 42px; border-radius: 8px; }
+  .lp2-logochip img.lp2-cred--mck { height: 55px; margin: -17px 0; }
+  .lp2-logochip img.lp2-cred--tex { height: 46px; margin: -11px 0 -14px; }
+  .lp2-logochip img.lp2-cred--mit { height: 20px; margin: 0; }
 }
 
 .lp2-trustbar { margin-top: 16px; display: flex; align-items: center; background: #0d1430; border: 1px solid rgba(255,255,255,0.14); border-radius: 18px; padding: 22px 8px; }
@@ -1847,11 +1857,17 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .lp2-banner-creds img[alt="Microsoft"]    { height: 18px; }
 .lp2-banner-creds img[alt="IIT Guwahati"] { height: 26px; }
 .lp2-banner-creds img[alt="ISB"]          { height: 19px; }
-.lp2-banner-creds img[alt="MIT"]          { height: 23px; }
-.lp2-banner-creds img[alt^="The University of Texas"] { height: 58px; margin: -16px 0; }
+/* Sized so the ink inside each file lands at the same height (20px), not so
+   the boxes match — the boxes are mostly transparent padding, in very
+   different amounts. Negative margins pull that padding back off so the row
+   stays as short as the marks are. Texas' ink sits 6% high in its canvas,
+   hence the uneven pair. */
+.lp2-banner-creds img.lp2-cred--mck { height: 55px; margin: -18px 0; max-width: none; }
+.lp2-banner-creds img.lp2-cred--tex { height: 46px; margin: -11px 0 -15px; max-width: none; }
+.lp2-banner-creds img.lp2-cred--mit { height: 20px; margin: 0; }
 /* McKinsey has no logo file — the trust bar sets it in serif and so does this,
    so the two rows carry the same mark rather than two different McKinseys. */
-.lp2-banner-cred-mck { font-family: Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: 500; letter-spacing: .01em; line-height: 1.14; color: var(--ink); opacity: 0.92; }
+.lp2-banner-cred-mck { font-family: Georgia, 'Times New Roman', serif; font-size: 11px; font-weight: 500; letter-spacing: .01em; line-height: 1.14; color: var(--ink); opacity: 0.92; }
 .lp2-banner-free { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--a-dark); border: 1px solid var(--a); border-radius: 5px; padding: 2px 7px; margin-right: 8px; }
 .lp2-banner-photo { position: absolute; right: 0; bottom: 0; top: 0; width: 42%; z-index: 1; }
 .lp2-banner-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 22%); mask-image: linear-gradient(90deg, transparent 0%, #000 22%); }
@@ -1883,9 +1899,10 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   .lp2-banner-creds img[alt="Microsoft"]    { height: 13px; }
   .lp2-banner-creds img[alt="IIT Guwahati"] { height: 18px; }
   .lp2-banner-creds img[alt="ISB"]          { height: 13px; }
-  .lp2-banner-creds img[alt="MIT"]          { height: 16px; }
-  .lp2-banner-creds img[alt^="The University of Texas"] { height: 41px; margin: -11px 0; }
-  .lp2-banner-cred-mck { font-size: 9px; }
+  .lp2-banner-creds img.lp2-cred--mck { height: 40px; margin: -13px 0; }
+  .lp2-banner-creds img.lp2-cred--tex { height: 33px; margin: -8px 0 -10px; }
+  .lp2-banner-creds img.lp2-cred--mit { height: 14px; margin: 0; }
+  .lp2-banner-cred-mck { font-size: 8px; }
   .lp2-banner-photo { width: 44%; }
   .lp2-banner-strip { padding: 7px 12px; font-size: 9.5px; gap: 7px; }
   .lp2-banner-strip span:first-child::before { margin-right: 5px; }

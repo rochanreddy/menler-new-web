@@ -188,6 +188,22 @@ const NITIN_CREDS = [
   { name: 'The University of Texas at Austin', logo: '/logos/texas-uni-removebg-preview.png' },
 ];
 
+// The Lightning-Fast marks come from Sanity, and the three uploads carry very
+// different amounts of transparent padding — measured ink is 36%, 100% and 44%
+// of canvas height. One shared height therefore renders MIT two and a half
+// times the size of McKinsey, which is what it looked like. Matching on a
+// keyword rather than the exact alt text, because that text is CMS copy and has
+// already been edited once ("Texas the university of texas of austin").
+const CRED_MARK_CLASS = [['mckinsey', 'mck'], ['texas', 'tex'], ['mit', 'mit']];
+const credMarkClass = (name) => {
+  const n = String(name || '').toLowerCase();
+  const hit = CRED_MARK_CLASS.find(([k]) => n.includes(k));
+  return hit ? ` lp2-cred--${hit[1]}` : '';
+};
+
+// Slugs whose banner marks get that optical sizing.
+const CREDS_OPTICAL = new Set(['build-ai-agents-lightning-fast']);
+
 const BANNER_CRED_LOGOS = {
   'build-your-portfolio-with-claude': SRIDEVI_CREDS,
   'build-ai-agents-lightning-fast': NITIN_CREDS,
@@ -202,12 +218,14 @@ const CERT_TITLES = {
 
 // One chip in the strip under the form. If the logo file is missing the chip
 // removes itself rather than leaving a broken-image icon on a live campaign.
-function LogoChip({ name, logo, size }) {
+function LogoChip({ name, logo, size, markClass }) {
   const [failed, setFailed] = useState(false);
   if (failed) return null;
   return (
     <span className="lp2-logochip">
-      <img src={logo} alt={name} loading="lazy" onError={() => setFailed(true)} style={size ? { height: `${size}px` } : undefined} />
+      {/* An optical class carries its own height, so the CMS size is skipped
+          there — an inline height would win and undo the matching. */}
+      <img src={logo} alt={name} loading="lazy" onError={() => setFailed(true)} className={markClass || undefined} style={!markClass && size ? { height: `${size}px` } : undefined} />
     </span>
   );
 }
@@ -310,6 +328,7 @@ export default function KickstarterLanding() {
   // Extra "College / University" field — only on the career-advantage campaign.
   const showCollege = activeSlug === 'turn-ai-into-your-career-advantage';
   const bannerCredLogos = (d.showCredLogosInBanner && sanityLogos) || BANNER_CRED_LOGOS[activeSlug];
+  const credsOptical = CREDS_OPTICAL.has(activeSlug);
   const certTitle = has(d.certificateTitle) ? d.certificateTitle : (CERT_TITLES[activeSlug] || heading);
   // Signature line on the certificate mock-up. "|" separates the designation
   // from the employer ("AI Educator | AI Future Skills Specialist"), and only
@@ -441,7 +460,7 @@ export default function KickstarterLanding() {
                 <div className="lp2-banner-creds" aria-label={bannerCredLogos.map((l) => l.name).join(', ')}>
                   {bannerCredLogos.map((l) => (l.mark === 'mck'
                     ? <span key={l.name} className="lp2-banner-cred-mck">McKinsey<br />&amp; Company</span>
-                    : <img key={l.name} src={l.logo} alt={l.name} decoding="async" style={{ ...(bannerLogoH ? { height: `${bannerLogoH}px` } : null), ...(l.invert ? { filter: 'brightness(0)' } : null) }} />
+                    : <img key={l.name} src={l.logo} alt={l.name} decoding="async" className={credsOptical ? credMarkClass(l.name).trim() : undefined} style={bannerLogoH ? { height: `${bannerLogoH}px` } : undefined} />
                   ))}
                 </div>
               )}
@@ -651,7 +670,7 @@ export default function KickstarterLanding() {
           {campaignLogos && (
             <div className="lp2-logostrip" aria-label={campaignLogos.map((l) => l.name).join(', ')}>
               {campaignLogos.map((l) => (
-                <LogoChip key={l.name} name={l.name} logo={l.logo} size={stripLogoH} />
+                <LogoChip key={l.name} name={l.name} logo={l.logo} size={stripLogoH} markClass={credsOptical ? credMarkClass(l.name).trim() : ''} />
               ))}
             </div>
           )}
