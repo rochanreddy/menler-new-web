@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import MenlerWordmark from '../components/common/MenlerWordmark';
 import Reveal from '../components/common/Reveal';
 import AccredSection from '../components/common/AccredSection';
@@ -13,7 +13,7 @@ import FaqList from '../components/common/FaqList';
 import { GENERALIST_FAQS } from '../data/faqData';
 import CampaignRail from '../components/campaign/CampaignRail';
 import TestimonialsColumns from '../components/common/TestimonialsColumns';
-import ApplyModal, { ThankYou } from '../components/campaign/CampaignApply';
+import ApplyModal from '../components/campaign/CampaignApply';
 import { GEN_HIRING } from '../data/genHiring';
 import { SOCIAL_LINKS, SUPPORT_EMAIL, SUPPORT_MAIL_HREF } from '../data/socialLinks';
 import { getFeaturedMentors } from '../data/featuredMentors';
@@ -223,7 +223,6 @@ export default function GeneralistCampaign() {
   const [applyOpen, setApplyOpen] = useState(false);
   // Set once the application is verified; the confirmation screen replaces the
   // landing page from then on.
-  const [applicant, setApplicant] = useState(null);
 
   // The sticky CTA only appears once the hero (and its own button) is gone.
   useEffect(() => {
@@ -238,16 +237,13 @@ export default function GeneralistCampaign() {
   }, []);
 
   const openApply = () => setApplyOpen(true);
-
-  if (applicant) {
-    return (
-      <ThankYou
-        applicant={applicant}
-        programTitle="Claude AI Generalist Fellowship"
-        followUp="walk you through the six weeks"
-      />
-    );
-  }
+  // The confirmation is its own URL, not a swap in place — an ad conversion
+  // needs a destination to fire on. replace: true so the campaign page is
+  // swapped out of history rather than stacked on: Back/Forward would otherwise
+  // re-enter this URL and count a second conversion for the same applicant.
+  const navigate = useNavigate();
+  const onApplied = (applicant) =>
+    navigate('/campaign/ai-claude-generalist/thank-you', { state: { applicant }, replace: true });
 
   return (
     <div className="gcamp">
@@ -414,7 +410,7 @@ export default function GeneralistCampaign() {
       {applyOpen && (
         <ApplyModal
           onClose={() => setApplyOpen(false)}
-          onDone={setApplicant}
+          onDone={onApplied}
           program="Claude AI Generalist"
           source="campaign-ai-claude-generalist"
           section="Claude AI Generalist Fellowship"

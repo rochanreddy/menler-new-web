@@ -12,6 +12,7 @@ const KickstarterLanding = lazy(() => import('./pages/KickstarterLanding'));
 const Checkout = lazy(() => import('./pages/Checkout'));
 const Generalist = lazy(() => import('./pages/Generalist'));
 const GeneralistCampaign = lazy(() => import('./pages/GeneralistCampaign'));
+const GeneralistCampaignThanks = lazy(() => import('./pages/GeneralistCampaignThanks'));
 const KickstarterCampaign = lazy(() => import('./pages/KickstarterCampaign'));
 const Engineering = lazy(() => import('./pages/Engineering'));
 const Projects = lazy(() => import('./pages/Projects'));
@@ -93,6 +94,9 @@ export default function App() {
             <Route path="/ai-kickstarter" element={<KickstarterLanding />} />
             {/* Before /campaign/:slug — this page is its own route, not a slug. */}
             <Route path="/campaign/ai-claude-generalist" element={<GeneralistCampaign />} />
+            {/* A URL of its own so an ad conversion has a destination to fire
+                on. Two segments, so /campaign/:slug can't swallow it. */}
+            <Route path="/campaign/ai-claude-generalist/thank-you" element={<GeneralistCampaignThanks />} />
             <Route path="/campaign/ai-kickstarter" element={<KickstarterCampaign />} />
             <Route path="/campaign/:slug" element={<KickstarterLanding />} />
             <Route path="/checkout" element={<Checkout />} />

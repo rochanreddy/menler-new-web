@@ -14,7 +14,7 @@ import BackgroundField from '../forms/BackgroundField';
  * opened the form, which is how the workshop checkout ends too: the page you
  * applied from is no longer the page you want, and a panel inside a dialog
  * leaves the whole advert still sitting behind it. */
-export function ThankYou({ applicant, programTitle, followUp, theme = '' }) {
+export function ThankYou({ applicant = {}, programTitle, followUp, theme = '' }) {
   const navigate = useNavigate();
 
   // The page under this one is where the reader had scrolled to. Start at the
@@ -47,11 +47,14 @@ export function ThankYou({ applicant, programTitle, followUp, theme = '' }) {
         </span>
 
         <h1 className="gcamp-thanks-h">You're registered!</h1>
+        {/* Now reachable with no applicant: this is a confirmation URL, so a
+            refresh or a bookmark lands here cold. The phone clause drops out
+            rather than rendering "call you on  within 24 hours". */}
         <p className="gcamp-thanks-p">
           {applicant.name ? `Thanks, ${applicant.name.split(/\s+/)[0]} — you're` : "You're"} all set for the{' '}
-          <b>{programTitle}</b>. Admissions will call you on{' '}
-          <b>{applicant.phone}</b> within 24 hours to {followUp} and confirm
-          your seat.
+          <b>{programTitle}</b>. Admissions will call you
+          {applicant.phone ? <> on <b>{applicant.phone}</b></> : null}{' '}
+          within 24 hours to {followUp} and confirm your seat.
         </p>
 
         <p className="gcamp-thanks-label">Open to you already</p>
