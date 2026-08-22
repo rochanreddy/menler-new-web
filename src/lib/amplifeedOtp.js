@@ -11,6 +11,35 @@
 
 import { getVerifiedLead, saveVerifiedLead } from './verifiedSession';
 
+/* ── Local development only: skip the widget ──────────────────────────────
+ *
+ * Amplifeed's widget requires a Cloudflare Turnstile pass before it will send
+ * anything, and its /send call fails on a dev machine — which makes the whole
+ * apply flow untestable locally even though nothing downstream of it is broken.
+ * With this on, verification resolves at once with a token that is obviously
+ * not real, so the rest of the flow can be exercised.
+ *
+ * It cannot reach production. `import.meta.env.DEV` is false in every build, so
+ * Vite drops this branch out of the bundle entirely — the string below does not
+ * exist in dist/. On top of that it has to be asked for by name in a local .env
+ * (which is gitignored), so it can't be switched on by accident either.
+ */
+const DEV_BYPASS = import.meta.env.VITE_OTP_DEV_BYPASS === '1';
+
+// Every use is written as `import.meta.env.DEV && DEV_BYPASS` rather than
+// folding DEV into the constant above. Vite replaces import.meta.env.DEV with a
+// literal false when building, so each guard collapses to `false && …`, esbuild
+// drops the branch, and this function goes with it for want of a caller. Hide
+// the check behind a helper and the minifier can no longer prove that, so the
+// token string ships. Verified by grepping dist/ after a build.
+const devToken = (channel, identifier) => {
+  // eslint-disable-next-line no-console
+  console.warn(`[otp] dev bypass — no ${channel} code sent to ${identifier}. Local only.`);
+  // Deliberately unmistakable: if this ever appears on a lead, it was not a
+  // verified applicant and the record should be read as a local test.
+  return { otp_token: 'DEV-BYPASS-NOT-VERIFIED', otp_channel: channel, otp_identifier: identifier };
+};
+
 // New Amplifeed keys start with wgt_ / otpta_. The retired MSG91 widget ids were
 // bare hex with no prefix. Ignore a stale (old-format) env value so production
 // can't get stuck on the widget Amplifeed is decommissioning — the new default
@@ -254,6 +283,7 @@ export function sendOtp(identifier, channel) {
 // session, reuse the stored token instead of prompting for a code again.
 export async function verifyEmailOtp(email) {
   const clean = String(email || '').trim();
+  if (import.meta.env.DEV && DEV_BYPASS) return devToken('email', clean);
   const prev = getVerifiedLead();
   if (prev && prev.otp_token && String(prev.email || '').toLowerCase() === clean.toLowerCase()) {
     return { otp_token: prev.otp_token, otp_channel: prev.otp_channel || 'email', otp_identifier: prev.otp_identifier || clean };
@@ -273,6 +303,7 @@ export async function verifyEmailOtp(email) {
 export async function verifySmsOtp(phone, { email } = {}) {
   const digits = String(phone || '').replace(/\D/g, '');
   const clean = String(email || '').trim();
+  if (import.meta.env.DEV && DEV_BYPASS) return devToken('sms', digits);
   await loadOtpProvider();
   const r = await sendOtpFull(digits, 'sms', clean ? { channel: 'email', identifier: clean } : null);
   // If they switched, the lead must say email — not the sms we opened with.

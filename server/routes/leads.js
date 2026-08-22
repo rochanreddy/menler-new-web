@@ -282,6 +282,43 @@ router.post('/:id/checkout', async (req, res) => {
   }
 });
 
+/* ── Attach qualifying answers to a lead ─────────────────────────────────── */
+// Asked after the one-time code is verified, so the lead already exists — this
+// updates it rather than creating a second record for the same person. The
+// answers are stored under extra, which is where the CRM forward already picks
+// up custom fields, so admissions sees them beside everything else.
+router.post('/:id/answers', async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!/^[a-f\d]{24}$/i.test(id)) return res.status(400).json({ error: 'Invalid lead id.' });
+
+    const lead = await Lead.findById(id);
+    if (!lead) return res.status(404).json({ error: 'Lead not found.' });
+
+    const answers = (req.body && req.body.answers) || {};
+    const clean = {};
+    for (const [k, v] of Object.entries(answers)) {
+      // Answers are chosen from a fixed list, so anything long or oddly shaped
+      // is not one of ours; keep the record tidy rather than trusting the post.
+      const key = String(k).slice(0, 40).replace(/[^a-z0-9_]/gi, '');
+      if (!key) continue;
+      clean[key] = String(v == null ? '' : v).slice(0, 160);
+    }
+    if (!Object.keys(clean).length) return res.status(400).json({ error: 'No answers supplied.' });
+
+    lead.extra = { ...(lead.extra && typeof lead.extra === 'object' ? lead.extra : {}), ...clean };
+    lead.markModified('extra');
+    await lead.save();
+
+    // Reflect the answers in the CRM (non-blocking).
+    forwardLeadToCrm(lead);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('lead answers update error', err);
+    res.status(500).json({ error: 'Could not save the answers.' });
+  }
+});
+
 /* ── PDF delivery by email attachment ────────────────────────────────────── */
 const FRONTEND_BASE = () =>
   (process.env.FRONTEND_URL || 'https://menler.in').split(',')[0].trim().replace(/\/+$/, '');

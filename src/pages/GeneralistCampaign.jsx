@@ -14,6 +14,7 @@ import { GENERALIST_FAQS } from '../data/faqData';
 import CampaignRail from '../components/campaign/CampaignRail';
 import TestimonialsColumns from '../components/common/TestimonialsColumns';
 import ApplyModal from '../components/campaign/CampaignApply';
+import { GENERALIST_QUALIFY } from '../data/qualifyQuestions';
 import { GEN_HIRING } from '../data/genHiring';
 import { SOCIAL_LINKS, SUPPORT_EMAIL, SUPPORT_MAIL_HREF } from '../data/socialLinks';
 import { getFeaturedMentors } from '../data/featuredMentors';
@@ -414,6 +415,7 @@ export default function GeneralistCampaign() {
           program="Claude AI Generalist"
           source="campaign-ai-claude-generalist"
           section="Claude AI Generalist Fellowship"
+          questions={GENERALIST_QUALIFY}
           label="Apply for the AI Generalist Fellowship"
           noteProgram="fellowship"
         />

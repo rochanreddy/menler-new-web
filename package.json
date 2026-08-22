@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/checkPdfs.mjs && vite build && node scripts/prerender.mjs",
+    "build": "node scripts/checkPdfs.mjs && vite build && node scripts/assertOtpLive.mjs && node scripts/prerender.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "server": "node server/index.js",

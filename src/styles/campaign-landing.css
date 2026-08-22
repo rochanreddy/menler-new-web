@@ -451,6 +451,8 @@
 .gcamp-applyform select:focus { border-color: var(--gc-on-dark); background: rgba(255, 255, 255, 0.1); }
 /* The list renders on the OS's own light menu — parchment on white is invisible. */
 .gcamp-applyform select option { color: #1b1b1b; }
+/* Question text above each answer in the qualifying step. */
+.gcamp-qlabel { font-size: 12.5px; line-height: 1.4; color: rgba(var(--gc-on-dark-rgb),0.82); margin: 4px 0 6px; }
 .gcamp-applyform input { width: 100%; font-family: inherit; font-size: 14px; padding: 12px 13px; border-radius: 11px; border: 1px solid rgba(var(--gc-on-dark-rgb),0.28); background: rgba(255, 255, 255, 0.055); color: var(--parchment); outline: none; transition: border-color 0.15s ease, background 0.15s ease; }
 .gcamp-applyform input::placeholder { color: rgba(var(--gc-on-dark-rgb),0.7); }
 .gcamp-applyform input:focus { border-color: var(--gc-on-dark); background: rgba(255, 255, 255, 0.1); }

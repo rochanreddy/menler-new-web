@@ -65,6 +65,21 @@ export async function completeCheckout(id, payload = {}) {
 }
 
 /**
+ * Attach qualifying answers to a lead that already exists. The questions are
+ * asked after the one-time code is verified, so this updates that record rather
+ * than creating a second one for the same applicant.
+ */
+export async function submitLeadAnswers(id, answers) {
+  const res = await fetch(`${API_URL}/leads/${id}/answers`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ answers }),
+  });
+  if (!res.ok) throw new Error(await errorMessage(res, 'Could not save your answers'));
+  return res.json();
+}
+
+/**
  * Create a shareable aptitude report. Returns { id, url } — the url is a public
  * read-only report page (/report/:id) that can be attached to the lead/CRM.
  */

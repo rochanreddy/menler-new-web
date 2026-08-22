@@ -5,7 +5,7 @@ import Seo from '../common/Seo';
 import { useToast } from '../common/Toast';
 import { verifySmsOtp, verifyEmailOtp } from '../../lib/amplifeedOtp';
 import { COUNTRY_CODES } from '../../data/countryCodes';
-import { submitLead } from '../../services/leadService';
+import { submitLead, submitLeadAnswers } from '../../services/leadService';
 import BackgroundField from '../forms/BackgroundField';
 
 /* The confirmation, as its own screen.
@@ -106,7 +106,7 @@ function ApplyForm({ onDone, program, source, section, noteProgram }) {
       const otp = indian
         ? await verifySmsOtp(digits, { email: form.email.trim() })
         : await verifyEmailOtp(form.email.trim());
-      await submitLead({
+      const created = await submitLead({
         name: form.name.trim(),
         email: form.email.trim(),
         phone: `${form.countryCode} ${form.phone}`,
@@ -121,7 +121,13 @@ function ApplyForm({ onDone, program, source, section, noteProgram }) {
       });
       // Hands the page the confirmed details and steps aside — the thank-you
       // is a page of its own, not a panel inside the dialog that opened it.
-      onDone({ name: form.name.trim(), phone: `${form.countryCode} ${form.phone}` });
+      // The lead id rides along so the qualifying step, if this page asks any,
+      // can attach its answers to this record instead of making a second one.
+      onDone({
+        name: form.name.trim(),
+        phone: `${form.countryCode} ${form.phone}`,
+        leadId: (created && created.id) || null,
+      });
       toast.success("You're verified — our admissions team will call you shortly.");
     } catch (e2) {
       setErr(e2?.message || "Couldn't verify that just now. Please try again.");
@@ -206,6 +212,64 @@ function ApplyForm({ onDone, program, source, section, noteProgram }) {
   );
 }
 
+/* The qualifying questions, asked once the code is verified.
+ *
+ * The lead already exists by the time this renders, which is the point of
+ * putting it after verification rather than before: someone who closes the
+ * dialog here is still an application with a verified number, not a lost one.
+ *
+ * For the same reason a failed save does not trap them. The answers are
+ * admissions' nice-to-have, not the applicant's problem — if the request
+ * fails, it is logged and the thank-you follows anyway. */
+function QualifyStep({ questions, leadId, onDone }) {
+  const [answers, setAnswers] = useState({});
+  const [busy, setBusy] = useState(false);
+  const done = questions.every((q) => answers[q.key]);
+
+  const submit = async (e) => {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      if (leadId) await submitLeadAnswers(leadId, answers);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('Could not save qualifying answers:', err?.message || err);
+    } finally {
+      setBusy(false);
+      onDone();
+    }
+  };
+
+  return (
+    <>
+      <p className="gcamp-formcard-t">Three quick questions</p>
+      <form className="gcamp-applyform" onSubmit={submit}>
+        {questions.map((q) => (
+          <div key={q.key}>
+            <p className="gcamp-qlabel">{q.label}</p>
+            <select
+              required
+              aria-label={q.label}
+              value={answers[q.key] || ''}
+              onChange={(e) => setAnswers((a) => ({ ...a, [q.key]: e.target.value }))}
+              disabled={busy}
+            >
+              <option value="" disabled>Select one…</option>
+              {q.options.map((o) => <option key={o} value={o}>{o}</option>)}
+            </select>
+          </div>
+        ))}
+        <button type="submit" disabled={busy || !done}>
+          {busy ? 'Saving…' : 'Finish'}
+        </button>
+      </form>
+      <p className="gcamp-formnote">
+        Your seat is already held — this only helps us tailor the call.
+      </p>
+    </>
+  );
+}
+
 /* The form, in a dialog over the page.
  *
  * Escape and a click on the backdrop close it, and the page behind stays put
@@ -213,7 +277,12 @@ function ApplyForm({ onDone, program, source, section, noteProgram }) {
  * Lenis drives scrolling from wheel events and keeps going regardless, so it
  * has to be stopped explicitly, and the panel carries data-lenis-prevent so
  * the wheel still reaches its own scrollbar. */
-export default function ApplyModal({ onClose, onDone, program, section, source, label, noteProgram = 'programme' }) {
+export default function ApplyModal({ onClose, onDone, program, section, source, label, noteProgram = 'programme', questions }) {
+  // Set once the code is verified. While it holds an applicant the dialog shows
+  // the qualifying questions instead of the form; pages that pass no questions
+  // never reach this state and go straight to the thank-you as before.
+  const [verified, setVerified] = useState(null);
+
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
     const prev = document.body.style.overflow;
@@ -237,7 +306,20 @@ export default function ApplyModal({ onClose, onDone, program, section, source, 
         aria-label={label}
       >
         <button type="button" className="gcamp-modal-x" onClick={onClose} aria-label="Close">×</button>
-        <ApplyForm onDone={onDone} program={program} source={source} section={section} noteProgram={noteProgram} />
+        {verified
+          ? <QualifyStep questions={questions} leadId={verified.leadId} onDone={() => onDone(verified)} />
+          : (
+            <ApplyForm
+              onDone={(applicant) => {
+                if (questions && questions.length) setVerified(applicant);
+                else onDone(applicant);
+              }}
+              program={program}
+              source={source}
+              section={section}
+              noteProgram={noteProgram}
+            />
+          )}
       </div>
     </div>
   );
