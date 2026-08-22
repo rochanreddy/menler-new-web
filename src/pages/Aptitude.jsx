@@ -195,6 +195,16 @@ export default function Aptitude() {
     setElapsed(0);
     setSheetUnlocked(false);
     setShareCopied(false);
+    // Every attempt is its own report. These two were left standing between
+    // tests, and because the gate was still unlocked from the first one,
+    // submitGate never ran again on a second: no new report was minted, no
+    // second lead reached the CRM, and the share box kept offering the first
+    // attempt's link — which is what made a shared "second test" open the
+    // first. Clearing them re-gates each attempt. The OTP does not prompt
+    // twice: verifyEmailOtp reuses the token already held for that address,
+    // and the name/email/phone stay filled in, so it is one click.
+    setReportUnlocked(false);
+    setReportUrl('');
     const t = setInterval(() => setElapsed(e => e + 1), 1000);
     return () => clearInterval(t);
   }, [state.view, state.setIdx]);
