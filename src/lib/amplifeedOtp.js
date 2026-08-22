@@ -88,6 +88,86 @@ function closeOtpWidget() {
   } catch { /* widget already gone */ }
 }
 
+// Paste and SMS autofill both drop everything after the first digit. Their six
+// boxes are maxLength=1 and share one input handler:
+//
+//   var v = input.value.replace(/\D/g, ''); input.value = v.slice(0, 1)
+//
+// so any value longer than a single character is cut down to its first. And
+// autocomplete="one-time-code" sits on box 0 alone, which is where the phone
+// puts the whole code — straight into the box that throws five sixths of it
+// away. One cause, both symptoms.
+//
+// Fixed by listening on the shadow root in the CAPTURE phase, so we see the
+// event before the box does and can stop it reaching that handler, then
+// spreading the digits across the row ourselves. Their verify reads the boxes
+// back out of the DOM (readCode()), so setting values is all that is needed —
+// there is no internal state to keep in step.
+function spreadDigits(root, target, rawValue) {
+  const boxes = Array.from(root.querySelectorAll('input.digit'));
+  if (!boxes.length) return false;
+  const digits = String(rawValue || '').replace(/\D/g, '');
+  if (digits.length < 2) return false;
+  // A full-length code fills from the start wherever it was dropped; a partial
+  // one continues from the box it landed in.
+  const at = boxes.indexOf(target);
+  const begin = digits.length >= boxes.length || at < 0 ? 0 : at;
+  for (let i = 0; begin + i < boxes.length; i++) boxes[begin + i].value = digits[i] || '';
+  const lastFilled = Math.min(begin + digits.length, boxes.length) - 1;
+  const focusTarget = boxes[lastFilled + 1] || boxes[lastFilled];
+  if (focusTarget && focusTarget.focus) focusTarget.focus();
+  return true;
+}
+
+function enhanceOtpDigits() {
+  if (typeof MutationObserver === 'undefined') return () => {};
+  let root = null;
+  const isDigit = (el) => el && el.classList && el.classList.contains('digit');
+
+  const onPaste = (e) => {
+    if (!isDigit(e.target) || !root) return;
+    const cb = e.clipboardData || window.clipboardData;
+    const text = cb && cb.getData ? cb.getData('text') : '';
+    if (String(text).replace(/\D/g, '').length < 2) return;
+    e.preventDefault();
+    e.stopPropagation();
+    spreadDigits(root, e.target, text);
+  };
+
+  // Autofill, and any keyboard that commits more than one character at once.
+  const onInput = (e) => {
+    if (!isDigit(e.target) || !root) return;
+    if (String(e.target.value || '').replace(/\D/g, '').length < 2) return;
+    e.stopPropagation();
+    spreadDigits(root, e.target, e.target.value);
+  };
+
+  const attach = () => {
+    const sh = otpShadow();
+    if (!sh || sh === root) return;
+    root = sh;
+    sh.addEventListener('paste', onPaste, true);
+    sh.addEventListener('input', onInput, true);
+    // maxLength=1 makes the browser truncate a paste or an autofill before any
+    // script sees it. Widen the boxes so the whole code can land; it is put
+    // back to one digit per box the moment it does.
+    sh.querySelectorAll('input.digit').forEach((b, _i, all) => { b.maxLength = all.length; });
+  };
+
+  const obs = new MutationObserver(attach);
+  try { obs.observe(document.body, { childList: true, subtree: true }); } catch { /* no body yet */ }
+  attach();
+  const poll = setInterval(attach, 300);
+  return () => {
+    clearInterval(poll);
+    obs.disconnect();
+    if (root) {
+      root.removeEventListener('paste', onPaste, true);
+      root.removeEventListener('input', onInput, true);
+    }
+  };
+}
+
 // Watch the widget's shadow root for the switch link and hand it a new handler.
 // Returns a stop function.
 function watchForSwitchLink(channel, onSwitch) {
@@ -128,7 +208,8 @@ export function sendOtpFull(identifier, channel, alt) {
       return;
     }
     let stop = () => {};
-    const done = (fn) => (v) => { stop(); fn(v); };
+    const stopDigits = enhanceOtpDigits();
+    const done = (fn) => (v) => { stop(); stopDigits(); fn(v); };
     const ok = done(resolve);
     const bad = done(reject);
 
@@ -190,7 +271,7 @@ export async function verifyEmailOtp(email) {
 // Pass `email` to make the widget's "Use email instead" link work: without it
 // that link retries the phone number over email and always fails.
 export async function verifySmsOtp(phone, { email } = {}) {
-  const digits = String(phone || '').replace(/D/g, '');
+  const digits = String(phone || '').replace(/\D/g, '');
   const clean = String(email || '').trim();
   await loadOtpProvider();
   const r = await sendOtpFull(digits, 'sms', clean ? { channel: 'email', identifier: clean } : null);
