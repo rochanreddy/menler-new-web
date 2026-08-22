@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { GENERALIST_QUALIFY } from '../data/qualifyQuestions';
 import { adminApi } from '../lib/adminApi';
 import Seo from '../components/common/Seo';
 import AttendanceTab from '../components/admin/AttendanceTab';
@@ -772,6 +773,12 @@ function LeadsTab() {
             ['Communication opt-in', selected.communication_optin === false ? 'No' : 'Yes'],
             ['Referrer URL', selected.referrer_url],
             ['Page URL', selected.page_url],
+            // Asked after verification on the Fellowship campaign. Labelled with
+            // the question itself: "Immediately" on its own tells admissions
+            // nothing about what was being answered.
+            ...(GENERALIST_QUALIFY.some((q) => selected.extra?.[q.key])
+              ? [{ heading: 'Qualifying answers' }, ...GENERALIST_QUALIFY.map((q) => [q.label, selected.extra?.[q.key]])]
+              : []),
             ['Extra fields', selected.extra && Object.keys(selected.extra).length ? selected.extra : '—'],
             ['Created', fmtDate(selected.createdAt)],
             ['Updated', fmtDate(selected.updatedAt)],

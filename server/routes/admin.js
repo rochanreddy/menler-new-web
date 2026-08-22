@@ -1058,6 +1058,13 @@ router.get('/leads/export.csv', requireAdmin, async (req, res) => {
       { key: 'utm_medium', label: 'UTM Medium' },
       { key: 'utm_campaign', label: 'UTM Campaign' },
       { key: 'utm_content', label: 'UTM Content' },
+      // The Fellowship campaign's qualifying answers, as columns of their own.
+      // They already ride along inside Extra, but as one JSON blob per row —
+      // which a spreadsheet can't sort, filter or pivot on, and sorting leads
+      // by intent is the entire reason for asking.
+      { key: 'q_outcome', label: 'Q: Outcome', get: (r) => r.extra?.outcome || '' },
+      { key: 'q_timeline', label: 'Q: Timeline', get: (r) => r.extra?.timeline || '' },
+      { key: 'q_funding', label: 'Q: Funding', get: (r) => r.extra?.funding || '' },
       { key: 'extra', label: 'Extra', get: (r) => (r.extra && Object.keys(r.extra).length ? r.extra : '') },
       { key: '_id', label: 'ID' },
     ];
