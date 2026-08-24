@@ -60,6 +60,11 @@ router.post('/cashfree/order', async (req, res) => {
     const phone = cleanPhone(body.phone || lead?.phone);
     const background = String(body.background || lead?.background || '').trim();
     const city = String(body.city || lead?.extra?.city || '').trim();
+    // Asked by the background question: a student's college, a graduate's year.
+    // Stored beside city in extra rather than folded into `background`, which
+    // stays the categorical group the admin filter groups on.
+    const college = String(body.college || lead?.extra?.college || '').trim();
+    const gradYear = String(body.graduation_year || lead?.extra?.graduation_year || '').trim();
     const track = String(body.track || lead?.track || '').trim();
     if (!name || !email || phone.length !== 10) {
       return res.status(400).json({ error: 'Name, a valid email and a 10-digit phone are required.' });
@@ -75,7 +80,7 @@ router.post('/cashfree/order', async (req, res) => {
         source: `enrol-${program}`,
         cta_label: `Enrol: ${price.label}`,
         section: price.label,
-        extra: { ...(city ? { city } : {}) },
+        extra: { ...(city ? { city } : {}), ...(college ? { college } : {}), ...(gradYear ? { graduation_year: gradYear } : {}) },
       });
       forwardLeadToCrm(lead);
     }

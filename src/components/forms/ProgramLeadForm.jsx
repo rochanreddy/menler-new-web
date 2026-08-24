@@ -7,11 +7,16 @@ export default function ProgramLeadForm({ program, programColor = 'var(--special
   const toast = useToast();
   // Stored as `background`, not `track`: this asks who they are, and filing it
   // under the domain-track field left it out of every background report.
-  const [form, setForm] = useState({ name: '', email: '', phone: '', background: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', background: '', college: '', graduation_year: '' });
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  // BackgroundField asks a student their college and a graduate their year.
+  // Those ride in their own fields, not in the background string, so spread
+  // the reported object — it always carries both keys, which is what clears
+  // the stale one when someone switches group.
+  const setDetail = (d) => setForm((f) => ({ ...f, ...d }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,7 +65,7 @@ export default function ProgramLeadForm({ program, programColor = 'var(--special
       </div>
       <div>
         <label>Your background</label>
-        <BackgroundField label="Select…" onChange={(v) => set('background', v)} />
+        <BackgroundField label="Select…" onChange={(v) => set('background', v)} onDetail={setDetail} />
       </div>
       <button type="submit" style={{ background: buttonBg }} disabled={loading}>
         {loading ? 'Sending…' : 'Get brochure & cohort details'}

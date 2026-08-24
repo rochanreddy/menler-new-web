@@ -45,10 +45,15 @@ export default function Engineering() {
   const navigate = useNavigate();
   const go = (path) => { navigate(path); window.scrollTo(0, 0); };
 
-  const [form, setForm] = useState({ name: '', email: '', phone: '', background: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', background: '', college: '', graduation_year: '' });
   const [done, setDone] = useState(false);
   const openApply = useApply();
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  // BackgroundField asks a student their college and a graduate their year.
+  // Those ride in their own fields, not in the background string, so spread
+  // the reported object — it always carries both keys, which is what clears
+  // the stale one when someone switches group.
+  const setDetail = (d) => setForm((f) => ({ ...f, ...d }));
   const handleBrochure = async (e) => {
     e.preventDefault();
     try {
@@ -58,6 +63,7 @@ export default function Engineering() {
         phone: form.phone,
         program: 'engineering',
         background: form.background,
+        college: form.college, graduation_year: form.graduation_year,
         resource: 'Engineering Fellowship Brochure',
         source: 'engineering-page',
         cta_label: 'Brochure: Engineering',
@@ -147,7 +153,7 @@ export default function Engineering() {
           ) : (
             <form className="mini-lead-form" onSubmit={handleBrochure}>
               <input type="email" required aria-label="Email address" placeholder="you@domain.com" value={form.email} onChange={e => set('email', e.target.value)} autoComplete="email" />
-              <BackgroundField label="You are…" onChange={(v) => set('background', v)} />
+              <BackgroundField label="You are…" onChange={(v) => set('background', v)} onDetail={setDetail} />
               <button type="submit">Verify & Download</button>
             </form>
           )}

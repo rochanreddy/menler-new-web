@@ -12,7 +12,7 @@ export default function LeadForm({ defaultProgram = '', showProgram = true, ctaL
   const toast = useToast();
   const [form, setForm] = useState({
     name: '', email: '', phone: '',
-    background: '', program: defaultProgram, track: '', message: '',
+    background: '', college: '', graduation_year: '', program: defaultProgram, track: '', message: '',
   });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -21,6 +21,11 @@ export default function LeadForm({ defaultProgram = '', showProgram = true, ctaL
   const [emailHint, setEmailHint] = useState(null); // "did you mean …?" suggestion
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  // BackgroundField asks a student their college and a graduate their year.
+  // Those ride in their own fields, not in the background string, so spread
+  // the reported object — it always carries both keys, which is what clears
+  // the stale one when someone switches group.
+  const setDetail = (d) => setForm((f) => ({ ...f, ...d }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -102,7 +107,7 @@ export default function LeadForm({ defaultProgram = '', showProgram = true, ctaL
 
       <div className="lf-field">
         <label>Background</label>
-        <BackgroundField label="Select…" onChange={(v) => set('background', v)} />
+        <BackgroundField label="Select…" onChange={(v) => set('background', v)} onDetail={setDetail} />
       </div>
 
       {showProgram && (

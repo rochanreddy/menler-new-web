@@ -153,7 +153,7 @@ export default function Kickstarter() {
 
   // `background`, not `role`: the brochure form asked the same question as
   // every other form but stored the answer under a name nothing reported on.
-  const [form, setForm] = useState({ name: '', email: '', phone: '', background: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', background: '', college: '', graduation_year: '' });
   const [done, setDone] = useState(false);
   const [activeProject, setActiveProject] = useState(null);
   const [activeModule, setActiveModule] = useState(0);
@@ -180,6 +180,11 @@ export default function Kickstarter() {
   const modules = useContent(KS_MODULES_QUERY, MODULES);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  // BackgroundField asks a student their college and a graduate their year.
+  // Those ride in their own fields, not in the background string, so spread
+  // the reported object — it always carries both keys, which is what clears
+  // the stale one when someone switches group.
+  const setDetail = (d) => setForm((f) => ({ ...f, ...d }));
   const handleSubmit = async (e) => {
     e.preventDefault();
     try { await submitLead({ ...form, program: 'kickstarter', source: 'kickstarter-page', cta_label: 'Apply: Kickstarter', section: 'Gen AI Kickstarter', apply: true }); } catch {}
@@ -361,7 +366,7 @@ export default function Kickstarter() {
           ) : (
             <form className="mini-lead-form" onSubmit={handleSubmit}>
               <input type="email" required aria-label="Email address" placeholder="you@domain.com" value={form.email} onChange={e => set('email', e.target.value)} autoComplete="email" />
-              <BackgroundField label="You are…" onChange={(v) => set('background', v)} />
+              <BackgroundField label="You are…" onChange={(v) => set('background', v)} onDetail={setDetail} />
               <button type="submit">Send Brochure</button>
             </form>
           )}

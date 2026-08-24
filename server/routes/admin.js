@@ -990,6 +990,8 @@ router.get('/paid-users/export.csv', requireAdmin, async (req, res) => {
       { label: 'utm_campaign', get: (r) => leadOf(r)?.utm_campaign || '' },
       { label: 'utm_content', get: (r) => leadOf(r)?.utm_content || '' },
       { label: 'Background', get: (r) => leadOf(r)?.background || '' },
+      { label: 'College', get: (r) => leadOf(r)?.extra?.college || '' },
+      { label: 'Graduation year', get: (r) => leadOf(r)?.extra?.graduation_year || '' },
       { label: 'First seen', get: (r) => (leadOf(r)?.createdAt ? new Date(leadOf(r).createdAt).toISOString() : '') },
       { label: 'Note', get: (r) => r.extra?.note || '' },
     ], rows);
@@ -1051,6 +1053,10 @@ router.get('/leads/export.csv', requireAdmin, async (req, res) => {
       { key: 'program', label: 'Program' },
       { key: 'track', label: 'Track' },
       { key: 'background', label: 'Background' },
+      // The background question's follow-ups. Their own columns because reading
+      // them out of the `extra` JSON blob is not something a spreadsheet can do.
+      { key: 'college', label: 'College', get: (r) => r.extra?.college || '' },
+      { key: 'graduation_year', label: 'Graduation year', get: (r) => r.extra?.graduation_year || '' },
       { key: 'message', label: 'Message' },
       { key: 'source', label: 'Source' },
       { key: 'page', label: 'Page' },

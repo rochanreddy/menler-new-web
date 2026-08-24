@@ -80,11 +80,16 @@ export function ThankYou({ applicant = {}, programTitle, followUp, theme = '' })
  * required rather than optional. */
 function ApplyForm({ onDone, program, source, section, noteProgram }) {
   const toast = useToast();
-  const [form, setForm] = useState({ name: '', email: '', countryCode: '+91', phone: '', background: '' });
+  const [form, setForm] = useState({ name: '', email: '', countryCode: '+91', phone: '', background: '', college: '', graduation_year: '' });
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState('');
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  // BackgroundField asks a student their college and a graduate their year.
+  // Those ride in their own fields, not in the background string, so spread
+  // the reported object — it always carries both keys, which is what clears
+  // the stale one when someone switches group.
+  const setDetail = (d) => setForm((f) => ({ ...f, ...d }));
   const indian = form.countryCode === '+91';
   const minLen = indian ? 10 : 8;
 
@@ -111,6 +116,7 @@ function ApplyForm({ onDone, program, source, section, noteProgram }) {
         email: form.email.trim(),
         phone: `${form.countryCode} ${form.phone}`,
         background: form.background,
+        college: form.college, graduation_year: form.graduation_year,
         program,
         ...otp,
         source,
@@ -192,6 +198,7 @@ function ApplyForm({ onDone, program, source, section, noteProgram }) {
           mutedColor="rgba(175, 169, 236, 0.7)"
           disabled={loading}
           onChange={(v) => set('background', v)}
+          onDetail={setDetail}
         />
         {/* Said before they submit, not after — someone abroad who expects an
             SMS will otherwise sit waiting for one that cannot arrive. */}

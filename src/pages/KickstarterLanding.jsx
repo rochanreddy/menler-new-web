@@ -135,6 +135,9 @@ const CAMPAIGN_QUERY = `*[_type == "campaignPage" && slug.current == $slug][0]{
   showLearn, showGet, showCertificate, showMentor, showCommunity
 }`;
 
+// The one campaign that asks EVERY registrant for a college, not just students.
+const COLLEGE_CAMPAIGN = 'turn-ai-into-your-career-advantage';
+
 const has = (v) => v != null && v !== '' && !(Array.isArray(v) && v.length === 0);
 
 // Serve right-sized, auto-format (WebP/AVIF) images from Sanity's CDN instead of
@@ -263,13 +266,27 @@ function useAutoFitTitle(deps) {
 
 export default function KickstarterLanding() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: '', email: '', countryCode: '+91', phone: '', city: '', college: '', background: '', otp: '' });
+  const [form, setForm] = useState({ name: '', email: '', countryCode: '+91', phone: '', city: '', college: '', graduation_year: '', background: '', otp: '' });
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState(null);
   const [done, setDone] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [otpBusy, setOtpBusy] = useState(false);
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  // Which background group is selected. Tracked because this page has a college
+  // question of its own (showCollege), and BackgroundField now asks students for
+  // theirs — without this the two would both render and both write `college`.
+  const [bgGroup, setBgGroup] = useState('');
+  const setDetail = (d, g) => {
+    setBgGroup(g);
+    // On a campaign that asks everyone for a college, that input owns the field
+    // for every group the background question isn't asking — so keep what was
+    // typed there instead of letting this clear it on each background change.
+    const keepTyped = COLLEGE_CAMPAIGN === activeSlug && g !== 'Student';
+    setForm((f) => ({ ...f, ...d, ...(keepTyped ? { college: f.college } : {}) }));
+  };
+  // The page's own college question, only where the background field isn't
+  // already asking it.
 
   const handlePhoneChange = (val) => {
     const clean = val.replace(/\D/g, '');
@@ -326,7 +343,7 @@ export default function KickstarterLanding() {
   const bannerLogoH = Number(d.credLogoSize) > 0 ? Number(d.credLogoSize) : null;
   const stripLogoH = bannerLogoH ? Math.round(bannerLogoH * 46 / 26) : null;
   // Extra "College / University" field — only on the career-advantage campaign.
-  const showCollege = activeSlug === 'turn-ai-into-your-career-advantage';
+  const showCollege = COLLEGE_CAMPAIGN === activeSlug && bgGroup !== 'Student';
   const bannerCredLogos = (d.showCredLogosInBanner && sanityLogos) || BANNER_CRED_LOGOS[activeSlug];
   const credsOptical = CREDS_OPTICAL.has(activeSlug);
   const certTitle = has(d.certificateTitle) ? d.certificateTitle : (CERT_TITLES[activeSlug] || heading);
@@ -387,7 +404,8 @@ export default function KickstarterLanding() {
       const created = await submitLead({
         name: form.name, email: form.email, phone,
         city: form.city, background: form.background,
-        ...(showCollege ? { college: form.college.trim() } : {}),
+        ...(form.college.trim() ? { college: form.college.trim() } : {}),
+        ...(form.graduation_year ? { graduation_year: form.graduation_year } : {}),
         ...otp,
         source: 'campaign-workshop', campaign: activeSlug, workshop: heading,
         cta_label: `Register: ${heading}`, section: `Campaign · ${activeSlug}`,
@@ -656,6 +674,7 @@ export default function KickstarterLanding() {
                     mutedColor="rgba(38,33,92,0.45)"
                     disabled={busy || otpBusy}
                     onChange={(v) => set('background', v)}
+                    onDetail={setDetail}
                   />
                   <button className="lp2-submit" type="submit" disabled={busy || otpBusy}>
                     {otpBusy ? (indianNumber ? 'Sending OTP…' : 'Emailing your code…') : busy ? 'Registering…' : 'Verify to Register'}

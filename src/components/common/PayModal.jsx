@@ -13,11 +13,16 @@ import BackgroundField from '../forms/BackgroundField';
  */
 export default function PayModal({ program, onClose }) {
   const price = PROGRAM_PRICES[program];
-  const [form, setForm] = useState({ name: '', email: '', phone: '', city: '', background: '', track: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', city: '', background: '', track: '', college: '', graduation_year: '' });
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const [done, setDone] = useState(false);
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  // BackgroundField asks a student their college and a graduate their year.
+  // Those ride in their own fields, not in the background string, so spread
+  // the reported object — it always carries both keys, which is what clears
+  // the stale one when someone switches group.
+  const setDetail = (d) => setForm((f) => ({ ...f, ...d }));
 
   useEffect(() => {
     const onKey = (e) => e.key === 'Escape' && onClose();
@@ -77,7 +82,7 @@ export default function PayModal({ program, onClose }) {
               <input className="pay-input" required type="email" placeholder="Email" value={form.email} onChange={(e) => set('email', e.target.value)} autoComplete="email" />
               <input className="pay-input" required type="tel" placeholder="Phone (10 digits)" value={form.phone} onChange={(e) => set('phone', e.target.value)} autoComplete="tel" />
               <input className="pay-input" required type="text" placeholder="City" value={form.city} onChange={(e) => set('city', e.target.value)} autoComplete="address-level2" />
-              <BackgroundField className="pay-input" label="Your background" onChange={(v) => set('background', v)} />
+              <BackgroundField className="pay-input" label="Your background" onChange={(v) => set('background', v)} onDetail={setDetail} />
               {/* Domain track is only shown for the Generalist enrolment, not Kickstarter. */}
               {program !== 'kickstarter' && (
                 <select className="pay-input" required value={form.track} onChange={(e) => set('track', e.target.value)}>

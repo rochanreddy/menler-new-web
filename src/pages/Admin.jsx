@@ -754,6 +754,8 @@ function LeadsTab() {
             ['Program', selected.program],
             ['Track', selected.track],
             ['Background', selected.background],
+            ['College', selected.extra?.college],
+            ['Graduation year', selected.extra?.graduation_year],
             ['Message', selected.message],
             ['Checkout completed', selected.checkout_completed ? `Yes${selected.checkout_at ? ' · ' + fmtDate(selected.checkout_at) : ''}` : 'No'],
             ['Paid', selected.extra?.paid_amount ? `₹${selected.extra.paid_amount}${selected.extra.order_id ? ' · ' + selected.extra.order_id : ''}` : 'No'],
