@@ -46,6 +46,7 @@ export const RESOURCE_PACKS = {
   'crack-your-next-high-paying-job-with-ai': CLAUDE_PLAYBOOK_PACK,
   'build-your-first-webapp-with-claude': CLAUDE_PLAYBOOK_PACK,
   'build-ai-agents-lightning-fast': CLAUDE_PLAYBOOK_PACK,
+  'build-with-generative-ai': CLAUDE_PLAYBOOK_PACK,
 };
 
 /** The paid resource pack for a campaign slug, or null if it has none. */
