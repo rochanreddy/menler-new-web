@@ -99,7 +99,7 @@ const PLAN = {
 };
 
 // Hero fact pills.
-const FACTS = ['Live Online', 'AI Career Opportunities', 'Capstone Project', 'Certification'];
+const FACTS = ['Live Online', 'Beginner Friendly', 'Capstone Project', 'Certificate'];
 
 // "Who this is for" — the five /kickstarter audiences, with the same tints.
 const AUDIENCE = [
@@ -107,6 +107,7 @@ const AUDIENCE = [
   { n: 2, t: 'College students', d: 'Any discipline. Stand out at internships and placements.', bg: '#E6E3F9', fg: '#534AB7' },
   { n: 3, t: 'Professionals new to AI', d: 'Catch up fast. Without coding. Without overwhelm.', bg: '#DCF0E7', fg: '#1D9E75' },
   { n: 4, t: "Founders' AI hires", d: 'First AI person at a startup? Get the toolkit fast.', bg: '#F9DFDF', fg: '#B0484F' },
+  { n: 5, t: 'Parents & educators', d: 'Be the AI guide for your kids and your classroom.', bg: '#F1EFE8', fg: '#5F5E5A' },
 ];
 
 // ── The syllabus — one card per module, lessons verbatim from /kickstarter.
@@ -252,7 +253,7 @@ export default function KickstarterCampaign() {
 
       <section className="gcamp-hero" ref={heroRef}>
         <Reveal>
-          <span className="gcamp-badge">NO coding required</span>
+          <span className="gcamp-badge">No Coding required</span>
           <h1 className="gcamp-title">
              AI <em>Kickstarter</em>
           </h1>
@@ -262,12 +263,14 @@ export default function KickstarterCampaign() {
 
         <Reveal delay={140}>
           <p className="gcamp-master">
-            14 days. <em>4 builds.</em>
-            <span>Your turning point in <b>the AI era</b>.</span>
+            India’s Most Accessible
+            <span> <em>Gen AI</em> Programme</span>
           </p>
 
           <p className="gcamp-sub gcamp-hero-sub">
-            Build real AI fluency in two weeks — hands-on and mentor-led.
+            Get hands-on with 10+ AI tools, ship four real builds in two weeks, and
+            walk away AI-fluent — taught by AI operators from Testbook, Flipkart,
+            McKinsey and more.
           </p>
 
           <div className="gcamp-facts">
