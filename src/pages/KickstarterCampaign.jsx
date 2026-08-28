@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import MenlerWordmark from '../components/common/MenlerWordmark';
 import Reveal from '../components/common/Reveal';
 import AccredSection from '../components/common/AccredSection';
-import { BrandLogo } from '../components/common/PartnersMarquee';
 import ToolStack from '../components/common/ToolStack';
 import MentorsRail, { MENTORS } from '../components/common/MentorsRail';
 import HiringJobs, { DEFAULT_GEN_ROLES, DEFAULT_ENG_ROLES } from '../components/common/HiringJobs';
@@ -27,40 +26,31 @@ import '../styles/campaign-landing.css';
 // Content comes from /kickstarter: the 14-day syllabus, the four modules, the
 // hero numbers, the audiences and the pricing card (shown without a price).
 
-// Hero art — a real HTML banner (not an SVG card): Deepak's photo bleeding
-// off the edge, a badge, a two-line highlighted headline and his mentor
-// credit, in the same visual grammar as the masterclass banners
-// (see .lp2-banner in global.css) but recoloured to this page's amber
-// accent. This is the ad's hook, so the copy carries the weight — kept to
-// the same "outcome in N days" shape the masterclass banners use.
+// Hero art: the finished composition, exported as one image — the wordmark,
+// the "14-Day AI Sprint" badge, the highlighted headline, Deepak's credit and
+// his credential marks, with his photo bleeding off the right edge. It was
+// built here as an HTML banner card reusing the .lp2-banner classes; the
+// artwork is authored outside the codebase now, so the page just places it,
+// the same way the Fellowship campaign places its own export.
+//
+// The export carries no alpha and its four corners are near-white behind the
+// card's own rounded edge, so .gcamp-heroart clips the img to that radius —
+// 26px of a 1536x1024 export. Re-export it with transparency and the clip can
+// come off.
+//
+// width/height are the export's own, so the box is reserved before it loads and
+// the hero doesn't jump; fetchPriority high because this is the hero's LCP.
 function HeroArt() {
   return (
-    <div className="gcamp-kick-banner">
-      <section className="lp2-banner">
-        <div className="lp2-banner-body">
-          <div className="lp2-banner-logo" style={{ marginBottom: '14px' }}>
-            <MenlerWordmark size={22} theme="light" />
-          </div>
-          <span className="lp2-banner-badge">✦⚡ The 14-Day AI Sprint</span>
-          <h2 className="lp2-banner-title">
-            <mark>Become AI-Fluent</mark>
-            <mark>In Just 14 Days</mark>
-          </h2>
-          <p className="lp2-banner-tag">Two weeks. Real AI advantage.</p>
-          <div className="lp2-banner-brand">
-            <span className="lp2-banner-credit">By <b>Deepak K</b> — AI Operations Lead, Testbook</span>
-          </div>
-          <div className="lp2-banner-creds" aria-label="Testbook, MyCaptain, Imarticus">
-            <BrandLogo name="Testbook" domain="testbook.com" />
-            <BrandLogo name="MyCaptain" logo="/logos/mycaptain.jpg" />
-            <BrandLogo name="Imarticus" logo="/logos/imarticus.jpg" />
-          </div>
-        </div>
-        <div className="lp2-banner-photo">
-          <img src="/mentors/Deepak.webp" alt="Deepak K" />
-        </div>
-      </section>
-    </div>
+    <img
+      className="gcamp-heroart"
+      src="/campaign_kickstarter.png"
+      width="1536"
+      height="1024"
+      alt="Menler AI Kickstarter — the 14-day AI sprint. Become AI-fluent in just 14 days. Two weeks, real AI advantage. By Deepak K, AI Operations Lead at Testbook. Accredited by Testbook, MyCaptain and Imarticus."
+      fetchPriority="high"
+      decoding="async"
+    />
   );
 }
 

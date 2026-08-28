@@ -75,28 +75,21 @@
 .gcamp-title { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: clamp(30px, 8.6vw, 44px); line-height: 1.12; letter-spacing: -0.01em; margin-bottom: 18px; }
 .gcamp-title em { font-style: italic; color: var(--gc-accent); }
 
-/* The Fellowship's hero art is a flat export with no alpha: its four corners
-   are black behind the card's own rounded edge. Clipping the img to that same
-   radius takes them off — 29px on a 1482×1061 export, so ~2% of the width and
-   ~2.7% of the height, rounded up so antialiasing leaves no dark rim. Set as
-   percentages, not pixels, so the clip tracks the image at any width. The
-   drop-shadow then follows the rounded shape rather than a rectangle. */
+/* Both campaigns' hero art is a flat export with no alpha, so each one's four
+   corners carry the ground the card was composed on — black on the Fellowship's,
+   near-white on the Kickstarter's — behind the card's own rounded edge. Clipping
+   the img to that same radius takes them off: 29px on the Fellowship's 1482×1061
+   export, so ~2% of the width and ~2.7% of the height, rounded up so antialiasing
+   leaves no dark rim. Set as percentages, not pixels, so the clip tracks the image
+   at any width. The drop-shadow then follows the rounded shape rather than a
+   rectangle. */
 .gcamp-heroart { display: block; width: 100%; max-width: 430px; height: auto; margin: 0 auto 22px; border-radius: 2.2% / 3.1%; filter: drop-shadow(0 14px 30px rgba(38, 33, 92, 0.1)); }
 
-/* Kickstarter's hero art — a real HTML banner card (Deepak's photo, badge,
-   highlighted headline, mentor credit), not the SVG mentor-pair composition
-   the Fellowship uses. Same visual grammar as the masterclass banner (see
-   .lp2-banner) — wordmark, badge pill, two full-width highlighted headline
-   bars, tagline, credit, credential logos, photo bleeding off the edge —
-   recoloured to the amber accent and sized to fill the hero the way the
-   masterclass banner fills its own page, rather than sitting as a small
-   card off to one side. */
-/* Each line is its own full block, not just tight-fit text — matching the
-   masterclass banner's chunky highlight bars rather than an inline <mark>. */
-/* Deepak's credentials — Testbook, MyCaptain, Imarticus — via the shared
-   BrandLogo chip (local logo → Clearbit → favicon → text), rescaled down
-   from its default card size to a small inline mark, same idea as, and
-   sized closer to, .lp2-banner-creds. */
+/* The Kickstarter's export rounds tighter than the Fellowship's — 26px of a
+   1536×1024 card — so it gets its own clip rather than the shared one, which
+   would shave a few pixels off the artwork to remove corners that are already
+   gone. Same rounding-up for antialiasing. */
+.gcamp--kick .gcamp-heroart { border-radius: 1.9% / 2.8%; }
 
 /* "Master Claude AI. / Transform your domain." */
 .gcamp-master { font-family: 'DM Serif Display', serif; font-size: clamp(23px, 6.4vw, 30px); line-height: 1.24; margin-bottom: 20px; }
