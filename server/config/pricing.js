@@ -14,6 +14,7 @@ export const PROGRAM_PRICES = {
   'build-your-first-webapp-with-claude': { amount: 99, label: 'Build Your First Webapp with Claude' },
   'build-ai-agents-lightning-fast': { amount: 99, label: 'Build AI Agents Lightning Fast' },
   'build-with-generative-ai': { amount: 99, label: 'Build with Generative AI' },
+  'ai-forward-deployed-engineering': { amount: 99, label: 'AI Forward Deployed Engineering' },
   // Paid seat, not a pack (₹199) — so its slug must stay OUT of the client's
   // RESOURCE_PACKS. Also listed in the client PROGRAM_PRICES for display.
   'ai-for-modern-work-and-careers': { amount: 199, label: 'AI for Modern Work and Careers' },
