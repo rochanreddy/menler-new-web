@@ -1270,11 +1270,26 @@ router.get('/zoom/attendance', requireAdmin, async (req, res) => {
     if (!zoomConfigured()) return res.status(503).json({ error: 'Zoom is not configured on this server.', notConfigured: true });
 
     const slug = String(req.query.slug || '').trim();
-    let uuid = String(req.query.uuid || '').trim();
+    // What the caller asked for, kept apart from what we end up reading. A uuid
+    // in the query is untrusted: the instance list it came from may have been
+    // fetched for a different campaign before the admin switched.
+    const requestedUuid = String(req.query.uuid || '').trim();
+    let uuid = requestedUuid;
+
+    const setting = await CampaignSetting.findOne({ slug }).lean();
+    const meetingId = meetingIdFromLink(setting?.zoomLink);
+    if (!meetingId && !setting?.zoomUuid) {
+      return res.status(400).json({ error: 'No Zoom session linked to this campaign yet.', needsLink: true, slug });
+    }
+
+    // Nothing found is not a failure. An empty result says so plainly instead
+    // of raising an error the reader has to decide how to interpret.
+    const nothing = (reason) => res.json({
+      slug, uuid: '', empty: reason, meeting: null, rows: [],
+      summary: { attended: 0, registered: 0, noShows: 0, walkIns: 0, avgMinutes: 0 },
+    });
 
     if (!uuid) {
-      const setting = await CampaignSetting.findOne({ slug }).lean();
-
       // A pinned occurrence wins. Resolving a meeting id instead gives the most
       // recent run of that room, and these rooms get reused for rehearsals —
       // the class with 262 people and the two-minute sound check share an id,
@@ -1282,18 +1297,37 @@ router.get('/zoom/attendance', requireAdmin, async (req, res) => {
       if (setting?.zoomUuid) {
         uuid = setting.zoomUuid;
       } else {
-        const meetingId = meetingIdFromLink(setting?.zoomLink);
-        if (!meetingId) return res.status(400).json({ error: 'No Zoom session linked to this campaign yet.', needsLink: true });
         const list = await pastInstances(meetingId);
         uuid = list[0]?.uuid || await latestInstanceUuid(meetingId);
-        if (!uuid) return res.status(404).json({ error: 'Zoom has no finished sessions for this meeting yet.' });
+        if (!uuid) return nothing('no-sessions');
       }
     }
 
-    const [meeting, attended] = await Promise.all([
-      pastMeeting(uuid).catch(() => null),
-      meetingParticipants(uuid),
-    ]);
+    /* Prove the occurrence belongs to this campaign before reading anybody out
+     * of it.
+     *
+     * Zoom will happily report on any uuid the token can see, so without this
+     * an id left over from another campaign returns that campaign's room —
+     * matched against these registrants, which makes every attendee look like
+     * a walk-in. Fetched before the participant list rather than beside it: the
+     * point is to not read the room at all unless it is ours. */
+    const meeting = await pastMeeting(uuid).catch(() => null);
+    if (requestedUuid && requestedUuid !== setting?.zoomUuid) {
+      const belongs = meeting && meetingId && String(meeting.id) === String(meetingId);
+      if (!belongs) {
+        return res.status(409).json({
+          error: 'That session belongs to a different Zoom meeting, so it is not this campaign’s class.',
+          wrongSession: true,
+          slug,
+        });
+      }
+    }
+
+    const attended = await meetingParticipants(uuid);
+
+    // A session with nobody in it has no attendance to show. The registration
+    // list on its own is the Leads tab, not this one.
+    if (!attended.length) return nothing('no-attendance');
 
     // Match on email, which is the only field both sides reliably share — Zoom
     // display names are whatever somebody typed into their client.
@@ -1333,6 +1367,7 @@ router.get('/zoom/attendance', requireAdmin, async (req, res) => {
 
     const totalMinutes = rows.reduce((n, r) => n + r.minutes, 0);
     res.json({
+      slug,
       uuid,
       meeting: meeting ? {
         topic: meeting.topic, startTime: meeting.start_time, endTime: meeting.end_time,

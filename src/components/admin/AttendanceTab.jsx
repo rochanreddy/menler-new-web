@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { adminApi } from '../../lib/adminApi';
 
 /* Class attendance, per campaign.
@@ -23,6 +23,15 @@ export default function AttendanceTab() {
 
   const [data, setData] = useState(null);
   const [instances, setInstances] = useState([]);
+  /* Which request is the live one.
+   *
+   * Zoom reports take seconds, so switching campaigns while one is in flight
+   * used to let the earlier answer land last — a previous class's attendees
+   * under the new class's heading, every one of them looking like a walk-in.
+   * Each fetch takes a ticket; answers that aren't holding the current ticket
+   * are dropped. The server also names the campaign it answered for, which is
+   * checked too: same ticket, wrong campaign, still dropped. */
+  const ticket = useRef(0);
   const [uuid, setUuid] = useState('');
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState('');
@@ -54,7 +63,10 @@ export default function AttendanceTab() {
   // Reset per-campaign state whenever the selection changes, so a previous
   // campaign's table can't sit under a new campaign's heading.
   useEffect(() => {
+    // Invalidate anything still in flight for the campaign being left.
+    ticket.current += 1;
     setData(null); setInstances([]); setUuid(''); setErr(''); setFilter('all'); setRelink(false);
+    setLoading(false);
     setLink(current?.zoomLink || '');
   }, [slug, current?.zoomLink]);
 
@@ -81,12 +93,25 @@ export default function AttendanceTab() {
 
   const fetchAttendance = useCallback((forUuid = '') => {
     if (!slug) return;
+    const mine = ++ticket.current;
+    const forSlug = slug;
+    const isLive = () => ticket.current === mine;
+
     setLoading(true); setErr(''); setData(null);
-    adminApi.zoomAttendance(slug, forUuid)
-      .then((d) => { setData(d); setUuid(d.uuid || ''); })
-      .catch((e) => setErr(e.message))
-      .finally(() => setLoading(false));
-    adminApi.zoomInstances(slug).then((d) => setInstances(d.instances || [])).catch(() => {});
+    adminApi.zoomAttendance(forSlug, forUuid)
+      .then((d) => {
+        if (!isLive() || (d.slug && d.slug !== forSlug)) return;
+        setData(d);
+        setUuid(d.uuid || '');
+      })
+      .catch((e) => { if (isLive()) setErr(e.message); })
+      .finally(() => { if (isLive()) setLoading(false); });
+
+    // Same guard: an instance list that arrives late belongs to the campaign it
+    // was asked for, and its uuids must not end up in another campaign's picker.
+    adminApi.zoomInstances(forSlug)
+      .then((d) => { if (isLive()) setInstances(d.instances || []); })
+      .catch(() => {});
   }, [slug]);
 
   // Load as soon as a linked campaign is chosen. Making someone press a button
@@ -299,7 +324,21 @@ export default function AttendanceTab() {
         </div>
       )}
 
-      {data && !mismatch && (
+      {/* No attendance is not an error and is not a table. Zoom simply has
+          nothing for this session — said once, quietly, with no numbers,
+          no tabs and no export to mistake for real figures. */}
+      {data?.empty && (
+        <div className="admin-table-wrap">
+          <div className="admin-empty">
+            <b>No attendance for this session yet</b>
+            {data.empty === 'no-sessions'
+              ? 'Zoom has no finished run of this meeting. It reports a class about half an hour after it ends.'
+              : 'Zoom recorded nobody in this session.'}
+          </div>
+        </div>
+      )}
+
+      {data && !data.empty && !mismatch && (
         <>
 
           {/* Say plainly which class these numbers are, above the numbers —
