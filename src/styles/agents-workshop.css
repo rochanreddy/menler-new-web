@@ -676,13 +676,8 @@ select.aw-bg-input { padding-right: 30px; background-image: linear-gradient(45de
    That page is the same build on the same palette, so it only needs the two
    places where its content has a different shape:
 
-   1. Its bundle is the campaign's six `get` lines rather than four, so the
-      grid is three across — two even rows of three instead of four and a
-      stranded pair. The breakpoints mirror the base rules above; the extra
-      class is what wins the tie, so each one has to be restated.
-   2. Its mentor has a bio on the campaign, and the banner only has room for
-      his name — so it is set under the banner, on the same 780px measure. */
-.aw-mw .aw-stack .aw-stack-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+   Its bundle is eight lines like the FDE page's, so it uses the base
+   four-across grid and needs no override of its own. */
 
 /* This mentor's portrait is framed wider than the FDE one, so the base rule's
    110%-wide, bottom-anchored placement leaves a bare strip of the column's
@@ -694,16 +689,4 @@ select.aw-bg-input { padding-right: 30px; background-image: linear-gradient(45de
   .aw-mw .aw-hb-photo img { inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
 }
 
-.aw-hostbio { max-width: 68ch; margin: 26px 0 0; }
-.aw-hostbio p { margin: 0; font-size: 15px; line-height: 1.65; color: var(--stone-700); }
-.aw-hostbio ul { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 0; padding: 0; list-style: none; }
-.aw-hostbio li { padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--sand); font: 600 11.5px/1 Manrope, sans-serif; letter-spacing: -.01em; color: var(--indigo); }
 
-@media (max-width: 1000px) {
-  .aw-mw .aw-stack .aw-stack-list { grid-template-columns: 1fr 1fr; }
-}
-@media (max-width: 800px) {
-  .aw-mw .aw-stack .aw-stack-list { grid-template-columns: 1fr; }
-  .aw-hostbio { margin-top: 22px; }
-  .aw-hostbio p { font-size: 14.5px; }
-}

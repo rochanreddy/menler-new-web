@@ -80,14 +80,6 @@ const HOST = {
   badge: 'AI for Productivity',
   role: 'AI Program & Ops Manager, Interview Kickstart',
   img: '/mentors/Deepak.webp',
-  bio: 'Deepak Kerkar is an educator and career strategist with over four years in ed-tech. He has led programs at Interview Kickstart and MyCaptain, guiding learners in digital marketing, UI/UX, content writing, and analytics. Beyond teaching, he co-founded The Thali Storie, a thriving cloud kitchen venture.',
-  // mentorCreds on the Sanity doc, written out — the banner shows the three
-  // marks as logos, and these say what he did at them.
-  credLines: [
-    'AI Program & Ops Manager, Interview Kickstart',
-    '5+ years in Program Ops',
-    'Ex-MyCaptain & Testbook',
-  ],
   // The campaign's own credLogos, pulled down from Sanity so the page carries
   // no remote image dependency. All three are white-ground squares, and the
   // CSS gives each one a tile.
@@ -115,11 +107,13 @@ const SOCIAL_STATS = [
 // a number typed twice.
 const BUNDLE = [
   { t: 'A real agentic AI system', d: 'Not a demo, but a production-grade build that’s yours to keep.', p: 400 },
-  { t: 'Live Q&A with the mentor', d: 'Ask anything and get unstuck in real time.', p: 299 },
-  { t: 'Prompt & tool starter pack — worth ₹4999/-', d: 'Your ready-to-use toolkit for AI-powered productivity.', p: 800 },
+  { t: 'Your AI-at-work audit', d: 'Where AI saves you hours in a normal week, and where it wastes them.', p: 200 },
+  { t: 'Document, sheet & deck prompt set', d: 'The prompts behind faster Word, Excel and PowerPoint work.', p: 250 },
+  { t: 'Prompt & tool starter pack — worth ₹4999/-', d: 'Your ready-to-use toolkit for AI-powered productivity.', p: 400 },
+  { t: 'Live Q&A with the mentor', d: 'Ask anything and get unstuck in real time.', p: 250 },
   { t: 'Masterclass recording', d: 'Rewatch anytime, follow at your own pace.', p: 200 },
   { t: 'Mentorship & career opportunities', d: 'Get mentorship, career guidance, and access to relevant job opportunities.', p: 200 },
-  { t: 'Exclusive community access', d: 'Join a network of AI builders and keep learning.', p: 100 },
+  { t: 'Exclusive community access', d: 'Join a network of AI builders and keep learning.', p: 99 },
 ];
 
 // The tools the two hours actually open. Microsoft 365 appears as the suite and
@@ -549,12 +543,6 @@ export default function ModernWorkCampaign() {
             />
             <span className="aw-demo-badge"><b>600+</b> in the room right now</span>
           </figure>
-        </div>
-
-        {/* The banner names him; this says what he has done. */}
-        <div className="aw-hostbio">
-          <p>{HOST.bio}</p>
-          <ul>{HOST.credLines.map((c) => <li key={c}>{c}</li>)}</ul>
         </div>
 
         <div className="aw-social">
