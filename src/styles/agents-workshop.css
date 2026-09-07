@@ -251,7 +251,8 @@ select.aw-bg-input { padding-right: 30px; background-image: linear-gradient(45de
    blocks are the campaign's own themeAccent/bannerFrom values, so this band and
    /campaign/ai-forward-deployed-engineering read as the same event. */
 .aw-host { padding: 52px 9vw 56px; background: var(--paper); }
-.aw-host-head { max-width: 780px; margin: 0 auto 20px; }
+.aw-host-row { display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); gap: 26px; align-items: center; }
+.aw-host-head { max-width: none; margin: 0 0 22px; }
 .aw-host-head h2 { font-size: clamp(30px, 3vw, 42px); line-height: 1; letter-spacing: -.05em; font-weight: 800; color: var(--indigo); }
 .aw-host-head h2 em { color: var(--amber); }
 
@@ -261,7 +262,6 @@ select.aw-bg-input { padding-right: 30px; background-image: linear-gradient(45de
    1.7:1, which is the thumbnail's own proportion. */
 .aw-hostbanner {
   position: relative; overflow: hidden;
-  max-width: 780px; margin: 0 auto;
   aspect-ratio: 16 / 9;
   display: grid; grid-template-columns: minmax(0, 1.44fr) minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr) auto;
@@ -270,24 +270,24 @@ select.aw-bg-input { padding-right: 30px; background-image: linear-gradient(45de
   background: var(--cream-1);
   box-shadow: var(--card-shadow);
 }
-.aw-hb-copy { grid-area: copy; position: relative; z-index: 2; padding: 38px 14px 29px 34px; }
-.aw-hb-wm { display: block; color: var(--indigo); }
+.aw-hb-copy { grid-area: copy; position: relative; z-index: 2; padding: 15px 7px 13px 17px; }
+.aw-hb-wm { display: block; color: var(--indigo); transform: scale(.64); transform-origin: left center; }
 
-.aw-hb-badge { display: inline-flex; align-items: center; gap: 7px; margin: 20px 0 0; padding: 9px 14px; border-radius: 999px; background: #fff; border: 1px solid rgba(186,117,23,.18); box-shadow: var(--card-shadow-sm); font: 700 10.5px/1 Manrope, sans-serif; letter-spacing: .02em; color: var(--indigo); white-space: nowrap; }
-.aw-hb-badge i { font-style: normal; font-size: 11px; color: var(--amber); }
+.aw-hb-badge { display: inline-flex; align-items: center; gap: 5px; margin: 7px 0 0; padding: 5px 8px; border-radius: 999px; background: #fff; border: 1px solid rgba(186,117,23,.18); box-shadow: var(--card-shadow-sm); font: 700 7.5px/1 Manrope, sans-serif; letter-spacing: .02em; color: var(--indigo); white-space: nowrap; }
+.aw-hb-badge i { font-style: normal; font-size: 8px; color: var(--amber); }
 
 /* The title, one block per line, in the campaign's own highlight colour. */
-.aw-hb-copy .aw-hb-title { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; margin: 20px 0 0; }
-.aw-hb-copy .aw-hb-title span { display: inline-block; padding: 6px 13px 8px; border-radius: 7px; background: var(--amber-block); color: var(--cream-text); font-size: 26px; font-weight: 800; letter-spacing: -.025em; line-height: 1.08; }
+.aw-hb-copy .aw-hb-title { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; margin: 8px 0 0; }
+.aw-hb-copy .aw-hb-title span { display: inline-block; padding: 3px 8px 5px; border-radius: 5px; background: var(--amber-block); color: var(--cream-text); font-size: 15px; font-weight: 800; letter-spacing: -.025em; line-height: 1.08; }
 
-.aw-hb-copy .aw-hb-tagline { margin: 22px 0 0; max-width: 372px; font-size: 16px; font-weight: 700; line-height: 1.4; letter-spacing: -.015em; color: var(--amber-dark); }
-.aw-hb-copy .aw-hb-by { margin: 25px 0 0; font-size: 12.5px; font-weight: 500; letter-spacing: -.01em; color: #7A6748; }
+.aw-hb-copy .aw-hb-tagline { margin: 9px 0 0; max-width: 26ch; font-size: 10.5px; font-weight: 700; line-height: 1.4; letter-spacing: -.015em; color: var(--amber-dark); }
+.aw-hb-copy .aw-hb-by { margin: 10px 0 0; font-size: 9.5px; font-weight: 500; letter-spacing: -.01em; color: #7A6748; }
 .aw-hb-copy .aw-hb-by b { font-weight: 800; color: var(--indigo); }
 
-.aw-hb-copy .aw-hb-creds { display: flex; gap: 8px; margin: 17px 0 0; padding: 0; list-style: none; }
+.aw-hb-copy .aw-hb-creds { display: flex; gap: 5px; margin: 8px 0 0; padding: 0; list-style: none; }
 /* Two of these three marks ship as full-bleed coloured squares, so each gets a
    tile rather than floating on the cream — as the thumbnail shows them. */
-.aw-hb-copy .aw-hb-creds li { width: 30px; height: 30px; border-radius: 7px; overflow: hidden; background: #fff; border: 1px solid rgba(186,117,23,.16); box-shadow: var(--card-shadow-sm); }
+.aw-hb-copy .aw-hb-creds li { width: 20px; height: 20px; border-radius: 5px; overflow: hidden; background: #fff; border: 1px solid rgba(186,117,23,.16); box-shadow: var(--card-shadow-sm); }
 .aw-hb-copy .aw-hb-creds img { display: block; width: 100%; height: 100%; object-fit: contain; }
 
 /* The mentor is sized by the column width and stood on the floor of the band.
@@ -295,16 +295,16 @@ select.aw-bg-input { padding-right: 30px; background-image: linear-gradient(45de
    has no visible edge, then cream is washed over the top and left. */
 .aw-hb-photo { grid-area: photo; position: relative; overflow: hidden; background: #BDBABB; }
 .aw-hb-photo img { position: absolute; right: -4%; bottom: 0; width: 110%; max-width: none; height: auto; }
-.aw-hb-photo::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, var(--cream-1) 0%, rgba(255,243,216,.72) 20%, rgba(255,243,216,0) 58%); }
+.aw-hb-photo::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, var(--cream-1) 0%, rgba(255,243,216,.55) 12%, rgba(255,243,216,0) 34%); }
 
-.aw-hb-when { grid-area: when; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 18px; background: linear-gradient(90deg, var(--indigo) 0%, var(--violet) 100%); color: #fff; font-size: 13.5px; font-weight: 700; letter-spacing: -.01em; }
-.aw-hb-when i { font-style: normal; margin-right: 9px; font-size: 14px; }
+.aw-hb-when { grid-area: when; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; padding: 7px 11px; background: linear-gradient(90deg, var(--indigo) 0%, var(--violet) 100%); color: #fff; font-size: 9.5px; font-weight: 700; letter-spacing: -.01em; }
+.aw-hb-when i { font-style: normal; margin-right: 6px; font-size: 10px; }
 .aw-hb-when span { display: inline-flex; align-items: center; }
-.aw-hb-when .dot { color: var(--amber-lite); font-size: 11px; }
+.aw-hb-when .dot { color: var(--amber-lite); font-size: 8px; }
 .aw-hb-when .time { font-weight: 500; color: rgba(238,237,254,.94); }
 
-.aw-social { display: flex; flex-direction: column; align-items: center; margin: 52px 0 0; padding: 40px 0 0; border-top: 1px solid var(--line); }
-.aw-demo-shot { position: relative; width: min(960px, 100%); margin-inline: auto; }
+.aw-social { display: flex; flex-direction: column; align-items: center; margin: 40px 0 0; padding: 34px 0 0; border-top: 1px solid var(--line); }
+.aw-host-row .aw-demo-shot { position: relative; width: 100%; margin: 0; }
 .aw-demo-shot img { display: block; width: 100%; height: auto; margin-inline: auto; border-radius: 12px; border: 1px solid var(--line); box-shadow: var(--card-shadow); }
 .aw-demo-badge { position: absolute; right: -10px; bottom: -12px; z-index: 2; display: inline-flex; align-items: center; gap: 6px; padding: 11px 16px; background: var(--amber-dark); color: #fff; font: 700 12px/1.2 Manrope, sans-serif; letter-spacing: -.01em; white-space: nowrap; box-shadow: var(--card-shadow-sm); }
 .aw-demo-badge b { font-size: 18px; font-weight: 800; letter-spacing: -.03em; }
@@ -484,16 +484,16 @@ select.aw-bg-input { padding-right: 30px; background-image: linear-gradient(45de
 }
 
 /* ── Desktop-first breakpoints, matching the reference ── */
-@media (max-width: 1010px) {
-  .aw-hb-copy { padding: 22px 12px 24px 28px; }
-  .aw-hb-badge { margin-top: 17px; padding: 8px 12px; font-size: 10px; }
-  .aw-hb-copy .aw-hb-title { margin-top: 17px; }
-  .aw-hb-copy .aw-hb-title span { font-size: 23px; padding: 5px 11px 7px; }
-  .aw-hb-copy .aw-hb-tagline { margin-top: 18px; font-size: 14.5px; max-width: 320px; }
-  .aw-hb-copy .aw-hb-by { margin-top: 20px; font-size: 11.5px; }
-  .aw-hb-copy .aw-hb-creds { margin-top: 14px; }
-  .aw-hb-copy .aw-hb-creds li { width: 27px; height: 27px; }
-  .aw-hb-when { font-size: 12.5px; padding: 11px 15px; }
+@media (max-width: 1180px) {
+  .aw-hb-copy { padding: 17px 8px 15px 18px; }
+  .aw-hb-badge { margin-top: 10px; padding: 6px 9px; font-size: 8px; }
+  .aw-hb-copy .aw-hb-title { margin-top: 10px; }
+  .aw-hb-copy .aw-hb-title span { font-size: 16px; padding: 3px 8px 5px; }
+  .aw-hb-copy .aw-hb-tagline { margin-top: 10px; font-size: 11px; }
+  .aw-hb-copy .aw-hb-by { margin-top: 11px; font-size: 10px; }
+  .aw-hb-copy .aw-hb-creds { margin-top: 9px; }
+  .aw-hb-copy .aw-hb-creds li { width: 21px; height: 21px; }
+  .aw-hb-when { font-size: 10px; padding: 8px 12px; }
 }
 
 @media (max-width: 1000px) {
@@ -504,12 +504,16 @@ select.aw-bg-input { padding-right: 30px; background-image: linear-gradient(45de
   .aw-form { margin: 0 0 20px; }
 
   .aw-stack .aw-stack-list { grid-template-columns: 1fr 1fr; }
-  .aw-hostbanner { aspect-ratio: auto; grid-template-columns: 1fr; grid-template-rows: auto auto auto; grid-template-areas: "photo" "copy" "when"; }
-  /* Stacked, the portrait is cropped to a band — at its natural height it was
-     360px of face sitting above the copy. */
-  .aw-hb-photo img { position: static; display: block; right: auto; width: 100%; height: 250px; object-fit: cover; object-position: 50% 14%; }
-  .aw-hb-photo::after { background: linear-gradient(180deg, rgba(255,243,216,0) 46%, var(--cream-1) 100%); }
-  .aw-hb-copy { padding: 24px 24px 30px; }
+  .aw-host-row { grid-template-columns: 1fr; gap: 24px; }
+  /* The card KEEPS its two columns on a phone — copy left, mentor right — the
+     way the campaign thumbnail reads. Stacking it put a 250px band of face
+     above the words and made the card as tall as the screen.
+     The locked 16:9 goes with it: at ~350px wide that is 197px, and the copy
+     needs more, so the card takes its height from its contents instead. */
+  .aw-hostbanner { aspect-ratio: auto; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); grid-template-rows: auto auto; grid-template-areas: "copy photo" "when when"; }
+  .aw-hb-photo img { position: absolute; inset: 0; right: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 10%; }
+  .aw-hb-photo::after { background: linear-gradient(90deg, var(--cream-1) 0%, rgba(255,243,216,.5) 10%, rgba(255,243,216,0) 30%); }
+  .aw-hb-copy { padding: 14px 6px 13px 14px; }
   .aw-hb-copy .aw-hb-tagline { max-width: none; }
 }
 
@@ -544,17 +548,24 @@ select.aw-bg-input { padding-right: 30px; background-image: linear-gradient(45de
   .aw-audience .aw-audience-foot { font-size: 10px; margin-top: 18px; gap: 6px 14px; }
   .aw-host { padding: 42px 18px 44px; }
   .aw-host-head h2 { font-size: 32px; }
-  .aw-hb-copy { padding: 22px 18px 26px; }
-  .aw-hb-copy .aw-hb-title span { font-size: 22px; padding: 5px 12px 7px; }
-  .aw-hb-copy .aw-hb-tagline { font-size: 15.5px; margin-top: 18px; }
-  .aw-hb-copy .aw-hb-by { font-size: 13px; margin-top: 16px; }
-  .aw-hb-copy .aw-hb-creds li { width: 30px; height: 30px; }
-  .aw-hb-when { font-size: 13px; gap: 10px; padding: 12px 16px; justify-content: center; }
+  .aw-hb-copy { padding: 11px 5px 10px 12px; }
+  .aw-hb-wm { transform: scale(.55); }
+  .aw-hb-badge { margin-top: 6px; padding: 4px 7px; font-size: 6.5px; gap: 4px; }
+  .aw-hb-badge i { font-size: 7px; }
+  .aw-hb-copy .aw-hb-title { margin-top: 6px; gap: 2px; }
+  .aw-hb-copy .aw-hb-title span { font-size: 13px; padding: 2px 7px 4px; border-radius: 4px; }
+  .aw-hb-copy .aw-hb-tagline { font-size: 9px; margin-top: 7px; line-height: 1.35; }
+  .aw-hb-copy .aw-hb-by { font-size: 8.5px; margin-top: 7px; }
+  .aw-hb-copy .aw-hb-creds { margin-top: 6px; gap: 4px; }
+  .aw-hb-copy .aw-hb-creds li { width: 17px; height: 17px; border-radius: 4px; }
+  .aw-hb-when { font-size: 8.5px; gap: 6px; padding: 6px 9px; justify-content: center; }
+  .aw-hb-when i { margin-right: 5px; font-size: 9px; }
   .aw-social-stats { grid-template-columns: 1fr; }
   .aw-social-stats div { border-right: 0; border-bottom: 1px solid var(--violet); }
   .aw-social-stats div:last-child { border-bottom: 0; }
-  .aw-demo-shot { width: min(960px, calc(100% - 32px)); margin-inline: auto; padding-bottom: 18px; }
-  .aw-demo-badge { right: 8px; bottom: 0; padding: 9px 12px; font-size: 11px; white-space: normal; max-width: min(220px, 72vw); text-align: left; }
+  .aw-host-row .aw-demo-shot { width: calc(100% + 36px); margin-inline: -18px; padding-bottom: 18px; }
+  .aw-demo-shot img { border-radius: 0; border-left: 0; border-right: 0; }
+  .aw-demo-badge { right: 14px; bottom: 0; padding: 9px 12px; font-size: 11px; white-space: normal; max-width: min(220px, 72vw); text-align: left; }
   .aw-demo-badge b { font-size: 16px; }
   .aw-zoom { grid-template-columns: 1fr; }
   .aw-zoom-slide { margin: 10px 10px 0; }

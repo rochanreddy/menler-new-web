@@ -97,13 +97,17 @@ const SOCIAL_STATS = [
   { n: '25+', l: 'Hiring companies in the network' },
 ];
 
-// Everything a seat includes. The four sum to PRICE.was, so the `Total value`
+// Everything a seat includes. The eight sum to PRICE.was, so the `Total value`
 // line under them is the real sum rather than a number typed twice.
 const BUNDLE = [
-  { t: 'Live Q&A with the mentor', d: 'Ask anything and get unstuck in real time.', p: 499 },
-  { t: 'Prompt & tool starter pack — worth ₹4999/-', d: 'Your ready-to-use toolkit for AI-powered productivity.', p: 800 },
-  { t: 'Mentorship & Career Opportunities', d: 'Get mentorship, career guidance, and access to relevant job opportunities.', p: 500 },
-  { t: 'Exclusive community access', d: 'Join a network of AI builders and keep learning.', p: 200 },
+  { t: 'A Real Agentic AI System', d: 'Not a demo. A production-grade build that is yours to keep.', p: 400 },
+  { t: 'AI System Blueprint', d: 'The requirements, workflows and architecture behind what you build.', p: 250 },
+  { t: 'The FDE Playbook', d: 'Understand → Design → Build → Integrate → Ship, written down.', p: 250 },
+  { t: 'Prompt & tool starter pack — worth ₹4999/-', d: 'Your ready-to-use toolkit for AI-powered productivity.', p: 400 },
+  { t: 'Live Q&A with the mentor', d: 'Ask anything and get unstuck in real time.', p: 250 },
+  { t: 'Masterclass recording', d: 'Rewatch anytime, follow at your own pace.', p: 200 },
+  { t: 'Mentorship & Career Opportunities', d: 'Get mentorship, career guidance, and access to relevant job opportunities.', p: 150 },
+  { t: 'Exclusive community access', d: 'Join a network of AI builders and keep learning.', p: 99 },
 ];
 
 // Claude Code ships only as a wordmark in this repo, which is illegible once
@@ -134,13 +138,15 @@ const AUDIENCE = [
   ['Data & Analytics', 'Turn a messy data problem into a tool the business actually uses.'],
 ];
 
+// Two hours, tiling 0:00 to 2:00 with no gaps — the session runs 6–8 PM, so
+// an agenda that ran to 3:00 was promising an hour the room does not have.
 const PLAN = [
-  { t: '0:00', e: '–0:30', title: 'Think Like an FDE', d: 'Understand the FDE mindset and how to break messy business problems into buildable AI solutions.', keep: 'FDE problem-solving framework', badge: 'SETUP', hot: false },
-  { t: '0:30', e: '–1:15', title: 'Scope the AI System', d: 'Turn a real use case into requirements, workflows, architecture, and an execution plan.', keep: 'AI system blueprint', badge: 'SCOPE', hot: true },
-  { t: '1:15', e: '–1:25', title: 'Break + Build Review', d: 'See how the system comes together and what separates a prototype from something usable.', keep: '', badge: 'BREAK', hot: false },
-  { t: '1:25', e: '–2:20', title: 'Build With AI', d: 'Use Claude Code, APIs, agents, and tools to build the working system.', keep: 'Your AI system', badge: 'BUILD', hot: true },
-  { t: '2:20', e: '–2:45', title: 'Connect & Automate', d: 'Bring in tools, data, APIs, and automation to make the system actually useful.', keep: 'Working AI workflow', badge: 'BUILD', hot: true },
-  { t: '2:45', e: '–3:00', title: 'Ship Like an FDE', d: 'Test, improve, document, and package your project for real-world use and your portfolio.', keep: 'FDE project + next-build plan', badge: 'SHIP', hot: true },
+  { t: '0:00', e: '–0:20', title: 'Think Like an FDE', d: 'Understand the FDE mindset and how to break messy business problems into buildable AI solutions.', keep: 'FDE problem-solving framework', badge: 'SETUP', hot: false },
+  { t: '0:20', e: '–0:50', title: 'Scope the AI System', d: 'Turn a real use case into requirements, workflows, architecture, and an execution plan.', keep: 'AI system blueprint', badge: 'SCOPE', hot: true },
+  { t: '0:50', e: '–0:55', title: 'Break + Build Review', d: 'See how the system comes together and what separates a prototype from something usable.', keep: '', badge: 'BREAK', hot: false },
+  { t: '0:55', e: '–1:35', title: 'Build With AI', d: 'Use Claude Code, APIs, agents, and tools to build the working system.', keep: 'Your AI system', badge: 'BUILD', hot: true },
+  { t: '1:35', e: '–1:50', title: 'Connect & Automate', d: 'Bring in tools, data, APIs, and automation to make the system actually useful.', keep: 'Working AI workflow', badge: 'BUILD', hot: true },
+  { t: '1:50', e: '–2:00', title: 'Ship Like an FDE', d: 'Test, improve, document, and package your project for real-world use and your portfolio.', keep: 'FDE project + next-build plan', badge: 'SHIP', hot: true },
 ];
 
 // The pitch for why this is engineering rather than prompting, set between the
@@ -154,7 +160,7 @@ const DIFFERENCE = {
 
 const FINAL_CTA = {
   head: 'Stop learning AI. Start shipping with AI.',
-  sub: 'Build your first AI FDE system in 3 hours.',
+  sub: 'Build your first AI FDE system in 2 hours.',
   cta: 'Reserve your seat',
 };
 
@@ -497,6 +503,7 @@ export default function AgentsWorkshopCampaign() {
       <section className="aw-host" id="host">
         <div className="aw-host-head"><h2>Who is <em className="serif">teaching</em></h2></div>
 
+        <div className="aw-host-row">
         <div className="aw-hostbanner">
           <div className="aw-hb-copy">
             <span className="aw-hb-wm"><MenlerWordmark size={26} theme="light" /></span>
@@ -519,7 +526,7 @@ export default function AgentsWorkshopCampaign() {
             <span className="time">{SESSION.time}</span>
           </div>
         </div>
-        <div className="aw-social">
+
           <figure className="aw-demo-shot">
             <img
               src={WORKSHOP_DEMO_SHOT}
@@ -528,6 +535,9 @@ export default function AgentsWorkshopCampaign() {
             />
             <span className="aw-demo-badge"><b>300</b> in the room right now</span>
           </figure>
+        </div>
+
+        <div className="aw-social">
           <div className="aw-social-stats">
             {SOCIAL_STATS.map((s) => <div key={s.l}><b>{s.n}</b><span>{s.l}</span></div>)}
           </div>
@@ -559,7 +569,7 @@ export default function AgentsWorkshopCampaign() {
       {/* 8 · The two hours, with the price card pinned beside it */}
       <section className="aw-plan" id="learn">
         <div className="aw-pb-head">
-          <h2>What happens in the <em className="serif">3 hours</em></h2>
+          <h2>What happens in the <em className="serif">2 hours</em></h2>
           <p>Every block ends with something you keep.</p>
         </div>
         <div className="aw-pb-grid">
