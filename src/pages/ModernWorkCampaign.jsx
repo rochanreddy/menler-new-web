@@ -516,6 +516,7 @@ export default function ModernWorkCampaign() {
       <section className="aw-host" id="host">
         <div className="aw-host-head"><h2>Who is <em className="serif">teaching</em></h2></div>
 
+        <div className="aw-host-row">
         <div className="aw-hostbanner">
           <div className="aw-hb-copy">
             <span className="aw-hb-wm"><MenlerWordmark size={26} theme="light" /></span>
@@ -539,13 +540,6 @@ export default function ModernWorkCampaign() {
           </div>
         </div>
 
-        {/* The banner names him; this says what he has done. */}
-        <div className="aw-hostbio">
-          <p>{HOST.bio}</p>
-          <ul>{HOST.credLines.map((c) => <li key={c}>{c}</li>)}</ul>
-        </div>
-
-        <div className="aw-social">
           <figure className="aw-demo-shot">
             <img
               src={WORKSHOP_DEMO_SHOT}
@@ -554,6 +548,15 @@ export default function ModernWorkCampaign() {
             />
             <span className="aw-demo-badge"><b>300</b> in the room right now</span>
           </figure>
+        </div>
+
+        {/* The banner names him; this says what he has done. */}
+        <div className="aw-hostbio">
+          <p>{HOST.bio}</p>
+          <ul>{HOST.credLines.map((c) => <li key={c}>{c}</li>)}</ul>
+        </div>
+
+        <div className="aw-social">
           <div className="aw-social-stats">
             {SOCIAL_STATS.map((s) => <div key={s.l}><b>{s.n}</b><span>{s.l}</span></div>)}
           </div>

@@ -694,7 +694,7 @@ select.aw-bg-input { padding-right: 30px; background-image: linear-gradient(45de
   .aw-mw .aw-hb-photo img { inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
 }
 
-.aw-hostbio { max-width: 780px; margin: 26px auto 0; }
+.aw-hostbio { max-width: 68ch; margin: 26px 0 0; }
 .aw-hostbio p { margin: 0; font-size: 15px; line-height: 1.65; color: var(--stone-700); }
 .aw-hostbio ul { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 0; padding: 0; list-style: none; }
 .aw-hostbio li { padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--sand); font: 600 11.5px/1 Manrope, sans-serif; letter-spacing: -.01em; color: var(--indigo); }
