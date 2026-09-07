@@ -48,10 +48,11 @@ export const RESOURCE_PACKS = {
   'build-ai-agents-lightning-fast': CLAUDE_PLAYBOOK_PACK,
   'build-with-generative-ai': CLAUDE_PLAYBOOK_PACK,
   'ai-forward-deployed-engineering': CLAUDE_PLAYBOOK_PACK,
-  // The one campaign that sells the pack ON TOP of a paid seat rather than
-  // instead of one, so it also appears in the client PROGRAM_PRICES. The
-  // server adds the pack price itself — see amountFor() in server/config.
+  // These two sell the pack ON TOP of a paid seat rather than instead of one,
+  // so they also appear in the client PROGRAM_PRICES. The server adds the pack
+  // price itself — see amountFor() in server/config/pricing.js.
   'build-like-an-ai-fde': CLAUDE_PLAYBOOK_PACK,
+  'ai-for-modern-work-and-careers': CLAUDE_PLAYBOOK_PACK,
 };
 
 /** The paid resource pack for a campaign slug, or null if it has none. */

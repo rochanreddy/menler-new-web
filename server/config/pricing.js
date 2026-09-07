@@ -35,7 +35,7 @@ export const PACK_PRICE = 99;
 // Only these campaigns add the pack to their seat price. The older pack
 // campaigns are deliberately absent: for those the slug price above IS the
 // pack and the seat itself is free, so adding it again would charge twice.
-const PACK_ON_TOP = new Set(['build-like-an-ai-fde']);
+const PACK_ON_TOP = new Set(['build-like-an-ai-fde', 'ai-for-modern-work-and-careers']);
 
 /** What to charge for a slug, given whether the buyer ticked the pack. */
 export function amountFor(program, wantsPack) {
