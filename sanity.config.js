@@ -38,7 +38,27 @@ export default defineConfig({
                 .child(S.document().schemaType(s.id).documentId(s.id)),
             ),
             S.divider(),
-            S.documentTypeListItem('campaignPage').title('Campaign Landing Pages'),
+            // Split in two: the campaigns this Studio actually renders, and the
+            // ones whose page is hand-built in React and only take a card on the
+            // Events page. Mixing them invites edits that never reach a visitor.
+            S.listItem()
+              .title('Campaign Landing Pages')
+              .id('campaignPages')
+              .schemaType('campaignPage')
+              .child(
+                S.documentTypeList('campaignPage')
+                  .title('Campaign Landing Pages')
+                  .filter('_type == "campaignPage" && codePage != true'),
+              ),
+            S.listItem()
+              .title('Coded Campaigns — Events card only')
+              .id('campaignPagesCoded')
+              .schemaType('campaignPage')
+              .child(
+                S.documentTypeList('campaignPage')
+                  .title('Coded Campaigns — Events card only')
+                  .filter('_type == "campaignPage" && codePage == true'),
+              ),
             orderableDocumentListDeskItem({ type: 'mentor', title: 'Mentors', S, context }),
             orderableDocumentListDeskItem({ type: 'project', title: 'Projects', S, context }),
             orderableDocumentListDeskItem({ type: 'playbook', title: 'Playbooks / Catalogs', S, context }),

@@ -21,6 +21,18 @@ export default defineType({
   fields: [
     // ── Setup: internal title + the page URL ──
     defineField({ name: 'title', title: 'Campaign title (internal — shown in this list)', type: 'string', group: 'setup', validation: (r) => r.required() }),
+    // Some campaigns have a bespoke landing page written in React instead of
+    // being drawn from this document. Those still need a document, because the
+    // Events page builds its cards from this type — but almost nothing else
+    // here reaches a visitor, and an editor has no way to tell without being
+    // told. Hence the flag, the warning on it, and its own list in the Studio.
+    defineField({
+      name: 'codePage', title: 'Landing page is built in code', type: 'boolean', group: 'setup', initialValue: false,
+      description:
+        'Tick this when the campaign has its own hand-built page. Only the Events page fields are '
+        + 'then used — title, banner lines, tagline, date, time, mentor, image and tags, to build its '
+        + 'card. Everything else here is ignored, so editing it will NOT change what visitors see.',
+    }),
     defineField({
       name: 'slug', title: 'Page URL', type: 'slug', group: 'setup',
       description: 'This becomes the page address: menler.in/campaign/<slug>',
@@ -209,5 +221,13 @@ export default defineType({
       description: 'The “Join our Menler community” block — appears on the landing page and the checkout confirmation. Off by default.',
     }),
   ],
-  preview: { select: { title: 'title', subtitle: 'slug.current' } },
+  // Coded campaigns are marked in the list, so nobody opens one expecting
+  // their edits to reach the page.
+  preview: {
+    select: { title: 'title', subtitle: 'slug.current', codePage: 'codePage' },
+    prepare: ({ title, subtitle, codePage }) => ({
+      title: codePage ? `${title} — page in code` : title,
+      subtitle: codePage ? `/campaign/${subtitle} · Events card only` : subtitle,
+    }),
+  },
 });
