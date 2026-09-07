@@ -28,3 +28,20 @@ export const PROGRAM_PRICES = {
 export function priceFor(program) {
   return PROGRAM_PRICES[String(program || '').toLowerCase()] || null;
 }
+
+// The optional Claude Playbook Pack, sold ON TOP of a paid seat.
+export const PACK_PRICE = 99;
+
+// Only these campaigns add the pack to their seat price. The older pack
+// campaigns are deliberately absent: for those the slug price above IS the
+// pack and the seat itself is free, so adding it again would charge twice.
+const PACK_ON_TOP = new Set(['build-like-an-ai-fde']);
+
+/** What to charge for a slug, given whether the buyer ticked the pack. */
+export function amountFor(program, wantsPack) {
+  const seat = priceFor(program);
+  if (!seat) return null;
+  const slug = String(program || '').toLowerCase();
+  const pack = wantsPack && PACK_ON_TOP.has(slug) ? PACK_PRICE : 0;
+  return { amount: seat.amount + pack, label: seat.label, pack };
+}

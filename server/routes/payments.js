@@ -3,7 +3,7 @@ import crypto from 'crypto';
 
 import { Lead } from '../models/Lead.js';
 import { Order } from '../models/Order.js';
-import { PROGRAM_PRICES, priceFor } from '../config/pricing.js';
+import { PROGRAM_PRICES, amountFor, priceFor } from '../config/pricing.js';
 import {
   createCashfreeOrder,
   getCashfreeOrder,
@@ -43,7 +43,9 @@ router.post('/cashfree/order', async (req, res) => {
     if (!cashfreeConfigured()) return res.status(503).json({ error: 'Payments are not configured.' });
     const body = req.body || {};
     const program = String(body.program || '').toLowerCase();
-    const price = priceFor(program);
+    // The browser sends only whether the pack was ticked; its price comes
+    // from our own config, so a tampered request cannot change what is charged.
+    const price = amountFor(program, body.pack === true);
     if (!price) return res.status(400).json({ error: 'Unknown or free program.' });
 
     const leadId = String(body.leadId || '').trim();

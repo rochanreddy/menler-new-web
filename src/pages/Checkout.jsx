@@ -102,6 +102,8 @@ export default function Checkout() {
           phone: phoneDigits,
           city: reg.city,
           background: reg.background,
+          // Whether the pack was ticked — the server owns its price.
+          pack: packOn,
         });
         const result = await openCashfreeCheckout(order.payment_session_id, order.mode);
         if (result && result.error) {
