@@ -97,8 +97,7 @@ const STATS = [
   { n: '0', l: 'Lines of code needed' },
 ];
 const SOCIAL_STATS = [
-  { n: '5000+', l: 'Mentors' },
-  { n: '500+', l: 'Professionals trained' },
+  { n: '5000+', l: 'Professionals trained' },
   { n: '25+', l: 'Hiring companies in the network' },
 ];
 
