@@ -93,6 +93,7 @@ const STATS = [
   { n: '0 to 1', l: 'Problem to working solution' },
 ];
 const SOCIAL_STATS = [
+  { n: '5000+', l: 'Mentors' },
   { n: '500+', l: 'Professionals trained' },
   { n: '25+', l: 'Hiring companies in the network' },
 ];
@@ -533,7 +534,7 @@ export default function AgentsWorkshopCampaign() {
               alt="A live Menler masterclass with participants on Zoom"
               loading="lazy"
             />
-            <span className="aw-demo-badge"><b>300</b> in the room right now</span>
+            <span className="aw-demo-badge"><b>600+</b> in the room right now</span>
           </figure>
         </div>
 
