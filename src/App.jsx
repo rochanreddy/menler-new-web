@@ -14,6 +14,7 @@ const Generalist = lazy(() => import('./pages/Generalist'));
 const GeneralistCampaign = lazy(() => import('./pages/GeneralistCampaign'));
 const GeneralistCampaignThanks = lazy(() => import('./pages/GeneralistCampaignThanks'));
 const KickstarterCampaign = lazy(() => import('./pages/KickstarterCampaign'));
+const AgentsWorkshopCampaign = lazy(() => import('./pages/AgentsWorkshopCampaign'));
 const Engineering = lazy(() => import('./pages/Engineering'));
 const Projects = lazy(() => import('./pages/Projects'));
 const Outcomes = lazy(() => import('./pages/Outcomes'));
@@ -98,6 +99,7 @@ export default function App() {
                 on. Two segments, so /campaign/:slug can't swallow it. */}
             <Route path="/campaign/ai-claude-generalist/thank-you" element={<GeneralistCampaignThanks />} />
             <Route path="/campaign/ai-kickstarter" element={<KickstarterCampaign />} />
+            <Route path="/campaign/build-like-an-ai-fde" element={<AgentsWorkshopCampaign />} />
             <Route path="/campaign/:slug" element={<KickstarterLanding />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/generalist" element={<Generalist />} />

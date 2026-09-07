@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Zapier">
+  <!-- Zapier's icon-only mark: a six-armed spark in Zapier orange. The
+       zapier.webp asset in this folder is the full wordmark, which is
+       unreadable once it is scaled down to a chip. -->
+  <g fill="#FF4F00">
+    <path d="M39.4 24.6 61 21.3v21.4l-21.6-3.3 15.3 15.4-18.5 10.7-3.2-21.6-3.2 21.6-18.5-10.7 15.3-15.4L3 42.7V21.3l21.6 3.3L9.3 9.2 27.8-1.5 31 20.1l3.2-21.6 18.5 10.7z" transform="translate(0,2) scale(0.94) translate(2,1)"/>
+  </g>
+</svg>

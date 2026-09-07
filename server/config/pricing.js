@@ -18,6 +18,7 @@ export const PROGRAM_PRICES = {
   // Paid seat, not a pack (₹199) — so its slug must stay OUT of the client's
   // RESOURCE_PACKS. Also listed in the client PROGRAM_PRICES for display.
   'ai-for-modern-work-and-careers': { amount: 199, label: 'AI for Modern Work and Careers' },
+  'build-like-an-ai-fde': { amount: 199, label: 'AI Forward Deployed Engineering (FDE)' },
   // Menler Library — ₹49 per playbook/resource download (menler.in/resources).
   library: { amount: 49, label: 'Menler Library' },
   // Internal gateway test — a live ₹5 charge via /pay-test. Remove after testing.
