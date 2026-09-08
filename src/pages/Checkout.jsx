@@ -101,9 +101,19 @@ export default function Checkout() {
         if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', { value: total, currency: 'INR', content_name: workshopTitle });
         if (typeof window.gtag === 'function') window.gtag('event', 'purchase', { value: total, currency: 'INR', items: [{ item_name: workshopTitle }] });
       } catch { /* a blocked pixel must never break the confirmation */ }
-      // A real URL for the conversion. replace, so Back does not re-enter
-      // checkout; state carried over, so the confirmation keeps its details.
-      navigate(`/checkout/${PAID_DONE}`, { replace: true, state: reg });
+      // A real URL for the conversion, carrying the keyword BOTH ways: the
+      // path is what fires the pixel (its PageView keys on pathname), and the
+      // query parameter is what an Events Manager rule is usually written
+      // against. The amount rides along so a rule can separate a 199 seat from
+      // a 298 one. replace, so Back does not re-enter checkout; state carried
+      // over, so the confirmation keeps its details.
+      const done = new URLSearchParams({
+        [PAID_DONE]: '1',
+        amount: String(total),
+        currency: 'INR',
+        ...(reg.campaign ? { campaign: reg.campaign } : {}),
+      });
+      navigate(`/checkout/${PAID_DONE}?${done}`, { replace: true, state: reg });
     }
   };
 
