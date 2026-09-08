@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useEffect, useRef, lazy, Suspense } from 'react';
 import Lenis from 'lenis';
 import Navbar from './components/layout/Navbar';
@@ -18,6 +18,21 @@ const KickstarterCampaign = lazy(() => import('./pages/KickstarterCampaign'));
 const AgentsWorkshopCampaign = lazy(() => import('./pages/AgentsWorkshopCampaign'));
 const ModernWorkCampaign = lazy(() => import('./pages/ModernWorkCampaign'));
 const Engineering = lazy(() => import('./pages/Engineering'));
+
+// Campaigns that were renamed after their URL had already gone out. Old slug
+// on the left, the page it became on the right.
+const RETIRED_SLUGS = {
+  'ai-forward-deployed-engineering': 'build-like-an-ai-fde',
+};
+
+// Carries the query string and hash across the redirect. These are paid ad
+// destinations, so dropping ?utm_source=…&ad_id=… would land the visitor on
+// the right page with the attribution stripped off — the campaign would look
+// like it converted nobody.
+function RetiredSlug({ to }) {
+  const { search, hash } = useLocation();
+  return <Navigate to={`/campaign/${to}${search}${hash}`} replace />;
+}
 const Projects = lazy(() => import('./pages/Projects'));
 const Outcomes = lazy(() => import('./pages/Outcomes'));
 const Aptitude = lazy(() => import('./pages/Aptitude'));
@@ -92,6 +107,14 @@ export default function App() {
       <main id="main" tabIndex={-1}>
         <Suspense fallback={<PageLoader />}>
           <Routes>
+            {/* A campaign that was renamed keeps its old URL working. Live ad
+                creative, bookmarks and anything already shared still point at
+                the old slug, and the retired Sanity document is still sitting
+                there — so without this the old URL quietly serves the OLD
+                design instead of the page the ad was bought for. */}
+            {Object.entries(RETIRED_SLUGS).map(([from, to]) => (
+              <Route key={from} path={`/campaign/${from}`} element={<RetiredSlug to={to} />} />
+            ))}
             <Route path="/" element={<Home />} />
             <Route path="/kickstarter" element={<Kickstarter />} />
             <Route path="/ai-kickstarter" element={<KickstarterLanding />} />
