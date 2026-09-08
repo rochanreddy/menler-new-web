@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import PageLoader from '../../components/common/PageLoader';
 import { useContentState } from '../../lib/useContent';
 import contentFromSanity from '../../data/campaigns/fromSanity';
+import KickstarterLanding from '../KickstarterLanding';
 import PaidCampaignLayout from './PaidCampaignLayout';
 
 /* A campaign whose document asks for the paid design.
@@ -31,8 +32,9 @@ export default function SanityPaidCampaign() {
 
   if (loading && !data) return <PageLoader />;
   const content = contentFromSanity(data);
-  // A slug with no document, or one with no price, is not a paid campaign —
-  // rendering an empty ₹0 seat page would be worse than saying nothing.
-  if (!content || !content.PRICE.now) return <PageLoader />;
+  // A campaign marked paid but missing its price cannot render a seat page —
+  // it would show ₹0. Fall back to the classic design rather than leaving a
+  // blank screen: a page with the wrong layout still sells; nothing does not.
+  if (!content || !content.PRICE.now) return <KickstarterLanding />;
   return <PaidCampaignLayout content={content} />;
 }
