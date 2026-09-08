@@ -42,10 +42,17 @@ export default function Checkout() {
   // Guard: /checkout is only valid after registering on a campaign, which passes
   // the verified registrant in router state. A direct URL visit has no state, so
   // send them home instead of exposing an empty checkout that skips OTP.
+  //
+  // The confirmation is deliberately exempt. It is the URL the ad platforms
+  // fire their conversion on, so it has to survive being opened on its own —
+  // bouncing it home meant the pixel never got the chance, and there was no way
+  // for anyone to check the page without paying ₹199 to see it. Nothing here is
+  // worth protecting: the payment has already happened, and with no state the
+  // page falls back to a generic thank-you with no personal detail on it.
   useEffect(() => {
-    if (!reg.email) navigate('/', { replace: true });
-  }, [reg.email, navigate]);
-  if (!reg.email) return null;
+    if (!reg.email && !placed) navigate('/', { replace: true });
+  }, [reg.email, placed, navigate]);
+  if (!reg.email && !placed) return null;
 
   const toggle = (id) => setCart((prev) => {
     const n = new Set(prev);
@@ -155,6 +162,7 @@ export default function Checkout() {
   if (placed) {
     return (
       <div className="cox cox--confirm">
+        <Seo title="Thank you | Menler" noindex />
         <div className="cox-confirm">
           <div className="cox-confirm-badge">
             <div className="cox-confirm-tick"><span className="cox-confirm-check">✓</span></div>
