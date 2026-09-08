@@ -297,9 +297,11 @@ export default function PaidCampaignLayout({ content }) {
             <span className="aw-hero-eyebrow">{EYEBROW}</span>
             <h1>{HEADLINE.pre}<em>{HEADLINE.em}</em>{HEADLINE.post}</h1>
             <p className="aw-hero-tagline">{TAGLINE}</p>
-            <ul className="aw-caps">
-              {CAPSULES.map((c) => <li key={c}>{c}</li>)}
-            </ul>
+            {CAPSULES.length > 0 && (
+              <ul className="aw-caps">
+                {CAPSULES.map((c) => <li key={c}>{c}</li>)}
+              </ul>
+            )}
           </div>
 
           <div className="aw-when">
@@ -514,6 +516,7 @@ export default function PaidCampaignLayout({ content }) {
       </section>
 
       {/* 8b · Why this is engineering, not prompting */}
+      {DIFFERENCE && (
       <section className="aw-diff">
         <div className="aw-diff-inner">
           <span className="aw-diff-eyebrow">{DIFFERENCE.eyebrow}</span>
@@ -525,6 +528,7 @@ export default function PaidCampaignLayout({ content }) {
           <p className="aw-diff-close">{DIFFERENCE.close}</p>
         </div>
       </section>
+      )}
 
       {/* 9 · FAQ */}
       <section className="aw-faq" id="faq">

@@ -9,6 +9,7 @@ import { ApplyProvider } from './components/common/ApplyContext';
 const Home = lazy(() => import('./pages/Home'));
 const Kickstarter = lazy(() => import('./pages/Kickstarter'));
 const KickstarterLanding = lazy(() => import('./pages/KickstarterLanding'));
+const CampaignBySlug = lazy(() => import('./pages/CampaignBySlug'));
 const Checkout = lazy(() => import('./pages/Checkout'));
 const Generalist = lazy(() => import('./pages/Generalist'));
 const GeneralistCampaign = lazy(() => import('./pages/GeneralistCampaign'));
@@ -104,7 +105,9 @@ export default function App() {
             {/* Its own build rather than the Sanity-driven /campaign/:slug page,
                 so it must sit above that route to win the match. */}
             <Route path="/campaign/ai-for-modern-work-and-careers" element={<ModernWorkCampaign />} />
-            <Route path="/campaign/:slug" element={<KickstarterLanding />} />
+            {/* The document decides its own design — classic, or the paid
+                masterclass layout. See CampaignBySlug. */}
+            <Route path="/campaign/:slug" element={<CampaignBySlug />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/generalist" element={<Generalist />} />
             <Route path="/engineering" element={<Engineering />} />

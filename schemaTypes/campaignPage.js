@@ -40,6 +40,23 @@ export default defineType({
       validation: (r) => r.required(),
     }),
 
+    defineField({
+      name: 'design', title: 'Page design', type: 'string', group: 'setup',
+      options: {
+        list: [
+          { title: 'Classic — the standard campaign page', value: 'classic' },
+          { title: 'Paid masterclass — the ₹199 seat page', value: 'paid' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'classic',
+      description:
+        'The paid design is the one with the offer rail, the itemised bundle, the agenda timeline and '
+        + 'the sticky price card. It reads the same fields as the classic one, plus the five below '
+        + '(capsules, stats, bundle prices, agenda timings, FAQs). Anything it needs that you leave '
+        + 'blank falls back to a sensible default.',
+    }),
+
     // ── Theme colours (hex codes; leave blank to keep the default amber theme) ──
     defineField({ name: 'themeAccent', title: 'Accent colour — buttons & links', type: 'string', group: 'theme', description: 'Hex code, e.g. #BA7517. Leave blank for default.' }),
     defineField({ name: 'themeAccentDark', title: 'Accent colour — dark (labels)', type: 'string', group: 'theme', description: 'Hex code, e.g. #854F0B' }),
@@ -92,6 +109,22 @@ export default defineType({
       validation: (r) => r.min(12).max(64),
     }),
     defineField({ name: 'bannerTagline', title: 'Tagline (under title)', type: 'string', group: 'banner' }),
+    defineField({
+      name: 'capsules', title: 'Hero capsules (paid design)', type: 'array', of: [{ type: 'string' }], group: 'banner',
+      description: 'The stack this session covers, shown as small pills under the tagline — e.g. Claude Code, APIs, AI Agents, n8n. Leave empty to hide the row.',
+    }),
+    defineField({
+      name: 'stats', title: 'Hero stats — three (paid design)', type: 'array', group: 'banner',
+      of: [{
+        type: 'object',
+        fields: [
+          { name: 'value', title: 'Number', type: 'string', description: 'e.g. 1, 3+, 0 to 1' },
+          { name: 'label', title: 'Label', type: 'string', description: 'e.g. Real AI system you build' },
+        ],
+        preview: { select: { title: 'value', subtitle: 'label' } },
+      }],
+      validation: (r) => r.max(3),
+    }),
     defineField({ name: 'subtitle', title: 'Intro paragraph (below banner)', type: 'text', rows: 3, group: 'banner' }),
 
     // ── Schedule & price ──
@@ -120,6 +153,10 @@ export default defineType({
         fields: [
           { name: 'title', title: 'Title', type: 'string' },
           { name: 'detail', title: 'Detail', type: 'text', rows: 2 },
+          { name: 'start', title: 'Starts at (paid design)', type: 'string', description: 'Minutes into the session, e.g. 0:00' },
+          { name: 'end', title: 'Ends at (paid design)', type: 'string', description: 'e.g. 0:20' },
+          { name: 'keep', title: 'You keep (paid design)', type: 'string', description: 'What the room walks away with from this block. Leave blank for a break.' },
+          { name: 'badge', title: 'Badge (paid design)', type: 'string', description: 'SETUP · BUILD · SHIP · BREAK · Q&A. Breaks and Q&A are drawn quieter than the build blocks.' },
         ],
         preview: { select: { title: 'title', subtitle: 'detail' } },
       }],
@@ -133,6 +170,7 @@ export default defineType({
         fields: [
           { name: 'title', title: 'Title', type: 'string' },
           { name: 'detail', title: 'Detail', type: 'string' },
+          { name: 'price', title: 'Value in ₹ (paid design)', type: 'number', description: 'What this line is worth. The bundle’s “total value” is the sum of these, so it should add up to the original price.' },
         ],
         preview: { select: { title: 'title', subtitle: 'detail' } },
       }],
@@ -195,6 +233,18 @@ export default defineType({
           { name: 'pdfPath', title: '…or PDF path already in the site (e.g. /pdfs/Name.pdf)', type: 'string', description: 'Only if you prefer to link a PDF already deployed under /pdfs/. Leave blank when you upload a file above.' },
         ],
         preview: { select: { title: 'title', file: 'file.asset.originalFilename', path: 'pdfPath' }, prepare: ({ title, file, path }) => ({ title, subtitle: file || path || 'no file yet' }) },
+      }],
+    }),
+
+    defineField({
+      name: 'faqs', title: 'FAQs (paid design)', type: 'array', group: 'sections',
+      of: [{
+        type: 'object',
+        fields: [
+          { name: 'q', title: 'Question', type: 'string' },
+          { name: 'a', title: 'Answer', type: 'text', rows: 3 },
+        ],
+        preview: { select: { title: 'q', subtitle: 'a' } },
       }],
     }),
 
