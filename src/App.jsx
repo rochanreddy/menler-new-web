@@ -109,6 +109,10 @@ export default function App() {
                 masterclass layout. See CampaignBySlug. */}
             <Route path="/campaign/:slug" element={<CampaignBySlug />} />
             <Route path="/checkout" element={<Checkout />} />
+            {/* Where a completed paid registration lands. A path, not a query
+                string, so the Meta Pixel PageView fires (see RouteChange) and
+                an ads URL rule on "webinar_paid" can match it. */}
+            <Route path="/checkout/:done" element={<Checkout />} />
             <Route path="/generalist" element={<Generalist />} />
             <Route path="/engineering" element={<Engineering />} />
             <Route path="/projects/:slug" element={<Projects />} />

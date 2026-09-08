@@ -19,6 +19,14 @@ const leadSchema = new mongoose.Schema(
     utm_content: { type: String, default: '' },
     utm_term: { type: String, default: '' },
 
+    // Meta's dynamic parameters, substituted by the ad platform itself. These
+    // are what identify the exact ad, ad set and placement behind a lead.
+    utm_source_platform: { type: String, default: '' },
+    ad_id: { type: String, default: '' },
+    adset_id: { type: String, default: '' },
+    campaign_id: { type: String, default: '' },
+    placement: { type: String, default: '' },
+
     // Ad-click IDs + attribution + consent (for CRM tracking).
     gclid: { type: String, default: '' },
     fbclid: { type: String, default: '' },

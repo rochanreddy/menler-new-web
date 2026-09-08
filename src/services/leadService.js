@@ -26,6 +26,14 @@ function getTracking() {
     utm_campaign: tracked(params, 'utm_campaign'),
     utm_content: tracked(params, 'utm_content'),
     utm_term: tracked(params, 'utm_term'),
+    // Meta's dynamic parameters. The ad platform substitutes these itself, so
+    // they are the only way to tell which ad, ad set and placement a lead came
+    // from — utm_campaign alone cannot.
+    utm_source_platform: tracked(params, 'utm_source_platform'),
+    ad_id: tracked(params, 'ad_id'),
+    adset_id: tracked(params, 'adset_id'),
+    campaign_id: tracked(params, 'campaign_id'),
+    placement: tracked(params, 'placement'),
     gclid: tracked(params, 'gclid'),
     fbclid: tracked(params, 'fbclid'),
     page_url: window.location.href,

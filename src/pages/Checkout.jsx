@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import MenlerWordmark from '../components/common/MenlerWordmark';
 import Seo from '../components/common/Seo';
 import MenlerCommunitySection from '../components/common/MenlerCommunitySection';
@@ -12,6 +12,10 @@ import { createEnrolOrder, getPaymentStatus } from '../services/paymentService';
 import { openCashfreeCheckout } from '../lib/cashfree';
 
 import { MENLER_WHATSAPP_URL } from '../data/communityLinks';
+
+// The URL segment a completed PAID registration lands on. Ads match on it,
+// so it is a path rather than a query string — see the route in App.jsx.
+const PAID_DONE = 'webinar_paid';
 
 export default function Checkout() {
   const navigate = useNavigate();
@@ -28,7 +32,10 @@ export default function Checkout() {
   const [cart, setCart] = useState(() => new Set()); // add-on mode: per-item selection
   const [packOn, setPackOn] = useState(false);       // pack mode: is the pack selected
   const [placing, setPlacing] = useState(false);
-  const [placed, setPlaced] = useState(false);
+  // Landing on /checkout/webinar_paid IS the confirmation — a refresh or a
+  // back-button return to it must not drop into an empty cart.
+  const { done } = useParams();
+  const [placed, setPlaced] = useState(done === PAID_DONE);
   const [err, setErr] = useState('');
   const [confirmLeave, setConfirmLeave] = useState(false); // "Leave checkout?" guard
 
@@ -87,6 +94,17 @@ export default function Checkout() {
     }
     setPlaced(true);
     window.scrollTo(0, 0);
+    if (total > 0) {
+      // Value and currency, so the ad platforms can report revenue rather
+      // than a bare count. Guarded because neither pixel is loaded in dev.
+      try {
+        if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', { value: total, currency: 'INR', content_name: workshopTitle });
+        if (typeof window.gtag === 'function') window.gtag('event', 'purchase', { value: total, currency: 'INR', items: [{ item_name: workshopTitle }] });
+      } catch { /* a blocked pixel must never break the confirmation */ }
+      // A real URL for the conversion. replace, so Back does not re-enter
+      // checkout; state carried over, so the confirmation keeps its details.
+      navigate(`/checkout/${PAID_DONE}`, { replace: true, state: reg });
+    }
   };
 
   const pay = async () => {

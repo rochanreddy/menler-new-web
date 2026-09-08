@@ -70,7 +70,8 @@ async function markLeadDelivered(lead) {
 const KNOWN_FIELDS = new Set([
   'name', 'email', 'phone', 'program', 'track', 'background', 'message',
   'source', 'page', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content',
-  'utm_term', 'gclid', 'fbclid', 'page_url', 'referrer_url', 'cta_label',
+  'utm_term', 'utm_source_platform', 'ad_id', 'adset_id', 'campaign_id', 'placement',
+  'gclid', 'fbclid', 'page_url', 'referrer_url', 'cta_label',
   'communication_optin', 'lead_source', 'lead_sub_source', 'resource', 'section', 'report_url',
   'checkout_completed',
 ]);
@@ -140,6 +141,11 @@ function buildAmplifeedPayload(lead) {
     utm_campaign: lead.utm_campaign || undefined,
     utm_content: lead.utm_content || undefined,
     utm_term: lead.utm_term || undefined,
+    utm_source_platform: lead.utm_source_platform || undefined,
+    ad_id: lead.ad_id || undefined,
+    adset_id: lead.adset_id || undefined,
+    campaign_id: lead.campaign_id || undefined,
+    placement: lead.placement || undefined,
     gclid: lead.gclid || undefined,
     fbclid: lead.fbclid || undefined,
     page_url: lead.page_url || undefined,
