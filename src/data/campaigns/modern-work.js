@@ -38,11 +38,16 @@ const SUBTITLE = 'Bring AI into your everyday work, from documents and data to p
 const CAPSULES = ['Claude', 'Microsoft 365', 'Excel', 'PowerPoint', 'Fireflies', 'Notion', 'Gemini', '& more'];
 
 /* ── Edit these ──────────────────────────────────────────────────────────── */
+// The schedule is editable in Sanity (Campaign page → Schedule → Date / Time)
+// and whatever the document says wins — see ModernWorkCampaign. What is left
+// here is the fallback: it renders when Sanity is unreachable, and for the
+// moment before the fetch lands on a first visit. Keep it in step with the
+// document rather than treating it as dead copy.
 const SESSION = {
-  date: 'Friday, 11 September 2026',    // feeds the calendar event on the confirmation page
+  date: 'Wednesday, 16 September 2026',    // feeds the calendar event on the confirmation page
   time: '7:00 PM – 9:00 PM IST',
-  dateLong: '11 September 2026, Friday',   // as the banner writes it
-  dateShort: 'Fri, 11 Sept',
+  dateLong: '16 September 2026, Wednesday',   // as the banner writes it
+  dateShort: 'Wed, 16 Sept',
   timeShort: '7:00 PM IST',
   duration: '2 hours',
   platform: 'Live Online Masterclass',

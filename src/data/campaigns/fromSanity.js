@@ -12,6 +12,7 @@
  */
 
 import { MENLER_WHATSAPP_URL } from '../communityLinks';
+import { sessionFrom } from './session';
 
 /* ── Defaults ─────────────────────────────────────────────────────────────
    Written to be true of any Menler masterclass, not of one campaign. A
@@ -137,16 +138,21 @@ export function contentFromSanity(d) {
     // campaign uses the base one.
     ROOT_CLASS: 'aw',
 
-    SESSION: {
-      date: clean(d.date) || '',
-      time: clean(d.time) || '',
-      dateLong: clean(d.date) || '',
-      dateShort: (clean(d.date) || '').split(',')[0] || '',
-      timeShort: (clean(d.time) || '').split('–')[0].trim(),
+    // The short forms used to come from splitting the date on its comma and the
+    // time on its dash, which only read correctly when the admin happened to
+    // type "Fri, 11 Sept …" — any other order put the whole date in the sticky
+    // bar, and the dash split dropped the timezone off the time. sessionFrom
+    // works it out from the date itself instead.
+    SESSION: sessionFrom(d, {
+      date: '',
+      time: '',
+      dateLong: '',
+      dateShort: '',
+      timeShort: '',
       duration: clean(d.duration) || '2 hours',
       platform: clean(d.format) || 'Live Online Masterclass',
       replay: 'Recording included',
-    },
+    }),
     // A paid page needs both halves of the anchor. Without an original price
     // there is no discount to show, so the anchor falls back to the price.
     PRICE: { now: now || 0, was: was || now || 0 },
