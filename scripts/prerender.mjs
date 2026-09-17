@@ -14,6 +14,8 @@ import { PROJECTS } from '../src/data/projectsData.js';
 import { HOME_FAQS, GENERALIST_FAQS, ENGINEERING_FAQS, KICKSTARTER_FAQS } from '../src/data/faqData.js';
 import { POLICIES } from '../src/data/policyContent.js';
 import { DOMAIN_TRACKS, GENERALIST_WEEKS } from '../src/data/curriculumData.js';
+import { RESOURCE_PACKS } from '../src/data/resourceCatalog.js';
+import { HIRING_COMPANIES } from '../src/data/hiringCompanies.js';
 import { BLOG_POSTS as FILE_POSTS } from '../src/data/blogData.js';
 
 const SITE = 'https://menler.in';
@@ -104,6 +106,7 @@ const STATIC_ROUTES = [
     intro: 'AI courses and fellowships: the no-code Claude AI Generalist, the Claude AI Engineering fellowship, and the 14-day Gen AI Kickstarter. Learn AI, build real projects, and get placement support.',
     jsonLd: [ORG_FULL, faqOf(HOME_FAQS)],
     faqs: HOME_FAQS,
+    hiring: HIRING_COMPANIES,
   },
   {
     path: '/generalist', file: 'generalist.html', nav: 'Generalist Fellowship',
@@ -162,12 +165,35 @@ const STATIC_ROUTES = [
     ],
   },
   {
+    path: '/projects', file: 'projects.html', nav: 'What learners build',
+    title: 'AI Projects Built With Claude — What Menler Learners Ship | Menler',
+    description: 'Twenty real AI projects built by Menler learners — agents, RAG pipelines, automations and internal tools across product, finance, sales, HR and engineering.',
+    keywords: 'AI projects, Claude AI projects, AI portfolio projects, real AI projects India, AI agent projects, RAG project examples, AI automation examples, AI portfolio for jobs, what to build with Claude',
+    h1: 'What Menler learners build',
+    intro: 'Twenty real projects shipped during Menler fellowships — AI agents, RAG pipelines, automations and internal tools built with Claude across product, finance, sales, operations, HR and engineering.',
+    projectList: PROJECTS,
+    jsonLd: [
+      {
+        '@context': 'https://schema.org', '@type': 'ItemList',
+        name: 'AI projects built by Menler learners',
+        description: 'Real AI projects shipped during Menler fellowships.',
+        numberOfItems: PROJECTS.length,
+        itemListElement: PROJECTS.map((p, i) => ({
+          '@type': 'ListItem', position: i + 1, name: p.title,
+          description: p.desc, url: `${SITE}/projects/${p.slug}`,
+        })),
+      },
+      crumbs([{ name: 'Home', path: '/' }, { name: 'What learners build', path: '/projects' }]),
+    ],
+  },
+  {
     path: '/resources', file: 'resources.html', nav: 'Resources',
     title: 'AI Learning Resources — Prompts, Templates & Guides | Menler',
     description: 'Free AI learning resources: a Claude prompt library, AI stack map, templates, cheat sheets and an AI glossary. The knowledge layer for the AI-native workforce.',
     keywords: 'AI learning resources, free AI resources, AI question bank, AI prompts library, Claude prompts, AI project ideas, AI capstone projects, AI tool setup guide, AI tools ecosystem, AI stack map, AI cheat sheets, AI templates, AI glossary, AI terms explained, agentic AI explained, agentic AI workflows, AI careers India',
     h1: 'The Menler library — free AI learning resources',
     intro: 'Free AI learning resources: a Claude prompt library, an AI stack map, templates, cheat sheets and an AI glossary — the knowledge layer for the AI-native workforce.',
+    packs: RESOURCE_PACKS,
     jsonLd: [crumbs([{ name: 'Home', path: '/' }, { name: 'Resources', path: '/resources' }])],
   },
   {
@@ -412,6 +438,62 @@ function faqHtml(faqs) {
 }
 
 /**
+ * The index of what learners build.
+ *
+ * Two jobs. It is the page llms.txt already points answer engines at for "what
+ * do Menler learners build" — which until now served the homepage, canonical
+ * and all. And it is the only internal link to the twenty project pages that a
+ * crawler without JavaScript can follow: they were in the sitemap and linked
+ * from nowhere, which is discovery without any signal that they matter.
+ */
+function projectListHtml(projects) {
+  if (!Array.isArray(projects) || !projects.length) return '';
+  return '<section><h2>Projects</h2><ul>' + projects.map((p) =>
+    `<li><a href="/projects/${escAttr(p.slug)}">${escText(p.title)}</a>` +
+    (p.tag ? ` — ${escText(p.tag)}` : '') +
+    (p.desc ? `. ${escText(p.desc)}` : '') +
+    (p.outcome ? ` Outcome: ${escText(p.outcome)}` : '') +
+    '</li>'
+  ).join('') + '</ul></section>';
+}
+
+/**
+ * The resource library, itemised.
+ *
+ * A page called "resources" that does not name a single resource cannot be the
+ * answer to "free Claude prompt library" or "AI templates" — the two hundred
+ * things it actually contains were a React render away. Each pack lists what
+ * is in it, which is the level of detail those searches are written at.
+ */
+function packsHtml(packs) {
+  if (!packs) return '';
+  const entries = Array.isArray(packs) ? packs : Object.values(packs);
+  if (!entries.length) return '';
+  return '<section><h2>Resource packs</h2>' + entries.map((p) =>
+    `<h3>${escText(p.title || '')}</h3>` +
+    (p.desc ? `<p>${escText(p.desc)}</p>` : '') +
+    (p.items?.length
+      ? `<ul>${p.items.map((i) =>
+          `<li>${escText(i.title || '')}${i.desc ? ' — ' + escText(i.desc) : ''}</li>`).join('')}</ul>`
+      : '')
+  ).join('') + '</section>';
+}
+
+/**
+ * Who hires from here, by name.
+ *
+ * "Placement support" is a claim; twenty-five named companies is evidence, and
+ * it is the evidence someone asking "is this course worth it" is looking for.
+ * The logos were already on the page — the names were not in the HTML.
+ */
+function hiringHtml(companies) {
+  if (!Array.isArray(companies) || !companies.length) return '';
+  return '<section><h2>Where our learners are hired</h2><ul>' +
+    companies.map((c) => `<li>${escText(c.name)}</li>`).join('') +
+    '</ul></section>';
+}
+
+/**
  * The syllabus, as text.
  *
  * "What will I actually learn" is the question a course page exists to answer,
@@ -474,6 +556,9 @@ function fallback(route) {
     (route.extraHtml || '') + // pre-escaped structured HTML (e.g. full blog body)
     curriculumHtml(route.weeks, route.tracks) +
     policyHtml(route.policy) +
+    packsHtml(route.packs) +
+    hiringHtml(route.hiring) +
+    projectListHtml(route.projectList) +
     faqHtml(route.faqs);
   // Visually hidden (sr-only): present in the HTML for non-JS crawlers/AI, but
   // never shown to users — so there's no flash of fallback text before React
