@@ -13,6 +13,7 @@ import { dirname, join } from 'path';
 import { PROJECTS } from '../src/data/projectsData.js';
 import { HOME_FAQS, GENERALIST_FAQS, ENGINEERING_FAQS, KICKSTARTER_FAQS } from '../src/data/faqData.js';
 import { POLICIES } from '../src/data/policyContent.js';
+import { DOMAIN_TRACKS, GENERALIST_WEEKS } from '../src/data/curriculumData.js';
 import { BLOG_POSTS as FILE_POSTS } from '../src/data/blogData.js';
 
 const SITE = 'https://menler.in';
@@ -117,6 +118,8 @@ const STATIC_ROUTES = [
       crumbs([{ name: 'Home', path: '/' }, { name: 'Generalist Fellowship', path: '/generalist' }]),
     ],
     faqs: GENERALIST_FAQS,
+    weeks: GENERALIST_WEEKS,
+    tracks: DOMAIN_TRACKS,
   },
   {
     path: '/engineering', file: 'engineering.html', nav: 'Engineering Fellowship',
@@ -355,6 +358,7 @@ const PROJECT_ROUTES = PROJECTS.map((p) => ({
 
 // Policy pages.
 const POLICY_ROUTES = Object.entries(POLICIES).map(([slug, p]) => ({
+  policy: p,   // the sections themselves, rendered into the fallback
   path: `/policy/${slug}`,
   file: `policy/${slug}.html`,
   nav: p.title,
@@ -407,6 +411,59 @@ function faqHtml(faqs) {
   );
 }
 
+/**
+ * The syllabus, as text.
+ *
+ * "What will I actually learn" is the question a course page exists to answer,
+ * and the answer was rendered by React alone. It is also the shape of query an
+ * answer engine gets asked constantly — what a course covers, in what order,
+ * with which tools — and it could only ever have replied from the one-line
+ * description.
+ *
+ * Weeks first, then the domain tracks, because that is the order someone reads
+ * them in: what everyone does, then the part that is specific to their job.
+ */
+function curriculumHtml(weeks, tracks) {
+  let out = '';
+  if (Array.isArray(weeks) && weeks.length) {
+    out += '<section><h2>Week by week</h2>' + weeks.map((w) =>
+      `<h3>${escText(w.wk)} — ${escText(w.title)}</h3>` +
+      (w.stage ? `<p>${escText(w.stage)}</p>` : '') +
+      (w.topics?.length ? `<ul>${w.topics.map((t) => `<li>${escText(t)}</li>`).join('')}</ul>` : '') +
+      (w.tools?.length ? `<p>Tools: ${escText(w.tools.join(', '))}</p>` : '')
+    ).join('') + '</section>';
+  }
+  if (Array.isArray(tracks) && tracks.length) {
+    out += '<section><h2>Domain tracks</h2>' + tracks.map((t) =>
+      `<h3>${escText(t.name)}</h3>` +
+      (t.weeks?.length ? `<ul>${t.weeks.map((w) =>
+        `<li>${escText(w.wk)}: ${escText(w.objective || '')}</li>`).join('')}</ul>` : '')
+    ).join('') + '</section>';
+  }
+  return out;
+}
+
+/**
+ * The policy text itself.
+ *
+ * A privacy policy that is 700 words in a data file and 38 words in the HTML
+ * is not a published policy — it is a page that says a policy exists. These
+ * are read by people deciding whether to hand over a phone number, and by
+ * anything assessing whether the site is a real company.
+ */
+function policyHtml(policy) {
+  if (!policy?.sections?.length) return '';
+  return policy.sections.map((s) =>
+    `<h2>${escText(s.h)}</h2>` +
+    (s.body || []).map((b) => {
+      if (b.sub) return `<h3>${escText(b.sub)}</h3>`;
+      if (b.ul) return `<ul>${b.ul.map((i) => `<li>${escText(i)}</li>`).join('')}</ul>`;
+      if (b.p) return `<p>${escText(b.p)}</p>`;
+      return typeof b === 'string' ? `<p>${escText(b)}</p>` : '';
+    }).join('')
+  ).join('');
+}
+
 function fallback(route) {
   const links = STATIC_ROUTES
     .filter((r) => r.path !== route.path)
@@ -415,6 +472,8 @@ function fallback(route) {
   const extra =
     (route.extra ? `<p>${escText(route.extra)}</p>` : '') +
     (route.extraHtml || '') + // pre-escaped structured HTML (e.g. full blog body)
+    curriculumHtml(route.weeks, route.tracks) +
+    policyHtml(route.policy) +
     faqHtml(route.faqs);
   // Visually hidden (sr-only): present in the HTML for non-JS crawlers/AI, but
   // never shown to users — so there's no flash of fallback text before React
