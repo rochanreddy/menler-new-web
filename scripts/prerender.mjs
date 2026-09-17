@@ -303,6 +303,38 @@ const BLOG_ROUTES = BLOG_POSTS.filter((p) => p.body).map((p) => ({
   ],
 }));
 
+/**
+ * A project's case study, as readable text.
+ *
+ * Each project already carries a structured `doc` — overview, problem, how it
+ * works, features, architecture, results — and it was rendered by React and by
+ * nothing else. These twenty pages are the site's proof: they are the answer to
+ * "what do people actually build", which is the question an answer engine is
+ * most likely to want Menler for. Leaving them at a title and one line of
+ * description made them the thinnest pages on the site and the least quotable.
+ *
+ * Real headings rather than one paragraph, because a crawler reading h2/h3 can
+ * quote a section; reading a wall it can only summarise the lot.
+ */
+function projectDoc(doc) {
+  // esc, not escText: this runs while PROJECT_ROUTES is built at module level,
+  // before escText is initialised. Same reason blogBodyHtml uses it.
+  if (!doc) return '';
+  const para = (h, t) => (t ? `<h2>${esc(h)}</h2><p>${esc(t)}</p>` : '');
+  const list = (h, items) =>
+    Array.isArray(items) && items.length
+      ? `<h2>${esc(h)}</h2><ul>${items.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>`
+      : '';
+  return (
+    para('Overview', doc.overview) +
+    para('The problem', doc.problem) +
+    list('How it works', doc.howItWorks) +
+    list('What it does', doc.features) +
+    para('Architecture', doc.architecture) +
+    list('Results', doc.results)
+  );
+}
+
 // Project detail pages (in the sitemap, but were invisible to crawlers).
 const PROJECT_ROUTES = PROJECTS.map((p) => ({
   path: `/projects/${p.slug}`,
@@ -314,6 +346,7 @@ const PROJECT_ROUTES = PROJECTS.map((p) => ({
   h1: p.title,
   intro: p.desc,
   extra: `${p.tag ? p.tag + ' · ' : ''}${(p.stack || []).length ? 'Stack: ' + p.stack.join(', ') + '. ' : ''}${p.outcome ? 'Outcome: ' + p.outcome : ''}`,
+  extraHtml: projectDoc(p.doc),
   jsonLd: [
     { '@context': 'https://schema.org', '@type': 'CreativeWork', name: p.title, description: p.desc, about: p.tag, creator: ORG, url: `${SITE}/projects/${p.slug}`, inLanguage: 'en' },
     crumbs([{ name: 'Home', path: '/' }, { name: p.title, path: `/projects/${p.slug}` }]),
