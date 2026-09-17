@@ -548,6 +548,12 @@ function policyHtml(policy) {
 
 function fallback(route) {
   const links = STATIC_ROUTES
+    // A page held back from search should not be linked from the crawlable
+    // HTML either. noindex tells a crawler not to list it; an internal link
+    // from every other page tells it the opposite, and the two together just
+    // spend crawl budget arguing. llms.txt and the sitemap already exclude
+    // these — the nav was the one place that did not.
+    .filter((r) => !r.noindex)
     .filter((r) => r.path !== route.path)
     .map((r) => `<a href="${r.path}">${escText(r.nav)}</a>`)
     .join(' · ');

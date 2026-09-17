@@ -3,6 +3,11 @@ Allow: /
 Disallow: /admin
 Disallow: /blog-portal
 Disallow: /blog/preview/
+# Not launched. Held back until they are — both also carry
+# <meta name="robots" content="noindex, nofollow"> and are absent from the
+# sitemap, from llms.txt and from the internal nav.
+Disallow: /outcomes
+Disallow: /blog
 Disallow: /dashboard
 Disallow: /profile
 Disallow: /login
@@ -30,6 +35,11 @@ Allow: /
 Disallow: /admin
 Disallow: /blog-portal
 Disallow: /blog/preview/
+# Not launched. Held back until they are — both also carry
+# <meta name="robots" content="noindex, nofollow"> and are absent from the
+# sitemap, from llms.txt and from the internal nav.
+Disallow: /outcomes
+Disallow: /blog
 Disallow: /dashboard
 Disallow: /profile
 Disallow: /login
