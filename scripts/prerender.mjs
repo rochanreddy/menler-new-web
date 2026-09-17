@@ -102,6 +102,7 @@ const STATIC_ROUTES = [
     h1: "Menler — India's Claude-native AI learning",
     intro: 'AI courses and fellowships: the no-code Claude AI Generalist, the Claude AI Engineering fellowship, and the 14-day Gen AI Kickstarter. Learn AI, build real projects, and get placement support.',
     jsonLd: [ORG_FULL, faqOf(HOME_FAQS)],
+    faqs: HOME_FAQS,
   },
   {
     path: '/generalist', file: 'generalist.html', nav: 'Generalist Fellowship',
@@ -115,6 +116,7 @@ const STATIC_ROUTES = [
       faqOf(GENERALIST_FAQS),
       crumbs([{ name: 'Home', path: '/' }, { name: 'Generalist Fellowship', path: '/generalist' }]),
     ],
+    faqs: GENERALIST_FAQS,
   },
   {
     path: '/engineering', file: 'engineering.html', nav: 'Engineering Fellowship',
@@ -128,6 +130,7 @@ const STATIC_ROUTES = [
       faqOf(ENGINEERING_FAQS),
       crumbs([{ name: 'Home', path: '/' }, { name: 'Engineering Fellowship', path: '/engineering' }]),
     ],
+    faqs: ENGINEERING_FAQS,
   },
   {
     path: '/kickstarter', file: 'kickstarter.html', nav: 'Gen AI Kickstarter',
@@ -141,6 +144,7 @@ const STATIC_ROUTES = [
       faqOf(KICKSTARTER_FAQS),
       crumbs([{ name: 'Home', path: '/' }, { name: 'Gen AI Kickstarter', path: '/kickstarter' }]),
     ],
+    faqs: KICKSTARTER_FAQS,
   },
   {
     path: '/aptitude', file: 'aptitude.html', nav: 'AI Aptitude Test',
@@ -348,6 +352,28 @@ function setMeta(html, attr, key, value) {
   return swap(html, re, escAttr(value), (v) => `<meta ${attr}="${key}" content="${v}" />`);
 }
 
+/**
+ * The FAQ, as readable text rather than only as structured data.
+ *
+ * Every route with an FAQPage in its JSON-LD already carries this copy — it was
+ * being handed to search engines as markup and withheld from the page itself.
+ * That is the wrong way round for the crawlers that matter most here: GPTBot,
+ * ClaudeBot and PerplexityBot do not execute JavaScript and do not read
+ * JSON-LD as prose, so they were getting a heading and one sentence off pages
+ * meant to answer exactly the questions these FAQs answer.
+ *
+ * It is the same words in both places on purpose. An FAQ that says one thing in
+ * the markup and another in the text is worse than either alone.
+ */
+function faqHtml(faqs) {
+  if (!Array.isArray(faqs) || !faqs.length) return '';
+  return (
+    '<section><h2>Frequently asked questions</h2>' +
+    faqs.map((f) => `<h3>${escText(f.q)}</h3><p>${escText(f.a)}</p>`).join('') +
+    '</section>'
+  );
+}
+
 function fallback(route) {
   const links = STATIC_ROUTES
     .filter((r) => r.path !== route.path)
@@ -355,7 +381,8 @@ function fallback(route) {
     .join(' · ');
   const extra =
     (route.extra ? `<p>${escText(route.extra)}</p>` : '') +
-    (route.extraHtml || ''); // pre-escaped structured HTML (e.g. full blog body)
+    (route.extraHtml || '') + // pre-escaped structured HTML (e.g. full blog body)
+    faqHtml(route.faqs);
   // Visually hidden (sr-only): present in the HTML for non-JS crawlers/AI, but
   // never shown to users — so there's no flash of fallback text before React
   // boots and replaces #root.
