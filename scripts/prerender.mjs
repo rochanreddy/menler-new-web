@@ -515,11 +515,26 @@ function curriculumHtml(weeks, tracks) {
       (w.tools?.length ? `<p>Tools: ${escText(w.tools.join(', '))}</p>` : '')
     ).join('') + '</section>';
   }
+  /* The tracks in full, not just their names and objectives.
+     That was 15% of what the data holds, and the 85% left out was the part
+     that answers the questions people actually type: what Claude does for a
+     product manager, for a marketer, for someone in finance. aiLayer names the
+     Claude setup per week, liveBuild names the real company the work is done
+     against, and outcome says what the learner ends up with. A page that
+     teaches Claude for six jobs should be findable for six jobs. */
   if (Array.isArray(tracks) && tracks.length) {
     out += '<section><h2>Domain tracks</h2>' + tracks.map((t) =>
       `<h3>${escText(t.name)}</h3>` +
-      (t.weeks?.length ? `<ul>${t.weeks.map((w) =>
-        `<li>${escText(w.wk)}: ${escText(w.objective || '')}</li>`).join('')}</ul>` : '')
+      (t.weeks || []).map((w) =>
+        `<h4>${escText(t.name)} — ${escText(w.wk)}</h4>` +
+        (w.objective ? `<p>${escText(w.objective)}</p>` : '') +
+        (w.domainSense?.length ? `<ul>${w.domainSense.map((d) => `<li>${escText(d)}</li>`).join('')}</ul>` : '') +
+        (w.aiLayer ? `<p>With Claude: ${escText(w.aiLayer)}</p>` : '') +
+        (w.liveBuild ? `<p>Live build: ${escText(w.liveBuild)}</p>` : '') +
+        (w.tools?.length ? `<p>Tools: ${escText(w.tools.join(', '))}</p>` : '') +
+        (w.project ? `<p>Project: ${escText(w.project)}</p>` : '') +
+        (w.outcome ? `<p>Outcome: ${escText(w.outcome)}</p>` : '')
+      ).join('')
     ).join('') + '</section>';
   }
   return out;
