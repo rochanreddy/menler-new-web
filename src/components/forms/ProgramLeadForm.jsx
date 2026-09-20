@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { verifyAndDownloadBrochure } from '../../lib/brochure';
 import { useToast } from '../common/Toast';
 import BackgroundField from './BackgroundField';
+import PhoneField from './PhoneField';
+import { isSmsReachable, phoneMinLength } from '../../lib/phone';
 
 export default function ProgramLeadForm({ program, programColor = 'var(--specialist)', buttonBg = 'var(--specialist)' }) {
   const toast = useToast();
   // Stored as `background`, not `track`: this asks who they are, and filing it
   // under the domain-track field left it out of every background report.
-  const [form, setForm] = useState({ name: '', email: '', phone: '', background: '', college: '', graduation_year: '' });
+  const [form, setForm] = useState({ name: '', email: '', countryCode: '+91', phone: '', background: '', college: '', graduation_year: '' });
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -60,13 +62,19 @@ export default function ProgramLeadForm({ program, programColor = 'var(--special
         </div>
         <div>
           <label>Phone</label>
-          <input required type="tel" placeholder="+91 …" value={form.phone} onChange={e => set('phone', e.target.value)} autoComplete="tel" />
+          <PhoneField countryCode={form.countryCode} phone={form.phone} onCountryCode={(v) => set('countryCode', v)} onPhone={(v) => set('phone', v)} />
         </div>
       </div>
       <div>
         <label>Your background</label>
         <BackgroundField label="Select…" onChange={(v) => set('background', v)} onDetail={setDetail} />
       </div>
+      {/* Say where the code will arrive before it is sent — SMS only reaches
+          +91, and an international reader would otherwise wait on a text that
+          never comes. */}
+      {!isSmsReachable(form.countryCode) && form.phone.length >= phoneMinLength(form.countryCode) && (
+        <p className="lead-channel-note">We can only text Indian numbers — your code will arrive by email.</p>
+      )}
       <button type="submit" style={{ background: buttonBg }} disabled={loading}>
         {loading ? 'Sending…' : 'Get brochure & cohort details'}
       </button>

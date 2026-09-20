@@ -712,6 +712,54 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 .mini-lead-form input:focus, .mini-lead-form select:focus { border-color: var(--specialist); }
 .mini-lead-form button { font-family: inherit; font-size: 13px; font-weight: 500; padding: 10px 18px; border-radius: 8px; border: none; background: var(--specialist); color: white; cursor: pointer; transition: background .2s; }
 .mini-lead-form button:hover { background: var(--ink); }
+/* Dialling code + number as one control, so a bar reads as three fields rather
+   than four. The pair shares a single border: the halves lose their own and the
+   seam between them is a hairline.
+
+   Scoped to the pair itself, not to any one form, because four forms use it —
+   the three brochure bars, the programme lead form and the campaign download.
+   The two-class child selectors outrank each form’s own `.x-form input` rule,
+   so the halves stay borderless wherever the pair is dropped; each form then
+   only has to restate its own padding and radius. */
+.phone-field { display: flex; align-items: stretch; flex: 1 1 200px; min-width: 200px; border-radius: 8px; border: 0.5px solid rgba(175,169,236,0.4); background: white; overflow: hidden; }
+/* No block padding of its own: a select is taller than an input at the same
+   font size, so left to itself it makes the pair 2px taller than the email
+   field beside it. Stretched instead, the number sets the height and the two
+   fields line up. */
+.phone-field > .phone-field-code { flex: 0 0 auto; width: auto; min-width: 0; border: 0; border-right: 0.5px solid rgba(175,169,236,0.4); border-radius: 0; background: transparent; padding-top: 0; padding-bottom: 0; padding-right: 6px; }
+.phone-field > .phone-field-number { flex: 1 1 auto; width: auto; min-width: 0; border: 0; border-radius: 0; background: transparent; }
+.phone-field:focus-within { border-color: var(--specialist); }
+/* The pair already carries the focus ring — a second one inside it reads as a
+   box within a box. */
+.phone-field > .phone-field-code:focus, .phone-field > .phone-field-number:focus { border-color: transparent; }
+/* The lead form stacks label over field, so the pair fills its column. */
+.prog-lead-form .phone-field { flex: none; width: 100%; min-width: 0; border-width: 1px; border-color: rgba(83,74,183,0.18); }
+.prog-lead-form .phone-field:focus-within { border-color: var(--specialist); }
+/* Sits under the button row, across its full width. */
+.lead-channel-note { margin: 0; font-size: 12px; line-height: 1.45; color: var(--text-muted); }
+
+/* Fitting a fourth field into the brochure bar.
+
+   The heading is set to one line (white-space: nowrap) and needs 341px at its
+   22px serif; the copy column only reserved 240px, which was plenty while the
+   form was three fields wide and clipped "brochure" off the end as soon as it
+   became four. So the copy now reserves what its line actually measures, and
+   the form gives the space back by being allowed to shrink — its fields sit
+   below their usual 200px only when the row is genuinely tight.
+
+   All of it is scoped to bars that carry the pair, because the same classes
+   dress the newsletter bars on /blog and /resources, and those still have
+   three fields and no reason to move. */
+.mini-lead-inner:has(.phone-field) .mini-lead-copy { min-width: 345px; }
+/* An explicit basis, not `auto`: wrapping is decided on base size, so a form
+   whose base is its full content width jumps to its own line before it ever
+   gets the chance to shrink. 620px leaves room for the copy’s 345. */
+.mini-lead-form:has(.phone-field) { flex: 1 1 620px; }
+.mini-lead-form:has(.phone-field) input { min-width: 140px; }
+.mini-lead-form:has(.phone-field) .phone-field { flex: 1 1 170px; min-width: 170px; }
+/* Sits under the row, across its full width. */
+.mini-lead-hint { flex: 1 1 100%; margin: 2px 0 0; font-size: 12px; color: var(--text-muted); }
+
 .mini-lead-success { font-size: 13px; color: var(--forest); font-weight: 500; padding: 10px 14px; background: #E1F5EE; border-radius: 8px; }
 
 /* ── METRICS ── */
@@ -2310,6 +2358,10 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
   input.pay-input {
     font-size: 16px;
   }
+  /* The code select is the one select that must follow the rule: it sits
+     inside the same box as a 16px input, where a 13px twin reads as broken.
+     Its width is `auto`, so nothing is disturbed by growing the text. */
+  .phone-field > .phone-field-code { font-size: 16px; }
 }
 .lp2-submit { width: 100%; margin-top: 4px; background: var(--a); color: #fff; border: none; font-family: inherit; font-size: 15.5px; font-weight: 600; padding: 14px; border-radius: 11px; cursor: pointer; box-shadow: 0 12px 26px rgba(186,117,23,0.3); transition: opacity .15s, transform .15s; }
 .lp2-submit:hover { opacity: .95; transform: translateY(-1px); }
@@ -3310,6 +3362,7 @@ a.mag-feat-img { display: block; }
   .mini-lead-copy h3 { white-space: normal; }
   .mini-lead-form { min-width: 0; width: 100%; }
   .mini-lead-form input, .mini-lead-form select { min-width: 0; flex: 1 1 100%; }
+  .mini-lead-form .phone-field { min-width: 0; flex: 1 1 100%; }
   .mini-lead-form button { flex: 1 1 100%; }
   .lead-section { padding: 56px 24px; }
   .lead-form { padding: 22px; }

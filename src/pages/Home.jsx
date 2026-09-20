@@ -15,6 +15,8 @@ import { useToast } from '../components/common/Toast';
 const Hero3D = lazy(() => import('../components/common/Hero3D'));
 import { HOME_FAQS } from '../data/faqData';
 import { verifyAndDownloadBrochure } from '../lib/brochure';
+import PhoneField from '../components/forms/PhoneField';
+import { isSmsReachable, phoneMinLength } from '../lib/phone';
 import { PROJECTS, PROJECTS_QUERY, tagClassFor } from '../data/projectsData';
 import { useContent } from '../lib/useContent';
 import ErrorBoundary from '../components/common/ErrorBoundary';
@@ -107,6 +109,8 @@ export default function Home() {
   }, [showApply]);
 
   const [miniEmail, setMiniEmail] = useState('');
+  const [miniCode, setMiniCode] = useState('+91');
+  const [miniPhone, setMiniPhone] = useState('');
   const [miniProgram, setMiniProgram] = useState('');
   const [miniDone, setMiniDone] = useState(false);
   const handleMiniLead = async (e) => {
@@ -114,6 +118,8 @@ export default function Home() {
     try {
       await verifyAndDownloadBrochure({
         email: miniEmail,
+        countryCode: miniCode,
+        phone: miniPhone,
         program: miniProgram || 'generalist',
         resource: `${miniProgram || 'Menler'} Brochure`,
         source: 'mini-lead',
@@ -296,20 +302,27 @@ export default function Home() {
         <div className="mini-lead-inner">
           <div className="mini-lead-copy">
             <h3>Get the Menler fellowship <em>brochure.</em></h3>
-            <p>Syllabus, schedule, fees & scholarships — verify your email and download it instantly.</p>
+            <p>Syllabus, schedule, fees &amp; scholarships — verify your number and download it instantly.</p>
           </div>
           {miniDone ? (
             <div className="mini-lead-success">✓ Brochure downloading.</div>
           ) : (
             <form className="mini-lead-form" onSubmit={handleMiniLead}>
               <input type="email" required aria-label="Email address" placeholder="you@domain.com" value={miniEmail} onChange={e => setMiniEmail(e.target.value)} autoComplete="email" />
+              <PhoneField countryCode={miniCode} phone={miniPhone} onCountryCode={setMiniCode} onPhone={setMiniPhone} />
               <select required aria-label="Program of interest" value={miniProgram} onChange={e => setMiniProgram(e.target.value)}>
                 <option value="">Program</option>
                 <option>Generalist</option>
                 <option>Engineering</option>
                 <option>Not sure</option>
               </select>
-              <button type="submit">Verify & Download</button>
+              <button type="submit">Verify &amp; Download</button>
+              {/* Say where the code will arrive before it is sent — SMS only
+                  reaches +91, and an international reader would otherwise wait
+                  on a text that never comes. */}
+              {!isSmsReachable(miniCode) && miniPhone.length >= phoneMinLength(miniCode) && (
+                <p className="mini-lead-hint">We can only text Indian numbers — your code will arrive by email.</p>
+              )}
             </form>
           )}
         </div>

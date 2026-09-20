@@ -15,6 +15,8 @@ import { useContent } from '../lib/useContent';
 import { GENERALIST_FAQS } from '../data/faqData';
 import { GEN_HIRING } from '../data/genHiring';
 import { verifyAndDownloadBrochure } from '../lib/brochure';
+import PhoneField from '../components/forms/PhoneField';
+import { isSmsReachable, phoneMinLength } from '../lib/phone';
 
 // ── Pricing card content ──
 const GEN_PRICE_FEATS = [
@@ -187,7 +189,7 @@ export default function Generalist() {
   const navigate = useNavigate();
   const go = (path) => { navigate(path); window.scrollTo(0, 0); };
 
-  const [form, setForm] = useState({ name: '', email: '', phone: '', track: '' });
+  const [form, setForm] = useState({ name: '', email: '', countryCode: '+91', phone: '', track: '' });
   const [done, setDone] = useState(false);
   const [activeProject, setActiveProject] = useState(null);
   // Download Curriculum → gated lead form (email OTP) that downloads the PDF.
@@ -229,6 +231,7 @@ export default function Generalist() {
       await verifyAndDownloadBrochure({
         name: form.name,
         email: form.email,
+        countryCode: form.countryCode,
         phone: form.phone,
         program: 'generalist',
         track: form.track,
@@ -438,13 +441,14 @@ export default function Generalist() {
         <div className="mini-lead-inner">
           <div className="mini-lead-copy">
             <h3>Get the Generalist <em>brochure & syllabus</em>.</h3>
-            <p>Syllabus, schedule, fees & scholarships — verify your email and download it instantly.</p>
+            <p>Syllabus, schedule, fees &amp; scholarships — verify your number and download it instantly.</p>
           </div>
           {done ? (
             <div className="mini-lead-success">✓ Brochure downloading.</div>
           ) : (
             <form className="mini-lead-form" onSubmit={handleBrochure}>
               <input type="email" required aria-label="Email address" placeholder="you@domain.com" value={form.email} onChange={e => set('email', e.target.value)} autoComplete="email" />
+              <PhoneField countryCode={form.countryCode} phone={form.phone} onCountryCode={(v) => set('countryCode', v)} onPhone={(v) => set('phone', v)} />
               <select required aria-label="Track of interest" value={form.track} onChange={e => set('track', e.target.value)}>
                 <option value="">Choose a track…</option>
                 <option>Founder's Office</option>
@@ -456,7 +460,10 @@ export default function Generalist() {
                 <option>Business owner — custom</option>
                 <option>Not sure yet</option>
               </select>
-              <button type="submit">Verify & Download</button>
+              <button type="submit">Verify &amp; Download</button>
+              {!isSmsReachable(form.countryCode) && form.phone.length >= phoneMinLength(form.countryCode) && (
+                <p className="mini-lead-hint">We can only text Indian numbers — your code will arrive by email.</p>
+              )}
             </form>
           )}
         </div>

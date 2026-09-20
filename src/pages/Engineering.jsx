@@ -9,6 +9,8 @@ import { useApply } from '../components/common/ApplyContext';
 import HiringJobs from '../components/common/HiringJobs';
 import { ENGINEERING_FAQS } from '../data/faqData';
 import { verifyAndDownloadBrochure } from '../lib/brochure';
+import PhoneField from '../components/forms/PhoneField';
+import { isSmsReachable, phoneMinLength } from '../lib/phone';
 import BackgroundField from '../components/forms/BackgroundField';
 
 // Hiring section content for the Engineering page only — edit freely, it does
@@ -45,7 +47,7 @@ export default function Engineering() {
   const navigate = useNavigate();
   const go = (path) => { navigate(path); window.scrollTo(0, 0); };
 
-  const [form, setForm] = useState({ name: '', email: '', phone: '', background: '', college: '', graduation_year: '' });
+  const [form, setForm] = useState({ name: '', email: '', countryCode: '+91', phone: '', background: '', college: '', graduation_year: '' });
   const [done, setDone] = useState(false);
   const openApply = useApply();
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
@@ -60,6 +62,7 @@ export default function Engineering() {
       await verifyAndDownloadBrochure({
         name: form.name,
         email: form.email,
+        countryCode: form.countryCode,
         phone: form.phone,
         program: 'engineering',
         background: form.background,
@@ -146,15 +149,19 @@ export default function Engineering() {
         <div className="mini-lead-inner">
           <div className="mini-lead-copy">
             <h3 style={{ color: 'var(--forest)' }}>Get the Engineering <em style={{ color: 'var(--placed)' }}>brochure & syllabus</em>.</h3>
-            <p>Syllabus, schedule, fees & scholarships — verify your email and download it instantly.</p>
+            <p>Syllabus, schedule, fees &amp; scholarships — verify your number and download it instantly.</p>
           </div>
           {done ? (
             <div className="mini-lead-success">✓ Brochure downloading.</div>
           ) : (
             <form className="mini-lead-form" onSubmit={handleBrochure}>
               <input type="email" required aria-label="Email address" placeholder="you@domain.com" value={form.email} onChange={e => set('email', e.target.value)} autoComplete="email" />
+              <PhoneField countryCode={form.countryCode} phone={form.phone} onCountryCode={(v) => set('countryCode', v)} onPhone={(v) => set('phone', v)} />
               <BackgroundField label="You are…" onChange={(v) => set('background', v)} onDetail={setDetail} />
-              <button type="submit">Verify & Download</button>
+              <button type="submit">Verify &amp; Download</button>
+              {!isSmsReachable(form.countryCode) && form.phone.length >= phoneMinLength(form.countryCode) && (
+                <p className="mini-lead-hint">We can only text Indian numbers — your code will arrive by email.</p>
+              )}
             </form>
           )}
         </div>

@@ -732,3 +732,25 @@
   .gcamp-foot-desc { font-size: 12.5px; max-width: 300px; }
   .gcamp-bar { display: none; }
 }
+
+/* The dialling-code + number pair, in this section's pill shape. The shared
+   rules in global.css already strip the halves' own borders; what has to be
+   restated here is the radius and the padding, because the download form
+   styles `input` alone and would otherwise leave the select at browser
+   default — a squat grey box wedged against a 14px input. */
+.gcamp-dl-form .phone-field {
+  flex: none;
+  width: 100%;
+  min-width: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(var(--gc-accent-rgb), 0.25);
+}
+.gcamp-dl-form .phone-field > .phone-field-code {
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--ink);
+  padding: 0 6px 0 15px;
+  outline: none;
+}
+.gcamp-dl-form .phone-field > .phone-field-number { padding: 14px 15px; }
+.gcamp-dl-form .phone-field:focus-within { border-color: var(--gc-accent); }

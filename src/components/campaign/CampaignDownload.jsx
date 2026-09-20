@@ -2,9 +2,11 @@ import { useState } from 'react';
 import Reveal from '../common/Reveal';
 import { useToast } from '../common/Toast';
 import { verifyAndDownloadBrochure } from '../../lib/brochure';
+import PhoneField from '../forms/PhoneField';
+import { isSmsReachable, phoneMinLength } from '../../lib/phone';
 
 /**
- * Curriculum download — verifies the email by OTP, hands over the brochure PDF
+ * Curriculum download — verifies the reader by OTP, hands over the brochure PDF
  * as an on-site download, and records the lead in the background. Same helper
  * the programme pages use, so the file and CRM fields stay in one place.
  *
@@ -20,6 +22,8 @@ export default function CampaignDownload({
 }) {
   const toast = useToast();
   const [email, setEmail] = useState('');
+  const [countryCode, setCountryCode] = useState('+91');
+  const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
 
@@ -29,6 +33,8 @@ export default function CampaignDownload({
     try {
       await verifyAndDownloadBrochure({
         email: email.trim(),
+        countryCode,
+        phone,
         program,
         resource,
         source,
@@ -68,10 +74,25 @@ export default function CampaignDownload({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
+            <PhoneField
+              countryCode={countryCode}
+              phone={phone}
+              onCountryCode={setCountryCode}
+              onPhone={setPhone}
+              disabled={loading}
+            />
+            {/* Say where the code will arrive before it is sent — SMS only
+                reaches +91, and an international reader would otherwise wait
+                on a text that never comes. */}
+            {!isSmsReachable(countryCode) && phone.length >= phoneMinLength(countryCode) && (
+              <p className="gcamp-dl-note">
+                We can only text Indian numbers — your code will arrive by email.
+              </p>
+            )}
             <button type="submit" className="gcamp-cta" disabled={loading}>
               {loading ? 'Verifying…' : 'Download curriculum'}
             </button>
-            <p className="gcamp-dl-note">PDF · no spam, we verify your email once.</p>
+            <p className="gcamp-dl-note">PDF · no spam, we verify your number once.</p>
           </form>
         )}
       </Reveal>
