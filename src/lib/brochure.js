@@ -4,8 +4,8 @@
 //
 // The program → PDF map mirrors the server (server/routes/leads.js).
 
-import { verifyEmailOtp, verifySmsOtp } from './amplifeedOtp';
-import { formatPhone, isSmsReachable, phoneDigits, phoneMinLength } from './phone';
+import { verifyLeadIdentity } from './leadVerify';
+import { formatPhone } from './phone';
 import { downloadFile } from './download';
 import { submitLead } from '../services/leadService';
 
@@ -26,29 +26,13 @@ export function brochurePdfForProgram(program) {
 // `payload` carries email, countryCode + phone, program, and the CRM fields
 // (resource/source/cta_label/…).
 //
-// THE CODE GOES BY SMS, EXCEPT WHERE SMS CANNOT REACH. Our provider only
-// delivers inside India, so a non-+91 number would never receive one and the
-// download would dead-end with nothing on screen to explain it. Those are
-// verified by email instead — the same proof of a real person, and the same
-// split the Kickstarter and campaign forms already make. The number is still
-// collected and still reaches the CRM either way.
+// The code goes by SMS where SMS can reach, and by email where it cannot —
+// see lib/leadVerify, which every download on the site shares.
 export async function verifyAndDownloadBrochure(payload) {
   const email = String(payload.email || '').trim();
   const code = String(payload.countryCode || '+91').trim();
-  // The SMS identifier is country code + number, digits only, no "+".
-  const digits = phoneDigits(code, payload.phone);
 
-  // A form that collects no number at all still has to work: without this it
-  // would text the bare country code and the reader would wait on nothing.
-  const smsReady =
-    isSmsReachable(code) &&
-    String(payload.phone || '').replace(/\D/g, '').length >= phoneMinLength(code);
-
-  const otp = smsReady
-    // `email` makes the widget's "use email instead" link work; without it that
-    // link retries the phone number over email and always fails.
-    ? await verifySmsOtp(digits, { email })
-    : await verifyEmailOtp(email);
+  const otp = await verifyLeadIdentity({ email, countryCode: code, phone: payload.phone });
 
   const pdf = brochurePdfForProgram(payload.program);
   const base = (payload.resource || 'Menler Brochure').replace(/[^\w\s&-]/g, '').trim();

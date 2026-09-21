@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { submitLead, deliverLibraryResource } from '../../services/leadService';
-import { verifyEmailOtp } from '../../lib/amplifeedOtp';
+import { verifyLeadIdentity } from '../../lib/leadVerify';
+import PhoneField from '../forms/PhoneField';
+import { formatPhone, isSmsReachable, phoneMinLength } from '../../lib/phone';
 import { getVerifiedLead, saveVerifiedLead } from '../../lib/verifiedSession';
 import { downloadFile } from '../../lib/download';
 import { createEnrolOrder, getPaymentStatus } from '../../services/paymentService';
@@ -19,7 +21,7 @@ import PdfView from './PdfView';
  * Pass the clicked item (or null) and an onClose handler.
  */
 export default function PlaybookModal({ item, onClose }) {
-  const [form, setForm] = useState({ name: '', email: '', phone: '' });
+  const [form, setForm] = useState({ name: '', email: '', countryCode: '+91', phone: '' });
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [err, setErr] = useState(false); // false | true | string
@@ -30,7 +32,7 @@ export default function PlaybookModal({ item, onClose }) {
 
   useEffect(() => {
     if (!item) return;
-    setForm({ name: '', email: '', phone: '' });
+    setForm({ name: '', email: '', countryCode: '+91', phone: '' });
     setDone(false);
     setErr(false);
     setFormOpen(false);
@@ -72,15 +74,19 @@ export default function PlaybookModal({ item, onClose }) {
     submitLead({ ...lead, resource: item.title, pdf: item.pdf, source: item.source || 'playbook-download', cta_label: `Download: ${item.title}`, section: item.section || item.badge || item.cat || 'Playbook' }).catch(() => {});
   };
 
-  // FREE flow: verify the email via OTP, then download the PDF on-site.
+  // FREE flow: verify by OTP — by text where a text can reach, by email where
+  // it cannot (see lib/leadVerify) — then download the PDF on-site.
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErr(false);
     setSubmitting(true);
     try {
-      const otp = await verifyEmailOtp(form.email.trim());
-      saveVerifiedLead({ name: form.name, email: form.email.trim(), phone: form.phone });
-      recordAndDownload({ ...form, ...otp });
+      const otp = await verifyLeadIdentity({ email: form.email.trim(), countryCode: form.countryCode, phone: form.phone });
+      // Stored the way the rest of the site stores it: dialling code, space,
+      // number — so a session restored later still reads as a real number.
+      const phone = formatPhone(form.countryCode, form.phone);
+      saveVerifiedLead({ name: form.name, email: form.email.trim(), phone });
+      recordAndDownload({ ...form, phone, ...otp });
       setDone(true);
     } catch {
       setErr(true);
@@ -199,7 +205,7 @@ export default function PlaybookModal({ item, onClose }) {
                 </div>
                 <div className="lf-field full">
                   <label>Phone</label>
-                  <input type="tel" required value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+91 98765 43210" autoComplete="tel" />
+                  <PhoneField countryCode={form.countryCode} phone={form.phone} onCountryCode={(v) => set('countryCode', v)} onPhone={(v) => set('phone', v)} />
                 </div>
                 <button className="pb-modal-btn" type="submit" disabled={submitting || !item.pdf}>{submitting ? 'Processing…' : item.pdf ? 'Pay & Download' : 'Coming soon'}</button>
                 {err && <p className="lf-fineprint" style={{ color: '#c0392b' }}>{errText}</p>}
@@ -237,11 +243,19 @@ export default function PlaybookModal({ item, onClose }) {
                 </div>
                 <div className="lf-field full">
                   <label>Phone</label>
-                  <input type="tel" required value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+91 98765 43210" autoComplete="tel" />
+                  <PhoneField countryCode={form.countryCode} phone={form.phone} onCountryCode={(v) => set('countryCode', v)} onPhone={(v) => set('phone', v)} />
                 </div>
                 <button className="pb-modal-btn" type="submit" disabled={submitting || !item.pdf}>{submitting ? 'Verifying…' : item.pdf ? 'Verify & Download' : 'Coming soon'}</button>
                 {err && <p className="lf-fineprint" style={{ color: '#c0392b' }}>{errText}</p>}
-                <p className="lf-fineprint">Verify your email and the PDF downloads here. We may send occasional Menler updates — unsubscribe anytime.</p>
+                {/* Say where the code will arrive before it is sent — SMS only
+                    reaches +91, and an international reader would otherwise wait
+                    on a text that never comes. */}
+                <p className="lf-fineprint">
+                  {isSmsReachable(form.countryCode) || form.phone.length < phoneMinLength(form.countryCode)
+                    ? 'Verify your number and the PDF downloads here.'
+                    : 'We can only text Indian numbers — your code will arrive by email.'}
+                  {' '}We may send occasional Menler updates — unsubscribe anytime.
+                </p>
               </form>
             </>
           )}

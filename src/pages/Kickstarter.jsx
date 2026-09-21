@@ -14,7 +14,9 @@ import PayModal from '../components/common/PayModal';
 import BackgroundField from '../components/forms/BackgroundField';
 import { useContent } from '../lib/useContent';
 import { KICKSTARTER_FAQS } from '../data/faqData';
-import { submitLead } from '../services/leadService';
+import { verifyAndDownloadBrochure } from '../lib/brochure';
+import PhoneField from '../components/forms/PhoneField';
+import { isSmsReachable, phoneMinLength } from '../lib/phone';
 
 // Curriculum PDF served by the "Download curriculum" button (no verification).
 const KS_CURRICULUM_PDF = '/pdfs/Menler_AI_Kickstarter.pdf';
@@ -153,7 +155,7 @@ export default function Kickstarter() {
 
   // `background`, not `role`: the brochure form asked the same question as
   // every other form but stored the answer under a name nothing reported on.
-  const [form, setForm] = useState({ name: '', email: '', phone: '', background: '', college: '', graduation_year: '' });
+  const [form, setForm] = useState({ name: '', email: '', countryCode: '+91', phone: '', background: '', college: '', graduation_year: '' });
   const [done, setDone] = useState(false);
   const [activeProject, setActiveProject] = useState(null);
   const [activeModule, setActiveModule] = useState(0);
@@ -187,8 +189,24 @@ export default function Kickstarter() {
   const setDetail = (d) => setForm((f) => ({ ...f, ...d }));
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try { await submitLead({ ...form, program: 'kickstarter', source: 'kickstarter-page', cta_label: 'Apply: Kickstarter', section: 'Gen AI Kickstarter', apply: true }); } catch {}
-    setDone(true);
+    // Verified and downloaded on the spot, like the other brochure bars —
+    // this used to file the lead and promise an email that the reader then
+    // had to go and wait for. verifyAndDownloadBrochure submits the lead too,
+    // so the CRM fields below (including apply) still ride along.
+    try {
+      await verifyAndDownloadBrochure({
+        ...form,
+        program: 'kickstarter',
+        resource: 'Kickstarter Brochure',
+        source: 'kickstarter-page',
+        cta_label: 'Apply: Kickstarter',
+        section: 'Gen AI Kickstarter',
+        apply: true,
+      });
+      setDone(true);
+    } catch {
+      setDone(false);
+    }
   };
 
   return (
@@ -359,15 +377,22 @@ export default function Kickstarter() {
         <div className="mini-lead-inner">
           <div className="mini-lead-copy">
             <h3>Get the Kickstarter <em>brochure.</em></h3>
-            <p>Syllabus, schedule, fees & scholarships straight to your inbox.</p>
+            <p>Syllabus, schedule, fees &amp; scholarships — verify your number and download it instantly.</p>
           </div>
           {done ? (
-            <div className="mini-lead-success">✓ Brochure on its way.</div>
+            <div className="mini-lead-success">✓ Verified — your brochure is downloading.</div>
           ) : (
             <form className="mini-lead-form" onSubmit={handleSubmit}>
               <input type="email" required aria-label="Email address" placeholder="you@domain.com" value={form.email} onChange={e => set('email', e.target.value)} autoComplete="email" />
+              <PhoneField countryCode={form.countryCode} phone={form.phone} onCountryCode={(v) => set('countryCode', v)} onPhone={(v) => set('phone', v)} />
               <BackgroundField label="You are…" onChange={(v) => set('background', v)} onDetail={setDetail} />
-              <button type="submit">Send Brochure</button>
+              <button type="submit">Verify &amp; Download</button>
+              {/* Say where the code will arrive before it is sent — SMS only
+                  reaches +91, and an international reader would otherwise wait
+                  on a text that never comes. */}
+              {!isSmsReachable(form.countryCode) && form.phone.length >= phoneMinLength(form.countryCode) && (
+                <p className="mini-lead-hint">We can only text Indian numbers — your code will arrive by email.</p>
+              )}
             </form>
           )}
         </div>

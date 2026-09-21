@@ -732,6 +732,13 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 /* The pair already carries the focus ring — a second one inside it reads as a
    box within a box. */
 .phone-field > .phone-field-code:focus, .phone-field > .phone-field-number:focus { border-color: transparent; }
+/* The modal stacks label over field too, and dresses its fields in parchment
+   rather than white — the pair has to carry that, since its halves are now
+   transparent and would otherwise show the card through. */
+.lf-field > .phone-field { flex: none; width: 100%; min-width: 0; background: var(--parchment); border-color: rgba(175,169,236,0.35); transition: border-color .15s, background .15s; }
+.lf-field > .phone-field:focus-within { border-color: var(--specialist); background: white; }
+.lf-field > .phone-field > .phone-field-code { font-size: 13px; color: var(--ink); }
+
 /* The lead form stacks label over field, so the pair fills its column. */
 .prog-lead-form .phone-field { flex: none; width: 100%; min-width: 0; border-width: 1px; border-color: rgba(83,74,183,0.18); }
 .prog-lead-form .phone-field:focus-within { border-color: var(--specialist); }
@@ -749,8 +756,14 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
 
    All of it is scoped to bars that carry the pair, because the same classes
    dress the newsletter bars on /blog and /resources, and those still have
-   three fields and no reason to move. */
-.mini-lead-inner:has(.phone-field) .mini-lead-copy { min-width: 345px; }
+   three fields and no reason to move.
+
+   The copy reserves
+   min-content, not a fixed 345px, because the bars do not all say the same
+   thing: the heading is the only nowrap child, so min-content IS its line —
+   341px on Home, 288px on Kickstarter, which needs the difference back for a
+   fifth field. */
+.mini-lead-inner:has(.phone-field) .mini-lead-copy { min-width: min-content; }
 /* An explicit basis, not `auto`: wrapping is decided on base size, so a form
    whose base is its full content width jumps to its own line before it ever
    gets the chance to shrink. 620px leaves room for the copy’s 345. */
