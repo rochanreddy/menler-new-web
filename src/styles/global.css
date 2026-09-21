@@ -768,8 +768,25 @@ button.dd-item { width: 100%; text-align: left; background: none; border: none; 
    whose base is its full content width jumps to its own line before it ever
    gets the chance to shrink. 620px leaves room for the copy’s 345. */
 .mini-lead-form:has(.phone-field) { flex: 1 1 620px; }
-.mini-lead-form:has(.phone-field) input { min-width: 140px; }
-.mini-lead-form:has(.phone-field) .phone-field { flex: 1 1 170px; min-width: 170px; }
+/* `> input`, not ` input`: the pair holds an input of its own, and a floor
+   meant for the email field was landing on that one too. It then could not
+   shrink, the two halves outgrew the pair, and overflow: hidden sliced the
+   placeholder down to "Phone nun". The child combinator keeps the floor on
+   the email, where it was aimed. */
+.mini-lead-form:has(.phone-field) > input { min-width: 140px; }
+/* Wide enough for the dialling code and the whole placeholder: 95 for the
+   select, 88 for "Phone number", 24 of padding and the border. Below this the
+   field is a box you cannot read, so it holds its ground and the track select
+   beside it — which is only ever as wide as its longest option — gives way. */
+.mini-lead-form:has(.phone-field) .phone-field { flex: 1 1 210px; min-width: 210px; }
+/* Wrapping is decided on base sizes, and a select’s base is its longest
+   option — 203px for "Choose a track…". With the pair now holding 210, that
+   base pushed the row over and the button dropped to a second line. Basing the
+   select at its own floor keeps the row intact; the free space flows back into
+   it, so it still renders full width when there is room. */
+.mini-lead-form:has(.phone-field) > select { flex: 1 1 140px; }
+/* The submit label is two words and must not wrap to make room. */
+.mini-lead-form:has(.phone-field) > button { flex: none; }
 /* Sits under the row, across its full width. */
 .mini-lead-hint { flex: 1 1 100%; margin: 2px 0 0; font-size: 12px; color: var(--text-muted); }
 
@@ -3376,6 +3393,14 @@ a.mag-feat-img { display: block; }
   .mini-lead-form { min-width: 0; width: 100%; }
   .mini-lead-form input, .mini-lead-form select { min-width: 0; flex: 1 1 100%; }
   .mini-lead-form .phone-field { min-width: 0; flex: 1 1 100%; }
+  /* The desktop rules above are scoped with :has(), which outranks the plain
+     selectors in this block — so the floors that keep four fields on one wide
+     row have to be released by name, or the pair and the track select crowd
+     onto a single phone-width line. */
+  .mini-lead-form:has(.phone-field) > input,
+  .mini-lead-form:has(.phone-field) > select { min-width: 0; flex: 1 1 100%; }
+  .mini-lead-form:has(.phone-field) .phone-field { min-width: 0; flex: 1 1 100%; }
+  .mini-lead-form:has(.phone-field) > button { flex: 1 1 100%; }
   .mini-lead-form button { flex: 1 1 100%; }
   .lead-section { padding: 56px 24px; }
   .lead-form { padding: 22px; }
