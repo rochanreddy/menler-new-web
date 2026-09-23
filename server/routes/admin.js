@@ -1053,6 +1053,11 @@ router.get('/leads/export.csv', requireAdmin, async (req, res) => {
       { key: 'program', label: 'Program' },
       { key: 'track', label: 'Track' },
       { key: 'background', label: 'Background' },
+      // Rides in `extra` like the two below it — the campaign forms ask for it,
+      // the Lead schema does not name it — so it gets a column for the same
+      // reason they do: a spreadsheet cannot sort on a JSON blob, and sorting
+      // leads by city is the whole point of asking for one.
+      { key: 'city', label: 'City', get: (r) => r.extra?.city || '' },
       // The background question's follow-ups. Their own columns because reading
       // them out of the `extra` JSON blob is not something a spreadsheet can do.
       { key: 'college', label: 'College', get: (r) => r.extra?.college || '' },

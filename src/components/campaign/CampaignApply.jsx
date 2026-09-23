@@ -80,7 +80,7 @@ export function ThankYou({ applicant = {}, programTitle, followUp, theme = '' })
  * required rather than optional. */
 function ApplyForm({ onDone, program, source, section, noteProgram }) {
   const toast = useToast();
-  const [form, setForm] = useState({ name: '', email: '', countryCode: '+91', phone: '', background: '', college: '', graduation_year: '' });
+  const [form, setForm] = useState({ name: '', email: '', countryCode: '+91', phone: '', city: '', background: '', college: '', graduation_year: '' });
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState('');
 
@@ -115,6 +115,7 @@ function ApplyForm({ onDone, program, source, section, noteProgram }) {
         name: form.name.trim(),
         email: form.email.trim(),
         phone: `${form.countryCode} ${form.phone}`,
+        city: form.city.trim(),
         background: form.background,
         college: form.college, graduation_year: form.graduation_year,
         program,
@@ -191,6 +192,19 @@ function ApplyForm({ onDone, program, source, section, noteProgram }) {
             disabled={loading}
           />
         </div>
+        {/* address-level2 is the autofill token browsers map to "city", so a
+            phone that already knows it offers it rather than making someone
+            type it out with one thumb. */}
+        <input
+          required
+          type="text"
+          aria-label="City"
+          placeholder="City"
+          autoComplete="address-level2"
+          value={form.city}
+          onChange={(e) => set('city', e.target.value)}
+          disabled={loading}
+        />
         {/* Who they are, asked the same two-step way as every other form on
             the site so admissions reads one vocabulary, not a per-page one. */}
         <BackgroundField
