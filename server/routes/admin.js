@@ -744,6 +744,24 @@ router.post('/paid-users', requireAdmin, async (req, res) => {
       return res.status(400).json({ error: 'A positive amount is required.' });
     }
 
+    // The deal behind the payment: the course's list price, what this student
+    // was actually sold it for, and which instalment this payment is. Optional
+    // — a blank stays blank rather than becoming 0 — but when given they must
+    // be real numbers, or the "sold for" column becomes a place typos hide.
+    const money = (v) => (v === '' || v == null ? null : Number(v));
+    const actualPrice = money(b.actual_price);
+    const soldPrice = money(b.sold_price);
+    const cycle = b.payment_cycle === '' || b.payment_cycle == null ? null : Number(b.payment_cycle);
+    if (actualPrice !== null && (!Number.isFinite(actualPrice) || actualPrice <= 0)) {
+      return res.status(400).json({ error: 'The actual price must be a positive amount.' });
+    }
+    if (soldPrice !== null && (!Number.isFinite(soldPrice) || soldPrice <= 0)) {
+      return res.status(400).json({ error: 'The sold price must be a positive amount.' });
+    }
+    if (cycle !== null && (!Number.isInteger(cycle) || cycle < 1 || cycle > 24)) {
+      return res.status(400).json({ error: 'The payment cycle must be 1, 2, 3 …' });
+    }
+
     const p = verified?.payment;
     const order = await Order.create({
       order_id: p?.order_id || `MANUAL_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
@@ -775,6 +793,9 @@ router.post('/paid-users', requireAdmin, async (req, res) => {
           ...(b.txn_id ? { txn_id: String(b.txn_id).trim() } : {}),
         }),
         ...(b.note ? { note: String(b.note).trim() } : {}),
+        ...(actualPrice !== null ? { actual_price: actualPrice } : {}),
+        ...(soldPrice !== null ? { sold_price: soldPrice } : {}),
+        ...(cycle !== null ? { payment_cycle: cycle } : {}),
       },
     });
     res.status(201).json({ ok: true, id: order._id, verified: Boolean(verified) });
@@ -973,6 +994,9 @@ router.get('/paid-users/export.csv', requireAdmin, async (req, res) => {
       { key: 'program', label: 'Program' },
       { label: 'Batch', get: (r) => r.extra?.batch || '' },
       { key: 'amount', label: 'Amount' },
+      { label: 'Actual price', get: (r) => r.extra?.actual_price ?? '' },
+      { label: 'Sold price', get: (r) => r.extra?.sold_price ?? '' },
+      { label: 'Payment cycle', get: (r) => r.extra?.payment_cycle ?? '' },
       { label: 'Paid by', get: (r) => r.extra?.payment?.label || r.extra?.payment_method || '' },
       { label: 'EMI', get: (r) => (r.extra?.payment?.emi ? 'yes' : '') },
       { label: 'Payment detail', get: (r) => r.extra?.payment?.detail || '' },

@@ -804,6 +804,7 @@ function UsersTab() {
   const [adding, setAdding] = useState(false);
   const [addForm, setAddForm] = useState({
     name: '', email: '', phone: '', amount: '', program: '', otherProgram: '', paid_at: '', batch: '', txn_id: '', note: '',
+    actual_price: '', sold_price: '', payment_cycle: '1',
   });
   const [addErr, setAddErr] = useState('');
   const [saving, setSaving] = useState(false);
@@ -833,7 +834,7 @@ function UsersTab() {
   const closeAdd = () => {
     setAdding(false);
     setRef(''); setFound(null); setAddErr(''); setManualMode(false);
-    setAddForm({ name: '', email: '', phone: '', amount: '', program: '', otherProgram: '', paid_at: '', batch: '', txn_id: '', note: '', });
+    setAddForm({ name: '', email: '', phone: '', amount: '', program: '', otherProgram: '', paid_at: '', batch: '', txn_id: '', note: '', actual_price: '', sold_price: '', payment_cycle: '1' });
   };
 
   // Escape closes it, and the page behind stays put while it's open.
@@ -937,6 +938,9 @@ function UsersTab() {
         ...addForm,
         program,
         amount: Number(addForm.amount),
+        actual_price: addForm.actual_price === '' ? '' : Number(addForm.actual_price),
+        sold_price: addForm.sold_price === '' ? '' : Number(addForm.sold_price),
+        payment_cycle: addForm.payment_cycle === '' ? '' : Number(addForm.payment_cycle),
         reference: manualMode ? '' : ref.trim(),
         unverified: manualMode,   // the server refuses a blank reference without this
       });
@@ -1065,6 +1069,15 @@ function UsersTab() {
                 </td>
                 <td>
                   <b>₹{r.amount.toLocaleString('en-IN')}</b>
+                  {/* Which instalment, and of what deal — only on rows that
+                      recorded one. */}
+                  {r.extra?.payment_cycle && (
+                    <span className="admin-subline"
+                      title={r.extra?.actual_price ? `List price ₹${r.extra.actual_price.toLocaleString('en-IN')}` : ''}>
+                      Payment {r.extra.payment_cycle}
+                      {r.extra?.sold_price ? ` · sold ₹${r.extra.sold_price.toLocaleString('en-IN')}` : ''}
+                    </span>
+                  )}
                   {/* How it was paid, under what was paid. EMI is called out
                       rather than left as one label among several: it's the
                       one that means the money arrives in instalments. */}
@@ -1130,6 +1143,11 @@ function UsersTab() {
             ['Program', selected.program],
             ['Batch', selected.extra?.batch ? monthLabel(selected.extra.batch) : 'not set'],
             ['Amount', `₹${selected.amount}`],
+            ...(selected.extra?.actual_price ? [['Actual price', `₹${selected.extra.actual_price.toLocaleString('en-IN')}`]] : []),
+            ...(selected.extra?.sold_price ? [['Sold price', `₹${selected.extra.sold_price.toLocaleString('en-IN')}`
+              + (selected.extra?.actual_price && selected.extra.sold_price < selected.extra.actual_price
+                ? ` (₹${(selected.extra.actual_price - selected.extra.sold_price).toLocaleString('en-IN')} off)` : '')]] : []),
+            ...(selected.extra?.payment_cycle ? [['Payment cycle', `Payment ${selected.extra.payment_cycle}`]] : []),
             ['Status', selected.status],
             ['Via', selected.extra?.manual
               ? `Cashfree payment link${selected.extra?.verified ? ' — verified against Cashfree' : ' — never verified'}`
@@ -1391,6 +1409,12 @@ function UsersTab() {
                     // Fill the usual price, still editable for part payments.
                     const known = COURSE_OPTIONS.find((c) => c.key === v);
                     if (known && !found) setF('amount', String(known.amount));
+                    // The list price is the course's; the sold price starts
+                    // there too, unless someone has already typed a deal in.
+                    if (known) {
+                      setF('actual_price', String(known.amount));
+                      if (!addForm.sold_price || addForm.sold_price === addForm.actual_price) setF('sold_price', String(known.amount));
+                    }
                     // Suggest the month they paid in — right most of the time,
                     // and a wrong suggestion is easier to correct than a blank.
                     if (COHORT_COURSES.has(v) && !addForm.batch) {
@@ -1414,6 +1438,37 @@ function UsersTab() {
                     value={addForm.otherProgram || ''} onChange={(e) => setF('otherProgram', e.target.value)} />
                 </label>
               )}
+
+              {/* The deal behind this payment: what the course lists at, what
+                  this student was sold it for, and which instalment this is.
+                  A payment of ₹20,000 means nothing on its own — first of
+                  three on a ₹60,000 deal, or the last of a discounted one. */}
+              <div className="admin-grid3">
+                <label className="admin-field"><span>Actual price (₹)</span>
+                  <input className="admin-search" type="number" min="1" placeholder="Course list price"
+                    value={addForm.actual_price} onChange={(e) => setF('actual_price', e.target.value)} />
+                </label>
+                <label className="admin-field"><span>Sold price (₹)</span>
+                  <input className="admin-search" type="number" min="1" placeholder="What they were charged"
+                    value={addForm.sold_price} onChange={(e) => setF('sold_price', e.target.value)} />
+                  {Number(addForm.actual_price) > 0 && Number(addForm.sold_price) > 0
+                    && Number(addForm.sold_price) < Number(addForm.actual_price) && (
+                    <em className="admin-field-hint">
+                      ₹{(Number(addForm.actual_price) - Number(addForm.sold_price)).toLocaleString('en-IN')} off
+                      ({Math.round((1 - Number(addForm.sold_price) / Number(addForm.actual_price)) * 100)}% discount)
+                    </em>
+                  )}
+                </label>
+                <label className="admin-field"><span>Payment cycle</span>
+                  <select className="admin-search" value={addForm.payment_cycle}
+                    onChange={(e) => setF('payment_cycle', e.target.value)}>
+                    {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => (
+                      <option key={n} value={String(n)}>{n}{n === 1 ? ' — first payment' : ''}</option>
+                    ))}
+                  </select>
+                  <em className="admin-field-hint">Which instalment this payment is — 1, 2, 3 …</em>
+                </label>
+              </div>
 
               <label className="admin-field">
                 <span>Amount paid (₹) *{found && <em className="admin-field-ok"> — from Cashfree</em>}</span>

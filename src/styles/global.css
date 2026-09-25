@@ -3875,6 +3875,12 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 
 .admin-grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 @media (max-width: 520px) { .admin-grid2 { grid-template-columns: 1fr; } }
+/* Three short fields side by side: the price, the deal, the instalment. */
+.admin-grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+/* The fields inside carry a min-width from .admin-search that is wider than a
+   third of the dialog, so without this they spill out of their columns. */
+.admin-grid3 .admin-search { width: 100%; min-width: 0; box-sizing: border-box; }
+@media (max-width: 620px) { .admin-grid3 { grid-template-columns: 1fr; } }
 
 .admin-field { display: block; }
 .admin-field > span { display: block; font-size: 12.5px; font-weight: 700; color: var(--ink); margin-bottom: 5px; }
