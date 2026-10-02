@@ -34,6 +34,9 @@ export const HOME_FAQS = [
 ];
 
 export const KICKSTARTER_FAQS = [
+  { q: 'What is the Menler Gen AI Kickstarter?', a: "The Gen AI Kickstarter is Menler's 14-day AI course for complete beginners. You get hands-on with 10+ AI tools, complete 4 mini-builds and earn a fluency certificate — designed for students and professionals who are starting from zero." },
+  { q: 'How long is the AI Kickstarter and what does it cost?', a: 'It runs for 14 days with live, recorded sessions, and costs ₹4,999. Group discounts are available for 5 or more learners from the same college or company.' },
+  { q: 'Who should take the AI Kickstarter?', a: "Anyone new to AI: students, working professionals, business owners and career switchers. If you want a short, practical start before a longer program like the AI Generalist Fellowship, the Kickstarter is built for you." },
   { q: 'Are there any prerequisites?', a: "None. If you can use a smartphone and join a Zoom call, you're ready." },
   { q: 'Will I get a refund if it\'s not a fit?', a: 'Once access to the program has been activated, fees are non-refundable. A full refund will be issued only if course access is not provided.' },
   { q: 'What language is the program in?', a: 'Primary instruction in English. Hindi explanations available on request. Slack is bilingual.' },
@@ -43,6 +46,18 @@ export const KICKSTARTER_FAQS = [
 ];
 
 export const GENERALIST_FAQS = [
+  {
+    q: 'What is an AI generalist?',
+    a: "An AI generalist is someone who uses AI across everyday work — research, writing, analysis, presentations, automation and building simple tools — without needing to code. Instead of specialising in one model or one task, an AI generalist knows which tool fits which job and can turn a business problem into a working AI workflow. Menler's AI Generalist Fellowship trains exactly this role, with Claude at the core.",
+  },
+  {
+    q: 'How do I become an AI generalist?',
+    a: "Learn the core skills in order: prompting and context, AI research and writing, AI for documents and presentations, creative and media tools, automation with tools like n8n, Make and Zapier, and no-code building with Lovable and Claude Code. Then apply them to real projects in your own field and build a portfolio. Menler's 10-week AI Generalist Fellowship follows this path, with live sessions, domain tracks and placement support.",
+  },
+  {
+    q: 'Is the AI Generalist course only about Claude?',
+    a: 'Claude is the core tool, but the course covers the wider AI stack a generalist uses: ChatGPT, Gemini, Perplexity and NotebookLM for research; Canva, Firefly and ElevenLabs for creative work; n8n, Make and Zapier for automation; and Lovable, Cursor and Claude Code for building — 35+ tools in all.',
+  },
   {
     q: "I'm not a technical person. Can I still succeed in this Fellowship?",
     a: "You don't need coding experience—just the willingness to learn, build, and apply AI to real-world work.",

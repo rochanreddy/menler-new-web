@@ -136,9 +136,9 @@ export default function Home() {
   return (
     <>
       <Seo
-        title="Menler — AI Learning India · Claude AI Fellowship & Courses"
-        description="India's Claude-native AI learning. AI courses & fellowships — Generalist (no-code), Engineering, and the Gen AI Kickstarter. Real projects."
-        keywords="AI learning India, AI courses India, AI fellowship India, Claude AI fellowship, AI uping India, AI skills training, AI-native work, AI-native workforce, AI careers India, AI jobs future, AI workflows, AI automation workflows, best AI tools, AI productivity tools, large language models explained, enterprise AI transformation, AI adoption, AI bootcamp India"
+        title="Menler — AI Courses India · AI Generalist Fellowship & Gen AI Kickstarter"
+        description="Menler is India's Claude-native AI learning company. Become an AI generalist with the no-code AI Generalist Fellowship, start with the 14-day Gen AI Kickstarter, or build AI systems in the Engineering Fellowship."
+        keywords="Menler, Menler AI, AI courses India, best AI course India, AI generalist, AI generalist course, AI generalist fellowship, AI kickstarter, Gen AI Kickstarter, AI course for beginners, AI engineering fellowship, AI fellowship India, AI bootcamp India, no-code AI course, Claude AI course, learn AI India, AI upskilling India, AI certification India, AI careers India"
         path="/"
       />
       {/* ── HERO ── */}

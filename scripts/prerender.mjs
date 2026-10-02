@@ -64,7 +64,8 @@ const ORG_FULL = {
   url: SITE,
   logo: `${SITE}/icon-512.png`,
   image: `${SITE}/og-image.png`,
-  description: "India's Claude-native AI learning company — AI courses and fellowships (Generalist, Engineering and the Gen AI Kickstarter) with real projects and placement support.",
+  description: "India's Claude-native AI learning company — the AI Generalist Fellowship (no-code), the AI Engineering Fellowship and the Gen AI Kickstarter for beginners, with real projects and placement support.",
+  knowsAbout: ['AI generalist skills', 'Generative AI', 'Claude', 'AI automation', 'No-code AI', 'AI engineering', 'Prompt engineering'],
   sameAs: SOCIAL,
 };
 
@@ -75,10 +76,11 @@ const crumbs = (items) => ({
   itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, item: SITE + it.path })),
 });
 
-const course = (name, description, workload, urlPath, price) => ({
+const course = (name, description, workload, urlPath, price, alternateName) => ({
   '@context': 'https://schema.org',
   '@type': 'Course',
   name,
+  ...(alternateName ? { alternateName } : {}),
   description,
   provider: ORG,
   url: SITE + urlPath,
@@ -99,26 +101,27 @@ const faqOf = (faqs) => ({
 const STATIC_ROUTES = [
   {
     path: '/', file: 'index.html', nav: 'Home',
-    title: 'Menler — AI Learning India · Claude AI Fellowship & Courses',
-    description: "India's Claude-native AI learning. AI courses & fellowships — Generalist (no-code), Engineering, and the Gen AI Kickstarter. Real projects.",
-    keywords: 'top AI courses, best AI course India, best AI courses in India, top Claude AI courses, best Claude AI course, Claude AI course, Claude AI training, online AI course India, AI certification India, AI learning India, AI courses India, AI fellowship India, Claude AI fellowship, AI upskilling India, AI skills training, AI-native work, AI-native workforce, AI careers India, AI bootcamp India, learn AI India',
-    h1: "Menler — India's Claude-native AI learning",
-    intro: 'AI courses and fellowships: the no-code Claude AI Generalist, the Claude AI Engineering fellowship, and the 14-day Gen AI Kickstarter. Learn AI, build real projects, and get placement support.',
+    title: "Menler — AI Courses India · AI Generalist Fellowship & Gen AI Kickstarter",
+    description: "Menler is India's Claude-native AI learning company. Become an AI generalist with the no-code AI Generalist Fellowship, start with the 14-day Gen AI Kickstarter, or build AI systems in the Engineering Fellowship.",
+    keywords: "Menler, Menler AI, AI courses India, best AI course India, AI generalist, AI generalist course, AI generalist fellowship, AI kickstarter, Gen AI Kickstarter, AI course for beginners, AI engineering fellowship, AI fellowship India, AI bootcamp India, no-code AI course, Claude AI course, learn AI India, AI upskilling India, AI certification India, AI careers India, top AI courses, best AI courses in India, Claude AI training, online AI course India",
+    h1: "Menler — AI courses India: AI Generalist Fellowship & Gen AI Kickstarter",
+    intro: 'AI courses and fellowships: the no-code AI Generalist Fellowship (Claude AI Generalist), the AI Engineering Fellowship, and the 14-day Gen AI Kickstarter for beginners. Learn AI, build real projects, and get placement support.',
     jsonLd: [ORG_FULL, faqOf(HOME_FAQS)],
     faqs: HOME_FAQS,
     hiring: HIRING_COMPANIES,
   },
   {
-    path: '/generalist', file: 'generalist.html', nav: 'Generalist Fellowship',
-    title: 'Claude AI Generalist Fellowship — No-Code AI Course India | Menler',
-    description: 'A 10-week no-code Claude AI fellowship for non-tech professionals and students. Master AI workflows across marketing, finance, product, HR & ops — with placement support.',
-    keywords: 'best Claude AI course, top AI course for professionals, best no-code AI course, Claude AI Generalist course, no-code AI fellowship, AI generalist program India, AI fellowship for non-tech, best AI course India, AI course for professionals, AI workflows, AI-native work, AI upskilling India, AI course India',
-    h1: 'Claude AI Generalist Fellowship',
-    intro: 'A 10-week no-code Claude AI fellowship for non-technical professionals and students — master AI workflows across marketing, finance, product, HR and operations, with real projects and placement support.',
+    path: '/generalist', file: 'generalist.html', nav: 'AI Generalist Fellowship',
+    title: "AI Generalist Course & Fellowship — No-Code, Claude AI | Menler",
+    description: "Menler's AI Generalist Fellowship: a 10-week no-code AI generalist course for professionals and students in India. Learn Claude, ChatGPT and AI automation for marketing, finance, product, HR & ops — with placement support.",
+    keywords: "AI generalist, AI generalist course, AI generalist program, AI generalist fellowship, AI generalist course India, generalist AI course, generalist program, generalist fellowship, Menler generalist, become an AI generalist, what is an AI generalist, no-code AI course, AI course for non-tech professionals, AI course for professionals, AI workflows course, AI automation course, Claude AI Generalist, Claude AI course, best AI course India",
+    h1: 'AI Generalist Course & Fellowship — Claude AI Generalist',
+    intro: 'The Menler AI Generalist Fellowship is a 10-week no-code AI generalist course for professionals and students — learn Claude and the wider AI stack, and apply AI workflows across marketing, finance, product, HR and operations, with real projects and placement support.',
+    extra: 'An AI generalist uses AI across everyday work — research, writing, analysis, presentations, automation and building simple tools — without needing to code. The Menler AI Generalist Fellowship trains this role over 10 weeks: prompting and context, AI research, AI for documents, creative and media tools, automation with n8n, Make and Zapier, voice AI, and no-code building with Lovable and Claude Code, applied in domain tracks for marketing, finance, product, HR, operations and more.',
     jsonLd: [
-      course('Claude AI Generalist Fellowship', '10-week no-code Claude AI fellowship for non-technical professionals — domain AI workflows, real projects and placement support.', '10 weeks', '/generalist', '59999'),
+      course('AI Generalist Fellowship', '10-week no-code AI generalist course and fellowship — Claude and the wider AI stack applied to real work, with domain projects and placement support.', '10 weeks', '/generalist', '59999', ['Claude AI Generalist Fellowship', 'AI Generalist Course', 'Menler Generalist', 'Generalist AI Program']),
       faqOf(GENERALIST_FAQS),
-      crumbs([{ name: 'Home', path: '/' }, { name: 'Generalist Fellowship', path: '/generalist' }]),
+      crumbs([{ name: 'Home', path: '/' }, { name: 'AI Generalist Fellowship', path: '/generalist' }]),
     ],
     faqs: GENERALIST_FAQS,
     weeks: GENERALIST_WEEKS,
@@ -140,13 +143,13 @@ const STATIC_ROUTES = [
   },
   {
     path: '/kickstarter', file: 'kickstarter.html', nav: 'Gen AI Kickstarter',
-    title: 'Gen AI Kickstarter — AI Bootcamp India for Beginners | Menler',
-    description: 'A 14-day beginner AI bootcamp. Get hands-on with 10+ AI tools, build your first AI projects, and become AI-fluent — no prerequisites.',
-    keywords: 'best beginner AI course, top AI bootcamp India, best AI course for beginners, AI bootcamp India, beginner AI course, Gen AI Kickstarter, learn AI India, AI tools onboarding, AI upskilling, best AI course India',
-    h1: 'Gen AI Kickstarter',
-    intro: 'A 14-day beginner AI bootcamp — get hands-on with 10+ AI tools, build your first AI projects, and become AI-fluent with no prerequisites.',
+    title: "Gen AI Kickstarter — 14-Day AI Course for Beginners | Menler",
+    description: "Menler's Gen AI Kickstarter is a 14-day AI course for complete beginners in India. Get hands-on with 10+ AI tools, ship 4 mini-builds and earn a certificate — no prerequisites, ₹4,999.",
+    keywords: "AI Kickstarter, Gen AI Kickstarter, AI kickstarter course, kickstarter AI course, Menler kickstarter, generative AI course for beginners, AI course for beginners, beginner AI course India, AI bootcamp India, 14 day AI course, short AI course, learn AI from scratch, AI tools course, AI certificate course, best AI course for beginners",
+    h1: 'Gen AI Kickstarter — AI Kickstarter Course for Beginners',
+    intro: "Menler's Gen AI Kickstarter is a 14-day AI course for complete beginners — get hands-on with 10+ AI tools, ship 4 mini-builds and earn a fluency certificate, with no prerequisites.",
     jsonLd: [
-      course('Gen AI Kickstarter', '14-day beginner AI bootcamp — hands-on with 10+ AI tools and first real AI projects, no prerequisites.', '14 days', '/kickstarter', '4999'),
+      course('Gen AI Kickstarter', '14-day generative AI course for complete beginners — hands-on with 10+ AI tools, 4 mini-builds and a certificate, no prerequisites.', '14 days', '/kickstarter', '4999', ['AI Kickstarter', 'Menler AI Kickstarter', 'AI Kickstarter Course']),
       faqOf(KICKSTARTER_FAQS),
       crumbs([{ name: 'Home', path: '/' }, { name: 'Gen AI Kickstarter', path: '/kickstarter' }]),
     ],
@@ -678,14 +681,17 @@ console.log(`✓ Generated sitemap.xml with ${sitemapUrls.length} indexable URLs
  *                  having to fetch and parse ten separate pages
  */
 const PROGRAM_FACTS = [
-  ['Claude AI Generalist Fellowship', '/generalist',
-    'A 10-week, no-code fellowship for non-technical professionals and students. Covers AI workflows across marketing, finance, product, HR and operations. ₹59,999. Includes real projects and placement support. Next batch starts September 2026.'],
-  ['Claude AI Generalist — 6 weeks', '/generalist',
-    'A shorter 6-week version of the Generalist fellowship. ₹35,000.'],
-  ['Claude AI Engineering Fellowship', '/engineering',
+  /* Batch dates are deliberately absent: a date here outlives the batch, and an
+     answer engine then repeats a start date that has already passed. The
+     programme pages carry the live dates. */
+  ['AI Generalist Fellowship (Claude AI Generalist)', '/generalist',
+    'A 10-week, no-code AI generalist course and fellowship for non-technical professionals and students — how to become an AI generalist. Covers Claude and 35+ AI tools for research, writing, automation (n8n, Make, Zapier) and no-code building, applied across marketing, finance, product, HR and operations. ₹59,999. Includes real projects and placement support.'],
+  ['AI Generalist Fellowship — 6 weeks', '/generalist',
+    'A shorter 6-week version of the AI Generalist Fellowship. ₹35,000.'],
+  ['AI Engineering Fellowship (Claude AI Engineering)', '/engineering',
     'A 12-week fellowship for developers. Build production AI systems — Claude API, RAG, MCP, agents, evaluations and LLMOps. ₹59,999. Includes placement support. Next batch starts October 2026.'],
-  ['Gen AI Kickstarter', '/kickstarter',
-    'A 14-day beginner bootcamp — 4 live sessions across 2 weekends. Hands-on with 10+ AI tools, 4 portfolio projects and a certificate. No prerequisites. ₹4,999. Next batch starts 30 August 2026.'],
+  ['Gen AI Kickstarter (AI Kickstarter)', '/kickstarter',
+    'A 14-day AI course for complete beginners — 4 live sessions across 2 weekends. Hands-on with 10+ AI tools, 4 portfolio projects and a certificate. No prerequisites. ₹4,999.'],
 ];
 
 const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
@@ -693,6 +699,8 @@ const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
 const llmsHead = `# Menler
 
 > Menler is an India-based, Claude-native AI learning company. It runs live, cohort-based AI courses and fellowships that teach professionals, students and engineers to build real work with Claude and other AI tools — with real projects, a portfolio, and placement support.
+
+Its programmes: the AI Generalist Fellowship — a no-code course for becoming an AI generalist; the Gen AI Kickstarter — a 14-day AI course for beginners; and the AI Engineering Fellowship for developers.
 
 Menler focuses on depth over breadth and outcomes over completion: learners ship real AI assets (workflows, agents, RAG apps) rather than only watching lectures. Every programme is live, cohort-based and delivered online from India.
 `;
@@ -758,11 +766,11 @@ ${STATIC_ROUTES.filter((r) => !r.noindex).map((r) => `- **${r.nav}** (${SITE}${r
 
 ${faqSection('About Menler', HOME_FAQS)}
 
-${faqSection('Claude AI Generalist Fellowship', GENERALIST_FAQS)}
+${faqSection('AI Generalist Fellowship (Claude AI Generalist)', GENERALIST_FAQS)}
 
-${faqSection('Claude AI Engineering Fellowship', ENGINEERING_FAQS)}
+${faqSection('AI Engineering Fellowship (Claude AI Engineering)', ENGINEERING_FAQS)}
 
-${faqSection('Gen AI Kickstarter', KICKSTARTER_FAQS)}
+${faqSection('Gen AI Kickstarter (AI Kickstarter)', KICKSTARTER_FAQS)}
 
 ${BLOG_PUBLIC ? `## Articles
 ${BLOG_POSTS.filter((p) => p.body).map(postSection).join('\n')}

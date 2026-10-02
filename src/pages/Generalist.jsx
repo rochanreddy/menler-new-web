@@ -247,11 +247,11 @@ export default function Generalist() {
   return (
     <>
       <Seo
-        title="Claude AI Generalist Fellowship — No-Code AI Course India | Menler"
-        description="A 10-week no-code Claude AI fellowship for non-tech professionals and students. Master AI workflows across marketing, finance, product, HR & ops — with placement support."
-        keywords="Claude AI Generalist course, no-code AI fellowship, AI generalist program India, AI fellowship for non-tech, AI workflows, AI-native work, AI upskilling India, AI course India"
+        title="AI Generalist Course & Fellowship — No-Code, Claude AI | Menler"
+        description="Menler's AI Generalist Fellowship: a 10-week no-code AI generalist course for professionals and students in India. Learn Claude, ChatGPT and AI automation for marketing, finance, product, HR & ops — with placement support."
+        keywords="AI generalist, AI generalist course, AI generalist program, AI generalist fellowship, AI generalist course India, generalist AI course, generalist program, generalist fellowship, Menler generalist, become an AI generalist, what is an AI generalist, no-code AI course, AI course for non-tech professionals, AI course for professionals, AI workflows course, AI automation course, Claude AI Generalist, Claude AI course, best AI course India"
         path="/generalist"
-        jsonLd={{ '@context': 'https://schema.org', '@type': 'Course', name: 'Claude AI Generalist Fellowship', description: '10-week no-code Claude AI fellowship for non-technical professionals — domain AI workflows, real projects and placement support.', provider: { '@type': 'Organization', name: 'Menler', sameAs: 'https://menler.in' } }}
+        jsonLd={{ '@context': 'https://schema.org', '@type': 'Course', name: 'AI Generalist Fellowship', alternateName: ['Claude AI Generalist Fellowship', 'AI Generalist Course', 'Menler Generalist', 'Generalist AI Program'], description: '10-week no-code AI generalist course and fellowship — Claude and the wider AI stack applied to real work, with domain projects and placement support.', provider: { '@type': 'Organization', name: 'Menler', sameAs: 'https://menler.in' } }}
       />
       {/* ── HERO + WHO THIS IS FOR (one screen together) ── */}
       <div className="hero-screen">
@@ -259,8 +259,11 @@ export default function Generalist() {
       <section className="hero hero-big" style={{ padding: '66px clamp(20px, 6vw, 40px) 68px' }}>
         <div className="hero-ring r1" /><div className="hero-ring r2" />
         <div className="hero-inner">
-          <p className="hero-eyebrow">Claude AI Generalist Fellowship</p>
-          <h1 className="hero-h1">Master Claude AI.<br /><em>Transform your domain.</em></h1>
+          {/* The page's one h1 is the label, worded as people search for it
+              ("AI generalist course"); the display line below is a paragraph
+              styled the same as before. Both are class-styled, so nothing moves. */}
+          <h1 className="hero-eyebrow">AI Generalist Course · Claude AI Fellowship</h1>
+          <p className="hero-h1">Master Claude AI.<br /><em>Transform your domain.</em></p>
           <p className="hero-sub">India's only Claude AI Specialist Fellowship.<strong className="hero-tagline" style={{ color: '#EEEDFE', fontWeight: 500 }}>Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
           <div className="hero-actions">
             <button className="btn-primary" style={{ minWidth: 220, textAlign: 'center' }} onClick={() => openGeneralistLead('Apply · Generalist')}>Apply Now</button>

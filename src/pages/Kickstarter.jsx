@@ -212,11 +212,11 @@ export default function Kickstarter() {
   return (
     <>
       <Seo
-        title="Gen AI Kickstarter — AI Bootcamp India for Beginners | Menler"
-        description="A 14-day beginner AI bootcamp. Get hands-on with 10+ AI tools, build your first AI projects, and become AI-fluent — no prerequisites."
-        keywords="AI bootcamp India, beginner AI course, Gen AI Kickstarter, AI tools onboarding, AI upskilling, learn AI India"
+        title="Gen AI Kickstarter — 14-Day AI Course for Beginners | Menler"
+        description="Menler's Gen AI Kickstarter is a 14-day AI course for complete beginners in India. Get hands-on with 10+ AI tools, ship 4 mini-builds and earn a certificate — no prerequisites, ₹4,999."
+        keywords="AI Kickstarter, Gen AI Kickstarter, AI kickstarter course, kickstarter AI course, Menler kickstarter, generative AI course for beginners, AI course for beginners, beginner AI course India, AI bootcamp India, 14 day AI course, short AI course, learn AI from scratch, AI tools course, AI certificate course, best AI course for beginners"
         path="/kickstarter"
-        jsonLd={{ '@context': 'https://schema.org', '@type': 'Course', name: 'Gen AI Kickstarter', description: '14-day beginner AI bootcamp — hands-on with 10+ AI tools and first real AI projects, no prerequisites.', provider: { '@type': 'Organization', name: 'Menler', sameAs: 'https://menler.in' } }}
+        jsonLd={{ '@context': 'https://schema.org', '@type': 'Course', name: 'Gen AI Kickstarter', alternateName: ['AI Kickstarter', 'Menler AI Kickstarter', 'AI Kickstarter Course'], description: '14-day generative AI course for complete beginners — hands-on with 10+ AI tools, 4 mini-builds and a certificate, no prerequisites.', provider: { '@type': 'Organization', name: 'Menler', sameAs: 'https://menler.in' } }}
       />
       {/* ── HERO + WHO THIS IS FOR (one screen together) ── */}
       <div className="hero-screen">
@@ -225,8 +225,10 @@ export default function Kickstarter() {
         <div className="hero-ring r1" style={{ borderColor: 'rgba(250,238,218,0.12)' }} />
         <div className="hero-ring r2" style={{ borderColor: 'rgba(250,238,218,0.08)' }} />
         <div className="hero-inner">
-          <p className="hero-eyebrow" style={{ color: '#FAEEDA' }}>Gen AI Kickstarter · No prerequisites</p>
-          <h1 className="hero-h1" style={{ color: '#FFF6E1' }}>14 days. 4 builds.<br /><em style={{ color: '#FAEEDA' }}>AI-fluent.</em></h1>
+          {/* The h1 is the label, worded as people search for it; the display
+              line is a paragraph styled exactly as before. */}
+          <h1 className="hero-eyebrow" style={{ color: '#FAEEDA' }}>Gen AI Kickstarter · AI course for beginners</h1>
+          <p className="hero-h1" style={{ color: '#FFF6E1' }}>14 days. 4 builds.<br /><em style={{ color: '#FAEEDA' }}>AI-fluent.</em></p>
           <p className="hero-sub" style={{ color: 'rgba(255,246,225,0.7)' }}>India's most accessible Gen AI program.<strong className="hero-tagline" style={{ color: '#FFF6E1', fontWeight: 500 }}>Learning that ships. Credential that counts. Outcomes that compound.</strong></p>
           <div className="hero-actions">
             <button className="btn-primary" style={{ background: '#BA7517', minWidth: 220, textAlign: 'center' }} onClick={() => openKickstarterLead('Apply · Kickstarter')}>Apply Now</button>

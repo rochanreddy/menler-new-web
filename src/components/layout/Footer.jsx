@@ -3,9 +3,27 @@ import MenlerWordmark from '../common/MenlerWordmark';
 import { useApply } from '../common/ApplyContext';
 import { SOCIAL_LINKS, SUPPORT_MAIL_HREF } from '../../data/socialLinks';
 
-export default function Footer() {
+/* A real link: crawlers follow the href (they cannot follow an onClick), and a
+   plain click still navigates inside the app. Cmd/Ctrl/Shift/middle-click keep
+   their usual open-in-new-tab behaviour. */
+function FooterLink({ to, children }) {
   const navigate = useNavigate();
-  const go = (path) => { navigate(path); window.scrollTo(0, 0); };
+  return (
+    <a
+      href={to}
+      onClick={(e) => {
+        if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        e.preventDefault();
+        navigate(to);
+        window.scrollTo(0, 0);
+      }}
+    >
+      {children}
+    </a>
+  );
+}
+
+export default function Footer() {
   const openApply = useApply();
 
   return (
@@ -44,34 +62,34 @@ export default function Footer() {
         <div>
           <p className="footer-col-title">Programs</p>
           <ul className="footer-links">
-            <li><a onClick={() => go('/kickstarter')}>Gen AI Kickstarter</a></li>
-            <li><a onClick={() => go('/generalist')}>Claude AI Generalist</a></li>
-            <li><a onClick={() => go('/engineering')}>Claude AI Engineering</a></li>
+            <li><FooterLink to="/kickstarter">Gen AI Kickstarter</FooterLink></li>
+            <li><FooterLink to="/generalist">AI Generalist Fellowship</FooterLink></li>
+            <li><FooterLink to="/engineering">AI Engineering Fellowship</FooterLink></li>
           </ul>
         </div>
         <div>
           <p className="footer-col-title">For learners</p>
           <ul className="footer-links">
-            <li><a onClick={() => go('/aptitude')}>AI Aptitude Test</a></li>
-            <li><a onClick={() => go('/resources')}>Library</a></li>
-            <li><a onClick={() => go('/events')}>Events</a></li>
+            <li><FooterLink to="/aptitude">AI Aptitude Test</FooterLink></li>
+            <li><FooterLink to="/resources">Library</FooterLink></li>
+            <li><FooterLink to="/events">Events</FooterLink></li>
           </ul>
         </div>
         <div>
           <p className="footer-col-title">For partners</p>
           <ul className="footer-links">
-            <li><a onClick={() => go('/about#working-with-us')}>Hire from us</a></li>
-            <li><a onClick={() => go('/about#working-with-us')}>Partner with us</a></li>
+            <li><FooterLink to="/about#working-with-us">Hire from us</FooterLink></li>
+            <li><FooterLink to="/about#working-with-us">Partner with us</FooterLink></li>
           </ul>
         </div>
         <div>
           <p className="footer-col-title">Company</p>
           <ul className="footer-links">
-            <li><a onClick={() => go('/about')}>About</a></li>
-            <li><a onClick={() => go('/about')}>Contact</a></li>
-            <li><a onClick={() => go('/policy/privacy')}>Privacy Policy</a></li>
-            <li><a onClick={() => go('/policy/refund')}>Refund Policy</a></li>
-            <li><a onClick={() => go('/policy/terms')}>Terms &amp; Conditions</a></li>
+            <li><FooterLink to="/about">About</FooterLink></li>
+            <li><FooterLink to="/about">Contact</FooterLink></li>
+            <li><FooterLink to="/policy/privacy">Privacy Policy</FooterLink></li>
+            <li><FooterLink to="/policy/refund">Refund Policy</FooterLink></li>
+            <li><FooterLink to="/policy/terms">Terms &amp; Conditions</FooterLink></li>
           </ul>
         </div>
       </div>
