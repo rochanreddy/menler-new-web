@@ -794,6 +794,20 @@ function LeadsTab() {
 
 /* ── Users tab ───────────────────────────────────────────────────────────── */
 
+/* Refunds, as the row shows them. PROCESSING is ours (asked, no answer on
+ * file yet); the rest are Cashfree's own statuses. */
+const REFUND_PENDING = new Set(['PROCESSING', 'PENDING', 'ONHOLD']);
+const refundState = (r) => {
+  const s = r?.extra?.refund?.status;
+  if (!s) return 'none';
+  if (s === 'SUCCESS') return 'done';
+  if (REFUND_PENDING.has(s)) return 'pending';
+  return 'failed';
+};
+/* A refund goes back through Cashfree, so the row needs a real Cashfree order
+ * behind it — an entry typed in by hand and never verified has none. */
+const canRefund = (r) => !/^MANUAL_/.test(r.order_id || '') && ['none', 'failed'].includes(refundState(r));
+
 function UsersTab() {
   const [search, setSearch] = useState('');
   const [batch, setBatch] = useState('');
@@ -817,6 +831,12 @@ function UsersTab() {
   const [verifyBusy, setVerifyBusy] = useState(false);
   const [verifyErr, setVerifyErr] = useState('');
   const [verifyDone, setVerifyDone] = useState(null);
+  const [refundRow, setRefundRow] = useState(null);
+  const [refundAmount, setRefundAmount] = useState('');
+  const [refundNote, setRefundNote] = useState('');
+  const [refundBusy, setRefundBusy] = useState(false);
+  const [refundErr, setRefundErr] = useState('');
+  const [refundDone, setRefundDone] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -897,6 +917,39 @@ function UsersTab() {
     }
   };
 
+  const openRefund = (row) => {
+    setRefundRow(row);
+    setRefundAmount(String(row.amount));
+    setRefundNote('');
+    setRefundErr(''); setRefundDone(null);
+  };
+
+  const doRefund = async () => {
+    if (!refundRow) return;
+    setRefundBusy(true); setRefundErr('');
+    try {
+      const res = await adminApi.refundPayment(refundRow._id, { amount: Number(refundAmount), note: refundNote.trim() });
+      setRefundDone(res.refund);
+      load();
+    } catch (err) {
+      setRefundErr(err.message || 'Could not start the refund.');
+      load();   // an uncertain attempt leaves the row marked; show it
+    } finally {
+      setRefundBusy(false);
+    }
+  };
+
+  const checkRefund = async (e, row) => {
+    e?.stopPropagation();
+    try {
+      const res = await adminApi.refundStatus(row._id);
+      window.alert(`Cashfree says: ${res.refund.status}${res.refund.status_description ? ' — ' + res.refund.status_description : ''}`);
+      load();
+    } catch (err) {
+      window.alert(err.message || 'Could not reach Cashfree.');
+    }
+  };
+
   const doVerify = async (raw) => {
     const value = String(raw ?? ref).trim();
     if (!value) return;
@@ -974,6 +1027,11 @@ function UsersTab() {
         <div className="admin-money-box">
           <span>{search ? 'Revenue (matching)' : 'Total revenue'}</span>
           <b>₹{(sum.revenue || 0).toLocaleString('en-IN')}</b>
+          {sum.refunds > 0 && (
+            <span className="admin-subline" title="Refunded money is taken off the revenue figures">
+              after ₹{(sum.refunded || 0).toLocaleString('en-IN')} refunded ({sum.refunds})
+            </span>
+          )}
         </div>
         <div className="admin-money-box">
           <span>This month</span>
@@ -1069,6 +1127,19 @@ function UsersTab() {
                 </td>
                 <td>
                   <b>₹{r.amount.toLocaleString('en-IN')}</b>
+                  {refundState(r) === 'done' && (
+                    <span className="admin-badge admin-badge--refund" title={r.extra.refund.processed_at ? `Refunded on ${fmtDate(r.extra.refund.processed_at)}` : ''}>
+                      Refunded ₹{Number(r.extra.refund.amount).toLocaleString('en-IN')}
+                    </span>
+                  )}
+                  {refundState(r) === 'pending' && (
+                    <span className="admin-badge admin-badge--warn admin-badge--refundpending" title="Cashfree has the refund and is processing it">
+                      Refund pending · ₹{Number(r.extra.refund.amount).toLocaleString('en-IN')}
+                    </span>
+                  )}
+                  {refundState(r) === 'failed' && (
+                    <span className="admin-subline" title={r.extra.refund.error || r.extra.refund.status_description || ''}>Refund failed</span>
+                  )}
                   {/* Which instalment, and of what deal — only on rows that
                       recorded one. */}
                   {r.extra?.payment_cycle && (
@@ -1119,8 +1190,20 @@ function UsersTab() {
                       )}
                 </td>
                 <td className="admin-muted">{fmtDate(r.paid_at || r.createdAt)}</td>
-                <td>
-                  {r.extra?.manual && (
+                <td className="admin-rowacts">
+                  {canRefund(r) && (
+                    <button type="button" className="admin-refundbtn" title="Send this payment back through Cashfree"
+                      onClick={(e) => { e.stopPropagation(); openRefund(r); }}>
+                      Refund
+                    </button>
+                  )}
+                  {refundState(r) === 'pending' && (
+                    <button type="button" className="admin-refundbtn" title="Ask Cashfree where this refund stands"
+                      onClick={(e) => checkRefund(e, r)}>
+                      Check status
+                    </button>
+                  )}
+                  {r.extra?.manual && !r.extra?.refund?.refund_id && (
                     <button className="admin-del" title="Delete manual entry" aria-label="Delete manual entry" onClick={(e) => onDelete(e, r)}>🗑</button>
                   )}
                 </td>
@@ -1156,6 +1239,19 @@ function UsersTab() {
             ['Transaction ID', selected.extra?.cf_payment_id || selected.extra?.txn_id || '—'],
             ['Paid at', fmtDate(selected.paid_at || selected.createdAt)],
             ...(selected.extra?.verified_at ? [['Verified on', fmtDate(selected.extra.verified_at)]] : []),
+
+            ...(selected.extra?.refund?.refund_id ? [
+              { heading: 'Refund' },
+              ['Refund status', selected.extra.refund.status === 'SUCCESS' ? 'Refunded'
+                : REFUND_PENDING.has(selected.extra.refund.status) ? 'Pending with Cashfree' : `Failed (${selected.extra.refund.status})`],
+              ['Refund amount', `₹${Number(selected.extra.refund.amount).toLocaleString('en-IN')}${selected.extra.refund.full ? ' (full)' : ' (partial)'}`],
+              ['Requested on', fmtDate(selected.extra.refund.requested_at)],
+              ...(selected.extra.refund.processed_at ? [['Refunded on', fmtDate(selected.extra.refund.processed_at)]] : []),
+              ['Refund ID', selected.extra.refund.refund_id],
+              ...(selected.extra.refund.arn ? [['Bank reference (ARN)', selected.extra.refund.arn]] : []),
+              ...(selected.extra.refund.note ? [['Reason', selected.extra.refund.note]] : []),
+              ...(selected.extra.refund.error ? [['Error', selected.extra.refund.error]] : []),
+            ] : []),
 
             { heading: 'How it was paid' },
             ['Method', methodLabel(selected) || '—'],
@@ -1202,6 +1298,66 @@ function UsersTab() {
             ...(selected.extra?.note ? [{ heading: 'Note' }, ['Note', selected.extra.note]] : []),
           ]}
         />
+      )}
+
+      {refundRow && (
+        <div className="admin-modal-backdrop" onClick={() => !refundBusy && setRefundRow(null)} role="presentation" data-lenis-prevent>
+          <div className="admin-modal admin-modal--sm" onClick={(e) => e.stopPropagation()}
+            role="dialog" aria-modal="true" aria-labelledby="cf-refund-title">
+            <div className="admin-modal-head">
+              <div>
+                <h2 id="cf-refund-title">Refund this payment</h2>
+                <p>{refundRow.customer_name || refundRow.customer_email || 'This buyer'} · paid ₹{refundRow.amount.toLocaleString('en-IN')} · {refundRow.program}</p>
+              </div>
+              <button className="admin-modal-close" onClick={() => setRefundRow(null)} aria-label="Close" disabled={refundBusy}>×</button>
+            </div>
+
+            <div className="admin-modal-body admin-addpay">
+              {refundDone ? (
+                <>
+                  <div className={`admin-note ${refundDone.status === 'SUCCESS' ? 'admin-note--ok' : 'admin-note--warn'}`}>
+                    <b>{refundDone.status === 'SUCCESS' ? 'Refunded.' : 'Refund started.'}</b>{' '}
+                    ₹{Number(refundDone.amount).toLocaleString('en-IN')} is going back to the way they paid.
+                    {refundDone.status !== 'SUCCESS' && ' Cashfree is processing it — the row shows “Refund pending” until it lands.'}
+                  </div>
+                  <p className="admin-addpay-help">
+                    Money usually reaches the buyer in 5–7 working days, depending on their bank. Refund ID: <b>{refundDone.refund_id}</b>
+                  </p>
+                  <div className="admin-modal-foot">
+                    <button className="admin-btn admin-btn--primary" type="button" onClick={() => setRefundRow(null)}>Done</button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="admin-note admin-note--warn">
+                    <b>This sends real money back and cannot be undone.</b> It goes through Cashfree to
+                    the card, UPI or bank account that paid.
+                  </div>
+                  <label className="admin-field"><span>Refund amount (₹)</span>
+                    <input className="admin-search" type="number" min="1" max={refundRow.amount} step="any"
+                      value={refundAmount} disabled={refundBusy}
+                      onChange={(e) => { setRefundAmount(e.target.value); setRefundErr(''); }} />
+                    <em className="admin-field-hint">
+                      The full ₹{refundRow.amount.toLocaleString('en-IN')} by default. Lower it for a partial refund.
+                    </em>
+                  </label>
+                  <label className="admin-field"><span>Reason <span className="admin-muted">— kept on the record</span></span>
+                    <input className="admin-search" placeholder="e.g. Could not attend the batch" maxLength={100}
+                      value={refundNote} disabled={refundBusy} onChange={(e) => setRefundNote(e.target.value)} />
+                  </label>
+                  {refundErr && <div className="admin-note admin-note--bad">{refundErr}</div>}
+                  <div className="admin-modal-foot">
+                    <button className="admin-btn" type="button" onClick={() => setRefundRow(null)} disabled={refundBusy}>Cancel</button>
+                    <button className="admin-btn admin-btn--danger" type="button" onClick={doRefund}
+                      disabled={refundBusy || !(Number(refundAmount) > 0) || Number(refundAmount) > refundRow.amount}>
+                      {refundBusy ? 'Refunding…' : `Refund ₹${Number(refundAmount || 0).toLocaleString('en-IN')}`}
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
       )}
 
       {verifyRow && (

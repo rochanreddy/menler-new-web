@@ -12,6 +12,7 @@ import { buildCertificatePdf, buildCertificateEmail } from '../utils/certificate
 import { sendMail, isMailConfigured, verifyMailer } from '../utils/email.js';
 import { cashfreeConfigured, describePayment, findCashfreePayment, getCashfreePayments } from '../utils/cashfree.js';
 import { deliverPackForOrder, deliverLibraryForOrder } from '../utils/packDelivery.js';
+import { createCashfreeRefund, getCashfreeRefund } from '../utils/cashfree.js';
 import { zoomConfigured, meetingIdFromLink, pastInstances, latestInstanceUuid, pastMeeting, pastMeetings, meetingParticipants, explainZoomError } from '../utils/zoom.js';
 import { RESOURCE_PACKS, CLAUDE_PLAYBOOK_PACK } from '../../src/data/resourceCatalog.js';
 import {
@@ -514,6 +515,19 @@ router.get('/paid-users', requireAdmin, async (req, res) => {
       }));
     }
 
+    /* A refund Cashfree accepted is usually PENDING for a while. Ask about the
+     * ones on this page that are still in flight, so the badge settles without
+     * anyone pressing anything. */
+    if (cashfreeConfigured()) {
+      await Promise.all(rows.map(async (r) => {
+        if (!IN_FLIGHT.has(r.extra?.refund?.status)) return;
+        try {
+          const fresh = await syncRefund(r._id);
+          if (fresh) r.extra = fresh.extra;
+        } catch { /* leave it; the next open asks again */ }
+      }));
+    }
+
     // Money totals over everything matching the search, not just this page —
     // a revenue figure that changes when you turn the page is worse than none.
     const startOfMonthIST = (() => {
@@ -525,14 +539,21 @@ router.get('/paid-users', requireAdmin, async (req, res) => {
       {
         $group: {
           _id: null,
-          revenue: { $sum: '$amount' },
+          // Net of refunds: money that went back is not revenue.
+          revenue: { $sum: { $subtract: ['$amount', { $ifNull: ['$extra.refunded_amount', 0] }] } },
+          refunded: { $sum: { $ifNull: ['$extra.refunded_amount', 0] } },
+          refunds: { $sum: { $cond: [{ $gt: [{ $ifNull: ['$extra.refunded_amount', 0] }, 0] }, 1, 0] } },
           count: { $sum: 1 },
           manual: { $sum: { $cond: ['$extra.manual', 1, 0] } },
           // Manual rows added before payments were checked against Cashfree.
           unverified: { $sum: { $cond: [{ $and: ['$extra.manual', { $ne: ['$extra.verified', true] }] }, 1, 0] } },
           thisMonth: {
             $sum: {
-              $cond: [{ $gte: [{ $ifNull: ['$paid_at', '$createdAt'] }, startOfMonthIST] }, '$amount', 0],
+              $cond: [
+                { $gte: [{ $ifNull: ['$paid_at', '$createdAt'] }, startOfMonthIST] },
+                { $subtract: ['$amount', { $ifNull: ['$extra.refunded_amount', 0] }] },
+                0,
+              ],
             },
           },
         },
@@ -543,7 +564,7 @@ router.get('/paid-users', requireAdmin, async (req, res) => {
     // picking one would empty the dropdown you picked it from.
     const batchAgg = await Order.aggregate([
       { $match: { ...paidFilter({ search: req.query.search }) } },
-      { $group: { _id: '$extra.batch', n: { $sum: 1 }, revenue: { $sum: '$amount' } } },
+      { $group: { _id: '$extra.batch', n: { $sum: 1 }, revenue: { $sum: { $subtract: ['$amount', { $ifNull: ['$extra.refunded_amount', 0] }] } } } },
       { $sort: { _id: -1 } },
     ]);
 
@@ -637,6 +658,8 @@ router.get('/paid-users', requireAdmin, async (req, res) => {
       unbatched: batchAgg.find((b) => !b._id)?.n || 0,
       summary: {
         revenue: agg?.revenue || 0,
+        refunded: agg?.refunded || 0,
+        refunds: agg?.refunds || 0,
         count: agg?.count || 0,
         manual: agg?.manual || 0,
         unverified: agg?.unverified || 0,
@@ -917,6 +940,157 @@ router.post('/paid-users/:id/resend-pack', requireAdmin, async (req, res) => {
   }
 });
 
+/* ── Refunds ───────────────────────────────────────────────────────────────
+ * A refund goes back through Cashfree to whatever paid — card, UPI, bank — so
+ * it needs a real Cashfree order behind the row. A payment typed in by hand
+ * and never verified has none, and is refused: verify it first.
+ *
+ * The record lives on the order as extra.refund, and extra.refunded_amount is
+ * what the revenue totals subtract. The row stays in Paid users, marked, so
+ * the history of who paid and who was refunded is in one place. */
+
+const IN_FLIGHT = new Set(['PROCESSING', 'PENDING', 'ONHOLD']);
+const SETTLED_OK = new Set(['SUCCESS']);
+const counts = (status) => IN_FLIGHT.has(status) || SETTLED_OK.has(status);
+
+/** Store what Cashfree says about a refund on the order; returns the fresh doc. */
+async function writeRefund(orderId, cf, extra = {}) {
+  const status = String(cf?.refund_status || 'PENDING').toUpperCase();
+  const amount = Number(cf?.refund_amount || 0);
+  return Order.findOneAndUpdate(
+    { _id: orderId },
+    {
+      $set: {
+        'extra.refund.status': status,
+        'extra.refund.cf_refund_id': cf?.cf_refund_id ? String(cf.cf_refund_id) : '',
+        'extra.refund.arn': cf?.refund_arn || '',
+        'extra.refund.status_description': cf?.status_description || '',
+        'extra.refund.updated_at': new Date(),
+        ...(status === 'SUCCESS' ? { 'extra.refund.processed_at': cf?.processed_at ? new Date(cf.processed_at) : new Date() } : {}),
+        'extra.refunded_amount': counts(status) ? amount : 0,
+        ...extra,
+      },
+    },
+    { new: true },
+  ).lean();
+}
+
+/** Ask Cashfree where a recorded refund stands and store the answer. */
+async function syncRefund(id) {
+  const order = await Order.findById(id).lean();
+  const refund = order?.extra?.refund;
+  if (!refund?.refund_id) return null;
+  const cf = await getCashfreeRefund(order.order_id, refund.refund_id);
+  // PROCESSING is ours: we claimed the row but have no answer on file. If
+  // Cashfree has never heard of it, the request never landed — free the row.
+  if (!cf) {
+    if (refund.status !== 'PROCESSING') return order;
+    return Order.findOneAndUpdate(
+      { _id: id },
+      { $set: { 'extra.refund.status': 'FAILED', 'extra.refund.error': 'Cashfree has no record of this refund — it was never created.', 'extra.refunded_amount': 0 } },
+      { new: true },
+    ).lean();
+  }
+  return writeRefund(id, cf);
+}
+
+router.post('/paid-users/:id/refund', requireAdmin, async (req, res) => {
+  try {
+    if (!cashfreeConfigured()) {
+      return res.status(503).json({ error: 'Cashfree keys are not configured on this server, so refunds cannot be made here.' });
+    }
+    const order = await Order.findById(req.params.id).lean();
+    if (!order) return res.status(404).json({ error: 'Not found.' });
+    if (order.status !== 'PAID') return res.status(400).json({ error: 'That order is not paid.' });
+    if (/^MANUAL_/.test(order.order_id)) {
+      return res.status(400).json({ error: 'This payment was typed in by hand and never verified, so there is no Cashfree order to refund. Verify it first, or refund it from the Cashfree dashboard.' });
+    }
+
+    const prev = order.extra?.refund;
+    if (prev && counts(prev.status)) {
+      return res.status(409).json({ error: prev.status === 'SUCCESS' ? 'This payment has already been refunded.' : 'A refund for this payment is already in progress.' });
+    }
+
+    // Whole rupees and paise only, never more than was paid.
+    const raw = req.body?.amount;
+    const amount = raw === undefined || raw === '' || raw === null ? Number(order.amount) : Math.round(Number(raw) * 100) / 100;
+    if (!Number.isFinite(amount) || amount <= 0) return res.status(400).json({ error: 'Give a refund amount above zero.' });
+    if (amount > Number(order.amount)) {
+      return res.status(400).json({ error: `The refund cannot be more than the ₹${order.amount} that was paid.` });
+    }
+    const note = String(req.body?.note || '').trim().slice(0, 100);
+
+    /* An earlier attempt that failed on OUR side (a timeout, say) may still
+     * have reached Cashfree. Look before asking again — a second request under
+     * a new id would be a second refund. */
+    if (prev?.refund_id) {
+      const existing = await getCashfreeRefund(order.order_id, prev.refund_id).catch(() => null);
+      const st = String(existing?.refund_status || '').toUpperCase();
+      if (existing && counts(st)) {
+        const fresh = await writeRefund(order._id, existing);
+        return res.json({ ok: true, adopted: true, refund: fresh.extra.refund });
+      }
+    }
+
+    // Claim the row atomically, so two clicks (or two admins) cannot both refund.
+    const attempt = (prev?.attempt || 0) + 1;
+    const refundId = `rf_${order._id}_${attempt}`;
+    const claimed = await Order.findOneAndUpdate(
+      { _id: order._id, status: 'PAID', 'extra.refund.status': { $nin: ['PROCESSING', 'PENDING', 'ONHOLD', 'SUCCESS'] } },
+      {
+        $set: {
+          'extra.refund': {
+            refund_id: refundId, attempt, amount, note, status: 'PROCESSING',
+            requested_at: new Date(), full: amount === Number(order.amount),
+          },
+          'extra.refunded_amount': amount,
+        },
+      },
+      { new: true },
+    ).lean();
+    if (!claimed) return res.status(409).json({ error: 'A refund for this payment is already in progress.' });
+
+    try {
+      const cf = await createCashfreeRefund({ orderId: order.order_id, refundId, amount, note: note || `Refund for ${order.order_id}` });
+      const fresh = await writeRefund(order._id, cf);
+      return res.json({ ok: true, refund: fresh.extra.refund });
+    } catch (err) {
+      /* A clear "no" from Cashfree (4xx) frees the row to be tried again. A
+       * timeout or a 5xx is not a no — the refund may exist — so the row stays
+       * claimed as PROCESSING and the next look asks Cashfree what happened. */
+      const definite = err.status >= 400 && err.status < 500;
+      if (definite) {
+        await Order.updateOne(
+          { _id: order._id },
+          { $set: { 'extra.refund.status': 'FAILED', 'extra.refund.error': String(err.message || '').slice(0, 300), 'extra.refunded_amount': 0 } },
+        );
+        return res.status(400).json({ error: `Cashfree refused the refund: ${err.message}` });
+      }
+      console.error('admin refund error (uncertain)', order.order_id, err.message);
+      return res.status(502).json({
+        error: 'Cashfree did not answer, so it is not known whether the refund went through. Do not press Refund again — press “Check status” in a minute.',
+        uncertain: true,
+      });
+    }
+  } catch (err) {
+    console.error('admin refund error', err);
+    res.status(500).json({ error: 'Could not start the refund.' });
+  }
+});
+
+// Where a refund stands now, straight from Cashfree.
+router.post('/paid-users/:id/refund/status', requireAdmin, async (req, res) => {
+  try {
+    if (!cashfreeConfigured()) return res.status(503).json({ error: 'Cashfree keys are not configured on this server.' });
+    const fresh = await syncRefund(req.params.id);
+    if (!fresh) return res.status(404).json({ error: 'No refund recorded for this payment.' });
+    res.json({ ok: true, refund: fresh.extra.refund });
+  } catch (err) {
+    console.error('admin refund status error', err.message);
+    res.status(502).json({ error: err?.message || 'Could not reach Cashfree.' });
+  }
+});
+
 /* Set or clear a row's batch month. Allowed on gateway orders too — the
  * website never asks which cohort someone is joining, so this is the only
  * place that information can be attached. */
@@ -945,6 +1119,9 @@ router.delete('/paid-users/:id', requireAdmin, async (req, res) => {
     if (!order) return res.status(404).json({ error: 'Not found.' });
     if (!order.extra?.manual) {
       return res.status(403).json({ error: 'Only manually added entries can be deleted.' });
+    }
+    if (order.extra?.refund?.refund_id) {
+      return res.status(403).json({ error: 'This entry has a refund on it and is kept as the record of that refund.' });
     }
     await order.deleteOne();
     res.json({ ok: true });
@@ -994,6 +1171,11 @@ router.get('/paid-users/export.csv', requireAdmin, async (req, res) => {
       { key: 'program', label: 'Program' },
       { label: 'Batch', get: (r) => r.extra?.batch || '' },
       { key: 'amount', label: 'Amount' },
+      { label: 'Refund status', get: (r) => r.extra?.refund?.status || '' },
+      { label: 'Refund amount', get: (r) => r.extra?.refund?.amount ?? '' },
+      { label: 'Refund ID', get: (r) => r.extra?.refund?.refund_id || '' },
+      { label: 'Refunded at', get: (r) => (r.extra?.refund?.processed_at ? new Date(r.extra.refund.processed_at).toISOString() : '') },
+      { label: 'Refund note', get: (r) => r.extra?.refund?.note || '' },
       { label: 'Actual price', get: (r) => r.extra?.actual_price ?? '' },
       { label: 'Sold price', get: (r) => r.extra?.sold_price ?? '' },
       { label: 'Payment cycle', get: (r) => r.extra?.payment_cycle ?? '' },

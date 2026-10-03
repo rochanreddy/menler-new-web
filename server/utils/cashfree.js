@@ -73,6 +73,48 @@ export async function getCashfreeOrder(orderId) {
   return data;
 }
 
+/* Refunds. Cashfree refunds against the ORDER, to the instrument that paid it;
+ * `refund_id` is ours and is the idempotency key — asking twice with the same
+ * id returns the same refund rather than a second one.
+ * Docs: https://www.cashfree.com/docs/api-reference/payments/latest/refunds/create */
+export async function createCashfreeRefund({ orderId, refundId, amount, note }) {
+  const resp = await fetch(`${BASE}/orders/${encodeURIComponent(orderId)}/refunds`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify({
+      refund_amount: Number(amount),
+      refund_id: refundId,
+      ...(note ? { refund_note: String(note).slice(0, 100) } : {}),
+      refund_speed: 'STANDARD',
+    }),
+    signal: AbortSignal.timeout(25000),
+  });
+  const data = await resp.json().catch(() => ({}));
+  if (!resp.ok) {
+    const err = new Error(data?.message || `Cashfree refund failed (${resp.status})`);
+    err.status = resp.status;
+    err.data = data;
+    throw err;
+  }
+  return data;
+}
+
+/** One refund by our refund_id, or null when Cashfree has no such refund. */
+export async function getCashfreeRefund(orderId, refundId) {
+  const resp = await fetch(
+    `${BASE}/orders/${encodeURIComponent(orderId)}/refunds/${encodeURIComponent(refundId)}`,
+    { headers: authHeaders(), signal: AbortSignal.timeout(20000) },
+  );
+  if (resp.status === 404) return null;
+  const data = await resp.json().catch(() => ({}));
+  if (!resp.ok) {
+    const err = new Error(data?.message || `Cashfree refund fetch failed (${resp.status})`);
+    err.status = resp.status;
+    throw err;
+  }
+  return data;
+}
+
 // Payments made against an order → each has cf_payment_id (Cashfree's
 // transaction id, the one shown in the Cashfree dashboard) + payment_status.
 export async function getCashfreePayments(orderId) {

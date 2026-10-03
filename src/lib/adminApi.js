@@ -107,6 +107,11 @@ export const adminApi = {
   setBatch: (id, batch) =>
     api(`/admin/paid-users/${encodeURIComponent(id)}/batch`, { method: 'PATCH', body: { batch } }),
   addPaidUser: (body) => api('/admin/paid-users', { method: 'POST', body }),
+  /** Refund a paid order through Cashfree. `amount` omitted = the full amount. */
+  refundPayment: (id, body) =>
+    api(`/admin/paid-users/${encodeURIComponent(id)}/refund`, { method: 'POST', body }),
+  refundStatus: (id) =>
+    api(`/admin/paid-users/${encodeURIComponent(id)}/refund/status`, { method: 'POST' }),
   deletePaidUser: (id) => api(`/admin/paid-users/${encodeURIComponent(id)}`, { method: 'DELETE' }),
 
   // Zoom attendance for a campaign's session (admin-only).
