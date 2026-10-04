@@ -121,6 +121,12 @@ html.lenis, html.lenis body { height: auto; }
 .dropdown-mega { min-width: 380px; }
 button.nav-logo { background: none; border: none; padding: 0; font: inherit; }
 button.dd-item { width: 100%; text-align: left; background: none; border: none; font: inherit; }
+/* The logo, the dropdown items and the drawer links are real links (crawlable).
+   These keep them looking exactly as the buttons they replaced did. */
+a.nav-logo, a.mm-link { text-decoration: none; }
+a.nav-link, a.prog-card-cta { text-align: center; }
+a.nav-logo { color: inherit; }
+a.dd-item { width: 100%; text-align: left; color: inherit; }
 .dd-title, .dd-desc { display: block; }
 
 .nav-cta {

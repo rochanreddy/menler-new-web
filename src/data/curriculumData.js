@@ -500,3 +500,42 @@ export const DOMAIN_TRACKS = [
     ],
   },
 ];
+
+/* The Gen AI Kickstarter syllabus. Lives here, not in the page, so the build-time
+   prerender can put it in the HTML — the page file imports React and cannot be
+   loaded by Node. Sanity (kickstarterPage) overrides both at runtime. */
+export const KICKSTARTER_DAYS = [
+  { num: '01', topic: 'The AI Landscape', tool: 'Claude, ChatGPT, Gemini', cap: false },
+  { num: '02', topic: 'Claude OS', tool: 'Chat, Cowork, Code', cap: false },
+  { num: '03', topic: 'Prompting Fundamentals', tool: 'Prompts', cap: false },
+  { num: '04', topic: 'AI Workflow Thinking', tool: 'Claude,Workflow ', cap: false },
+  { num: '05', topic: 'Claude Skills', tool: 'Skills', cap: false },
+  { num: '06', topic: 'Claude Connectors', tool: 'Connectors & Mcps', cap: false },
+  { num: '07', topic: 'Claude Projects', tool: 'Notion AI', cap: false },
+  { num: '08', topic: 'Research Intelligence', tool: 'Claude, Perplexity, NotebookLM', cap: false },
+  { num: '09', topic: 'AI Creatives', tool: 'Gemini Imagen', cap: false },
+  { num: '10', topic: 'Claude Schedules & Routines', tool: 'Cowork,Schedule,Routines', cap: false },
+  { num: '11', topic: 'Claude for Data', tool: 'Artifacts, Excel, Doc', cap: false },
+  { num: '12', topic: 'External Automation', tool: 'n8n , zapier', cap: false },
+  { num: '13', topic: 'Vibe Coding', tool: 'Lovable, Emergent', cap: false },
+  { num: '14', topic: 'Capstone Build Sprint', tool: 'Live audience', cap: true },
+];
+
+export const KICKSTARTER_MODULES = [
+  { label: 'Module 1', title: 'AI Foundations + Claude OS',
+    lessons: ['The AI Landscape : What You Actually Need to Know', 'Claude OS : Three Interfaces, Three Use Cases', 'Prompting Fundamentals : The CLEAR Framework','AI Workflow Thinking  From Task to System'],
+    tools: ['Claude', 'ChatGPT', 'Gemini', 'Perplexity'],
+    project: 'Personal AI Operating System' },
+  { label: 'Module 2', title: 'Claude Power Layers',
+    lessons: ['Claude Skills : Teaching Claude to Behave Differently', 'Claude Connectors Claude Inside Your Existing Tools', 'Claude Projects Building a Persistent Intelligence System','Research Intelligence Claude + Perplexity + NotebookLM', 'AI Creatives Image, Audio & Video Generation'],
+    tools: ['Canva AI', 'Gemini', 'ElevenLabs', 'NotebookLM', 'Runway', 'Claude Skills', 'Claude Routines'],
+    project: 'Study planner agent & Content engine' },
+  { label: 'Module 3', title: 'Automation Systems',
+    lessons: ['Claude Schedules : Time-Triggered Intelligence', 'Claude Routines On Demand Repeatable Workflows', 'Claude for Data Upload, Interrogate, Act','External Automation Zapier, n8n & When to Leave Claude'],
+    tools: ['n8n', 'Zapier', 'Claude', 'Notion'],
+    project: 'Automation Suite' },
+  { label: 'Module 4',  title: 'Vibe coding & Demo day',
+    lessons: ['Vibe Coding : Build Real Things Without Writing Code', 'Capstone Build Sprint Ship in 20 Minutes', 'Demo Day Present, Critique, Level Up','AI-Native Career Positioning'],
+    tools: ['Claude', 'Emergent', 'Lovable'],
+    project: 'AI-Powered Capstone Project' },
+];

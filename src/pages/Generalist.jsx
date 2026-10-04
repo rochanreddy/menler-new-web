@@ -246,12 +246,14 @@ export default function Generalist() {
 
   return (
     <>
+      {/* The Course, FAQ and breadcrumb structured data is baked into the HTML by
+          scripts/prerender.mjs — a second Course added here would be a thinner
+          duplicate, with no price or schedule. */}
       <Seo
         title="AI Generalist Course & Fellowship — No-Code, Claude AI | Menler"
         description="Menler's AI Generalist Fellowship: a 10-week no-code AI generalist course for professionals and students in India. Learn Claude, ChatGPT and AI automation for marketing, finance, product, HR & ops — with placement support."
         keywords="AI generalist, AI generalist course, AI generalist program, AI generalist fellowship, AI generalist course India, generalist AI course, generalist program, generalist fellowship, Menler generalist, become an AI generalist, what is an AI generalist, no-code AI course, AI course for non-tech professionals, AI course for professionals, AI workflows course, AI automation course, Claude AI Generalist, Claude AI course, best AI course India"
         path="/generalist"
-        jsonLd={{ '@context': 'https://schema.org', '@type': 'Course', name: 'AI Generalist Fellowship', alternateName: ['Claude AI Generalist Fellowship', 'AI Generalist Course', 'Menler Generalist', 'Generalist AI Program'], description: '10-week no-code AI generalist course and fellowship — Claude and the wider AI stack applied to real work, with domain projects and placement support.', provider: { '@type': 'Organization', name: 'Menler', sameAs: 'https://menler.in' } }}
       />
       {/* ── HERO + WHO THIS IS FOR (one screen together) ── */}
       <div className="hero-screen">

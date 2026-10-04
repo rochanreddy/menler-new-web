@@ -45,6 +45,13 @@ export default function Home() {
   const navigate = useNavigate();
   const toast = useToast();
   const go = (path) => { navigate(path); window.scrollTo(0, 0); };
+  // For real <a href> links: crawlers follow the href, a plain click stays in-app,
+  // and modified clicks (new tab) are left to the browser.
+  const linkTo = (e, path) => {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    go(path);
+  };
   // Smooth-scroll to a section ref, driving Lenis when it's active (Lenis sets
   // scroll-behavior:auto, so native scrollIntoView would otherwise jump).
   const smoothTo = (el) => {
@@ -217,7 +224,7 @@ export default function Home() {
                 <span className="nb-chip">Career Development</span>
               </div>
             </div>
-            <button className="prog-card-cta" onClick={() => go('/generalist')}>Explore Generalist Program</button>
+            <a className="prog-card-cta" href="/generalist" onClick={(e) => linkTo(e, '/generalist')}>Explore Generalist Program</a>
           </div>
           <div className="prog-card eng">
             <span className="prog-card-badge">Coding experience required</span>
@@ -242,7 +249,7 @@ export default function Home() {
                 <span className="nb-chip">Career Development</span>
               </div>
             </div>
-            <button className="prog-card-cta" onClick={() => go('/engineering')}>Explore Engineering Program</button>
+            <a className="prog-card-cta" href="/engineering" onClick={(e) => linkTo(e, '/engineering')}>Explore Engineering Program</a>
           </div>
         </div>
         <div style={{ textAlign: 'center', marginTop: 16 }}>

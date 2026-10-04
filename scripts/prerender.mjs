@@ -13,7 +13,7 @@ import { dirname, join } from 'path';
 import { PROJECTS } from '../src/data/projectsData.js';
 import { HOME_FAQS, GENERALIST_FAQS, ENGINEERING_FAQS, KICKSTARTER_FAQS } from '../src/data/faqData.js';
 import { POLICIES } from '../src/data/policyContent.js';
-import { DOMAIN_TRACKS, GENERALIST_WEEKS } from '../src/data/curriculumData.js';
+import { DOMAIN_TRACKS, GENERALIST_WEEKS, KICKSTARTER_DAYS, KICKSTARTER_MODULES } from '../src/data/curriculumData.js';
 import { RESOURCE_PACKS } from '../src/data/resourceCatalog.js';
 import { HIRING_COMPANIES } from '../src/data/hiringCompanies.js';
 import { BLOG_POSTS as FILE_POSTS } from '../src/data/blogData.js';
@@ -52,15 +52,20 @@ const SOCIAL = [
   'https://www.instagram.com/menler.in',
   'https://www.facebook.com/profile.php?id=61589670181082',
 ];
+// The organisation is one entity with one @id — the same one index.html
+// declares — so a course's `provider` and the homepage's brand block resolve to
+// a single node instead of three look-alikes a crawler has to guess are related.
+const ORG_ID = `${SITE}/#organization`;
 // Compact org reference used as a course `provider`.
-const ORG = { '@type': 'Organization', name: 'Menler', url: SITE };
+const ORG = { '@type': 'Organization', '@id': ORG_ID, name: 'Menler', url: SITE, sameAs: SOCIAL };
 
 // Full standalone brand entity (emitted on the homepage).
 const ORG_FULL = {
   '@context': 'https://schema.org',
   '@type': 'EducationalOrganization',
+  '@id': ORG_ID,
   name: 'Menler',
-  alternateName: 'Menler Learning Systems',
+  alternateName: ['Menler Learning Systems', 'Menler AI'],
   url: SITE,
   logo: `${SITE}/icon-512.png`,
   image: `${SITE}/og-image.png`,
@@ -76,19 +81,38 @@ const crumbs = (items) => ({
   itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, item: SITE + it.path })),
 });
 
-const course = (name, description, workload, urlPath, price, alternateName) => ({
+/* A Course, in the shape Google's course results require: an offer with a
+ * category, and an instance with a mode and a schedule. The old `courseWorkload:
+ * '10 weeks'` was not a valid duration, so the block read as a course with no
+ * usable instance. `weeks` x `hoursPerWeek` is the schedule the page itself
+ * states. */
+const course = ({ name, alternateName, description, path, price, weeks, hoursPerWeek, level, prerequisites, credential, teaches }) => ({
   '@context': 'https://schema.org',
   '@type': 'Course',
+  '@id': `${SITE}${path}#course`,
   name,
   ...(alternateName ? { alternateName } : {}),
   description,
   provider: ORG,
-  url: SITE + urlPath,
+  url: SITE + path,
+  image: `${SITE}/og-image.png`,
   inLanguage: 'en',
-  hasCourseInstance: { '@type': 'CourseInstance', courseMode: 'online', courseWorkload: workload },
-  ...(price
-    ? { offers: { '@type': 'Offer', price: String(price).replace(/[^\d.]/g, ''), priceCurrency: 'INR', availability: 'https://schema.org/InStock', url: SITE + urlPath } }
-    : {}),
+  ...(level ? { educationalLevel: level } : {}),
+  ...(prerequisites ? { coursePrerequisites: prerequisites } : {}),
+  ...(credential ? { educationalCredentialAwarded: credential } : {}),
+  ...(teaches ? { teaches } : {}),
+  hasCourseInstance: {
+    '@type': 'CourseInstance',
+    courseMode: 'Online',
+    courseSchedule: { '@type': 'Schedule', repeatFrequency: 'Weekly', repeatCount: weeks, duration: `PT${hoursPerWeek}H` },
+  },
+  offers: {
+    '@type': 'Offer',
+    category: 'Paid',
+    ...(price ? { price: String(price), priceCurrency: 'INR' } : {}),
+    availability: 'https://schema.org/InStock',
+    url: SITE + path,
+  },
 });
 
 const faqOf = (faqs) => ({
@@ -96,6 +120,35 @@ const faqOf = (faqs) => ({
   '@type': 'FAQPage',
   mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
 });
+
+/* The programmes, one line each. Used by llms.txt and by the homepage's
+ * crawlable text, so both describe a programme in the same words. */
+const PROGRAM_FACTS = [
+  /* Batch dates are deliberately absent: a date here outlives the batch, and an
+     answer engine then repeats a start date that has already passed. The
+     programme pages carry the live dates. */
+  ['AI Generalist Fellowship (Claude AI Generalist)', '/generalist',
+    'A 10-week, no-code AI generalist course and fellowship for non-technical professionals and students — how to become an AI generalist. Covers Claude and 35+ AI tools for research, writing, automation (n8n, Make, Zapier) and no-code building, applied across marketing, finance, product, HR and operations. ₹59,999. Includes real projects and placement support.'],
+  ['AI Generalist Fellowship — 6 weeks', '/generalist',
+    'A shorter 6-week version of the AI Generalist Fellowship. ₹35,000.'],
+  ['AI Engineering Fellowship (Claude AI Engineering)', '/engineering',
+    'A 12-week fellowship for developers. Build production AI systems — Claude API, RAG, MCP, agents, evaluations and LLMOps. ₹59,999. Includes placement support.'],
+  ['Gen AI Kickstarter (AI Kickstarter)', '/kickstarter',
+    'A 14-day AI course for complete beginners — 4 live sessions across 2 weekends. Hands-on with 10+ AI tools, 4 portfolio projects and a certificate. No prerequisites. ₹4,999.'],
+];
+
+// The three programmes as a list, for the homepage: it tells a crawler these
+// are the site's main entities, not three pages among thirty.
+const PROGRAM_LIST = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Menler AI programs',
+  itemListElement: [
+    ['AI Generalist Fellowship', '/generalist'],
+    ['Gen AI Kickstarter', '/kickstarter'],
+    ['AI Engineering Fellowship', '/engineering'],
+  ].map(([name, path], i) => ({ '@type': 'ListItem', position: i + 1, name, url: SITE + path })),
+};
 
 // Routes --------------------------------------------------------------------
 const STATIC_ROUTES = [
@@ -106,7 +159,8 @@ const STATIC_ROUTES = [
     keywords: "Menler, Menler AI, AI courses India, best AI course India, AI generalist, AI generalist course, AI generalist fellowship, AI kickstarter, Gen AI Kickstarter, AI course for beginners, AI engineering fellowship, AI fellowship India, AI bootcamp India, no-code AI course, Claude AI course, learn AI India, AI upskilling India, AI certification India, AI careers India, top AI courses, best AI courses in India, Claude AI training, online AI course India",
     h1: "Menler — AI courses India: AI Generalist Fellowship & Gen AI Kickstarter",
     intro: 'AI courses and fellowships: the no-code AI Generalist Fellowship (Claude AI Generalist), the AI Engineering Fellowship, and the 14-day Gen AI Kickstarter for beginners. Learn AI, build real projects, and get placement support.',
-    jsonLd: [ORG_FULL, faqOf(HOME_FAQS)],
+    jsonLd: [ORG_FULL, PROGRAM_LIST, faqOf(HOME_FAQS)],
+    programs: PROGRAM_FACTS,
     faqs: HOME_FAQS,
     hiring: HIRING_COMPANIES,
   },
@@ -117,9 +171,17 @@ const STATIC_ROUTES = [
     keywords: "AI generalist, AI generalist course, AI generalist program, AI generalist fellowship, AI generalist course India, generalist AI course, generalist program, generalist fellowship, Menler generalist, become an AI generalist, what is an AI generalist, no-code AI course, AI course for non-tech professionals, AI course for professionals, AI workflows course, AI automation course, Claude AI Generalist, Claude AI course, best AI course India",
     h1: 'AI Generalist Course & Fellowship — Claude AI Generalist',
     intro: 'The Menler AI Generalist Fellowship is a 10-week no-code AI generalist course for professionals and students — learn Claude and the wider AI stack, and apply AI workflows across marketing, finance, product, HR and operations, with real projects and placement support.',
-    extra: 'An AI generalist uses AI across everyday work — research, writing, analysis, presentations, automation and building simple tools — without needing to code. The Menler AI Generalist Fellowship trains this role over 10 weeks: prompting and context, AI research, AI for documents, creative and media tools, automation with n8n, Make and Zapier, voice AI, and no-code building with Lovable and Claude Code, applied in domain tracks for marketing, finance, product, HR, operations and more.',
+    extra: 'An AI generalist uses AI across everyday work — research, writing, analysis, presentations, automation and building simple tools — without needing to code. The Menler AI Generalist Fellowship trains this role over 10 weeks: prompting and context, AI research, AI for documents, creative and media tools, automation with n8n, Make and Zapier, voice AI, and no-code building with Lovable and Claude Code, applied in domain tracks for marketing, finance, product, HR, operations and more. The Menler Generalist program runs live online as 20 sessions and 50 hours of instruction, costs ₹59,999, and ends with a project portfolio, a Claude Specialist certificate and placement support.',
     jsonLd: [
-      course('AI Generalist Fellowship', '10-week no-code AI generalist course and fellowship — Claude and the wider AI stack applied to real work, with domain projects and placement support.', '10 weeks', '/generalist', '59999', ['Claude AI Generalist Fellowship', 'AI Generalist Course', 'Menler Generalist', 'Generalist AI Program']),
+      course({
+        name: 'AI Generalist Fellowship',
+        alternateName: ['Claude AI Generalist Fellowship', 'AI Generalist Course', 'Menler Generalist', 'Generalist AI Program'],
+        description: '10-week no-code AI generalist course and fellowship — Claude and the wider AI stack applied to real work, with domain projects and placement support.',
+        path: '/generalist', price: 59999, weeks: 10, hoursPerWeek: 10,
+        level: 'Beginner', prerequisites: 'None — no coding experience required.',
+        credential: 'Claude Specialist certificate',
+        teaches: ['Prompting and context', 'AI research and writing', 'AI for documents and presentations', 'AI automation with n8n, Make and Zapier', 'No-code building with Lovable and Claude Code'],
+      }),
       faqOf(GENERALIST_FAQS),
       crumbs([{ name: 'Home', path: '/' }, { name: 'AI Generalist Fellowship', path: '/generalist' }]),
     ],
@@ -135,7 +197,13 @@ const STATIC_ROUTES = [
     h1: 'Claude AI Engineering Fellowship',
     intro: 'A 12-week Claude AI engineering fellowship for developers — build production AI systems: API, RAG, MCP, agents, evals and LLMOps, with placement support.',
     jsonLd: [
-      course('Claude AI Engineering Fellowship', '12-week Claude AI engineering fellowship — production AI systems: API, RAG, MCP, agents, evals and LLMOps, with placement support.', '12 weeks', '/engineering'),
+      course({
+        name: 'Claude AI Engineering Fellowship',
+        alternateName: ['AI Engineering Fellowship', 'Menler Engineering'],
+        description: '12-week Claude AI engineering fellowship — production AI systems: API, RAG, MCP, agents, evals and LLMOps, with placement support.',
+        path: '/engineering', weeks: 12, hoursPerWeek: 12,
+        prerequisites: 'Working knowledge of Python or JavaScript.',
+      }),
       faqOf(ENGINEERING_FAQS),
       crumbs([{ name: 'Home', path: '/' }, { name: 'Engineering Fellowship', path: '/engineering' }]),
     ],
@@ -149,10 +217,21 @@ const STATIC_ROUTES = [
     h1: 'Gen AI Kickstarter — AI Kickstarter Course for Beginners',
     intro: "Menler's Gen AI Kickstarter is a 14-day AI course for complete beginners — get hands-on with 10+ AI tools, ship 4 mini-builds and earn a fluency certificate, with no prerequisites.",
     jsonLd: [
-      course('Gen AI Kickstarter', '14-day generative AI course for complete beginners — hands-on with 10+ AI tools, 4 mini-builds and a certificate, no prerequisites.', '14 days', '/kickstarter', '4999', ['AI Kickstarter', 'Menler AI Kickstarter', 'AI Kickstarter Course']),
+      course({
+        name: 'Gen AI Kickstarter',
+        alternateName: ['AI Kickstarter', 'Menler Kickstarter', 'Menler AI Kickstarter', 'AI Kickstarter Course'],
+        description: '14-day generative AI course for complete beginners — hands-on with 10+ AI tools, 4 mini-builds and a certificate, no prerequisites.',
+        path: '/kickstarter', price: 4999, weeks: 2, hoursPerWeek: 4,
+        level: 'Beginner', prerequisites: 'None.',
+        credential: 'Menler AI Kickstarter Certificate',
+        teaches: KICKSTARTER_MODULES.map((m) => m.title),
+      }),
       faqOf(KICKSTARTER_FAQS),
       crumbs([{ name: 'Home', path: '/' }, { name: 'Gen AI Kickstarter', path: '/kickstarter' }]),
     ],
+    extra: 'The Menler Kickstarter — also called the AI Kickstarter — is the entry programme: 4 live sessions across 2 weekends, 8 live hours in all, for ₹4,999. You build a personal AI operating system on Claude, a research system and an automation, then ship a capstone on Demo Day and earn the Menler AI Kickstarter Certificate. Kickstarter alumni get a 30% scholarship to the AI Generalist Fellowship or the AI Engineering Fellowship.',
+    days: KICKSTARTER_DAYS,
+    modules: KICKSTARTER_MODULES,
     faqs: KICKSTARTER_FAQS,
   },
   {
@@ -544,6 +623,49 @@ function curriculumHtml(weeks, tracks) {
 }
 
 /**
+ * The Kickstarter syllabus, as text.
+ *
+ * The generalist page has had its curriculum in the HTML for a while; this page
+ * had a heading, a sentence and the FAQ. Everything that says what the fourteen
+ * days contain — the modules, the lessons, the tools, the builds — was a React
+ * render away, which the crawlers behind ChatGPT, Claude and Perplexity never
+ * perform.
+ */
+function kickstarterHtml(days, modules) {
+  let out = '';
+  if (Array.isArray(modules) && modules.length) {
+    out += '<section><h2>What you learn in the Gen AI Kickstarter</h2>' + modules.map((m) =>
+      `<h3>${escText(m.label)} — ${escText(m.title)}</h3>` +
+      (m.lessons?.length ? `<ul>${m.lessons.map((l) => `<li>${escText(l)}</li>`).join('')}</ul>` : '') +
+      (m.tools?.length ? `<p>Tools: ${escText(m.tools.join(', '))}</p>` : '') +
+      (m.project ? `<p>Project: ${escText(m.project)}</p>` : '')
+    ).join('') + '</section>';
+  }
+  if (Array.isArray(days) && days.length) {
+    const tools = (t) => String(t || '').split(',').map((x) => x.trim()).filter(Boolean).join(', ');
+    out += '<section><h2>Day by day</h2><ol>' + days.map((d) =>
+      `<li>Day ${escText(d.num)} — ${escText(d.topic)}${tools(d.tool) ? ` (${escText(tools(d.tool))})` : ''}</li>`
+    ).join('') + '</ol></section>';
+  }
+  return out;
+}
+
+/**
+ * The programmes, linked by name.
+ *
+ * The homepage is the page with the most authority, and it reached the
+ * programme pages only through buttons, which have no href. This is the link a
+ * crawler can follow, with the programme's name as its anchor text — the
+ * plainest statement a site can make about what a page is.
+ */
+function programsHtml(programs) {
+  if (!Array.isArray(programs) || !programs.length) return '';
+  return '<section><h2>Programs</h2><ul>' + programs.map(([name, path, desc]) =>
+    `<li><a href="${escAttr(path)}">${escText(name)}</a>: ${escText(desc)}</li>`
+  ).join('') + '</ul></section>';
+}
+
+/**
  * The policy text itself.
  *
  * A privacy policy that is 700 words in a data file and 38 words in the HTML
@@ -578,7 +700,9 @@ function fallback(route) {
   const extra =
     (route.extra ? `<p>${escText(route.extra)}</p>` : '') +
     (route.extraHtml || '') + // pre-escaped structured HTML (e.g. full blog body)
+    programsHtml(route.programs) +
     curriculumHtml(route.weeks, route.tracks) +
+    kickstarterHtml(route.days, route.modules) +
     policyHtml(route.policy) +
     packsHtml(route.packs) +
     hiringHtml(route.hiring) +
@@ -607,6 +731,11 @@ function render(template, route) {
   if (route.keywords) html = setMeta(html, 'name', 'keywords', route.keywords);
   html = swap(html, /(<link rel="canonical" href=")[^"]*(")/i, escAttr(canonical),
     (v) => `<link rel="canonical" href="${v}" />`);
+  // hreflang has to name the page it sits on. The template's two alternates
+  // point at the homepage, and every route inherited them — so /generalist was
+  // telling search engines its Indian-English version is the homepage.
+  html = html.replace(/(<link rel="alternate" hreflang="[^"]*" href=")[^"]*(")/gi,
+    (_m, p1, p2) => p1 + escAttr(canonical) + p2);
 
   html = setMeta(html, 'property', 'og:title', route.title);
   html = setMeta(html, 'property', 'og:description', route.description);
@@ -680,27 +809,15 @@ console.log(`✓ Generated sitemap.xml with ${sitemapUrls.length} indexable URLs
  *   llms-full.txt  the answers themselves, so a model can cite us without
  *                  having to fetch and parse ten separate pages
  */
-const PROGRAM_FACTS = [
-  /* Batch dates are deliberately absent: a date here outlives the batch, and an
-     answer engine then repeats a start date that has already passed. The
-     programme pages carry the live dates. */
-  ['AI Generalist Fellowship (Claude AI Generalist)', '/generalist',
-    'A 10-week, no-code AI generalist course and fellowship for non-technical professionals and students — how to become an AI generalist. Covers Claude and 35+ AI tools for research, writing, automation (n8n, Make, Zapier) and no-code building, applied across marketing, finance, product, HR and operations. ₹59,999. Includes real projects and placement support.'],
-  ['AI Generalist Fellowship — 6 weeks', '/generalist',
-    'A shorter 6-week version of the AI Generalist Fellowship. ₹35,000.'],
-  ['AI Engineering Fellowship (Claude AI Engineering)', '/engineering',
-    'A 12-week fellowship for developers. Build production AI systems — Claude API, RAG, MCP, agents, evaluations and LLMOps. ₹59,999. Includes placement support. Next batch starts October 2026.'],
-  ['Gen AI Kickstarter (AI Kickstarter)', '/kickstarter',
-    'A 14-day AI course for complete beginners — 4 live sessions across 2 weekends. Hands-on with 10+ AI tools, 4 portfolio projects and a certificate. No prerequisites. ₹4,999.'],
-];
-
 const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
 
 const llmsHead = `# Menler
 
 > Menler is an India-based, Claude-native AI learning company. It runs live, cohort-based AI courses and fellowships that teach professionals, students and engineers to build real work with Claude and other AI tools — with real projects, a portfolio, and placement support.
 
-Its programmes: the AI Generalist Fellowship — a no-code course for becoming an AI generalist; the Gen AI Kickstarter — a 14-day AI course for beginners; and the AI Engineering Fellowship for developers.
+Its programmes: the AI Generalist Fellowship — a no-code course for becoming an AI generalist, also called the Menler Generalist program; the Gen AI Kickstarter — a 14-day AI course for beginners, also called the Menler Kickstarter or AI Kickstarter; and the AI Engineering Fellowship for developers.
+
+The Gen AI Kickstarter is an AI course. It is not connected to Kickstarter, the crowdfunding platform.
 
 Menler focuses on depth over breadth and outcomes over completion: learners ship real AI assets (workflows, agents, RAG apps) rather than only watching lectures. Every programme is live, cohort-based and delivered online from India.
 `;
@@ -782,3 +899,33 @@ writeFileSync(join(DIST, 'llms-full.txt'), llmsFull, 'utf8');
 
 const faqCount = [HOME_FAQS, GENERALIST_FAQS, ENGINEERING_FAQS, KICKSTARTER_FAQS].reduce((n, f) => n + f.length, 0);
 console.log(`✓ Generated llms.txt and llms-full.txt (${PROGRAM_FACTS.length} programmes, ${faqCount} FAQs, ${BLOG_PUBLIC ? BLOG_POSTS.filter((p) => p.body).length : 0} articles).`);
+
+/* ── IndexNow ────────────────────────────────────────────────────────────────
+ * Tells Bing — and the answer engines that search through its index, ChatGPT
+ * and Copilot among them — which URLs changed, instead of waiting weeks for a
+ * recrawl. Google does not take part; it is asked through Search Console.
+ *
+ * Production builds only, so a preview deploy never announces anything. The key
+ * is public by design: it is proved by the matching file in /public. A failure
+ * here is logged and ignored — a deploy must not fail because a ping did.
+ */
+const INDEXNOW_KEY = '5afc3731e525c2886043b407e584aa7f';
+if (process.env.VERCEL_ENV === 'production') {
+  const urlList = ROUTES.filter((r) => !r.noindex).map((r) => SITE + r.path);
+  try {
+    const res = await fetch('https://api.indexnow.org/indexnow', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body: JSON.stringify({
+        host: new URL(SITE).host,
+        key: INDEXNOW_KEY,
+        keyLocation: `${SITE}/${INDEXNOW_KEY}.txt`,
+        urlList,
+      }),
+      signal: AbortSignal.timeout(10000),
+    });
+    console.log(`✓ IndexNow: submitted ${urlList.length} URLs (HTTP ${res.status}).`);
+  } catch (err) {
+    console.warn(`! IndexNow ping failed (${err.message}) — skipped.`);
+  }
+}

@@ -14,29 +14,13 @@ import PayModal from '../components/common/PayModal';
 import BackgroundField from '../components/forms/BackgroundField';
 import { useContent } from '../lib/useContent';
 import { KICKSTARTER_FAQS } from '../data/faqData';
+import { KICKSTARTER_DAYS as DAYS, KICKSTARTER_MODULES as MODULES } from '../data/curriculumData';
 import { verifyAndDownloadBrochure } from '../lib/brochure';
 import PhoneField from '../components/forms/PhoneField';
 import { isSmsReachable, phoneMinLength } from '../lib/phone';
 
 // Curriculum PDF served by the "Download curriculum" button (no verification).
 const KS_CURRICULUM_PDF = '/pdfs/Menler_AI_Kickstarter.pdf';
-
-const DAYS = [
-  { num: '01', topic: 'The AI Landscape', tool: 'Claude, ChatGPT, Gemini', cap: false },
-  { num: '02', topic: 'Claude OS', tool: 'Chat, Cowork, Code', cap: false },
-  { num: '03', topic: 'Prompting Fundamentals', tool: 'Prompts', cap: false },
-  { num: '04', topic: 'AI Workflow Thinking', tool: 'Claude,Workflow ', cap: false },
-  { num: '05', topic: 'Claude Skills', tool: 'Skills', cap: false },
-  { num: '06', topic: 'Claude Connectors', tool: 'Connectors & Mcps', cap: false },
-  { num: '07', topic: 'Claude Projects', tool: 'Notion AI', cap: false },
-  { num: '08', topic: 'Research Intelligence', tool: 'Claude, Perplexity, NotebookLM', cap: false },
-  { num: '09', topic: 'AI Creatives', tool: 'Gemini Imagen', cap: false },
-  { num: '10', topic: 'Claude Schedules & Routines', tool: 'Cowork,Schedule,Routines', cap: false },
-  { num: '11', topic: 'Claude for Data', tool: 'Articrafts, Excel, Doc', cap: false },
-  { num: '12', topic: 'External Automation', tool: 'n8n , zapier', cap: false },
-  { num: '13', topic: 'Vibe Coding', tool: 'Lovable, Emergent', cap: false },
-  { num: '14', topic: 'Capstone Build Sprint', tool: 'Live audience', cap: true },
-];
 
 // ── Pricing card content ──
 const KS_FEATS = [
@@ -90,25 +74,6 @@ const PROJECTS = [
   { tag: 'Build 3', tagStyle: { background: '#FAEEDA', color: '#854F0B' }, title: 'Content engine', meta: 'Day 9 · Claude + Canva AI', desc: 'Posts, captions, thumbnails, and scripts on autopilot in your voice.', cardStyle: { background: 'white', borderColor: 'rgba(186,117,23,0.18)' } },
   { tag: 'Build 4', tagStyle: { background: '#FAEEDA', color: '#854F0B' }, title: 'Automation Suite', meta: 'Day 10 · Claude · Cowork', desc: 'Stress test any idea market, competition, ICP in a single Claude run with citations.', cardStyle: { background: 'white', borderColor: 'rgba(186,117,23,0.18)' } },
   { tag: 'Build 5', tagStyle: { background: '#BA7517', color: 'white' }, title: 'AI-Powered Capstone Project', meta: 'Day 11 · Claude Skills', desc: 'Wire Claude into your daily life calendar, mail, study notes with one Skill that does the work.', cardStyle: { background: '#FFE9C7', borderColor: 'rgba(186,117,23,0.4)' } },
-];
-
-const MODULES = [
-  { label: 'Module 1', title: 'AI Foundations + Claude OS',
-    lessons: ['The AI Landscape : What You Actually Need to Know', 'Claude OS : Three Interfaces, Three Use Cases', 'Prompting Fundamentals : The CLEAR Framwork','AI Workflow Thinking  From Task to System'],
-    tools: ['Claude', 'ChatGPT', 'Gemini', 'Perplexity'],
-    project: 'Personal AI Operating System' },
-  { label: 'Module 2', title: 'Claude Power Layers',
-    lessons: ['Claude Skills : Teaching Claude to Behave Differently', 'Claude Connectors Claude Inside Your Existing Tools', 'Claude Projects Building a Persistent Intelligence System','Research Intelligence Claude + Perplexity + NotebookLM', 'AI Creatives Image, Audio & Video Generation'],
-    tools: ['Canva AI', 'Gemini', 'ElevenLabs', 'NotebookLM', 'Runway', 'Claude Skills', 'Claude Routines'],
-    project: 'Study planner agent & Content engine' },
-  { label: 'Module 3', title: 'Automation Systems',
-    lessons: ['Claude Schedules : Time-Triggered Intelligence', 'Claude Routines On Demand Repeatable Workflows', 'Claude for Data Upload, Interrogate, Act','External Automation Zapier, n8n & When to Leave Claude'],
-    tools: ['n8n', 'Zapier', 'Claude', 'Notion'],
-    project: 'Automation Suite' },
-  { label: 'Module 4',  title: 'Vibe coding & Demo day',
-    lessons: ['Vibe Coding : Build Real Things Without Writing Code', 'Capstone Build Sprint Ship in 20 Minutes', 'Demo Day Present, Critique, Level Up','AI-Native Career Positioning'],
-    tools: ['Claude', 'Emergent', 'Lovable'],
-    project: 'AI-Powered Capstone Project' },
 ];
 
 // Logo per tool used in the module tool stacks (local SVG for Claude/MCP,
@@ -211,12 +176,14 @@ export default function Kickstarter() {
 
   return (
     <>
+      {/* The Course, FAQ and breadcrumb structured data is baked into the HTML by
+          scripts/prerender.mjs — a second Course added here would be a thinner
+          duplicate, with no price or schedule. */}
       <Seo
         title="Gen AI Kickstarter — 14-Day AI Course for Beginners | Menler"
         description="Menler's Gen AI Kickstarter is a 14-day AI course for complete beginners in India. Get hands-on with 10+ AI tools, ship 4 mini-builds and earn a certificate — no prerequisites, ₹4,999."
         keywords="AI Kickstarter, Gen AI Kickstarter, AI kickstarter course, kickstarter AI course, Menler kickstarter, generative AI course for beginners, AI course for beginners, beginner AI course India, AI bootcamp India, 14 day AI course, short AI course, learn AI from scratch, AI tools course, AI certificate course, best AI course for beginners"
         path="/kickstarter"
-        jsonLd={{ '@context': 'https://schema.org', '@type': 'Course', name: 'Gen AI Kickstarter', alternateName: ['AI Kickstarter', 'Menler AI Kickstarter', 'AI Kickstarter Course'], description: '14-day generative AI course for complete beginners — hands-on with 10+ AI tools, 4 mini-builds and a certificate, no prerequisites.', provider: { '@type': 'Organization', name: 'Menler', sameAs: 'https://menler.in' } }}
       />
       {/* ── HERO + WHO THIS IS FOR (one screen together) ── */}
       <div className="hero-screen">

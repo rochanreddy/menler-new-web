@@ -17,6 +17,19 @@ export default function Navbar() {
     setMobileOpen(false);
   };
 
+  /* Real links, not buttons: a crawler follows an href and cannot follow an
+     onClick, so the main nav — the strongest internal links a site has — was
+     invisible to search engines. A plain click still navigates inside the app;
+     Cmd/Ctrl/Shift/middle-click open a new tab as links should. */
+  const link = (path) => ({
+    href: path,
+    onClick: (e) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      e.preventDefault();
+      go(path);
+    },
+  });
+
   // Apply Now → open the popup (and close any open menus first). On the
   // Kickstarter page, open the same simplified form as its "Book a call" CTA
   // (no Program field, Kickstarter-specific background options).
@@ -69,9 +82,9 @@ export default function Navbar() {
   return (
     <>
     <nav className="nav" ref={navRef}>
-      <button className="nav-logo" onClick={() => go('/')} aria-label="menler — home">
+      <a className="nav-logo" {...link('/')} aria-label="menler — home">
         <MenlerWordmark size={26} theme="light" />
-      </button>
+      </a>
 
       <button
         className={`nav-burger${mobileOpen ? ' open' : ''}`}
@@ -92,28 +105,28 @@ export default function Navbar() {
             </svg>
           </button>
           <div className="dropdown dropdown-mega" role="menu">
-            <button className="dd-item dd-gen" role="menuitem" onClick={() => go('/generalist')}>
+            <a className="dd-item dd-gen" role="menuitem" {...link('/generalist')}>
               <span className="dd-badge">10 weeks · No code</span>
               <span className="dd-title">Claude AI Generalist</span>
               <span className="dd-desc">For students, professionals, and business owners. Master Claude. Become a domain Specialist.</span>
-            </button>
+            </a>
             <div className="dd-divider" />
-            <button className="dd-item dd-eng" role="menuitem" onClick={() => go('/engineering')}>
+            <a className="dd-item dd-eng" role="menuitem" {...link('/engineering')}>
               <span className="dd-badge" style={{ background: '#E1F5EE', color: '#085041' }}>12 weeks · Code</span>
               <span className="dd-title">Claude AI Engineering</span>
               <span className="dd-desc">For software engineers, DS, ML, IT. Build production Claude systems — API, RAG, MCP, agents.</span>
-            </button>
+            </a>
           </div>
         </div>
-        <button className={`nav-link${isActive('/kickstarter') ? ' active' : ''}`} onClick={() => go('/kickstarter')}>AI Kickstarter</button>
+        <a className={`nav-link${isActive('/kickstarter') ? ' active' : ''}`} {...link('/kickstarter')}>AI Kickstarter</a>
 
         
         
 
-        <button className={`nav-link${isActive('/aptitude') ? ' active' : ''}`} onClick={() => go('/aptitude')}>AI Aptitude Test</button>
-        <button className={`nav-link${isActive('/events') ? ' active' : ''}`} onClick={() => go('/events')}>Events</button>
-        <button className={`nav-link${isActive('/resources') ? ' active' : ''}`} onClick={() => go('/resources')}>Library</button>
-        <button className={`nav-link${isActive('/about') ? ' active' : ''}`} onClick={() => go('/about')}>About</button>
+        <a className={`nav-link${isActive('/aptitude') ? ' active' : ''}`} {...link('/aptitude')}>AI Aptitude Test</a>
+        <a className={`nav-link${isActive('/events') ? ' active' : ''}`} {...link('/events')}>Events</a>
+        <a className={`nav-link${isActive('/resources') ? ' active' : ''}`} {...link('/resources')}>Library</a>
+        <a className={`nav-link${isActive('/about') ? ' active' : ''}`} {...link('/about')}>About</a>
         <button className="nav-cta" onClick={apply}>Apply Now</button>
       </div>
     </nav>
@@ -122,15 +135,15 @@ export default function Navbar() {
           not the navbar's backdrop-filter containing block) ── */}
       <div className={`mobile-menu${mobileOpen ? ' open' : ''}`} aria-hidden={!mobileOpen}>
         <div className="mm-section-label">Fellowship</div>
-        <button className="mm-link" onClick={() => go('/generalist')}>Claude AI Generalist</button>
-        <button className="mm-link" onClick={() => go('/engineering')}>Claude AI Engineering</button>
+        <a className="mm-link" {...link('/generalist')}>Claude AI Generalist</a>
+        <a className="mm-link" {...link('/engineering')}>Claude AI Engineering</a>
         <div className="mm-divider" />
-        <button className="mm-link" onClick={() => go('/kickstarter')}>AI Kickstarter</button>
+        <a className="mm-link" {...link('/kickstarter')}>AI Kickstarter</a>
         <div className="mm-divider" />
-        <button className={`mm-link${isActive('/aptitude') ? ' active' : ''}`} onClick={() => go('/aptitude')}>AI Aptitude Test</button>
-        <button className={`mm-link${isActive('/events') ? ' active' : ''}`} onClick={() => go('/events')}>Events</button>
-        <button className={`mm-link${isActive('/resources') ? ' active' : ''}`} onClick={() => go('/resources')}>Library</button>
-        <button className={`mm-link${isActive('/about') ? ' active' : ''}`} onClick={() => go('/about')}>About</button>
+        <a className={`mm-link${isActive('/aptitude') ? ' active' : ''}`} {...link('/aptitude')}>AI Aptitude Test</a>
+        <a className={`mm-link${isActive('/events') ? ' active' : ''}`} {...link('/events')}>Events</a>
+        <a className={`mm-link${isActive('/resources') ? ' active' : ''}`} {...link('/resources')}>Library</a>
+        <a className={`mm-link${isActive('/about') ? ' active' : ''}`} {...link('/about')}>About</a>
         <div className="mm-divider" />
         <button className="mm-cta" onClick={apply}>Apply Now</button>
       </div>
