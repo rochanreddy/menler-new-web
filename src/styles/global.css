@@ -3553,6 +3553,9 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .notfound-rings span:nth-child(3) { width: 180px; height: 180px; top: -20px; left: 50%; transform: translateX(-50%); }
 .notfound-inner { position: relative; z-index: 2; max-width: 600px; margin: 0 auto; }
 .notfound-code { font-family: 'DM Serif Display', serif; font-size: clamp(64px, 14vw, 120px); line-height: 1; color: var(--lavender); margin-bottom: 6px; }
+.notfound-tag { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--lavender); margin-bottom: 16px; }
+.notfound-sub b { color: #EEEDFE; font-weight: 500; }
+.notfound-actions { align-items: center; }
 .notfound-h1 { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: clamp(26px, 5vw, 38px); color: #EEEDFE; line-height: 1.15; margin-bottom: 14px; letter-spacing: -0.01em; }
 .notfound-h1 em { color: var(--lavender); font-style: italic; }
 .notfound-sub { font-size: 15px; color: rgba(238,237,254,0.62); line-height: 1.6; max-width: 440px; margin: 0 auto 28px; }

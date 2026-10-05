@@ -16,7 +16,6 @@ const GeneralistCampaign = lazy(() => import('./pages/GeneralistCampaign'));
 const GeneralistCampaignThanks = lazy(() => import('./pages/GeneralistCampaignThanks'));
 const KickstarterCampaign = lazy(() => import('./pages/KickstarterCampaign'));
 const AgentsWorkshopCampaign = lazy(() => import('./pages/AgentsWorkshopCampaign'));
-const ModernWorkCampaign = lazy(() => import('./pages/ModernWorkCampaign'));
 const Engineering = lazy(() => import('./pages/Engineering'));
 
 const Projects = lazy(() => import('./pages/Projects'));
@@ -103,9 +102,6 @@ export default function App() {
             <Route path="/campaign/ai-claude-generalist/thank-you" element={<GeneralistCampaignThanks />} />
             <Route path="/campaign/ai-kickstarter" element={<KickstarterCampaign />} />
             <Route path="/campaign/build-like-an-ai-fde" element={<AgentsWorkshopCampaign />} />
-            {/* Its own build rather than the Sanity-driven /campaign/:slug page,
-                so it must sit above that route to win the match. */}
-            <Route path="/campaign/ai-for-modern-work-and-careers" element={<ModernWorkCampaign />} />
             {/* The document decides its own design — classic, or the paid
                 masterclass layout. See CampaignBySlug. */}
             <Route path="/campaign/:slug" element={<CampaignBySlug />} />
