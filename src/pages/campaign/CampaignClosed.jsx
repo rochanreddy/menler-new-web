@@ -22,7 +22,7 @@ export default function CampaignClosed({ title }) {
         <div className="notfound-rings" aria-hidden="true">
           <span /><span /><span />
         </div>
-        <div className="notfound-inner">
+        <div className="notfound-inner notfound-card">
           <p className="notfound-tag">✦ Registrations closed</p>
           <h1 className="notfound-h1">This masterclass is <em>no longer open.</em></h1>
           <p className="notfound-sub">
