@@ -3562,6 +3562,8 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .notfound-card .notfound-h1 em { color: var(--specialist); }
 .notfound-card .notfound-sub { color: rgba(38,33,92,0.72); }
 .notfound-card .notfound-sub b { color: var(--ink); }
+.notfound-card .notfound-sub { text-wrap: balance; }
+.notfound-card .notfound-sub--lead { margin-bottom: 8px; }
 .notfound-card .notfound-actions { margin-bottom: 0; }
 .notfound-wa { background: #25D366; }
 .notfound-wa:hover { background: #1EBE5A; }

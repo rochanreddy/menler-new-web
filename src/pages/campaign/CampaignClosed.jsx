@@ -25,12 +25,14 @@ export default function CampaignClosed({ title }) {
         <div className="notfound-inner notfound-card">
           <p className="notfound-tag">✦ Registrations closed</p>
           <h1 className="notfound-h1">This masterclass is <em>no longer open.</em></h1>
+          <p className="notfound-sub notfound-sub--lead">
+            {title ? <>Registrations for <b>{title}</b> have closed.</> : 'Registrations for this masterclass have closed.'}
+          </p>
           <p className="notfound-sub">
-            {title ? <>Registrations for <b>{title}</b> have closed. </> : 'Registrations for this masterclass have closed. '}
             Head to our events page to see what&rsquo;s coming up next and grab the free resources from past sessions.
           </p>
           <div className="notfound-actions">
-            <button className="btn-primary" onClick={() => navigate('/events')}>See all events</button>
+            <button className="btn-primary" onClick={() => navigate('/events')}>Check all events</button>
             <a className="btn-primary notfound-wa" href={MENLER_WHATSAPP_URL} target="_blank" rel="noopener noreferrer">Get notified on WhatsApp</a>
           </div>
         </div>
