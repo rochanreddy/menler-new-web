@@ -182,7 +182,7 @@ export default function Home() {
               <div><span className="hero-stat-num">90%</span><span className="hero-stat-lbl">Interview Pipeline<br />Target</span></div>
               <div><span className="hero-stat-num">25+</span><span className="hero-stat-lbl">Hiring<br />Associations</span></div>
               <div><span className="hero-stat-num">20+</span><span className="hero-stat-lbl">AI Builders<br />& Operators</span></div>
-              <div><span className="hero-stat-num">12</span><span className="hero-stat-lbl">Weeks Intensive<br />Fellowship</span></div>
+              <div><span className="hero-stat-num">10</span><span className="hero-stat-lbl">Weeks Intensive<br />Fellowship</span></div>
               <div><span className="hero-stat-num">6+</span><span className="hero-stat-lbl">Domain<br />Tracks</span></div>
             </div>
           )}
