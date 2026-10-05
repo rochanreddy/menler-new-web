@@ -31,7 +31,7 @@ export default function CampaignClosed({ title }) {
           </p>
           <div className="notfound-actions">
             <button className="btn-primary" onClick={() => navigate('/events')}>See all events</button>
-            <a className="btn-ghost" href={MENLER_WHATSAPP_URL} target="_blank" rel="noopener noreferrer">Get notified on WhatsApp</a>
+            <a className="btn-primary notfound-wa" href={MENLER_WHATSAPP_URL} target="_blank" rel="noopener noreferrer">Get notified on WhatsApp</a>
           </div>
         </div>
       </section>
