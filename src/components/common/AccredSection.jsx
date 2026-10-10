@@ -17,7 +17,7 @@ const ACCREDITORS = [
  * second implementation of the same thing. Opt-in, because the home page's
  * grid is deliberate there — the landing page wants the row to keep moving.
  *
- * On phones the home page's grid becomes the same rail, running left to right:
+ * On phones the home page’s grid becomes the same rail, running right to left:
  * four 230px cards stacked one under another took a full screen and a half to
  * say one line. Both are rendered and CSS shows one; the hidden rail's
  * animation does not run, because visibleRaf only ticks while it is on-screen.
@@ -38,7 +38,7 @@ export default function AccredSection({ marquee = false }) {
                 ))}
               </div>
               <div className="accred-by-mobile-rail">
-                <HiringRail companies={ACCREDITORS} dir="ltr" />
+                <HiringRail companies={ACCREDITORS} />
               </div>
             </>
           )}

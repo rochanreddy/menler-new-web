@@ -696,7 +696,7 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
 .accred-by-row .partner-logo-img[alt="Google for Education"] { max-height: 92px; }
 .accred-by-row .partner-logo-img[alt="Startup India"] { max-height: 52px; }
 .accred-by-row .partner-name { font-size: 16px; font-weight: 600; color: var(--ink); }
-/* Phones: the grid becomes a left-to-right rail (AccredSection). Full-bleed, so
+/* Phones: the grid becomes a right-to-left rail (AccredSection). Full-bleed, so
    cards enter and leave at the screen edge rather than at the section padding. */
 .accred-by-mobile-rail { display: none; }
 @media (max-width: 640px) {
