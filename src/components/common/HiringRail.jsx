@@ -62,7 +62,8 @@ function LogoRow({ list, dir }) {
   );
 }
 
-export default function HiringRail({ companies, rows = 1 }) {
+// `dir` sets which way a single row runs: 'rtl' (the default) or 'ltr'.
+export default function HiringRail({ companies, rows = 1, dir = 'rtl' }) {
   if (rows === 2) {
     const mid = Math.ceil(companies.length / 2);
     return (
@@ -74,7 +75,7 @@ export default function HiringRail({ companies, rows = 1 }) {
   }
   return (
     <div className="logorail-rows">
-      <LogoRow list={companies} dir="rtl" />
+      <LogoRow list={companies} dir={dir} />
     </div>
   );
 }

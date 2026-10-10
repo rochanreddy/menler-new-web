@@ -696,6 +696,19 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
 .accred-by-row .partner-logo-img[alt="Google for Education"] { max-height: 92px; }
 .accred-by-row .partner-logo-img[alt="Startup India"] { max-height: 52px; }
 .accred-by-row .partner-name { font-size: 16px; font-weight: 600; color: var(--ink); }
+/* Phones: the grid becomes a left-to-right rail (AccredSection). Full-bleed, so
+   cards enter and leave at the screen edge rather than at the section padding. */
+.accred-by-mobile-rail { display: none; }
+@media (max-width: 640px) {
+  .accred-by-row { display: none; }
+  .accred-by-mobile-rail { display: block; margin: 0 -22px; }
+  .accred-by-mobile-rail .logorail-rows { margin-top: 4px; }
+  .accred-by-mobile-rail .logorail-track .partner-chip { min-width: 168px; height: 84px; margin-right: 12px; padding: 12px 18px; background: #fff; border: 1px solid rgba(83,74,183,0.16); border-radius: 14px; box-shadow: 0 6px 16px rgba(38,33,92,0.06); }
+  .accred-by-mobile-rail .logorail-track .partner-logo-img { height: auto; max-height: 44px; max-width: 132px; }
+  .accred-by-mobile-rail .logorail-track .partner-logo-img[alt="Anthropic"] { max-height: 62px; }
+  .accred-by-mobile-rail .logorail-track .partner-logo-img[alt="Google for Education"] { max-height: 56px; }
+  .accred-by-mobile-rail .logorail-track .partner-logo-img[alt="Startup India"] { max-height: 44px; max-width: 140px; }
+}
 .accred-tile { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--parchment); border-radius: 10px; border: 0.5px solid rgba(175,169,236,0.2); }
 .accred-icon { width: 36px; height: 36px; flex-shrink: 0; border-radius: 8px; background: var(--cloud); display: flex; align-items: center; justify-content: center; color: var(--specialist); }
 .accred-tile.alt .accred-icon { background: #E1F5EE; color: var(--forest); }
