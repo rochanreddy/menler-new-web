@@ -15,9 +15,9 @@ export const PROGRAM_PRICES = {
   'build-ai-agents-lightning-fast': { amount: 99, label: 'Build AI Agents Lightning Fast' },
   'build-with-generative-ai': { amount: 99, label: 'Build with Generative AI' },
   'ai-forward-deployed-engineering': { amount: 99, label: 'AI Forward Deployed Engineering' },
+  'ai-for-modern-work-and-careers': { amount: 99, label: 'AI for Modern Work and Careers' },
   // Paid seat, not a pack (₹199). Also listed in the client PROGRAM_PRICES for
-  // display. (ai-for-modern-work-and-careers was here too; it is free from
-  // the 31 Oct 2026 run, so it is not listed at all.)
+  // display.
   'build-like-an-ai-fde': { amount: 199, label: 'AI Forward Deployed Engineering (FDE)' },
   // Menler Library — ₹49 per playbook/resource download (menler.in/resources).
   library: { amount: 49, label: 'Menler Library' },
