@@ -15,6 +15,12 @@ export function brochurePdfForProgram(program) {
   return BROCHURE_PDF.generalist;
 }
 
+/* What one add-on costs at campaign checkout: the Library page's single-download
+   price. The server charges it (server/config/pricing.js ADDON_PRICE) and only
+   for these six files (CHECKOUT_ADDON_PDFS) — keep both lists in step. `price`
+   on each item is the struck-through list price shown beside it. */
+export const ADDON_PRICE = 49;
+
 export const CHECKOUT_CATALOG = [
   { id: 'prompt-library', title: 'Prompt Library', desc: '100+ tested prompts across business, engineering, and beginner tracks.', price: 499, pdf: '/pdfs/Menler_100_Prompts_Playbook.pdf' },
   { id: 'claude-code', title: 'Claude Code Playbook', desc: 'Build, refactor, and ship real code with Claude in your terminal and editor.', price: 499, pdf: '/pdfs/Menler_Claude_Code_Playbook.pdf' },

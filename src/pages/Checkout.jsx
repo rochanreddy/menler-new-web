@@ -6,7 +6,7 @@ import MenlerCommunitySection from '../components/common/MenlerCommunitySection'
 import AddToCalendar from '../components/common/AddToCalendar';
 import { parseEventDateTime } from '../lib/calendar';
 import { submitLead, deliverResources, completeCheckout } from '../services/leadService';
-import { CHECKOUT_CATALOG, resourcePackFor } from '../data/resourceCatalog';
+import { ADDON_PRICE, CHECKOUT_CATALOG, resourcePackFor } from '../data/resourceCatalog';
 import { PROGRAM_PRICES, formatINR } from '../data/pricing';
 import { createEnrolOrder, getPaymentStatus } from '../services/paymentService';
 import { openCashfreeCheckout } from '../lib/cashfree';
@@ -67,7 +67,10 @@ export default function Checkout() {
   const campaignPrice = reg.campaign ? PROGRAM_PRICES[reg.campaign] : null;
   const workshopFee = campaignPrice?.amount ?? 0;
   const packFee = pack && packOn ? pack.price : 0;
-  const total = workshopFee + packFee;
+  // Add-ons are ₹49 each, the Library page's price. The server prices them
+  // itself from the file list sent below; this is only the figure shown.
+  const addonFee = pack ? 0 : addedItems.length * ADDON_PRICE;
+  const total = workshopFee + packFee + addonFee;
   const isPaid = total > 0;
 
   const finishRegistration = async () => {
@@ -137,8 +140,10 @@ export default function Checkout() {
           phone: phoneDigits,
           city: reg.city,
           background: reg.background,
-          // Whether the pack was ticked — the server owns its price.
+          // Whether the pack was ticked, and which add-ons — the server owns
+          // every price.
           pack: packOn,
+          addons: pack ? [] : addedItems.map((i) => i.pdf),
         });
         const result = await openCashfreeCheckout(order.payment_session_id, order.mode);
         if (result && result.error) {
@@ -293,7 +298,7 @@ export default function Checkout() {
           <div className="cox-addons-head">
             <div className="cox-addons-head-text">
               <h3 className="cox-h3">Add resources</h3>
-              <p className="cox-addons-sub">Optional — handpicked resources, free during launch.</p>
+              <p className="cox-addons-sub">Optional — handpicked resources, ₹{ADDON_PRICE} each, emailed to you.</p>
             </div>
             <div className={`cox-cart${cart.size ? ' cox-cart--active' : ''}`} aria-label={`${cart.size} item${cart.size === 1 ? '' : 's'} added`} title={`${cart.size} added`}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -315,7 +320,7 @@ export default function Checkout() {
                     <span className="cox-addon-d">{i.desc}</span>
                   </span>
                   <span className="cox-addon-right">
-                    <span className="cox-addon-price"><s>₹{i.price}</s> Free</span>
+                    <span className="cox-addon-price"><s>₹{i.price}</s> ₹{ADDON_PRICE}</span>
                     <span className="cox-addon-action">{added ? '✓ Added' : '+ Add'}</span>
                   </span>
                 </button>
@@ -363,8 +368,8 @@ export default function Checkout() {
             ) : (
               addedItems.map((i) => (
                 <div className="cox-row" key={i.id}>
-                  <div><p className="cox-row-t">{i.title}</p><p className="cox-row-d">Resource pack</p></div>
-                  <span className="cox-row-amt"><s>₹{i.price}</s> Free</span>
+                  <div><p className="cox-row-t">{i.title}</p><p className="cox-row-d">Emailed to you</p></div>
+                  <span className="cox-row-amt"><s>₹{i.price}</s> {formatINR(ADDON_PRICE)}</span>
                 </div>
               ))
             )}

@@ -3,7 +3,7 @@ import crypto from 'crypto';
 
 import { Lead } from '../models/Lead.js';
 import { Order } from '../models/Order.js';
-import { PROGRAM_PRICES, amountFor, priceFor } from '../config/pricing.js';
+import { PROGRAM_PRICES, checkoutAmount, priceFor } from '../config/pricing.js';
 import {
   createCashfreeOrder,
   getCashfreeOrder,
@@ -43,9 +43,10 @@ router.post('/cashfree/order', async (req, res) => {
     if (!cashfreeConfigured()) return res.status(503).json({ error: 'Payments are not configured.' });
     const body = req.body || {};
     const program = String(body.program || '').toLowerCase();
-    // The browser sends only whether the pack was ticked; its price comes
-    // from our own config, so a tampered request cannot change what is charged.
-    const price = amountFor(program, body.pack === true);
+    // The browser sends only whether the pack was ticked and which add-on
+    // files were picked; every price comes from our own config, so a tampered
+    // request cannot change what is charged.
+    const price = checkoutAmount(program, body.pack === true, body.addons);
     if (!price) return res.status(400).json({ error: 'Unknown or free program.' });
 
     const leadId = String(body.leadId || '').trim();
@@ -128,6 +129,8 @@ router.post('/cashfree/order', async (req, res) => {
       leadId: lead._id,
       customer_name: name, customer_email: email, customer_phone: phone,
       ...(libraryPdf ? { extra: { pdf: libraryPdf, resource: String(body.resource || '').trim() } } : {}),
+      // The ₹49 add-ons this order pays for, so the admin can see what was bought.
+      ...(price.addons.length && !libraryPdf ? { extra: { addons: price.addons } } : {}),
     });
 
     // Mirror it onto the lead too, so the admin's Resource column says which

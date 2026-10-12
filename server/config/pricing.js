@@ -45,3 +45,31 @@ export function amountFor(program, wantsPack) {
   const pack = wantsPack && PACK_ON_TOP.has(slug) ? PACK_PRICE : 0;
   return { amount: seat.amount + pack, label: seat.label, pack };
 }
+
+/* Resources picked one by one at campaign checkout (the "Add resources" list,
+ * src/data/resourceCatalog.js CHECKOUT_CATALOG). Each costs what a single
+ * download costs on the Library page, and only these six files can be bought
+ * this way — the browser sends file paths, so the list is what stops it
+ * buying anything else under /pdfs at this price. Keep in step with the client. */
+export const ADDON_PRICE = PROGRAM_PRICES.library.amount;
+export const CHECKOUT_ADDON_PDFS = new Set([
+  '/pdfs/Menler_100_Prompts_Playbook.pdf',
+  '/pdfs/Menler_Claude_Code_Playbook.pdf',
+  '/pdfs/Menler_Claude_Chat_Playbook.pdf',
+  '/pdfs/Menler_Claude_Cowork_Playbook.pdf',
+  '/pdfs/Menler_Claude_Design_Playbook.pdf',
+  '/pdfs/Menler_Claude_Microsoft_Playbook.pdf',
+]);
+
+/**
+ * What a campaign checkout costs: the seat (and pack) as amountFor prices it,
+ * plus ADDON_PRICE for each allowed add-on. A free seat with add-ons is a paid
+ * order for the add-ons alone. Null when there is nothing to charge.
+ */
+export function checkoutAmount(program, wantsPack, addons) {
+  const base = amountFor(program, wantsPack);
+  const picked = [...new Set((Array.isArray(addons) ? addons : []).map(String))].filter((p) => CHECKOUT_ADDON_PDFS.has(p));
+  const amount = (base?.amount || 0) + picked.length * ADDON_PRICE;
+  if (!amount) return null;
+  return { amount, label: base?.label || 'Masterclass resources', pack: base?.pack || 0, addons: picked };
+}
