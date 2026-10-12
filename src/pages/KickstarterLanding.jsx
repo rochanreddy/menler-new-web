@@ -237,6 +237,45 @@ function LogoChip({ name, logo, size, markClass }) {
 // fits on a single line within its box. The CSS size (incl. any Sanity cap)
 // is the MAX; this only scales down when a line would otherwise wrap/overflow.
 // Re-runs on content change, resize, and once web fonts finish loading.
+/**
+ * Lays its children out at a fixed design width and, when the column is
+ * narrower, scales them down as one picture. Used for the banner and the
+ * certificate so a phone shows exactly the thumbnail a laptop does — same
+ * proportions, same line breaks — rather than a re-flowed, taller card.
+ * At or above `width` it does nothing: children fill the column as before.
+ */
+function FitToWidth({ width, children }) {
+  const outer = useRef(null);
+  const inner = useRef(null);
+  const [fit, setFit] = useState(null); // { scale, height } once measured and narrower than `width`
+  useLayoutEffect(() => {
+    const o = outer.current;
+    const i = inner.current;
+    if (!o || !i) return undefined;
+    const measure = () => {
+      const scale = o.clientWidth / width;
+      setFit(scale < 1 ? { scale, height: Math.ceil(i.offsetHeight * scale) } : null);
+    };
+    measure();
+    if (typeof ResizeObserver === 'undefined') return undefined;
+    const ro = new ResizeObserver(measure);
+    ro.observe(o);
+    ro.observe(i);
+    return () => ro.disconnect();
+  }, [width]);
+  return (
+    <div ref={outer} className="lp2-fit" style={fit ? { height: fit.height } : undefined}>
+      <div
+        ref={inner}
+        className="lp2-fit-inner"
+        style={fit ? { width, transform: `scale(${fit.scale})` } : undefined}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
 function useAutoFitTitle(deps) {
   const ref = useRef(null);
   useLayoutEffect(() => {
@@ -452,6 +491,7 @@ export default function KickstarterLanding() {
         {/* ── LEFT: scrolling content ── */}
         <div className="lp2-main">
           {/* Banner hero */}
+          <FitToWidth width={700}>
           <section className="lp2-banner">
             <div className="lp2-banner-body">
               <div className="lp2-banner-logo" style={{ marginBottom: '14px' }}>
@@ -493,6 +533,7 @@ export default function KickstarterLanding() {
               <span>{d.time}</span>
             </div>
           </section>
+          </FitToWidth>
 
           {/* Mobile-only: registration CTA directly under the banner thumbnail. */}
           <a className="lp2-mobile-cta" href="#register">
@@ -543,6 +584,7 @@ export default function KickstarterLanding() {
               {d.certificateImage ? (
                 <img className="lp2-cert-img" src={optImg(d.certificateImage, 960)} alt="Sample Menler certificate" loading="lazy" decoding="async" />
               ) : (
+                <FitToWidth width={600}>
                 <div className="lp2-cert-mock">
                   <div className="lp2-cert-mock-top">
                     <MenlerWordmark size={26} theme="light" tagline />
@@ -572,6 +614,7 @@ export default function KickstarterLanding() {
                     )}
                   </div>
                 </div>
+                </FitToWidth>
               )}
               {d.certificateNote && <p className="lp2-cert-note">{d.certificateNote}</p>}
             </div>

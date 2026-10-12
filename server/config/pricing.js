@@ -15,9 +15,9 @@ export const PROGRAM_PRICES = {
   'build-ai-agents-lightning-fast': { amount: 99, label: 'Build AI Agents Lightning Fast' },
   'build-with-generative-ai': { amount: 99, label: 'Build with Generative AI' },
   'ai-forward-deployed-engineering': { amount: 99, label: 'AI Forward Deployed Engineering' },
-  // Paid seat, not a pack (₹199) — so its slug must stay OUT of the client's
-  // RESOURCE_PACKS. Also listed in the client PROGRAM_PRICES for display.
-  'ai-for-modern-work-and-careers': { amount: 199, label: 'AI for Modern Work and Careers' },
+  // Paid seat, not a pack (₹199). Also listed in the client PROGRAM_PRICES for
+  // display. (ai-for-modern-work-and-careers was here too; it is free from
+  // the 31 Oct 2026 run, so it is not listed at all.)
   'build-like-an-ai-fde': { amount: 199, label: 'AI Forward Deployed Engineering (FDE)' },
   // Menler Library — ₹49 per playbook/resource download (menler.in/resources).
   library: { amount: 49, label: 'Menler Library' },
@@ -35,7 +35,7 @@ export const PACK_PRICE = 99;
 // Only these campaigns add the pack to their seat price. The older pack
 // campaigns are deliberately absent: for those the slug price above IS the
 // pack and the seat itself is free, so adding it again would charge twice.
-const PACK_ON_TOP = new Set(['build-like-an-ai-fde', 'ai-for-modern-work-and-careers']);
+const PACK_ON_TOP = new Set(['build-like-an-ai-fde']);
 
 /** What to charge for a slug, given whether the buyer ticked the pack. */
 export function amountFor(program, wantsPack) {

@@ -9,8 +9,6 @@ export const PROGRAM_PRICES = {
   // Paid 3-hour workshop — the seat itself is the charge, so it is NOT in
   // RESOURCE_PACKS (that would make registration free with a pack upsell).
   'build-like-an-ai-fde': { amount: 199, label: 'AI Forward Deployed Engineering (FDE)' },
-  // Paid ₹199 seat on /campaign/ai-for-modern-work-and-careers — same rule as above.
-  'ai-for-modern-work-and-careers': { amount: 199, label: 'AI for Modern Work and Careers' },
   // Internal gateway test — a live ₹5 charge via /pay-test. Remove after testing.
   test: { amount: 5, label: 'Payment Gateway Test' },
 };
