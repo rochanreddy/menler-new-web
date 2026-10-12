@@ -2029,12 +2029,12 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
      full-width below — so the bio reads across the card instead of a narrow
      column beside the photo. */
   .lp2-mentor { flex-direction: column; gap: 14px; padding: 16px; margin-top: 26px; }
-  /* A fixed 178px band cropped headshots tight to the face and cut the
-     shoulders off. A 4:3 box scales with the screen and frames head *and*
-     shoulders; the max-height stops it getting oversized near the breakpoint. */
+  /* A small portrait above the name rather than a full-width photo: at card
+     width the headshot took most of a phone screen before a word of the bio.
+     4:5 still frames head and shoulders. */
   .lp2-mentor-img {
-    width: 100%; height: auto; aspect-ratio: 4 / 3; max-height: 300px;
-    min-height: 0; align-self: stretch;
+    width: 120px; height: auto; aspect-ratio: 4 / 5; max-height: none;
+    min-height: 0; align-self: flex-start;
     background-position: center 12%; border-radius: 12px;
   }
   /* Nudge this campaign's mentor photo down a little (per-campaign crop). */
