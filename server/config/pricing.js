@@ -17,6 +17,7 @@ export const PROGRAM_PRICES = {
   'ai-forward-deployed-engineering': { amount: 99, label: 'AI Forward Deployed Engineering' },
   'ai-for-modern-work-and-careers': { amount: 99, label: 'AI for Modern Work and Careers' },
   'build-your-first-rag-application': { amount: 99, label: 'Build Your First RAG Application' },
+  'grok-bot': { amount: 99, label: 'Grok Bot' },
   // Paid seat, not a pack (₹199). Also listed in the client PROGRAM_PRICES for
   // display.
   'build-like-an-ai-fde': { amount: 199, label: 'AI Forward Deployed Engineering (FDE)' },
