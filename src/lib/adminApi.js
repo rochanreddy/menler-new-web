@@ -59,6 +59,7 @@ export const adminApi = {
   logout: () => api('/admin/logout', { method: 'POST' }),
   getSession: () => api('/admin/session'),
   getStats: () => api('/admin/stats'),
+  getClientErrors: () => api('/admin/client-errors'),
 
   /** Leads count for one calendar day (IST). date = "YYYY-MM-DD". */
   getDayLeads: (from, to) => api(`/admin/stats/day${qs({ from, to: to || from })}`),

@@ -2350,6 +2350,97 @@ function CertificatesTab() {
 
 /* ── Shell ───────────────────────────────────────────────────────────────── */
 
+/* ── Errors ──────────────────────────────────────────────────────────────
+   Failures visitors hit while registering or paying, reported by the page
+   itself (src/lib/friendlyError.js). No names or contact details — only which
+   step failed, how, and where. */
+
+const STAGE_LABELS = {
+  otp: 'Code verification',
+  register: 'Saving registration',
+  order: 'Starting payment',
+  payment: 'Payment',
+  confirm: 'Confirming payment',
+};
+
+const when = (d) => new Date(d).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
+
+function ErrorsTab() {
+  const [data, setData] = useState(null);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    try {
+      setData(await adminApi.getClientErrors());
+    } catch (e) {
+      setError(e?.message || 'Could not load errors.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  return (
+    <div className="admin-panel-card">
+      <div className="admin-toolbar">
+        <p className="admin-card-title">Registration &amp; checkout errors</p>
+        <button type="button" className="admin-btn" onClick={load} disabled={loading}>{loading ? 'Loading…' : 'Refresh'}</button>
+      </div>
+      {error && <p className="admin-empty">{error}</p>}
+      {data && (
+        <>
+          <p className="admin-muted">Last 7 days, by step and kind</p>
+          {data.last7Days.length === 0 ? (
+            <p className="admin-empty">No errors in the last 7 days.</p>
+          ) : (
+            <div className="admin-table-wrap">
+              <table className="admin-table">
+                <thead><tr><th>Step</th><th>Kind</th><th>Count</th><th>Last seen</th></tr></thead>
+                <tbody>
+                  {data.last7Days.map((k) => (
+                    <tr key={`${k.stage}-${k.code}`}>
+                      <td>{STAGE_LABELS[k.stage] || k.stage}</td>
+                      <td>{k.code}</td>
+                      <td><b>{k.count}</b></td>
+                      <td>{when(k.last)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          <p className="admin-muted" style={{ marginTop: 20 }}>Latest {data.latest.length}</p>
+          {data.latest.length === 0 ? (
+            <p className="admin-empty">Nothing reported yet.</p>
+          ) : (
+            <div className="admin-table-wrap">
+              <table className="admin-table">
+                <thead><tr><th>When</th><th>Step</th><th>Kind</th><th>Campaign / page</th><th>Message</th></tr></thead>
+                <tbody>
+                  {data.latest.map((r) => (
+                    <tr key={r._id}>
+                      <td>{when(r.createdAt)}</td>
+                      <td>{STAGE_LABELS[r.stage] || r.stage}</td>
+                      <td>{r.code}{r.status ? ` (${r.status})` : ''}</td>
+                      <td>{r.campaign || r.page}</td>
+                      <td>{r.message}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
 const TABS = [
   { key: 'overview', label: 'Overview' },
   { key: 'leads', label: 'Leads' },
@@ -2358,6 +2449,7 @@ const TABS = [
   { key: 'attendance', label: 'Attendance' },
   { key: 'shortlinks', label: 'Short links' },
   { key: 'certificates', label: 'Certificates' },
+  { key: 'errors', label: 'Errors' },
 ];
 
 function AdminPanel({ onLogout }) {
@@ -2392,6 +2484,7 @@ function AdminPanel({ onLogout }) {
         {tab === 'shortlinks' && <ShortLinksTab />}
         {tab === 'certificates' && <CertificatesTab />}
         {tab === 'attendance' && <AttendanceTab />}
+        {tab === 'errors' && <ErrorsTab />}
       </main>
     </div>
   );
