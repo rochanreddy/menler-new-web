@@ -635,7 +635,7 @@ export default function KickstarterLanding() {
             <div className="lp2-mentor">
               {contentLoading
                 ? <div className="lp2-skel lp2-mentor-img lp2-mentor-img-skel" aria-hidden="true" />
-                : <div className={`lp2-mentor-img mentor-${activeSlug}`} role="img" aria-label={d.mentorName} style={{ backgroundImage: `url("${optImg(d.mentorPhoto, 440)}")` }} />}
+                : <div className={`lp2-mentor-img mentor-${activeSlug}`} role="img" aria-label={d.mentorName} style={{ backgroundImage: `url("${optImg(d.mentorPhoto, 760)}")` }} />}
               <div className="lp2-mentor-info">
                 <p className="lp2-mentor-name">{d.mentorName}</p>
                 <p className="lp2-mentor-role">{d.mentorRole}</p>

@@ -2032,29 +2032,33 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
    cards whose bio runs past it are affected, the rest still align bottoms. */
 .lp2-mentor-img { width: 172px; align-self: stretch; min-height: 168px; max-height: 300px; flex-shrink: 0; background-color: #ddd; background-size: cover; background-position: center top; background-repeat: no-repeat; border-radius: 14px; }
 @media (max-width: 560px) {
-  /* Phone: a header row — portrait on the left, name and designation beside
-     it — then the bio and credentials full width underneath. A photo on its
-     own above the name left most of the card's width empty; this puts the
-     name where the eye lands next to the face and keeps the bio reading
-     across the whole card.
+  /* Phone: a profile card. The photo runs the full width of the card, and the
+     name and designation sit on it in white over a soft fade — then the bio
+     and credentials full width beneath. A portrait beside the name (or above
+     it) always left half the card empty at phone width; this uses all of it
+     and gives the mentor the weight a host should have.
      The info block is display:contents, so its name, role, bio and list become
-     cells of this grid without a second wrapper in the markup. */
-  .lp2-mentor { display: grid; grid-template-columns: 108px 1fr; gap: 0 14px; align-items: center; padding: 16px; margin-top: 26px; }
+     cells of this grid without another wrapper in the markup; name and role
+     share the photo's cell and are pinned to its bottom edge. */
+  .lp2-mentor { display: grid; grid-template-columns: 1fr; grid-template-areas: "photo" "bio" "creds"; gap: 0; padding: 0; margin-top: 26px; overflow: hidden; }
   .lp2-mentor-img {
-    grid-column: 1; grid-row: 1 / span 2;
-    width: 108px; height: auto; aspect-ratio: 4 / 5; max-height: none;
-    min-height: 0; align-self: start;
-    background-position: center 12%; border-radius: 12px;
+    grid-area: photo; position: relative;
+    width: 100%; height: auto; aspect-ratio: 16 / 11; max-height: none; min-height: 0;
+    align-self: stretch; background-position: center 16%; border-radius: 0;
   }
+  /* The fade the name is set on — dark only where the text is. */
+  .lp2-mentor-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(22, 18, 54, 0.88) 0%, rgba(22, 18, 54, 0.45) 30%, transparent 58%); }
   /* Nudge this campaign's mentor photo down a little (per-campaign crop). */
   .lp2-mentor-img.mentor-turn-messy-data-into-clear-decisions-with-claude { background-position: center 14%; }
   .lp2-mentor-info { display: contents; }
   /* Doubled class: these sit before the base rules below, which would
      otherwise win on order alone. */
-  .lp2-mentor .lp2-mentor-name { grid-column: 2; grid-row: 1; align-self: end; font-size: 21px; margin: 0; }
-  .lp2-mentor .lp2-mentor-role { grid-column: 2; grid-row: 2; align-self: start; font-size: 12.5px; line-height: 1.4; margin: 5px 0 0; }
-  .lp2-mentor .lp2-mentor-bio { grid-column: 1 / -1; margin-top: 14px; font-size: 13px; line-height: 1.55; }
-  .lp2-mentor .lp2-mentor-creds { grid-column: 1 / -1; margin-top: 10px; }
+  .lp2-mentor .lp2-mentor-name,
+  .lp2-mentor .lp2-mentor-role { grid-area: photo; position: relative; z-index: 1; align-self: end; padding: 0 16px; color: #fff; }
+  .lp2-mentor .lp2-mentor-name { font-size: 24px; margin: 0 0 40px; text-shadow: 0 1px 12px rgba(0, 0, 0, 0.25); }
+  .lp2-mentor .lp2-mentor-role { font-size: 12.5px; line-height: 1.35; margin: 0 0 14px; opacity: 0.92; }
+  .lp2-mentor .lp2-mentor-bio { grid-area: bio; margin: 0; padding: 14px 16px 0; font-size: 13px; line-height: 1.55; }
+  .lp2-mentor .lp2-mentor-creds { grid-area: creds; margin: 0; padding: 10px 16px 16px; }
 }
 .lp2-mentor-label { font-size: 10.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--a-dark); margin-bottom: 4px; }
 .lp2-mentor-name { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--ink); line-height: 1.1; }
