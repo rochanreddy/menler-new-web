@@ -1994,6 +1994,13 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
    instead of a re-flowed, taller card. */
 .lp2-fit { position: relative; }
 .lp2-fit > .lp2-fit-inner { transform-origin: top left; }
+/* Inside the fitted banner the type uses its desktop size. Its own clamp()
+   follows the SCREEN width, so on a phone it would shrink to its minimum and
+   then be scaled down again with the rest of the card — the headline twice
+   as small as everything around it. useAutoFitTitle still steps it down if a
+   long headline would not fit. */
+.lp2-fit-inner .lp2-banner-title { font-size: var(--banner-title-max, 40px); }
+.lp2-fit-inner .lp2-banner-tag { font-size: 17px; }
 
 /* Mobile-only "Reserve your seat" CTA that sits directly under the banner. */
 .lp2-mobile-cta { display: none; }

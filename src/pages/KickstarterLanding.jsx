@@ -498,7 +498,7 @@ export default function KickstarterLanding() {
         {/* ── LEFT: scrolling content ── */}
         <div className="lp2-main">
           {/* Banner hero */}
-          <FitToWidth width={700}>
+          <FitToWidth width={540}>
           <section className="lp2-banner">
             <div className="lp2-banner-body">
               <div className="lp2-banner-logo" style={{ marginBottom: '14px' }}>
