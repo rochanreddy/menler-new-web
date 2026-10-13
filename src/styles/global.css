@@ -497,6 +497,38 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
 .curric-modules li { position: relative; padding-left: 20px; font-size: 15px; color: rgba(238,237,254,0.8); line-height: 1.6; margin-bottom: 11px; }
 .curric-modules li::before { content: ''; position: absolute; left: 2px; top: 9px; width: 6px; height: 6px; border-radius: 50%; background: var(--lavender); }
 
+/* AI FDE (Engineering page) curriculum: the same accordion in the page's green. */
+.curric-section--fde .curric-acc { background: #062E26; border-color: rgba(93,202,165,0.5); }
+.curric-section--fde .curric-acc-item { border-bottom-color: rgba(93,202,165,0.25); }
+.curric-section--fde .curric-acc-head:hover { background: rgba(93,202,165,0.07); }
+.curric-section--fde .curric-acc-item.open .curric-acc-head { background: rgba(93,202,165,0.12); }
+.curric-section--fde .curric-acc-no,
+.curric-section--fde .curric-acc-caret,
+.curric-section--fde .curric-week.on .curric-week-caret { color: #5DCAA5; }
+.curric-section--fde .curric-acc-title,
+.curric-section--fde .curric-week.on .curric-week-title { color: #E1F5EE; }
+.curric-section--fde .curric-label { color: #9FE1CB; }
+.curric-section--fde .curric-weeks { border-color: rgba(93,202,165,0.28); }
+.curric-section--fde .curric-week { border-bottom-color: rgba(93,202,165,0.14); }
+.curric-section--fde .curric-week-head { cursor: pointer; }
+.curric-section--fde .curric-week.on .curric-week-head { background: rgba(93,202,165,0.18); }
+.curric-section--fde .curric-week-title { color: rgba(225,245,238,0.82); }
+.curric-section--fde .curric-modules li { color: rgba(225,245,238,0.82); }
+.curric-section--fde .curric-modules li::before { background: #5DCAA5; }
+.curric-section--fde .curric-detail-mid,
+.curric-section--fde .curric-detail-tools { border-left-color: rgba(93,202,165,0.16); }
+.fde-shift { margin: 0; font-family: 'DM Serif Display', serif; font-style: italic; font-size: 19px; line-height: 1.35; color: #E1F5EE; }
+.fde-tool { padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.05); border: 1px solid rgba(93,202,165,0.3); color: #E1F5EE; font-size: 13.5px; font-weight: 500; }
+.curric-section--fde .curric-tools { gap: 8px; }
+.fde-rhythm { margin-top: 22px; font-size: 13.5px; }
+/* Two tracks side by side; six outcomes three across. */
+.audience-grid.fde-tracks { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.audience-grid.fde-outcomes { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+@media (max-width: 760px) {
+  .audience-grid.fde-tracks, .audience-grid.fde-outcomes { grid-template-columns: 1fr; }
+  .fde-shift { font-size: 17px; }
+}
+
 /* Generalist curriculum: more compact accordion cards on mobile. */
 @media (max-width: 640px) {
   .curric-section--gen .curric-acc { margin-top: 24px; border-radius: 14px; }

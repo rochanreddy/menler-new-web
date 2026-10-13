@@ -102,24 +102,36 @@ export const GENERALIST_FAQS = [
 
 export const ENGINEERING_FAQS = [
   {
+    q: 'What is an AI FDE?',
+    a: 'A Forward Deployed AI Engineer sits with a client, understands a messy operational problem, and owns the AI solution from the first interview to handover. The Fellowship trains exactly that: you work through real-world engagements and are graded on whether you can defend what you built to a panel that plays the client.',
+  },
+  {
     q: 'Who is this Fellowship designed for?',
-    a: 'This Fellowship is built for engineers and technical professionals. Prior coding experience is required. The program is designed for software engineers, data scientists, ML practitioners, platform engineers, and technical builders looking to specialize in AI Engineering.',
+    a: 'Engineers, analysts, consultants and technical product people who want to deliver AI systems to real clients, and early-career graduates ready to work at that standard. You should be comfortable reading code and working in a terminal, and willing to defend your decisions in front of a panel.',
+  },
+  {
+    q: 'Do I need to be a developer?',
+    a: 'You need Python or JavaScript at reading level. There are two tracks with the same acceptance criteria: on the Builder track you direct Claude Code from starter repositories and own the tests, so you need not have written production code; on the Engineer track you write the core components yourself and take on stretch items.',
   },
   {
     q: 'What will I build during the Fellowship?',
-    a: "You'll build production-grade AI systems. From RAG pipelines and agentic workflows to MCP integrations, evaluations, deployment, and AI infrastructure, every project is designed to reflect how modern AI products are built in industry.",
-  },
-  {
-    q: 'How technical is the program?',
-    a: "You'll work with code, APIs, frameworks, deployment workflows, and production engineering practices used by AI-native companies.",
+    a: 'Six milestone projects across six real-world cases: a complaint-triage engine for a bank grievance cell, a cited farm-advisory copilot, a GST reconciliation agent behind a public MCP server, a certified health pre-authorisation review assistant, a production failed-delivery recovery system with an ROI model, and a capstone on a fresh brief.',
   },
   {
     q: 'How much time should I expect to commit each week?',
-    a: 'Approximately 10–12 hours per week. This includes live sessions, engineering assignments, capstone development, code reviews, and project implementation.',
+    a: 'About 12 hours a week: 4 live hours (2 hours each on Saturday and Sunday) plus 7–8 hours of outside work with your pod. 48 live hours in total over 12 weeks.',
   },
   {
-    q: 'Who teaches the Fellowship?',
-    a: 'AI Engineers in production today. Every mentor has hands-on experience deploying AI systems, working with LLM infrastructure, building AI products, or leading AI engineering initiatives inside startups and enterprises.',
+    q: 'How are fellows graded?',
+    a: 'By defence. Each two-week case ends in a Case Defence: a walk-through of your solution, results on about 10 hidden scenarios you have not seen, and a live change request with panel questions. To graduate you clear 80 of the 100 competencies and pass the capstone on Demo Day.',
+  },
+  {
+    q: 'What do I need before Week 1?',
+    a: 'A laptop that can run Docker, with admin rights, and GitHub and Claude accounts. API credits for the programme are provided by Menler. A short diagnostic before the first session confirms that Claude, Claude Code, GitHub and your API key all work.',
+  },
+  {
+    q: 'Is any real client or personal data used?',
+    a: 'No. All case data is synthetic, and the briefs are written by Menler from public information. Systems in the health, tax and claims cases recommend and explain; they never deny claims, file returns or decide eligibility — a human decides.',
   },
   {
     q: 'Will I receive interview opportunities and career support?',

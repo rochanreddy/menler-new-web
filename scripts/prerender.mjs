@@ -131,8 +131,8 @@ const PROGRAM_FACTS = [
     'A 10-week, no-code AI generalist course and fellowship for non-technical professionals and students — how to become an AI generalist. Covers Claude and 35+ AI tools for research, writing, automation (n8n, Make, Zapier) and no-code building, applied across marketing, finance, product, HR and operations. ₹59,999. Includes real projects and placement support.'],
   ['AI Generalist Fellowship — 6 weeks', '/generalist',
     'A shorter 6-week version of the AI Generalist Fellowship. ₹35,000.'],
-  ['AI Engineering Fellowship (Claude AI Engineering)', '/engineering',
-    'A 12-week fellowship for developers. Build production AI systems — Claude API, RAG, MCP, agents, evaluations and LLMOps. ₹59,999. Includes placement support.'],
+  ['AI FDE Fellowship (Forward Deployed AI Engineer)', '/engineering',
+    'A 12-week Forward Deployed AI Engineer fellowship. Six real-world cases — triage, retrieval, agents and MCP, evaluation and security, deployment and ROI, and a capstone — each built with Claude and defended to a client panel. ₹59,999. Includes placement support.'],
   ['Gen AI Kickstarter (AI Kickstarter)', '/kickstarter',
     'A 14-day AI course for complete beginners — 4 live sessions across 2 weekends. Hands-on with 10+ AI tools, 4 portfolio projects and a certificate. No prerequisites. ₹4,999.'],
 ];
@@ -146,7 +146,7 @@ const PROGRAM_LIST = {
   itemListElement: [
     ['AI Generalist Fellowship', '/generalist'],
     ['Gen AI Kickstarter', '/kickstarter'],
-    ['AI Engineering Fellowship', '/engineering'],
+    ['AI FDE Fellowship', '/engineering'],
   ].map(([name, path], i) => ({ '@type': 'ListItem', position: i + 1, name, url: SITE + path })),
 };
 
@@ -190,22 +190,22 @@ const STATIC_ROUTES = [
     tracks: DOMAIN_TRACKS,
   },
   {
-    path: '/engineering', file: 'engineering.html', nav: 'Engineering Fellowship',
-    title: 'Claude AI Engineering Fellowship — AI Specialist Program India | Menler',
-    description: 'A 12-week Claude AI engineering fellowship for developers. Build production AI systems — API, RAG, MCP, agents, evals & LLMOps — with placement support.',
+    path: '/engineering', file: 'engineering.html', nav: 'AI FDE Fellowship',
+    title: 'AI FDE Fellowship — Forward Deployed AI Engineer Program India | Menler',
+    description: 'A 12-week AI Forward Deployed Engineer fellowship. Six real-world cases, built with Claude and defended to a client panel — from first interview to handover.',
     keywords: 'best AI engineering course, top Claude AI course for developers, best Claude AI course, Claude AI engineering fellowship, AI engineering course India, agentic AI engineering, AI engineering roadmap, AI systems engineering, Claude API engineering, RAG engineering, MCP, agentic AI workflows, AI specialist program India',
-    h1: 'Claude AI Engineering Fellowship',
-    intro: 'A 12-week Claude AI engineering fellowship for developers — build production AI systems: API, RAG, MCP, agents, evals and LLMOps, with placement support.',
+    h1: 'AI FDE Fellowship',
+    intro: 'A 12-week AI Forward Deployed Engineer fellowship — six real-world cases, built with Claude and defended to a client panel, from first interview to handover.',
     jsonLd: [
       course({
-        name: 'Claude AI Engineering Fellowship',
-        alternateName: ['AI Engineering Fellowship', 'Menler Engineering'],
-        description: '12-week Claude AI engineering fellowship — production AI systems: API, RAG, MCP, agents, evals and LLMOps, with placement support.',
+        name: 'AI FDE Fellowship',
+        alternateName: ['AI Forward Deployed Engineer Fellowship', 'AI Engineering Fellowship', 'Menler Engineering'],
+        description: '12-week AI Forward Deployed Engineer fellowship — six real-world cases built with Claude and defended to a client panel: triage, retrieval, agents and MCP, evaluation and security, deployment and ROI.',
         path: '/engineering', weeks: 12, hoursPerWeek: 12,
-        prerequisites: 'Working knowledge of Python or JavaScript.',
+        prerequisites: 'Python or JavaScript at reading level, and a laptop that can run Docker.',
       }),
       faqOf(ENGINEERING_FAQS),
-      crumbs([{ name: 'Home', path: '/' }, { name: 'Engineering Fellowship', path: '/engineering' }]),
+      crumbs([{ name: 'Home', path: '/' }, { name: 'AI FDE Fellowship', path: '/engineering' }]),
     ],
     faqs: ENGINEERING_FAQS,
   },
