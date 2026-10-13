@@ -2454,7 +2454,16 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
   /* The border keeps the button readable even when a campaign's accent is
      close to (or identical to) the bar colour, which would otherwise render
      it invisible. */
-  .lp2-stickybar-btn { background: var(--a); border: 1px solid rgba(255,255,255,0.45); box-shadow: 0 1px 0 rgba(0,0,0,0.15); padding: 9px 18px; border-radius: 9px; font-weight: 700; font-size: 13.5px; }
+  /* A beam of light runs round the button's edge. The ring is a conic
+     gradient spinning behind it (::before), and ::after paints the button's
+     own colour over all but the rim — so only that 2px edge shows the light.
+     The faint base of the ring also does the old border's job: the button
+     stays visible when a campaign's accent matches the bar. */
+  .lp2-stickybar-btn { position: relative; isolation: isolate; overflow: hidden; border-radius: 9px; padding: 10px 19px; font-weight: 700; font-size: 13.5px; box-shadow: 0 0 14px rgba(255, 255, 255, 0.12); }
+  .lp2-stickybar-btn::before { content: ''; position: absolute; z-index: -2; left: 50%; top: 50%; width: 260%; aspect-ratio: 1; background: conic-gradient(from 0deg, rgba(255,255,255,0.28) 0deg 230deg, rgba(255,255,255,0.95) 300deg, #fff 320deg, rgba(255,255,255,0.28) 360deg); transform: translate(-50%, -50%) rotate(0deg); animation: lp2-beam 2.8s linear infinite; }
+  .lp2-stickybar-btn::after { content: ''; position: absolute; z-index: -1; inset: 2px; border-radius: 7px; background: var(--a); }
+  @keyframes lp2-beam { to { transform: translate(-50%, -50%) rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .lp2-stickybar-btn::before { animation: none; } }
   .lp2-foot { padding-bottom: 76px; }
 }
 
