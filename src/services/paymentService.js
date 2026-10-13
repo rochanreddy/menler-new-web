@@ -1,11 +1,8 @@
 // Payment API client — talks to the Cashfree payment endpoints on the Menler API.
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+import { apiFetch } from '../lib/apiFetch';
 
-async function readError(res, fallback) {
-  try { const j = await res.json(); if (j && j.error) return j.error; } catch { /* no json */ }
-  return fallback;
-}
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 // Create a Cashfree order for a paid program or paid campaign.
 // Pass leadId when the registrant already exists (campaign checkout).
@@ -14,18 +11,14 @@ async function readError(res, fallback) {
 // sent when the order is CREATED, not after payment, so delivery no longer
 // depends on this browser coming back from checkout to say what to send.
 export async function createEnrolOrder({ program, leadId, name, email, phone, city, background, college, graduation_year, track, pdf, resource, pack, addons }) {
-  const res = await fetch(`${API_URL}/payments/cashfree/order`, {
+  return apiFetch(`${API_URL}/payments/cashfree/order`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ program, leadId, name, email, phone, city, background, college, graduation_year, track, pdf, resource, pack, addons }),
-  });
-  if (!res.ok) throw new Error(await readError(res, 'Could not start the payment.'));
-  return res.json();
+  }, { fallback: 'Could not start the payment.' });
 }
 
 // Confirm an order's status (source of truth is our server).
 export async function getPaymentStatus(orderId) {
-  const res = await fetch(`${API_URL}/payments/cashfree/status/${encodeURIComponent(orderId)}`);
-  if (!res.ok) throw new Error(await readError(res, 'Could not check payment status.'));
-  return res.json();
+  return apiFetch(`${API_URL}/payments/cashfree/status/${encodeURIComponent(orderId)}`, {}, { fallback: 'Could not check payment status.' });
 }

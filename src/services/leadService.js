@@ -4,6 +4,8 @@
  * session, so attribution survives navigation from the ad landing to the form.
  */
 
+import { apiFetch } from '../lib/apiFetch';
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 // Read a param from the URL; if present, remember it for the session; otherwise
@@ -48,13 +50,11 @@ export async function submitLead(payload) {
     page: window.location.pathname,
   };
 
-  const res = await fetch(`${API_URL}/leads`, {
+  return apiFetch(`${API_URL}/leads`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
-  });
-  if (!res.ok) throw new Error(await errorMessage(res, 'Lead submission failed'));
-  return res.json();
+  }, { fallback: 'Lead submission failed' });
 }
 
 /**
@@ -63,13 +63,11 @@ export async function submitLead(payload) {
  * per registrant with a "checkout completed" flag.
  */
 export async function completeCheckout(id, payload = {}) {
-  const res = await fetch(`${API_URL}/leads/${id}/checkout`, {
+  return apiFetch(`${API_URL}/leads/${id}/checkout`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
-  });
-  if (!res.ok) throw new Error(await errorMessage(res, 'Checkout update failed'));
-  return res.json();
+  }, { fallback: 'Checkout update failed' });
 }
 
 /**

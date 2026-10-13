@@ -2359,6 +2359,12 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
 .lp2-submit:hover { opacity: .95; transform: translateY(-1px); }
 .lp2-submit:disabled { opacity: .6; cursor: default; transform: none; }
 .lp2-err { margin-top: 10px; font-size: 12.5px; color: #A32D2D; }
+.lp2-err p { margin: 0; line-height: 1.45; }
+.cox-err { margin-top: 12px; padding: 10px 12px; border-radius: 10px; background: #FCEBEB; color: #A32D2D; font-size: 13px; }
+.cox-err p { margin: 0; line-height: 1.45; }
+/* Shared by registration (.lp2-err) and checkout (.cox-err). */
+.lp2-err-retry, .cox-err-retry { margin-top: 8px; padding: 7px 14px; border-radius: 8px; border: 1px solid currentColor; background: #fff; color: #A32D2D; font: inherit; font-weight: 700; cursor: pointer; }
+.lp2-err-retry:disabled, .cox-err-retry:disabled { opacity: .5; cursor: default; }
 
 /* OTP reveal section */
 .lp2-otp-wrap {

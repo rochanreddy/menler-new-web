@@ -7,6 +7,7 @@ import { User } from '../models/User.js';
 import { Profile } from '../models/Profile.js';
 import { CampaignSetting } from '../models/CampaignSetting.js';
 import { ShortLink } from '../models/ShortLink.js';
+import { ClientError } from '../models/ClientError.js';
 import { requireAdmin } from '../middleware/adminAuth.js';
 import { buildCertificatePdf, buildCertificateEmail } from '../utils/certificate.js';
 import { sendMail, isMailConfigured, verifyMailer } from '../utils/email.js';
@@ -135,6 +136,27 @@ router.post('/login', (req, res) => {
 router.post('/logout', (_req, res) => {
   res.clearCookie(ADMIN_COOKIE_NAME, { path: '/' });
   res.json({ ok: true });
+});
+
+/* Failures visitors hit during registration and checkout (POST /client-errors).
+ * The latest 200, and the last 7 days counted by step and kind — enough to
+ * spot "OTP is failing on one campaign" or "the API keeps timing out". */
+router.get('/client-errors', requireAdmin, async (_req, res) => {
+  try {
+    const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const [latest, byKind] = await Promise.all([
+      ClientError.find().sort({ createdAt: -1 }).limit(200).lean(),
+      ClientError.aggregate([
+        { $match: { createdAt: { $gte: since } } },
+        { $group: { _id: { stage: '$stage', code: '$code' }, count: { $sum: 1 }, last: { $max: '$createdAt' } } },
+        { $sort: { count: -1 } },
+      ]),
+    ]);
+    res.json({ last7Days: byKind.map((k) => ({ stage: k._id.stage, code: k._id.code, count: k.count, last: k.last })), latest });
+  } catch (err) {
+    console.error('client-errors list failed', err.message);
+    res.status(500).json({ error: 'Could not load client errors.' });
+  }
 });
 
 router.get('/session', requireAdmin, (_req, res) => {

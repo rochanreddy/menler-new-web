@@ -16,6 +16,7 @@ import adminRoutes from './routes/admin.js';
 import shortRoutes from './routes/short.js';
 import paymentRoutes from './routes/payments.js';
 import postRoutes from './routes/posts.js';
+import clientErrorRoutes from './routes/clientErrors.js';
 
 const app = express();
 const port = Number(process.env.PORT || 4000);
@@ -63,6 +64,7 @@ app.use('/MNLRAI', shortRoutes);
 app.use('/l', shortRoutes); // legacy prefix — keeps older short links working
 app.use('/payments', paymentRoutes);
 app.use('/posts', postRoutes);
+app.use('/client-errors', clientErrorRoutes);
 
 async function start() {
   try {

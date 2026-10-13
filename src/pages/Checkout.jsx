@@ -12,6 +12,7 @@ import { createEnrolOrder, getPaymentStatus } from '../services/paymentService';
 import { openCashfreeCheckout } from '../lib/cashfree';
 
 import { MENLER_WHATSAPP_URL } from '../data/communityLinks';
+import { friendlyError, reportError } from '../lib/friendlyError';
 
 // The URL segment a completed PAID registration lands on. Ads match on it,
 // so it is a path rather than a query string — see the route in App.jsx.
@@ -127,8 +128,17 @@ export default function Checkout() {
     }
   };
 
+  // Each step that can fail is named, so the message (and the team's log) says
+  // whether the payment never started, was cancelled, or wasn't confirmed.
+  const fail = (stage, e) => {
+    const f = friendlyError(e, stage);
+    reportError(stage, e, { campaign: reg.campaign });
+    setErr({ message: f.message, retry: f.retry });
+  };
+
   const pay = async () => {
     setErr(''); setPlacing(true);
+    let stage = isPaid ? 'order' : 'register';
     try {
       if (isPaid) {
         const phoneDigits = String(reg.phone || '').replace(/\D/g, '').slice(-10);
@@ -145,20 +155,22 @@ export default function Checkout() {
           pack: packOn,
           addons: pack ? [] : addedItems.map((i) => i.pdf),
         });
+        stage = 'payment';
         const result = await openCashfreeCheckout(order.payment_session_id, order.mode);
         if (result && result.error) {
-          setErr(result.error.message || 'Payment was cancelled.');
+          fail('payment', new Error(result.error.message || 'Payment was cancelled.'));
           return;
         }
+        stage = 'confirm';
         const status = await getPaymentStatus(order.order_id);
         if (status.status !== 'PAID') {
-          setErr('Payment not completed. If you were charged, it will confirm shortly — check your email.');
+          fail('confirm', new Error(`Payment status ${status.status || 'unknown'}`));
           return;
         }
       }
       await finishRegistration();
     } catch (e) {
-      setErr(e?.message || 'Something went wrong — please try again.');
+      fail(stage, e);
     } finally {
       setPlacing(false);
     }
@@ -382,7 +394,14 @@ export default function Checkout() {
           <button className="cox-complete" onClick={pay} disabled={placing}>
             {placing ? 'Processing…' : isPaid ? `Pay ${formatINR(total)} & Register` : 'Complete Registration'}
           </button>
-          {err && <p className="cox-err">{err}</p>}
+          {err && (
+            <div className="cox-err" role="alert">
+              <p>{typeof err === 'string' ? err : err.message}</p>
+              {typeof err === 'object' && err.retry && (
+                <button type="button" className="cox-err-retry" onClick={pay} disabled={placing}>Try again</button>
+              )}
+            </div>
+          )}
           {isPaid && <p className="cox-pay-fine">Secured by Cashfree · UPI · Cards · Netbanking</p>}
         </div>
       </div>

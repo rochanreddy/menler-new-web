@@ -7,6 +7,7 @@ import { MENLER_WHATSAPP_URL, MENLER_INSTAGRAM_URL, CAMPAIGN_INSTAGRAM_SLUGS } f
 import { submitLead } from '../services/leadService';
 import { useContentState } from '../lib/useContent';
 import { verifySmsOtp, verifyEmailOtp } from '../lib/amplifeedOtp';
+import { friendlyError, reportError } from '../lib/friendlyError';
 import BackgroundField from '../components/forms/BackgroundField';
 import { COUNTRY_CODES } from '../data/countryCodes';
 
@@ -427,6 +428,9 @@ export default function KickstarterLanding() {
     }
     setErr(null);
     setOtpBusy(true);
+    // Which step failed decides the message: a code that didn't verify and a
+    // registration that didn't save need different words and different fixes.
+    let stage = 'otp';
     try {
       const phone = `${form.countryCode} ${form.phone}`;
       // SMS OTP identifier: country code + number, digits only (no "+"/spaces).
@@ -440,6 +444,7 @@ export default function KickstarterLanding() {
         : await verifyEmailOtp(form.email.trim());
       setOtpBusy(false);
       setBusy(true);
+      stage = 'register';
       const created = await submitLead({
         name: form.name, email: form.email, phone,
         city: form.city, background: form.background,
@@ -473,7 +478,9 @@ export default function KickstarterLanding() {
     } catch (e2) {
       setOtpBusy(false);
       setBusy(false);
-      setErr(e2?.message || 'Verification failed. Please try again.');
+      const f = friendlyError(e2, stage);
+      reportError(stage, e2, { campaign: activeSlug });
+      setErr({ message: f.message, retry: f.retry });
     }
   };
 
@@ -722,7 +729,15 @@ export default function KickstarterLanding() {
                   <button className="lp2-submit" type="submit" disabled={busy || otpBusy}>
                     {otpBusy ? (indianNumber ? 'Sending OTP…' : 'Emailing your code…') : busy ? 'Registering…' : 'Verify to Register'}
                   </button>
-                  {err && <p className="lp2-err">{typeof err === 'string' ? err : "Couldn't register — please try again."}</p>}
+                  {err && (
+                    <div className="lp2-err" role="alert">
+                      <p>{typeof err === 'string' ? err : err.message}</p>
+                      {/* A submit button: retrying is simply sending the same form again. */}
+                      {typeof err === 'object' && err.retry && (
+                        <button type="submit" className="lp2-err-retry" disabled={busy || otpBusy}>Try again</button>
+                      )}
+                    </div>
+                  )}
                 </form>
               </>
             )}
