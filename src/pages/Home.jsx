@@ -215,8 +215,8 @@ export default function Home() {
             <div className="next-batch">
               <div className="nb-info">
                 <p className="nb-label">Batch starts</p>
-                <p className="nb-when"><strong>September 2026</strong></p>
-                <p className="nb-deadline">Applications close by <span style={{ whiteSpace: 'nowrap' }}>30th August 2026</span></p>
+                <p className="nb-when"><strong>7 November 2026</strong></p>
+                <p className="nb-deadline">Applications open now</p>
               </div>
               <div className="nb-chips">
                 <span className="nb-chip">10 Weeks</span>
@@ -240,8 +240,8 @@ export default function Home() {
             <div className="next-batch">
               <div className="nb-info">
                 <p className="nb-label">Batch Starts</p>
-                <p className="nb-when"><strong>October 2026</strong></p>
-                <p className="nb-deadline">Applications open by <span style={{ whiteSpace: 'nowrap' }}>30th September 2026</span></p>
+                <p className="nb-when"><strong>14 November 2026</strong></p>
+                <p className="nb-deadline">Applications open now</p>
               </div>
               <div className="nb-chips">
                 <span className="nb-chip">12 Weeks</span>

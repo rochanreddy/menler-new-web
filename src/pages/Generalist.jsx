@@ -38,7 +38,7 @@ const GEN_PRICING = {
   priceSub: 'incl. all taxes · EMI from ₹4,999/mo',
   features: GEN_PRICE_FEATS,
   chips: [
-    { label: 'Start date', value: 'September 30, 2026' },
+    { label: 'Start date', value: 'November 7, 2026' },
     { label: 'Duration', value: '10 Weeks' },
     { label: 'Sessions', value: '20 Live · 50 hrs' },
     { label: 'Format', value: 'Live online' },
