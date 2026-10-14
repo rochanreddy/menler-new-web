@@ -17,6 +17,7 @@ import shortRoutes from './routes/short.js';
 import paymentRoutes from './routes/payments.js';
 import postRoutes from './routes/posts.js';
 import clientErrorRoutes from './routes/clientErrors.js';
+import { rateLimit } from './middleware/rateLimit.js';
 
 const app = express();
 const port = Number(process.env.PORT || 4000);
@@ -53,6 +54,15 @@ app.use(cors({
 }));
 
 app.get('/health', (_req, res) => res.json({ ok: true }));
+
+// Rate limits on the endpoints worth abusing — see middleware/rateLimit.js.
+const MIN = 60 * 1000;
+app.use('/admin/login', rateLimit({ name: 'admin-login', max: 10, windowMs: 15 * MIN, message: 'Too many login attempts. Please wait 15 minutes and try again.' }));
+for (const p of ['/auth/login', '/auth/signup', '/auth/verify-otp', '/auth/resend', '/auth/forgot-password', '/auth/reset-password']) {
+  app.use(p, rateLimit({ name: `auth${p.slice(5)}`, max: 20, windowMs: 15 * MIN }));
+}
+app.use('/leads', rateLimit({ name: 'leads', max: 40, windowMs: 10 * MIN }));
+app.use('/payments/cashfree/order', rateLimit({ name: 'payment-order', max: 20, windowMs: 10 * MIN }));
 
 app.use('/auth', authRoutes);
 app.use('/auth/google', googleRoutes);
