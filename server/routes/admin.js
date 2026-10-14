@@ -159,6 +159,133 @@ router.get('/client-errors', requireAdmin, async (_req, res) => {
   }
 });
 
+/* ── Dashboard: revenue, live-campaign numbers, search ─────────────────────
+ * Three read-only views for the Overview and the search box. Everything is
+ * counted from what already exists: PAID orders (webhook/status-confirmed, plus
+ * manual entries) for money, and campaign leads (extra.campaign) for
+ * registrations. */
+
+const IST_DAY_START = () => {
+  const istNow = new Date(Date.now() + 5.5 * 60 * 60 * 1000);
+  return new Date(`${istNow.toISOString().slice(0, 10)}T00:00:00+05:30`);
+};
+
+/* What a PAID order was for, from its program key. */
+const FELLOWSHIP_PROGRAMS = new Set(['kickstarter', 'generalist', 'generalist-6w', 'engineering']);
+const revenueCategory = (program) => {
+  const p = String(program || '').toLowerCase();
+  if (p === 'library') return 'library';
+  if (FELLOWSHIP_PROGRAMS.has(p)) return 'programs';
+  if (p === 'test') return 'test';
+  return 'masterclass';
+};
+const CATEGORY_LABELS = {
+  masterclass: 'Masterclass packs & seats',
+  programs: 'Fellowships & Kickstarter',
+  library: 'Library (₹49)',
+};
+
+// GET /admin/revenue — money in, today / 7 days / 30 days / all time, and the
+// last 30 days split by what was bought. The ₹5 gateway test is left out.
+router.get('/revenue', requireAdmin, async (_req, res) => {
+  try {
+    const rows = await Order.aggregate([
+      { $match: { status: 'PAID' } },
+      { $project: { amount: 1, program: 1, at: { $ifNull: ['$paid_at', '$createdAt'] } } },
+    ]);
+    const today = IST_DAY_START();
+    const d7 = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const d30 = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    const sum = (list) => ({ amount: list.reduce((s, r) => s + (Number(r.amount) || 0), 0), count: list.length });
+    const real = rows.filter((r) => revenueCategory(r.program) !== 'test');
+    const last30 = real.filter((r) => r.at >= d30);
+    const byCategory = Object.keys(CATEGORY_LABELS).map((key) => ({
+      key,
+      label: CATEGORY_LABELS[key],
+      ...sum(last30.filter((r) => revenueCategory(r.program) === key)),
+    }));
+    res.json({
+      today: sum(real.filter((r) => r.at >= today)),
+      last7: sum(real.filter((r) => r.at >= d7)),
+      last30: sum(last30),
+      allTime: sum(real),
+      byCategory30: byCategory,
+    });
+  } catch (err) {
+    console.error('admin revenue error', err);
+    res.status(500).json({ error: 'Could not load revenue.' });
+  }
+});
+
+// GET /admin/campaign-stats?slugs=a,b — for each campaign: registrations
+// (all, today, completed) and ₹99 packs sold. The page asks for the slugs of
+// the masterclasses it is showing as upcoming.
+router.get('/campaign-stats', requireAdmin, async (req, res) => {
+  try {
+    const slugs = String(req.query.slugs || '')
+      .split(',')
+      .map((s) => s.trim().toLowerCase())
+      .filter((s) => /^[a-z0-9-]{1,100}$/.test(s))
+      .slice(0, 20);
+    if (!slugs.length) return res.json({ stats: {} });
+    const today = IST_DAY_START();
+    const [leadAgg, orderAgg] = await Promise.all([
+      Lead.aggregate([
+        { $match: { 'extra.campaign': { $in: slugs } } },
+        {
+          $group: {
+            _id: '$extra.campaign',
+            registrations: { $sum: 1 },
+            completed: { $sum: { $cond: ['$checkout_completed', 1, 0] } },
+            today: { $sum: { $cond: [{ $gte: ['$createdAt', today] }, 1, 0] } },
+          },
+        },
+      ]),
+      Order.aggregate([
+        { $match: { status: 'PAID', program: { $in: slugs } } },
+        { $group: { _id: '$program', packs: { $sum: 1 }, revenue: { $sum: '$amount' } } },
+      ]),
+    ]);
+    const stats = Object.fromEntries(slugs.map((s) => [s, { registrations: 0, completed: 0, today: 0, packs: 0, revenue: 0 }]));
+    for (const l of leadAgg) Object.assign(stats[l._id], { registrations: l.registrations, completed: l.completed, today: l.today });
+    for (const o of orderAgg) Object.assign(stats[o._id], { packs: o.packs, revenue: o.revenue });
+    res.json({ stats });
+  } catch (err) {
+    console.error('admin campaign-stats error', err);
+    res.status(500).json({ error: 'Could not load campaign numbers.' });
+  }
+});
+
+// GET /admin/search?q= — one box for a name, email or phone across leads,
+// payments and accounts. At least 3 characters; 20 of each, newest first.
+const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+router.get('/search', requireAdmin, async (req, res) => {
+  try {
+    const q = String(req.query.q || '').trim().slice(0, 80);
+    if (q.length < 3) return res.json({ q, leads: [], payments: [], users: [] });
+    const digits = q.replace(/\D/g, '');
+    const text = new RegExp(escapeRe(q), 'i');
+    // Phones are stored in several formats ("+91 98…", "98…"), so match on the
+    // last digits the admin typed rather than the exact string.
+    const phone = digits.length >= 5 ? new RegExp(escapeRe(digits.slice(-10))) : null;
+    const leadOr = [{ name: text }, { email: text }, ...(phone ? [{ phone }] : [])];
+    const orderOr = [{ customer_name: text }, { customer_email: text }, { order_id: text }, ...(phone ? [{ customer_phone: phone }] : [])];
+    const userOr = [{ fullName: text }, { email: text }, ...(phone ? [{ phone }] : [])];
+    const [leads, payments, users] = await Promise.all([
+      Lead.find({ $or: leadOr }).sort({ createdAt: -1 }).limit(20)
+        .select('name email phone source section extra.campaign extra.workshop checkout_completed verified createdAt').lean(),
+      Order.find({ $or: orderOr }).sort({ createdAt: -1 }).limit(20)
+        .select('order_id program amount status customer_name customer_email customer_phone paid_at createdAt').lean(),
+      User.find({ $or: userOr }).sort({ createdAt: -1 }).limit(20)
+        .select('fullName email phone provider emailVerified createdAt').lean(),
+    ]);
+    res.json({ q, leads, payments, users });
+  } catch (err) {
+    console.error('admin search error', err);
+    res.status(500).json({ error: 'Search failed.' });
+  }
+});
+
 router.get('/session', requireAdmin, (_req, res) => {
   res.json({ authenticated: true });
 });
