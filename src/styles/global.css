@@ -4725,3 +4725,20 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
   .admin-search-box input { width: 100%; }
   .admin-up-nums { grid-template-columns: repeat(2, 1fr); row-gap: 10px; }
 }
+
+/* ── Payment recovery (src/components/common/PaymentRecovery.jsx) ──────────
+   Replaces the Pay button when a payment does not complete: retry, pay by
+   UPI, or re-check a pending one. Calm, not an error banner — most of these
+   buyers still want to pay. */
+.pay-recover { margin-top: 12px; padding: 16px 16px 14px; border-radius: 14px; border: 1px solid #F3D9A4; background: #FFF8EA; text-align: left; }
+.pay-recover--pending { border-color: rgba(83,74,183,0.28); background: #F4F3FE; }
+.pay-recover-title { margin: 0 0 4px; font-size: 15px; font-weight: 600; color: var(--ink); }
+.pay-recover-body { margin: 0; font-size: 13px; line-height: 1.55; color: #4a4741; }
+.pay-recover-note { margin-top: 6px; font-weight: 500; color: var(--specialist); }
+.pay-recover-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.pay-recover-btn { flex: 1 1 150px; padding: 11px 14px; border-radius: 10px; border: none; cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 600; background: var(--specialist); color: #fff; transition: opacity .15s; }
+.pay-recover-btn:hover:not(:disabled) { opacity: .9; }
+.pay-recover-btn:disabled { opacity: .6; cursor: default; }
+.pay-recover-btn--ghost { background: #fff; color: var(--specialist); border: 1.5px solid rgba(83,74,183,0.4); }
+.pay-recover-help { margin: 10px 0 0; font-size: 12px; line-height: 1.5; color: var(--text-muted); overflow-wrap: anywhere; }
+.pay-recover-help a { color: var(--specialist); }

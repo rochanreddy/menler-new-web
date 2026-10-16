@@ -28,7 +28,9 @@ function authHeaders() {
 }
 
 // Create an order. Returns Cashfree's order object incl. payment_session_id.
-export async function createCashfreeOrder({ orderId, amount, customer, returnUrl, notifyUrl }) {
+// `paymentMethods` narrows the checkout, e.g. 'upi' to show only UPI (QR and
+// apps) when someone's card has just failed. Omitted, every method is offered.
+export async function createCashfreeOrder({ orderId, amount, customer, returnUrl, notifyUrl, paymentMethods }) {
   const body = {
     order_id: orderId,
     order_amount: Number(amount),
@@ -42,6 +44,7 @@ export async function createCashfreeOrder({ orderId, amount, customer, returnUrl
     order_meta: {
       ...(returnUrl ? { return_url: returnUrl } : {}),
       ...(notifyUrl ? { notify_url: notifyUrl } : {}),
+      ...(paymentMethods ? { payment_methods: paymentMethods } : {}),
     },
   };
   const resp = await fetch(`${BASE}/orders`, {

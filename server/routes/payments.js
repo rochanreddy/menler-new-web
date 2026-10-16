@@ -118,6 +118,8 @@ router.post('/cashfree/order', async (req, res) => {
       customer: { id: String(lead._id), name, email, phone },
       returnUrl: `${FRONTEND_BASE()}${returnPath}?order_id={order_id}`,
       notifyUrl: notifyBase ? `${notifyBase}/payments/cashfree/webhook` : undefined,
+      // "Pay with UPI instead" after a failed card payment opens a UPI-only checkout.
+      paymentMethods: body.method === 'upi' ? 'upi' : undefined,
     });
 
     await Order.create({

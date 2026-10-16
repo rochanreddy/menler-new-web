@@ -10,11 +10,12 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 // `pdf` / `resource` name the single Library item a ₹49 order buys. They are
 // sent when the order is CREATED, not after payment, so delivery no longer
 // depends on this browser coming back from checkout to say what to send.
-export async function createEnrolOrder({ program, leadId, name, email, phone, city, background, college, graduation_year, track, pdf, resource, pack, addons }) {
+// `method: 'upi'` asks for a UPI-only checkout (the "Pay with UPI instead" retry).
+export async function createEnrolOrder({ program, leadId, name, email, phone, city, background, college, graduation_year, track, pdf, resource, pack, addons, method }) {
   return apiFetch(`${API_URL}/payments/cashfree/order`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ program, leadId, name, email, phone, city, background, college, graduation_year, track, pdf, resource, pack, addons }),
+    body: JSON.stringify({ program, leadId, name, email, phone, city, background, college, graduation_year, track, pdf, resource, pack, addons, method }),
   }, { fallback: 'Could not start the payment.' });
 }
 
