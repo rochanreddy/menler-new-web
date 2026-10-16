@@ -1161,11 +1161,15 @@ function refundBlocker(order) {
 
 /** The amount and reason asked for, checked against what was paid. */
 function refundTerms(order, body) {
-  // Whole rupees and paise only, never more than was paid.
+  // Whole rupees and paise only, never more than Cashfree took for this
+  // order — on a row with instalments, that is the first payment only.
+  const cap = Array.isArray(order.extra?.instalments) && order.extra.instalments.length
+    ? Number(order.extra.instalments[0].amount)
+    : Number(order.amount);
   const raw = body?.amount;
-  const amount = raw === undefined || raw === '' || raw === null ? Number(order.amount) : Math.round(Number(raw) * 100) / 100;
+  const amount = raw === undefined || raw === '' || raw === null ? cap : Math.round(Number(raw) * 100) / 100;
   if (!Number.isFinite(amount) || amount <= 0) return { error: 'Give a refund amount above zero.' };
-  if (amount > Number(order.amount)) return { error: `The refund cannot be more than the ₹${order.amount} that was paid.` };
+  if (amount > cap) return { error: `The refund cannot be more than the ₹${cap} paid through Cashfree on this order.` };
   return { amount, note: String(body?.note || '').trim().slice(0, 100) };
 }
 
@@ -1279,6 +1283,199 @@ router.post('/paid-users/:id/refund/status', requireAdmin, async (req, res) => {
 /* Set or clear a row's batch month. Allowed on gateway orders too — the
  * website never asks which cohort someone is joining, so this is the only
  * place that information can be attached. */
+/* ── Edit a payment, and record later instalments on the same row ──────────
+ *
+ * A course sold in instalments used to need a new row for every payment.
+ * Now the row is the deal: extra.instalments lists each payment received
+ * ({ cycle, amount, paid_at, verified, cf_payment_id | txn_id, note }), the
+ * row's amount is their total and extra.payment_cycle the latest cycle, so
+ * the revenue figures keep adding up exactly as before.
+ *
+ * Every change is appended to extra.edit_log, so what was changed and when
+ * stays visible after the fact.
+ *
+ * Amounts follow the rule the rest of this file keeps: a figure Cashfree
+ * confirmed is never overwritten by a typed one. A verified row's amount,
+ * date and payment id are locked; only an unverified, hand-typed row can
+ * have those corrected. */
+
+const money = (v) => (v === '' || v == null ? null : Number(v));
+
+/** The row's instalments, seeding #1 from the row itself the first time. */
+function instalmentsOf(order) {
+  const list = order.extra?.instalments;
+  if (Array.isArray(list) && list.length) return list;
+  return [{
+    cycle: Number(order.extra?.payment_cycle) || 1,
+    amount: Number(order.amount),
+    paid_at: order.paid_at || order.createdAt,
+    verified: !order.extra?.manual || Boolean(order.extra?.verified),
+    ...(order.extra?.cf_payment_id ? { cf_payment_id: order.extra.cf_payment_id } : {}),
+    ...(order.extra?.txn_id ? { txn_id: order.extra.txn_id } : {}),
+  }];
+}
+
+const isLocked = (order) => !order.extra?.manual || Boolean(order.extra?.verified);
+
+router.patch('/paid-users/:id', requireAdmin, async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id).lean();
+    if (!order || order.status !== 'PAID') return res.status(404).json({ error: 'Not found.' });
+    const b = req.body || {};
+    const set = {};
+    const changed = [];
+    const put = (key, value, label) => {
+      const before = key.split('.').reduce((o, k) => (o == null ? undefined : o[k]), order);
+      if (String(before ?? '') === String(value ?? '')) return;
+      set[key] = value;
+      changed.push(label);
+    };
+
+    if ('name' in b) {
+      const name = String(b.name || '').trim();
+      if (!name) return res.status(400).json({ error: 'A name is required.' });
+      put('customer_name', name, 'name');
+    }
+    if ('email' in b) put('customer_email', String(b.email || '').trim().toLowerCase(), 'email');
+    if ('phone' in b) put('customer_phone', String(b.phone || '').trim(), 'phone');
+    if ('program' in b) {
+      const program = String(b.program || '').trim();
+      if (!program) return res.status(400).json({ error: 'Pick what they paid for.' });
+      put('program', program, 'course');
+    }
+    if ('batch' in b) put('extra.batch', cleanBatch(b.batch) || '', 'batch');
+    if ('note' in b) put('extra.note', String(b.note || '').trim().slice(0, 300), 'note');
+    for (const [key, label] of [['actual_price', 'actual price'], ['sold_price', 'sold price']]) {
+      if (!(key in b)) continue;
+      const v = money(b[key]);
+      if (v !== null && (!Number.isFinite(v) || v <= 0)) return res.status(400).json({ error: `The ${label} must be a positive amount.` });
+      put(`extra.${key}`, v, label);
+    }
+
+    // Amount, date and reference: only on a hand-typed row nobody verified.
+    const locked = isLocked(order);
+    const hasInstalments = Array.isArray(order.extra?.instalments) && order.extra.instalments.length > 1;
+    if (!locked && !hasInstalments) {
+      if ('amount' in b) {
+        const amount = Number(b.amount);
+        if (!Number.isFinite(amount) || amount <= 0) return res.status(400).json({ error: 'A positive amount is required.' });
+        put('amount', amount, 'amount');
+      }
+      if ('paid_at' in b && b.paid_at) put('paid_at', new Date(`${b.paid_at}T12:00:00+05:30`), 'paid date');
+      if ('txn_id' in b) put('extra.txn_id', String(b.txn_id || '').trim(), 'transaction ID');
+    }
+
+    if (!changed.length) return res.json({ ok: true, changed: [] });
+    const fresh = await Order.findOneAndUpdate(
+      { _id: order._id },
+      { $set: set, $push: { 'extra.edit_log': { at: new Date(), what: `Edited ${changed.join(', ')}` } } },
+      { new: true },
+    ).lean();
+    res.json({ ok: true, changed, row: fresh });
+  } catch (err) {
+    console.error('admin paid-users edit error', err);
+    res.status(500).json({ error: 'Could not save the changes.' });
+  }
+});
+
+/* Record the next instalment on an existing row. With a Cashfree Order ID it
+ * is checked like any other payment (Cashfree's amount wins, and it can't be
+ * a payment already recorded anywhere); without one it needs a transaction
+ * ID and stays marked unverified. */
+router.post('/paid-users/:id/instalments', requireAdmin, async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id).lean();
+    if (!order || order.status !== 'PAID') return res.status(404).json({ error: 'Not found.' });
+    if (order.extra?.refund && counts(order.extra.refund.status)) {
+      return res.status(409).json({ error: 'This payment has been refunded, so no instalment can be added to it.' });
+    }
+    const b = req.body || {};
+    const ref = String(b.reference || '').trim();
+    const txn = String(b.txn_id || '').trim();
+    let amount = Number(b.amount);
+    let entry = {};
+
+    if (ref) {
+      if (!cashfreeConfigured()) return res.status(503).json({ error: 'Cashfree keys are not configured on this server, so the reference cannot be checked.' });
+      const found = await findCashfreePayment(ref);
+      if (!found.found) return res.status(400).json({ error: found.detail || 'That reference has no successful payment in Cashfree.' });
+      const p = found.payment;
+      const dupe = await Order.findOne({
+        $or: [
+          { order_id: p.order_id },
+          ...(p.cf_payment_id ? [{ 'extra.cf_payment_id': p.cf_payment_id }, { 'extra.instalments.cf_payment_id': p.cf_payment_id }] : []),
+          { 'extra.instalments.order_id': p.order_id },
+        ],
+      }).lean();
+      if (dupe) return res.status(409).json({ error: `That payment is already recorded — on ${dupe.customer_name || dupe.customer_email || dupe.order_id}.` });
+      amount = Number(p.amount);
+      entry = {
+        verified: true,
+        order_id: p.order_id,
+        ...(p.cf_payment_id ? { cf_payment_id: p.cf_payment_id } : {}),
+        method: p.methodInfo?.label || p.method || '',
+        paid_at: b.paid_at ? new Date(`${b.paid_at}T12:00:00+05:30`) : (p.paid_at ? new Date(p.paid_at) : new Date()),
+      };
+    } else {
+      if (b.unverified !== true) return res.status(400).json({ error: 'A Cashfree Order ID is required, or tick the option to record it unverified.' });
+      if (!txn) return res.status(400).json({ error: 'A transaction ID is required when recording without verification.' });
+      entry = { verified: false, txn_id: txn, paid_at: b.paid_at ? new Date(`${b.paid_at}T12:00:00+05:30`) : new Date() };
+    }
+    if (!Number.isFinite(amount) || amount <= 0) return res.status(400).json({ error: 'A positive amount is required.' });
+
+    const list = instalmentsOf(order);
+    const cycle = Math.max(...list.map((i) => Number(i.cycle) || 0)) + 1;
+    const next = [...list, { cycle, amount, ...entry, ...(b.note ? { note: String(b.note).trim().slice(0, 200) } : {}), added_at: new Date() }];
+    const total = Math.round(next.reduce((t, i) => t + Number(i.amount || 0), 0) * 100) / 100;
+
+    // Guard against two saves racing: only write if the row still has the
+    // instalments we started from.
+    const fresh = await Order.findOneAndUpdate(
+      { _id: order._id, amount: order.amount },
+      {
+        $set: { amount: total, 'extra.instalments': next, 'extra.payment_cycle': cycle },
+        $push: { 'extra.edit_log': { at: new Date(), what: `Added payment ${cycle} of ₹${amount.toLocaleString('en-IN')}${entry.verified ? ' (verified)' : ' (unverified)'}` } },
+      },
+      { new: true },
+    ).lean();
+    if (!fresh) return res.status(409).json({ error: 'This row changed while you were editing it. Close and try again.' });
+    res.status(201).json({ ok: true, row: fresh });
+  } catch (err) {
+    console.error('admin add instalment error', err);
+    res.status(500).json({ error: 'Could not add the instalment.' });
+  }
+});
+
+/* Take back the most recent instalment (a typo, or the wrong student). The
+ * first payment is the row itself and is never removed this way. */
+router.delete('/paid-users/:id/instalments/:cycle', requireAdmin, async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id).lean();
+    if (!order) return res.status(404).json({ error: 'Not found.' });
+    const list = order.extra?.instalments || [];
+    const cycle = Number(req.params.cycle);
+    const last = list[list.length - 1];
+    if (list.length < 2 || !last || Number(last.cycle) !== cycle) {
+      return res.status(400).json({ error: 'Only the latest instalment can be removed, and never the first payment.' });
+    }
+    const next = list.slice(0, -1);
+    const total = Math.round(next.reduce((t, i) => t + Number(i.amount || 0), 0) * 100) / 100;
+    const fresh = await Order.findOneAndUpdate(
+      { _id: order._id, amount: order.amount },
+      {
+        $set: { amount: total, 'extra.instalments': next, 'extra.payment_cycle': Number(next[next.length - 1].cycle) || 1 },
+        $push: { 'extra.edit_log': { at: new Date(), what: `Removed payment ${cycle} of ₹${Number(last.amount).toLocaleString('en-IN')}` } },
+      },
+      { new: true },
+    ).lean();
+    if (!fresh) return res.status(409).json({ error: 'This row changed while you were editing it. Close and try again.' });
+    res.json({ ok: true, row: fresh });
+  } catch (err) {
+    console.error('admin remove instalment error', err);
+    res.status(500).json({ error: 'Could not remove the instalment.' });
+  }
+});
+
 router.patch('/paid-users/:id/batch', requireAdmin, async (req, res) => {
   try {
     const raw = String(req.body?.batch || '').trim();

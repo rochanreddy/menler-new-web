@@ -4742,3 +4742,20 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .pay-recover-btn--ghost { background: #fff; color: var(--specialist); border: 1.5px solid rgba(83,74,183,0.4); }
 .pay-recover-help { margin: 10px 0 0; font-size: 12px; line-height: 1.5; color: var(--text-muted); overflow-wrap: anywhere; }
 .pay-recover-help a { color: var(--specialist); }
+
+/* Edit payment: the payments on a row, and the next instalment. */
+.admin-inst { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 12px; flex-shrink: 0; }
+.admin-inst-row { display: grid; grid-template-columns: 92px 90px 100px auto 1fr auto; align-items: center; gap: 10px; padding: 9px 14px; font-size: 13px; border-bottom: 1px solid var(--border); }
+.admin-inst-cycle { font-weight: 600; color: var(--ink); }
+.admin-inst-amt { font-weight: 600; font-variant-numeric: tabular-nums; }
+.admin-inst-total { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; padding: 10px 14px; background: var(--cloud); font-size: 13px; }
+.admin-inst-done { color: var(--placed); font-weight: 600; }
+.admin-inst-due { color: var(--amber); font-weight: 600; }
+.admin-inst-add { border: 1.5px dashed var(--lavender); border-radius: 12px; padding: 14px 14px 4px; margin-bottom: 4px; flex-shrink: 0; }
+.admin-editlog { margin: 12px 0 0; font-size: 12.5px; color: var(--ink); }
+.admin-editlog summary { cursor: pointer; color: var(--specialist); font-weight: 500; }
+.admin-editlog ul { margin: 8px 0 0; padding-left: 18px; line-height: 1.7; }
+@media (max-width: 620px) {
+  .admin-inst-row { grid-template-columns: 1fr auto; }
+  .admin-inst-row > :nth-child(n+3) { grid-column: 1 / -1; }
+}

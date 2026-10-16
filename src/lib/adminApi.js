@@ -120,6 +120,12 @@ export const adminApi = {
   refundStatus: (id) =>
     api(`/admin/paid-users/${encodeURIComponent(id)}/refund/status`, { method: 'POST' }),
   deletePaidUser: (id) => api(`/admin/paid-users/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+  /** Edit a payment row's details (and, on an unverified row, its amount/date). */
+  editPaidUser: (id, body) => api(`/admin/paid-users/${encodeURIComponent(id)}`, { method: 'PATCH', body }),
+  /** Record the next instalment on a row. body: { reference } or { unverified: true, txn_id, amount }, plus paid_at, note. */
+  addInstalment: (id, body) => api(`/admin/paid-users/${encodeURIComponent(id)}/instalments`, { method: 'POST', body }),
+  /** Take back the latest instalment on a row. */
+  removeInstalment: (id, cycle) => api(`/admin/paid-users/${encodeURIComponent(id)}/instalments/${cycle}`, { method: 'DELETE' }),
 
   // Zoom attendance for a campaign's session (admin-only).
   zoomMeetings: (slug) => api(`/admin/zoom/meetings${qs({ slug })}`),

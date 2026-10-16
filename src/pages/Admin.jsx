@@ -4,6 +4,7 @@ import { adminApi } from '../lib/adminApi';
 import Seo from '../components/common/Seo';
 import AttendanceTab from '../components/admin/AttendanceTab';
 import RefundCaptcha from '../components/admin/RefundCaptcha';
+import EditPaymentModal from '../components/admin/EditPaymentModal';
 import { RevenueCards, SearchResults, UpcomingMasterclasses } from '../components/admin/DashboardExtras';
 
 /* Courses offered in the manual-payment form. The paid campaign packs and the
@@ -838,6 +839,8 @@ function UsersTab() {
   const [verifyErr, setVerifyErr] = useState('');
   const [verifyDone, setVerifyDone] = useState(null);
   const [refundRow, setRefundRow] = useState(null);
+  // The row open in Edit payment (details + later instalments).
+  const [editRow, setEditRow] = useState(null);
   const [refundAmount, setRefundAmount] = useState('');
   const [refundNote, setRefundNote] = useState('');
   const [refundBusy, setRefundBusy] = useState(false);
@@ -1188,6 +1191,7 @@ function UsersTab() {
                       title={r.extra?.actual_price ? `List price ₹${r.extra.actual_price.toLocaleString('en-IN')}` : ''}>
                       Payment {r.extra.payment_cycle}
                       {r.extra?.sold_price ? ` · sold ₹${r.extra.sold_price.toLocaleString('en-IN')}` : ''}
+                      {r.extra?.sold_price > r.amount ? ` · ₹${(r.extra.sold_price - r.amount).toLocaleString('en-IN')} due` : ''}
                     </span>
                   )}
                   {/* How it was paid, under what was paid. EMI is called out
@@ -1232,6 +1236,10 @@ function UsersTab() {
                 </td>
                 <td className="admin-muted">{fmtDate(r.paid_at || r.createdAt)}</td>
                 <td className="admin-rowacts">
+                  <button type="button" className="admin-refundbtn" title="Edit details, or record the next instalment on this row"
+                    onClick={(e) => { e.stopPropagation(); setEditRow(r); }}>
+                    Edit
+                  </button>
                   {canRefund(r) && (
                     <button type="button" className="admin-refundbtn" title="Send this payment back through Cashfree"
                       onClick={(e) => { e.stopPropagation(); openRefund(r); }}>
@@ -1338,6 +1346,15 @@ function UsersTab() {
 
             ...(selected.extra?.note ? [{ heading: 'Note' }, ['Note', selected.extra.note]] : []),
           ]}
+        />
+      )}
+
+      {editRow && (
+        <EditPaymentModal
+          row={editRow}
+          courseOptions={COURSE_OPTIONS}
+          onClose={() => setEditRow(null)}
+          onSaved={load}
         />
       )}
 
