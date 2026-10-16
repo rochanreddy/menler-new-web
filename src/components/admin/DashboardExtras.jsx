@@ -52,12 +52,21 @@ const UPCOMING_QUERY = `*[_type == "campaignPage" && isLiveEvent == true && hide
   title, "slug": slug.current, date, time, eventStart, bannerLine1, bannerLine2
 }`;
 
+// Calendar days in India, not hours rounded up — a session at 7 PM tonight
+// is "Today" at 1 AM, not "Tomorrow".
+const IST = 'Asia/Kolkata';
+const istDay = (d) => new Date(d).toLocaleDateString('en-CA', { timeZone: IST });
 const daysUntil = (iso) => {
-  const ms = new Date(iso).getTime() - Date.now();
-  if (ms <= 0) return 'Today / live';
-  const d = Math.ceil(ms / (24 * 60 * 60 * 1000));
-  return d === 1 ? 'Tomorrow' : `In ${d} days`;
+  const start = new Date(iso);
+  if (start.getTime() <= Date.now()) return { label: 'Live / ended', tone: 'live' };
+  const diff = Math.round((new Date(istDay(start)) - new Date(istDay(new Date()))) / 86400000);
+  if (diff <= 0) return { label: 'Today', tone: 'today' };
+  if (diff === 1) return { label: 'Tomorrow', tone: 'soon' };
+  return { label: `In ${diff} days`, tone: diff <= 7 ? 'soon' : 'later' };
 };
+const startsAt = (iso) => new Date(iso).toLocaleString('en-IN', {
+  timeZone: IST, weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit',
+});
 
 export function UpcomingMasterclasses() {
   const [rows, setRows] = useState(null);
@@ -89,19 +98,31 @@ export function UpcomingMasterclasses() {
         <div className="admin-up-grid">
           {rows.map((c) => {
             const name = [c.bannerLine1, c.bannerLine2].filter(Boolean).join(' ').trim() || c.title;
+            const due = daysUntil(c.eventStart);
+            const reg = c.s.registrations ?? 0;
+            const done = c.s.completed ?? 0;
+            const pct = reg ? Math.round((done / reg) * 100) : 0;
             return (
-              <div className="admin-up-card" key={c.slug}>
+              <div className={`admin-up-card admin-up-card--${due.tone}`} key={c.slug}>
                 <div className="admin-up-head">
-                  <span className="admin-up-when">{daysUntil(c.eventStart)}</span>
-                  <a className="admin-up-link" href={`/campaign/${c.slug}`} target="_blank" rel="noreferrer">Open page ↗</a>
+                  <span className={`admin-up-when admin-up-when--${due.tone}`}>{due.label}</span>
+                  <span className="admin-up-date">{startsAt(c.eventStart)}</span>
                 </div>
                 <p className="admin-up-title">{name}</p>
-                <p className="admin-muted">{c.date} · {c.time}</p>
-                <div className="admin-up-nums">
-                  <div><b>{c.s.registrations ?? 0}</b><span>Registered</span></div>
-                  <div><b>+{c.s.today ?? 0}</b><span>Today</span></div>
-                  <div><b>{c.s.completed ?? 0}</b><span>Completed</span></div>
-                  <div><b>{c.s.packs ?? 0}</b><span>₹99 packs · {inr(c.s.revenue)}</span></div>
+
+                <div className="admin-up-main">
+                  <b>{reg}</b>
+                  <span>registered</span>
+                  <span className={`admin-up-today${c.s.today ? ' on' : ''}`}>+{c.s.today ?? 0} today</span>
+                </div>
+                <div className="admin-up-bar" title={`${done} of ${reg} completed checkout`}>
+                  <span style={{ width: `${pct}%` }} />
+                </div>
+                <p className="admin-up-sub">{done} completed checkout{reg ? ` · ${pct}%` : ''}</p>
+
+                <div className="admin-up-foot">
+                  <span>Pack sales <b>{inr(c.s.revenue)}</b> · {c.s.packs ?? 0} sold</span>
+                  <a className="admin-up-link" href={`/campaign/${c.slug}`} target="_blank" rel="noreferrer">Open page ↗</a>
                 </div>
               </div>
             );
