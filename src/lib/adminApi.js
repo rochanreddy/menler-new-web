@@ -111,7 +111,10 @@ export const adminApi = {
   setBatch: (id, batch) =>
     api(`/admin/paid-users/${encodeURIComponent(id)}/batch`, { method: 'PATCH', body: { batch } }),
   addPaidUser: (body) => api('/admin/paid-users', { method: 'POST', body }),
-  /** Refund a paid order through Cashfree. `amount` omitted = the full amount. */
+  /** Text the refund approval code to the approver's phone. body: { amount, note, captchaToken } */
+  refundOtp: (id, body) =>
+    api(`/admin/paid-users/${encodeURIComponent(id)}/refund/otp`, { method: 'POST', body }),
+  /** Refund a paid order through Cashfree. body: { approvalId, otp } from refundOtp. */
   refundPayment: (id, body) =>
     api(`/admin/paid-users/${encodeURIComponent(id)}/refund`, { method: 'POST', body }),
   refundStatus: (id) =>

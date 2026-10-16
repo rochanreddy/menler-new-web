@@ -14,6 +14,7 @@ import { sendMail, isMailConfigured, verifyMailer } from '../utils/email.js';
 import { cashfreeConfigured, describePayment, findCashfreePayment, getCashfreePayments } from '../utils/cashfree.js';
 import { deliverPackForOrder, deliverLibraryForOrder } from '../utils/packDelivery.js';
 import { createCashfreeRefund, getCashfreeRefund } from '../utils/cashfree.js';
+import { sendRefundCode, verifyRefundCode, maskedApproverPhone } from '../utils/refundApproval.js';
 import { zoomConfigured, meetingIdFromLink, pastInstances, latestInstanceUuid, pastMeeting, pastMeetings, meetingParticipants, explainZoomError } from '../utils/zoom.js';
 import { RESOURCE_PACKS, CLAUDE_PLAYBOOK_PACK } from '../../src/data/resourceCatalog.js';
 import {
@@ -1143,31 +1144,65 @@ async function syncRefund(id) {
   return writeRefund(id, cf);
 }
 
+/** Can this order be refunded? An { status, error } to send back if not. */
+function refundBlocker(order) {
+  if (!cashfreeConfigured()) return { status: 503, error: 'Cashfree keys are not configured on this server, so refunds cannot be made here.' };
+  if (!order) return { status: 404, error: 'Not found.' };
+  if (order.status !== 'PAID') return { status: 400, error: 'That order is not paid.' };
+  if (/^MANUAL_/.test(order.order_id)) {
+    return { status: 400, error: 'This payment was typed in by hand and never verified, so there is no Cashfree order to refund. Verify it first, or refund it from the Cashfree dashboard.' };
+  }
+  const prev = order.extra?.refund;
+  if (prev && counts(prev.status)) {
+    return { status: 409, error: prev.status === 'SUCCESS' ? 'This payment has already been refunded.' : 'A refund for this payment is already in progress.' };
+  }
+  return null;
+}
+
+/** The amount and reason asked for, checked against what was paid. */
+function refundTerms(order, body) {
+  // Whole rupees and paise only, never more than was paid.
+  const raw = body?.amount;
+  const amount = raw === undefined || raw === '' || raw === null ? Number(order.amount) : Math.round(Number(raw) * 100) / 100;
+  if (!Number.isFinite(amount) || amount <= 0) return { error: 'Give a refund amount above zero.' };
+  if (amount > Number(order.amount)) return { error: `The refund cannot be more than the ₹${order.amount} that was paid.` };
+  return { amount, note: String(body?.note || '').trim().slice(0, 100) };
+}
+
+/* Step 1 of a refund: text the approval code (server/utils/refundApproval.js).
+ * The code is for this order, this amount and this reason only. */
+router.post('/paid-users/:id/refund/otp', requireAdmin, async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id).lean();
+    const blocked = refundBlocker(order);
+    if (blocked) return res.status(blocked.status).json({ error: blocked.error });
+    const terms = refundTerms(order, req.body);
+    if (terms.error) return res.status(400).json({ error: terms.error });
+    const sent = await sendRefundCode({ orderId: order._id, ...terms, captchaToken: req.body?.captchaToken });
+    res.json({ ok: true, ...sent });
+  } catch (err) {
+    if (!err.status) console.error('admin refund otp error', err);
+    res.status(err.status || 500).json({ error: err.status ? err.message : 'Could not send the code.' });
+  }
+});
+
+/* Step 2: the code, then the refund. Without a verified code nothing moves —
+ * calling this endpoint directly does not skip the approval. */
 router.post('/paid-users/:id/refund', requireAdmin, async (req, res) => {
   try {
-    if (!cashfreeConfigured()) {
-      return res.status(503).json({ error: 'Cashfree keys are not configured on this server, so refunds cannot be made here.' });
-    }
     const order = await Order.findById(req.params.id).lean();
-    if (!order) return res.status(404).json({ error: 'Not found.' });
-    if (order.status !== 'PAID') return res.status(400).json({ error: 'That order is not paid.' });
-    if (/^MANUAL_/.test(order.order_id)) {
-      return res.status(400).json({ error: 'This payment was typed in by hand and never verified, so there is no Cashfree order to refund. Verify it first, or refund it from the Cashfree dashboard.' });
-    }
+    const blocked = refundBlocker(order);
+    if (blocked) return res.status(blocked.status).json({ error: blocked.error });
 
+    let approved;
+    try {
+      approved = await verifyRefundCode({ approvalId: req.body?.approvalId, orderId: order._id, otp: req.body?.otp });
+    } catch (err) {
+      return res.status(err.status || 400).json({ error: err.message, expired: Boolean(err.expired) });
+    }
+    // The terms the code was sent for, not whatever this request says.
+    const { amount, note } = approved;
     const prev = order.extra?.refund;
-    if (prev && counts(prev.status)) {
-      return res.status(409).json({ error: prev.status === 'SUCCESS' ? 'This payment has already been refunded.' : 'A refund for this payment is already in progress.' });
-    }
-
-    // Whole rupees and paise only, never more than was paid.
-    const raw = req.body?.amount;
-    const amount = raw === undefined || raw === '' || raw === null ? Number(order.amount) : Math.round(Number(raw) * 100) / 100;
-    if (!Number.isFinite(amount) || amount <= 0) return res.status(400).json({ error: 'Give a refund amount above zero.' });
-    if (amount > Number(order.amount)) {
-      return res.status(400).json({ error: `The refund cannot be more than the ₹${order.amount} that was paid.` });
-    }
-    const note = String(req.body?.note || '').trim().slice(0, 100);
 
     /* An earlier attempt that failed on OUR side (a timeout, say) may still
      * have reached Cashfree. Look before asking again — a second request under
@@ -1191,6 +1226,7 @@ router.post('/paid-users/:id/refund', requireAdmin, async (req, res) => {
           'extra.refund': {
             refund_id: refundId, attempt, amount, note, status: 'PROCESSING',
             requested_at: new Date(), full: amount === Number(order.amount),
+            approved_by_sms: maskedApproverPhone(),
           },
           'extra.refunded_amount': amount,
         },
