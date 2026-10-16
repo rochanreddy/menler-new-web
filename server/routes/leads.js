@@ -21,7 +21,7 @@ const LIB_TPL_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '..'
 const BROCHURE_PDFS = {
   kickstarter: '/pdfs/Menler_AI_Kickstarter.pdf',
   generalist: '/pdfs/Menler_Claude_Gen_brochure.pdf',
-  engineering: '/pdfs/Menler_Claude_Gen_brochure.pdf',
+  engineering: '/pdfs/Menler_AI_FDE_Fellowship_Curriculum.pdf',
 };
 
 function brochurePdfForProgram(program) {

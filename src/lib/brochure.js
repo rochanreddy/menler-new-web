@@ -12,7 +12,7 @@ import { submitLead } from '../services/leadService';
 const BROCHURE_PDFS = {
   kickstarter: '/pdfs/Menler_AI_Kickstarter.pdf',
   generalist: '/pdfs/Menler_Claude_Gen_brochure.pdf',
-  engineering: '/pdfs/Menler_Claude_Gen_brochure.pdf',
+  engineering: '/pdfs/Menler_AI_FDE_Fellowship_Curriculum.pdf',
 };
 
 export function brochurePdfForProgram(program) {
