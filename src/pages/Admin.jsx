@@ -5,7 +5,7 @@ import Seo from '../components/common/Seo';
 import AttendanceTab from '../components/admin/AttendanceTab';
 import RefundCaptcha from '../components/admin/RefundCaptcha';
 import EditPaymentModal from '../components/admin/EditPaymentModal';
-import { RevenueCards, SearchResults, UpcomingMasterclasses } from '../components/admin/DashboardExtras';
+import { SearchResults, UpcomingMasterclasses } from '../components/admin/DashboardExtras';
 
 /* Courses offered in the manual-payment form. The paid campaign packs and the
  * library aren't in the client price list (registration for those is free and
@@ -418,7 +418,6 @@ function Overview() {
     <div className="admin-overview">
       {/* What the team asks first: how the next sessions are filling, and money in. */}
       <UpcomingMasterclasses />
-      <RevenueCards />
 
       <div className="admin-stat-grid">
         <StatCard label="Total leads" value={t.leads} accent="var(--specialist)"

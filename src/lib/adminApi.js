@@ -60,7 +60,6 @@ export const adminApi = {
   getSession: () => api('/admin/session'),
   getStats: () => api('/admin/stats'),
   getClientErrors: () => api('/admin/client-errors'),
-  getRevenue: () => api('/admin/revenue'),
   getCampaignStats: (slugs) => api(`/admin/campaign-stats${qs({ slugs: slugs.join(',') })}`),
   search: (q) => api(`/admin/search${qs({ q })}`),
 

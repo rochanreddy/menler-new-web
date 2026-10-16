@@ -4704,9 +4704,6 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 .admin-btn--danger:disabled { opacity: .55; cursor: not-allowed; }
 
 /* ── Admin: upcoming masterclasses, revenue, search ── */
-.admin-rev-grid { margin-top: 12px; }
-.admin-rev-split { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-top: 14px; font-size: 13px; }
-.admin-rev-chip { padding: 5px 11px; border-radius: 999px; background: #E1F5EE; color: #085041; }
 .admin-up-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 14px; }
 .admin-up-card { position: relative; display: flex; flex-direction: column; border: 1px solid rgba(38,33,92,0.1); border-radius: 14px; padding: 16px 18px 14px; background: #fff; overflow: hidden; transition: box-shadow .15s, border-color .15s; }
 .admin-up-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--lavender); }

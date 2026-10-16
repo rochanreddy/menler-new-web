@@ -2,47 +2,10 @@ import { useEffect, useState } from 'react';
 import { adminApi } from '../../lib/adminApi';
 import { sanityClient } from '../../lib/sanity';
 
-/* Overview additions: money in, and how each upcoming masterclass is doing.
-   Plus the search that sits in the top bar. All read-only. */
+/* Overview additions: how each upcoming masterclass is doing, plus the
+   search that sits in the top bar. All read-only. */
 
 const inr = (n) => '₹' + Math.round(Number(n) || 0).toLocaleString('en-IN');
-
-/* ── Revenue ────────────────────────────────────────────────────────────── */
-
-export function RevenueCards() {
-  const [r, setR] = useState(null);
-  const [error, setError] = useState('');
-  useEffect(() => { adminApi.getRevenue().then(setR).catch((e) => setError(e.message)); }, []);
-
-  if (error) return <p className="admin-empty">{error}</p>;
-  if (!r) return <p className="admin-empty">Loading revenue…</p>;
-
-  const card = (label, v, note) => (
-    <div className="admin-stat" style={{ borderTopColor: '#1D9E75' }}>
-      <div className="admin-stat-value">{inr(v.amount)}</div>
-      <div className="admin-stat-label">{label}</div>
-      <div className="admin-stat-note">{note || `${v.count} payment${v.count === 1 ? '' : 's'}`}</div>
-    </div>
-  );
-
-  return (
-    <div className="admin-panel-card">
-      <p className="admin-card-title">Revenue</p>
-      <div className="admin-stat-grid admin-rev-grid">
-        {card('Today', r.today)}
-        {card('Last 7 days', r.last7)}
-        {card('Last 30 days', r.last30)}
-        {card('All time', r.allTime)}
-      </div>
-      <div className="admin-rev-split">
-        <span className="admin-muted">Last 30 days by product:</span>
-        {r.byCategory30.map((c) => (
-          <span key={c.key} className="admin-rev-chip">{c.label} <b>{inr(c.amount)}</b> · {c.count}</span>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 /* ── Upcoming masterclasses ─────────────────────────────────────────────── */
 

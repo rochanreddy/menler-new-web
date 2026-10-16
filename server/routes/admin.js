@@ -160,63 +160,15 @@ router.get('/client-errors', requireAdmin, async (_req, res) => {
   }
 });
 
-/* ── Dashboard: revenue, live-campaign numbers, search ─────────────────────
- * Three read-only views for the Overview and the search box. Everything is
- * counted from what already exists: PAID orders (webhook/status-confirmed, plus
- * manual entries) for money, and campaign leads (extra.campaign) for
- * registrations. */
+/* ── Dashboard: live-campaign numbers, search ──────────────────────────────
+ * Read-only views for the Overview and the search box. Everything is counted
+ * from what already exists: PAID orders (webhook/status-confirmed, plus manual
+ * entries) for money, and campaign leads (extra.campaign) for registrations. */
 
 const IST_DAY_START = () => {
   const istNow = new Date(Date.now() + 5.5 * 60 * 60 * 1000);
   return new Date(`${istNow.toISOString().slice(0, 10)}T00:00:00+05:30`);
 };
-
-/* What a PAID order was for, from its program key. */
-const FELLOWSHIP_PROGRAMS = new Set(['kickstarter', 'generalist', 'generalist-6w', 'engineering']);
-const revenueCategory = (program) => {
-  const p = String(program || '').toLowerCase();
-  if (p === 'library') return 'library';
-  if (FELLOWSHIP_PROGRAMS.has(p)) return 'programs';
-  if (p === 'test') return 'test';
-  return 'masterclass';
-};
-const CATEGORY_LABELS = {
-  masterclass: 'Masterclass packs & seats',
-  programs: 'Fellowships & Kickstarter',
-  library: 'Library (₹49)',
-};
-
-// GET /admin/revenue — money in, today / 7 days / 30 days / all time, and the
-// last 30 days split by what was bought. The ₹5 gateway test is left out.
-router.get('/revenue', requireAdmin, async (_req, res) => {
-  try {
-    const rows = await Order.aggregate([
-      { $match: { status: 'PAID' } },
-      { $project: { amount: 1, program: 1, at: { $ifNull: ['$paid_at', '$createdAt'] } } },
-    ]);
-    const today = IST_DAY_START();
-    const d7 = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-    const d30 = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-    const sum = (list) => ({ amount: list.reduce((s, r) => s + (Number(r.amount) || 0), 0), count: list.length });
-    const real = rows.filter((r) => revenueCategory(r.program) !== 'test');
-    const last30 = real.filter((r) => r.at >= d30);
-    const byCategory = Object.keys(CATEGORY_LABELS).map((key) => ({
-      key,
-      label: CATEGORY_LABELS[key],
-      ...sum(last30.filter((r) => revenueCategory(r.program) === key)),
-    }));
-    res.json({
-      today: sum(real.filter((r) => r.at >= today)),
-      last7: sum(real.filter((r) => r.at >= d7)),
-      last30: sum(last30),
-      allTime: sum(real),
-      byCategory30: byCategory,
-    });
-  } catch (err) {
-    console.error('admin revenue error', err);
-    res.status(500).json({ error: 'Could not load revenue.' });
-  }
-});
 
 // GET /admin/campaign-stats?slugs=a,b — for each campaign: registrations
 // (all, today, completed) and ₹99 packs sold. The page asks for the slugs of
