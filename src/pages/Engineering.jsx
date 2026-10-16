@@ -123,7 +123,7 @@ export default function Engineering() {
         <div className="hero-ring r2" style={{ borderColor: 'rgba(93,202,165,0.08)' }} />
         <div className="hero-inner">
           <p className="hero-eyebrow" style={{ color: '#5DCAA5' }}>AI FDE Fellowship · Forward Deployed AI Engineer</p>
-          <h1 className="hero-h1" style={{ color: '#E1F5EE' }}>Twelve weeks. Six real-world cases.<br /><em style={{ color: '#9FE1CB' }}>Defended, not just delivered.</em></h1>
+          <h1 className="hero-h1" style={{ color: '#E1F5EE' }}>Twelve weeks.<br />Six real-world cases.<br /><em style={{ color: '#9FE1CB' }}>Defended, not just delivered.</em></h1>
           <p className="hero-sub" style={{ color: 'rgba(225,245,238,0.55)' }}>Sit with a client, frame a messy problem and own the AI solution from first interview to handover.<strong className="hero-tagline" style={{ color: '#E1F5EE', fontWeight: 500 }}>Graded on whether you can defend what you built.</strong></p>
           <div className="hero-actions">
             <button className="btn-primary" style={{ background: '#1D9E75', minWidth: 220, textAlign: 'center' }} onClick={openApply}>Apply Now</button>
