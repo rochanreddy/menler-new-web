@@ -528,6 +528,9 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
    stretching to fill the column. */
 .curric-section--fde .curric-weeks { flex: none; }
 .curric-section--fde .curric-week { flex: none; }
+@media (min-width: 761px) {
+  .curric-section--fde .curric-week-head { min-height: 140px; }
+}
 @media (max-width: 760px) {
   .tracks-grid.tracks-grid--two { grid-template-columns: 1fr; }
   .curric-section--gen.curric-section--fde .curric-acc-head { padding-right: 46px; }
