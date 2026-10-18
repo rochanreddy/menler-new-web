@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { FDE_PHASES, FDE_AUDIENCE, FDE_HIGHLIGHTS } from '../data/fdeCurriculum';
 import { useNavigate } from 'react-router-dom';
 import FaqList from '../components/common/FaqList';
@@ -18,6 +18,7 @@ import PhoneField from '../components/forms/PhoneField';
 import { isSmsReachable, phoneMinLength } from '../lib/phone';
 import BackgroundField from '../components/forms/BackgroundField';
 import { FDE_PATH } from '../lib/routes';
+import { useReveal } from '../hooks/useReveal';
 
 // The AI Forward Deployed Engineer course page. Same flow as the Generalist
 // page: hero, who it is for, curriculum, highlights, brochure, mentors,
@@ -89,6 +90,8 @@ export default function Engineering() {
   const [activePhase, setActivePhase] = useState(0);
   const [phaseWeek, setPhaseWeek] = useState(0);
   const weekDetailRef = useRef(null);
+  // Program highlights reveal once, when they scroll into view.
+  const [hlRef, hlIn] = useReveal({ threshold: 0.2 });
 
   // Select a week. On mobile, the lesson plan stacks below the week list, so
   // scroll it into view (after re-render) — same UX as the Generalist page.
@@ -266,11 +269,11 @@ export default function Engineering() {
         <p className="section-label" style={{ color: '#5DCAA5' }}>Program highlights</p>
         <h2 className="section-h2" style={{ color: '#E1F5EE' }}>Everything an AI FDE does.<br /><em style={{ color: '#9FE1CB' }}>Real time and real builds.</em></h2>
         <p className="section-sub" style={{ color: 'rgba(225,245,238,0.55)' }}>Twelve weeks of real briefs, real builds and real deadlines.<br />You don&rsquo;t watch AI get shipped. You deploy it.</p>
-        <div className="fde-hl-panel">
+        <div ref={hlRef} className={`fde-hl-panel${hlIn ? ' in' : ''}`}>
           {FDE_HIGHLIGHTS.map((h, i) => (
-            <div className="fde-hl" key={h.label}>
+            <div className="fde-hl" key={h.label} style={{ '--i': i }} onMouseMove={glowAt}>
               <span className="fde-hl-idx">{String(i + 1).padStart(2, '0')}</span>
-              <p className="fde-hl-num">{h.num}</p>
+              <p className="fde-hl-num"><CountUp value={h.num} run={hlIn} delay={i * 90} /></p>
               <p className="fde-hl-label">{h.label}</p>
               <p className="fde-hl-desc">{h.desc}</p>
             </div>
@@ -349,6 +352,37 @@ export default function Engineering() {
       {payProgram && <PayModal program={payProgram} onClose={() => setPayProgram(null)} />}
     </>
   );
+}
+
+/* Counts a figure up from zero once `run` turns true ("6+" keeps its "+").
+   Reduced motion, or a value that isn't a number, shows the final figure. */
+function CountUp({ value, run, delay = 0, duration = 1100 }) {
+  const m = String(value).match(/^(\d+)(.*)$/);
+  const target = m ? Number(m[1]) : null;
+  const [n, setN] = useState(0);
+  const still = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  useEffect(() => {
+    if (!run || target === null || still) return undefined;
+    let raf;
+    let start;
+    const step = (t) => {
+      if (start === undefined) start = t + delay;
+      const p = Math.min(1, Math.max(0, (t - start) / duration));
+      setN(Math.round(target * (1 - (1 - p) ** 3)));   // ease-out cubic
+      if (p < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [run, target, delay, duration, still]);
+  if (target === null || still) return value;
+  return <>{run ? n : 0}{m[2]}</>;
+}
+
+/* A soft light that follows the cursor inside a highlight cell. */
+function glowAt(e) {
+  const r = e.currentTarget.getBoundingClientRect();
+  e.currentTarget.style.setProperty('--mx', `${e.clientX - r.left}px`);
+  e.currentTarget.style.setProperty('--my', `${e.clientY - r.top}px`);
 }
 
 // Avatar colours for the five audience cards, matching the Generalist page.

@@ -525,12 +525,24 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
    six figures read as a set rather than six loose boxes. */
 .tracks-dark.tracks-dark--fde { background: #062E26; }
 .fde-hl-panel { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin: 42px auto 0; max-width: 1200px; background: rgba(93,202,165,0.2); border: 1px solid rgba(93,202,165,0.2); border-radius: 20px; overflow: hidden; }
-.fde-hl { position: relative; background: #062E26; padding: 30px 30px 28px; transition: background .2s; }
-.fde-hl:hover { background: #083A30; }
+.fde-hl { position: relative; background: #062E26; padding: 30px 30px 28px; overflow: hidden; transition: background .25s; }
+/* Each cell's contents rise in, one cell after another, when the panel
+   scrolls into view (.in). The cells themselves stay put, so the hairlines
+   never flash while they reveal. */
+.fde-hl > * { position: relative; opacity: 0; transform: translateY(14px); transition: opacity .7s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 90ms), transform .7s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 90ms); }
+.fde-hl > .fde-hl-idx { position: absolute; }
+.fde-hl-panel.in .fde-hl > * { opacity: 1; transform: none; }
+/* A soft light under the cursor. */
+.fde-hl::before { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .35s; background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(93,202,165,0.14), transparent 65%); }
+.fde-hl:hover::before { opacity: 1; }
+.fde-hl:hover { background: #072F27; }
 .fde-hl-idx { position: absolute; top: 24px; right: 26px; font-size: 11px; font-weight: 600; letter-spacing: .14em; color: rgba(93,202,165,0.55); }
 .fde-hl-num { margin: 0; font-family: 'DM Serif Display', serif; font-size: 54px; line-height: 1; background: linear-gradient(135deg, #E1F5EE 0%, #5DCAA5 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .fde-hl-label { margin: 12px 0 0; padding-bottom: 12px; font-size: 16px; font-weight: 600; color: #E1F5EE; position: relative; }
-.fde-hl-label::after { content: ''; position: absolute; left: 0; bottom: 0; width: 28px; height: 2px; border-radius: 2px; background: #5DCAA5; }
+.fde-hl-label::after { content: ''; position: absolute; left: 0; bottom: 0; width: 0; height: 2px; border-radius: 2px; background: #5DCAA5; transition: width .6s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 90ms + 450ms); }
+.fde-hl-panel.in .fde-hl-label::after { width: 28px; }
+.fde-hl:hover .fde-hl-label::after { width: 44px; transition-delay: 0s; }
+.fde-hl-num { font-variant-numeric: tabular-nums; }
 .fde-hl-desc { margin: 12px 0 0; font-size: 13.5px; line-height: 1.65; color: rgba(225,245,238,0.62); }
 
 /* FAQ questions as headings that look unchanged. */
