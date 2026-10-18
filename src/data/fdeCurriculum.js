@@ -11,8 +11,6 @@ export const FDE_PHASES = [
     label: 'Phase 1',
     weeks: 'Weeks 1–4',
     title: 'LLM Foundations, Claude Code & RAG',
-    oneLiner: 'Learn how models think, build with Claude Code, and ship your first two AI systems.',
-    cases: ['01 Bank Grievance Triage', '02 Vetted-Answer Farm Copilot'],
     modules: [
       {
         w: 'Week 1 — Discover, Frame & Model Basics',
@@ -25,7 +23,7 @@ export const FDE_PHASES = [
         ],
       },
       {
-        w: 'Week 2 — Prompt Engineering & Context Engineering',
+        w: 'Week 2 — Prompt & Context Engineering',
         lessons: [
           'Structured outputs and schemas',
           'Context control',
@@ -51,16 +49,16 @@ export const FDE_PHASES = [
         ],
       },
     ],
-    ship: ['A complaint triage engine', 'A cited, abstaining RAG copilot'],
-    tools: ['Claude', 'Claude Code', 'Claude API', 'GitHub', 'pgvector', 'Qdrant', 'Neo4j (optional)'],
-    gate: 'Case Defence 1 and 2',
+    projects: [
+      'Case 01 : Bank Grievance Triage (a complaint triage engine)',
+      'Case 02 : Vetted-Answer Farm Copilot (a cited, abstaining RAG copilot)',
+    ],
+    tools: ['Claude', 'Claude Code', 'Claude API', 'JSON Schema', 'Postgres', 'pgvector', 'Qdrant', 'Neo4j', 'GitHub'],
   },
   {
     label: 'Phase 2',
     weeks: 'Weeks 5–8',
     title: 'AI Agents, MCP, Evals & AI Security',
-    oneLiner: 'Build multi-agent systems, connect them to enterprise software, then learn to certify or reject one.',
-    cases: ['03 GST Credit Reconciliation Agent', '04 Health Pre-Authorisation Assistant'],
     modules: [
       {
         w: 'Week 5 — Agent Architecture, MCP & Memory',
@@ -72,7 +70,7 @@ export const FDE_PHASES = [
         ],
       },
       {
-        w: 'Week 6 — Multi-Agent Systems & Enterprise Integration',
+        w: 'Week 6 — Multi-Agent & Enterprise Integration',
         lessons: [
           'Supervisor and sub-agents with the Claude Agent SDK',
           'Webhooks, OAuth and queues',
@@ -99,16 +97,16 @@ export const FDE_PHASES = [
         ],
       },
     ],
-    ship: ['A public MCP server', 'A multi-agent reconciliation system', 'An eval harness', 'A go / no-go certification memo'],
-    tools: ['Claude Agent SDK', 'MCP', 'n8n', 'promptfoo', 'Braintrust', 'RAGAS', 'Presidio', 'NeMo Guardrails'],
-    gate: 'Mid-point defence, war room, Case Defence 3 and 4',
+    projects: [
+      'Case 03 : GST Credit Reconciliation (a public MCP server and a multi-agent system)',
+      'Case 04 : Health Pre-Authorisation (an eval harness and a go / no-go memo)',
+    ],
+    tools: ['Claude Agent SDK', 'MCP', 'Claude Code', 'n8n', 'promptfoo', 'Braintrust', 'RAGAS', 'Presidio', 'NeMo Guardrails'],
   },
   {
     label: 'Phase 3',
     weeks: 'Weeks 9–12',
     title: 'Deploy, Prove ROI & Capstone',
-    oneLiner: 'Take AI from laptop to production, prove it pays for itself, then lead a full client engagement.',
-    cases: ['05 Failed-Delivery Recovery', '06 Client Capstone'],
     modules: [
       {
         w: 'Week 9 — Deploy & Operate (LLMOps)',
@@ -146,40 +144,36 @@ export const FDE_PHASES = [
         ],
       },
     ],
-    ship: ['A monitored production system', 'A CFO-ready ROI model', 'A handover pack', 'Your capstone'],
-    briefs: ['EPFO claim-readiness', 'Court-judgment research', 'ONDC seller grievance copilot', 'Bring your own client'],
+    projects: [
+      'Case 05 : Failed-Delivery Recovery (a monitored production system and a CFO-ready ROI model)',
+      'Case 06 : Client Capstone (EPFO claims, court judgments, ONDC grievances, or your own client)',
+    ],
     // The production and observability stack the deploy weeks use.
     tools: ['Claude Code', 'Docker', 'GitHub Actions', 'OpenTelemetry', 'Langfuse', 'Phoenix'],
-    gate: 'Case Defence 5 and Demo Day',
   },
 ];
 
-// "Who this is for" — five audiences, each with who they are.
+// "Who this is for" — five audiences, one line each, like the Generalist cards.
 export const FDE_AUDIENCE = [
   {
     role: 'Students & fresh graduates',
-    desc: 'Start your career with a deployed AI portfolio, not just a degree.',
-    who: 'Engineering, BCA, MCA, B.Sc, B.Com, BBA and MBA students and recent grads.',
+    desc: 'Start your career with a deployed AI portfolio.',
   },
   {
     role: 'Engineers & developers',
-    desc: 'Move from writing features to shipping AI systems in production.',
-    who: 'Software, full-stack, QA, DevOps, data, ML and IT services engineers.',
+    desc: 'Go from writing features to shipping AI systems.',
   },
   {
     role: 'Product, design & delivery',
-    desc: 'Stop handing AI specs over. Build and ship the solution yourself.',
-    who: 'Product managers, designers, program managers, business analysts and tech leads.',
+    desc: 'Stop handing AI specs over. Ship it yourself.',
   },
   {
     role: 'Founders & domain experts',
-    desc: 'Bring the problem you know best and deploy AI into it, for your own company or your function.',
-    who: 'Founders, and finance, operations, consulting, sales, marketing, HR, healthcare and legal professionals.',
+    desc: 'Deploy AI into the problem you know best.',
   },
   {
     role: 'Freelancers & career switchers',
-    desc: 'Turn AI into client work, or move into one of the fastest-growing roles in tech.',
-    who: 'Freelancers, consultants, team leads and anyone switching into AI.',
+    desc: 'Turn AI into client work or a new career.',
   },
 ];
 

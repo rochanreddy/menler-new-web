@@ -106,20 +106,8 @@ export const ENGINEERING_FAQS = [
     a: 'An engineer who embeds with a client, understands their problem, builds the AI system and owns it in production. It combines software engineering with the judgment of a consultant.',
   },
   {
-    q: 'What does an AI Forward Deployed Engineer do day to day?',
-    a: 'Runs discovery with the client, designs the architecture, builds with LLMs, RAG and agents, integrates with existing systems, evaluates quality, handles security and proves ROI.',
-  },
-  {
     q: 'What is the difference between an AI engineer and a Forward Deployed Engineer?',
     a: 'An AI engineer is measured mainly on the system and its code. An FDE is measured on the client outcome, so they also own discovery, deployment, adoption and the business case. This fellowship trains both.',
-  },
-  {
-    q: 'How do I become a Forward Deployed Engineer in India?',
-    a: 'Build real systems end to end, show you can work with clients, and have a portfolio to prove it. The fellowship gives you six deployed builds, six defences and a capstone.',
-  },
-  {
-    q: 'Is this an AI engineering course or an FDE course?',
-    a: 'Both. Phases 1 and 2 are a complete AI engineering curriculum: LLMs, prompt and context engineering, RAG, AI agents, MCP, evals and AI security. Phase 3 adds the forward-deployed layer: production, ROI and client delivery.',
   },
   {
     q: 'Do I need to know how to code?',
@@ -127,23 +115,15 @@ export const ENGINEERING_FAQS = [
   },
   {
     q: 'Is the AI FDE Fellowship only about Claude?',
-    a: 'Claude is the primary stack: Claude API, Claude Code, Claude Agent SDK and MCP. You also compare models, use vector databases, eval tools and integration platforms, and learn model routing.',
+    a: 'Claude is the primary stack: Claude API, Claude Code, Claude Agent SDK and MCP. You also compare models, use vector databases, eval tools and integration platforms, and learn model routing. You use your own Claude API key, so every build stays in your own account.',
   },
   {
     q: 'What will I build during the Fellowship?',
-    a: 'A complaint triage engine, a RAG copilot, a public MCP server, a multi-agent system, an eval harness, a hardened assistant, a production deployment and a client capstone.',
-  },
-  {
-    q: 'What are the six case studies?',
-    a: 'Bank grievance triage, farm advisory copilot, GST reconciliation agent, health pre-authorisation assistant, failed-delivery recovery, and a capstone you choose.',
+    a: 'Six builds across six real cases: a bank grievance triage engine, a cited farm-advisory RAG copilot, a GST reconciliation agent behind a public MCP server, a certified health pre-authorisation assistant, a production failed-delivery recovery system, and a client capstone you choose.',
   },
   {
     q: 'How much time should I commit each week?',
     a: 'Four live hours on weekends plus around 6–8 hours of build time.',
-  },
-  {
-    q: 'Do I get API credits?',
-    a: 'No. You use your own Claude API key, which keeps your builds and portfolio in your own account.',
   },
   {
     q: 'Will I get a certificate?',

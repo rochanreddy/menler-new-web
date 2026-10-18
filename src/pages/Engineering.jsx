@@ -176,14 +176,13 @@ export default function Engineering() {
       <section className="section" style={{ background: '#E1F5EE', paddingTop: 24, paddingBottom: 20 }}>
         <p className="section-label" style={{ color: 'var(--forest)' }}>Who this is for</p>
         <h2 className="section-h2" style={{ color: 'var(--forest)' }}>You already code.<br /><em style={{ color: 'var(--placed)' }}>Now build with AI.</em></h2>
-        <p className="section-sub">The AI Native products of the next decade will be built by engineers who know how to work with AI.</p>
-        <div className="audience-grid fde-audience">
+        <p className="section-sub">The AI Native products of the next decade<br />will be built by engineers who know how to work with AI.</p>
+        <div className="audience-grid">
           {FDE_AUDIENCE.map((a, i) => (
             <div className="audience-card" key={a.role}>
               <div className="ava" style={AVA_STYLES[i % AVA_STYLES.length]}>{i + 1}</div>
               <p className="audience-role">{a.role}</p>
               <p className="audience-desc">{a.desc}</p>
-              <p className="audience-who">{a.who}</p>
             </div>
           ))}
         </div>
@@ -220,10 +219,9 @@ export default function Engineering() {
                 </button>
                 {open && (
                   <div className="curric-acc-body">
-                    <p className="fde-phase-intro">{p.oneLiner}</p>
                     <div className="curric-detail--split curric-detail--triple">
                       <div className="curric-detail-main">
-                        <p className="curric-label">Weeks</p>
+                        <p className="curric-label">Modules</p>
                         <ul className="curric-weeks">
                           {p.modules.map((m, wi) => (
                             <li key={m.w} className={`curric-week${phaseWeek === wi ? ' on' : ''}`}>
@@ -240,30 +238,15 @@ export default function Engineering() {
                         <ul className="curric-modules">
                           {week.lessons.map(l => <li key={l}>{l}</li>)}
                         </ul>
-                        <p className="curric-label" style={{ marginTop: 28 }}>What you ship</p>
+                        <p className="curric-label" style={{ marginTop: 28 }}>Projects you&rsquo;ll build</p>
                         <ul className="curric-modules">
-                          {p.ship.map(s => <li key={s}>{s}</li>)}
+                          {p.projects.map(pr => <li key={pr}>{pr}</li>)}
                         </ul>
-                        {p.briefs && (
-                          <>
-                            <p className="curric-label" style={{ marginTop: 28 }}>Capstone briefs</p>
-                            <div className="fde-briefs">
-                              {p.briefs.map(b => <span className="fde-brief" key={b}>{b}</span>)}
-                            </div>
-                          </>
-                        )}
                       </div>
                       <div className="curric-detail-tools">
                         <p className="curric-label">Tool stack</p>
                         <div className="curric-tools">
                           {p.tools.map(t => <ToolChip key={t} name={t} />)}
-                        </div>
-                        <div className="fde-phase-meta">
-                          <p className="curric-label">Cases</p>
-                          <ul className="fde-cases">
-                            {p.cases.map(c => <li key={c}>{c}</li>)}
-                          </ul>
-                          <p className="fde-gate"><span>Gate</span>{p.gate}</p>
                         </div>
                       </div>
                     </div>
@@ -282,10 +265,11 @@ export default function Engineering() {
       <section className="section tracks-dark tracks-dark--fde" style={{ paddingTop: 48 }}>
         <p className="section-label" style={{ color: '#5DCAA5' }}>Program highlights</p>
         <h2 className="section-h2" style={{ color: '#E1F5EE' }}>Everything an AI FDE does.<br /><em style={{ color: '#9FE1CB' }}>Real time and real builds.</em></h2>
-        <p className="section-sub fde-hl-sub">Twelve weeks of real briefs, real builds and real deadlines. You don&rsquo;t watch AI get shipped. You deploy it. Every week brings a new client brief, a working build to ship and a panel to defend it to.</p>
-        <div className="fde-hl-grid">
-          {FDE_HIGHLIGHTS.map((h) => (
+        <p className="section-sub" style={{ color: 'rgba(225,245,238,0.55)' }}>Twelve weeks of real briefs, real builds and real deadlines.<br />You don&rsquo;t watch AI get shipped. You deploy it.</p>
+        <div className="fde-hl-panel">
+          {FDE_HIGHLIGHTS.map((h, i) => (
             <div className="fde-hl" key={h.label}>
+              <span className="fde-hl-idx">{String(i + 1).padStart(2, '0')}</span>
               <p className="fde-hl-num">{h.num}</p>
               <p className="fde-hl-label">{h.label}</p>
               <p className="fde-hl-desc">{h.desc}</p>
@@ -327,18 +311,17 @@ export default function Engineering() {
       <section className="section kp-section fde-pricing" style={{ background: '#ffffff', paddingTop: 8 }}>
         <p className="section-label" style={{ textAlign: 'center', color: 'var(--forest)' }}>Pricing</p>
         <h2 className="section-h2" style={{ textAlign: 'center', color: 'var(--forest)' }}>One fellowship. <em style={{ color: 'var(--placed)' }}>Everything shipped.</em></h2>
-        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto 32px' }}>Twelve weeks of Claude-first engineering, six client cases, a production portfolio and placement support.</p>
+        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto 32px' }}>Twelve weeks of Claude-first engineering, real client cases and placement support.</p>
         <PricingCard
           {...FDE_PRICING}
           tagline=""
           ctaLabel="Enrol Now"
-          // The card keeps each line on one row on desktop (.kp-desc), so the
-          // sentence is split where it reads naturally.
-          description={<>Ship your AI engineering portfolio in 12 weeks.<span className="kp-desc-line2">Build RAG, agents and MCP servers on real Indian cases,</span><span className="kp-desc-line2">deploy to production, and defend your work to an industry panel.</span></>}
+          // Two lines, like the Generalist card: .kp-desc keeps each on one row on desktop.
+          description={<>Ship your AI engineering portfolio in 12 weeks.<span className="kp-desc-line2">Build RAG, agents and MCP servers on real Indian cases, then deploy and defend them.</span></>}
+          ctaNote="Bring your own Claude API key."
           onCta={() => setPayProgram('engineering')}
         />
-        <p className="fde-price-fine">Bring your own Claude API key. Claude Code used throughout.</p>
-        <div style={{ textAlign: 'center', marginTop: 32 }}>
+        <div style={{ textAlign: 'center', marginTop: 56 }}>
           <button className="btn-primary" style={{ minWidth: 220, background: '#1D9E75' }} onClick={() => openFdeLead('Book a Call · AI FDE')}>Book a Call</button>
         </div>
       </section>

@@ -520,45 +520,29 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
 /* AI FDE course page: the Generalist layout in the page's forest green. */
 .curric-section--fde .curric-tool { border-color: rgba(93,202,165,0.3); color: #E1F5EE; padding: 12px 12px; gap: 10px; font-size: 14px; }
 
-/* Who this is for: the line naming who each card means. */
-.audience-grid.fde-audience { gap: 10px; }
-.fde-audience .audience-card { padding: 16px 14px 18px; }
-.fde-audience .audience-role { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
-.fde-audience .audience-desc { font-size: 12px; color: #4a4741; line-height: 1.5; }
-.audience-who { margin: 10px 0 0; padding-top: 10px; border-top: 1px solid rgba(8,80,65,0.1); font-size: 11px; line-height: 1.5; color: var(--text-muted); }
-
-/* Curriculum: phase intro, cases, gate and capstone briefs. */
-.fde-phase-intro { margin: 0 0 22px; font-family: 'DM Serif Display', serif; font-style: italic; font-size: 18px; line-height: 1.4; color: #E1F5EE; }
-.fde-phase-meta { margin-top: 26px; padding-top: 20px; border-top: 1px solid rgba(93,202,165,0.18); }
-.fde-cases { list-style: none; margin: 0 0 14px; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.fde-cases li { font-size: 14.5px; color: #E1F5EE; font-weight: 500; }
-.fde-gate { margin: 0; font-size: 13.5px; line-height: 1.5; color: rgba(225,245,238,0.8); }
-.fde-gate span { display: inline-block; margin-right: 8px; padding: 2px 9px; border-radius: 999px; background: #5DCAA5; color: #062E26; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
-.fde-briefs { display: flex; flex-wrap: wrap; gap: 8px; }
-.fde-brief { padding: 7px 13px; border-radius: 999px; border: 1px solid rgba(93,202,165,0.35); color: #E1F5EE; font-size: 13px; }
-
-/* Program highlights: where the Generalist page has its domain tracks. */
+/* Program highlights — where the Generalist page has its domain tracks. One
+   panel split by hairlines (the gap shows the panel colour through), so the
+   six figures read as a set rather than six loose boxes. */
 .tracks-dark.tracks-dark--fde { background: #062E26; }
-.fde-hl-sub { max-width: 720px; }
-.fde-hl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 38px auto 0; max-width: 1200px; }
-.fde-hl { border: 1px solid rgba(93,202,165,0.22); border-radius: 14px; padding: 22px 22px 20px; background: rgba(255,255,255,0.02); transition: border-color .2s, background .2s; }
-.fde-hl:hover { border-color: rgba(93,202,165,0.45); background: rgba(93,202,165,0.05); }
-.fde-hl-num { margin: 0; font-family: 'DM Serif Display', serif; font-size: 40px; line-height: 1; color: #9FE1CB; }
-.fde-hl-label { margin: 6px 0 10px; font-size: 15px; font-weight: 600; color: #E1F5EE; }
-.fde-hl-desc { margin: 0; font-size: 13.5px; line-height: 1.6; color: rgba(225,245,238,0.66); }
+.fde-hl-panel { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin: 42px auto 0; max-width: 1200px; background: rgba(93,202,165,0.2); border: 1px solid rgba(93,202,165,0.2); border-radius: 20px; overflow: hidden; }
+.fde-hl { position: relative; background: #062E26; padding: 30px 30px 28px; transition: background .2s; }
+.fde-hl:hover { background: #083A30; }
+.fde-hl-idx { position: absolute; top: 24px; right: 26px; font-size: 11px; font-weight: 600; letter-spacing: .14em; color: rgba(93,202,165,0.55); }
+.fde-hl-num { margin: 0; font-family: 'DM Serif Display', serif; font-size: 54px; line-height: 1; background: linear-gradient(135deg, #E1F5EE 0%, #5DCAA5 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.fde-hl-label { margin: 12px 0 0; padding-bottom: 12px; font-size: 16px; font-weight: 600; color: #E1F5EE; position: relative; }
+.fde-hl-label::after { content: ''; position: absolute; left: 0; bottom: 0; width: 28px; height: 2px; border-radius: 2px; background: #5DCAA5; }
+.fde-hl-desc { margin: 12px 0 0; font-size: 13.5px; line-height: 1.65; color: rgba(225,245,238,0.62); }
 
-/* Pricing small print, and FAQ questions as headings that look unchanged. */
-.fde-price-fine { margin: 18px auto 0; text-align: center; font-size: 12.5px; color: var(--text-muted); }
+/* FAQ questions as headings that look unchanged. */
 .faq-h { margin: 0; font: inherit; }
 
 @media (max-width: 1100px) {
-  .audience-grid.fde-audience { grid-template-columns: repeat(3, 1fr); }
-  .fde-hl-grid { grid-template-columns: repeat(2, 1fr); }
+  .fde-hl-panel { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 760px) {
-  .audience-grid.fde-audience { grid-template-columns: 1fr; }
-  .fde-hl-grid { grid-template-columns: 1fr; }
-  .fde-hl-num { font-size: 34px; }
+  .fde-hl-panel { grid-template-columns: 1fr; border-radius: 16px; }
+  .fde-hl { padding: 24px 22px 22px; }
+  .fde-hl-num { font-size: 44px; }
   .curric-section--gen.curric-section--fde .curric-acc-head { padding-right: 46px; }
 }
 
