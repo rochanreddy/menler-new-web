@@ -524,8 +524,8 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
    bento of six tiles, each drawing its number: 100 dots, 24 sessions, 12
    weeks in three phases, 12 ticks, the six builds and the six industries. */
 .tracks-dark.tracks-dark--fde { background: #062E26; }
-.fde-bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-areas: "dots dots sessions sessions" "dots dots weeks checks" "chips chips cases cases"; gap: 14px; margin: 42px auto 0; max-width: 1200px; }
-.fde-tile { display: flex; flex-direction: column; gap: 18px; padding: 26px 26px 24px; border-radius: 20px; border: 1px solid rgba(93,202,165,0.2); background: linear-gradient(160deg, rgba(93,202,165,0.11) 0%, rgba(93,202,165,0.02) 60%); transition: border-color .2s, transform .2s; }
+.fde-bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-areas: "dots dots sessions sessions" "dots dots weeks checks" "chips chips cases cases"; gap: 12px; margin: 34px auto 0; max-width: 1080px; }
+.fde-tile { display: flex; flex-direction: column; gap: 12px; padding: 18px 20px 18px; border-radius: 16px; border: 1px solid rgba(93,202,165,0.2); background: linear-gradient(160deg, rgba(93,202,165,0.11) 0%, rgba(93,202,165,0.02) 60%); transition: border-color .2s, transform .2s; }
 .fde-tile:hover { border-color: rgba(93,202,165,0.45); transform: translateY(-2px); }
 .fde-tile--dots { grid-area: dots; }
 .fde-tile--sessions { grid-area: sessions; }
@@ -534,28 +534,28 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
 .fde-tile--chips { grid-area: chips; }
 .fde-tile--cases { grid-area: cases; }
 .fde-tile-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-.fde-tile-num { margin: 0; font-family: 'DM Serif Display', serif; font-size: 48px; line-height: 1; background: linear-gradient(135deg, #E1F5EE 0%, #5DCAA5 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.fde-tile--dots .fde-tile-num { font-size: 76px; }
-.fde-tile-label { margin: 0; font-size: 16px; font-weight: 600; color: #E1F5EE; }
-.fde-tile-desc { margin: auto 0 0; font-size: 13.5px; line-height: 1.6; color: rgba(225,245,238,0.62); }
+.fde-tile-num { margin: 0; font-family: 'DM Serif Display', serif; font-size: 36px; line-height: 1; background: linear-gradient(135deg, #E1F5EE 0%, #5DCAA5 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.fde-tile--dots .fde-tile-num { font-size: 52px; }
+.fde-tile-label { margin: 0; font-size: 14.5px; font-weight: 600; color: #E1F5EE; }
+.fde-tile-desc { margin: auto 0 0; font-size: 12.5px; line-height: 1.55; color: rgba(225,245,238,0.62); }
 
 /* 100 competencies: a 10×10 field, shaded by phase. */
-.fde-v-dotwrap { display: flex; align-items: center; gap: 28px; }
-.fde-v-dots { display: grid; grid-template-columns: repeat(10, 1fr); gap: 8px; width: 100%; max-width: 300px; flex-shrink: 0; }
-.fde-v-key { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
-.fde-v-key li { display: flex; align-items: center; gap: 10px; font-size: 13px; line-height: 1.4; color: rgba(225,245,238,0.72); }
-.fde-v-key i { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; background: #5DCAA5; }
+.fde-v-dotwrap { display: flex; align-items: center; gap: 22px; }
+.fde-v-dots { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; width: 100%; max-width: 200px; flex-shrink: 0; }
+.fde-v-key { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+.fde-v-key li { display: flex; align-items: center; gap: 8px; font-size: 12px; line-height: 1.4; color: rgba(225,245,238,0.72); }
+.fde-v-key i { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; background: #5DCAA5; }
 .fde-v-key i.p2 { background: #9FE1CB; }
 .fde-v-key i.p3 { background: #E1F5EE; }
-.fde-v-key b { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: 20px; color: #E1F5EE; min-width: 26px; }
+.fde-v-key b { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: 16px; color: #E1F5EE; min-width: 20px; }
 .fde-v-dots span { aspect-ratio: 1; border-radius: 50%; background: #5DCAA5; }
 .fde-v-dots span.p2 { background: #9FE1CB; }
 .fde-v-dots span.p3 { background: #E1F5EE; }
 /* 48 live hours: 24 two-hour sessions. */
-.fde-v-bars { display: flex; gap: 4px; }
-.fde-v-bars span { flex: 1; height: 34px; border-radius: 5px; background: #5DCAA5; }
+.fde-v-bars { display: flex; gap: 3px; }
+.fde-v-bars span { flex: 1; height: 22px; border-radius: 4px; background: #5DCAA5; }
 .fde-v-bars span.sun { background: #2E8D70; }
-.fde-v-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; font-size: 11.5px; color: rgba(225,245,238,0.6); }
+.fde-v-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 7px; font-size: 11px; color: rgba(225,245,238,0.6); }
 .fde-v-legend span:last-child { margin-left: auto; }
 .fde-v-legend i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; background: #5DCAA5; }
 .fde-v-legend i.sun { background: #2E8D70; }
@@ -563,21 +563,21 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
 .fde-v-weeks { display: flex; gap: 8px; }
 .fde-v-phase { flex: 1; }
 .fde-v-ticks { display: flex; gap: 3px; }
-.fde-v-ticks span { flex: 1; height: 22px; border-radius: 4px; background: #5DCAA5; }
+.fde-v-ticks span { flex: 1; height: 14px; border-radius: 3px; background: #5DCAA5; }
 .fde-v-ticks span.p2 { background: #9FE1CB; }
 .fde-v-ticks span.p3 { background: #E1F5EE; }
-.fde-v-phase em { display: block; margin-top: 6px; font-style: normal; font-size: 10.5px; letter-spacing: .04em; color: rgba(225,245,238,0.55); }
+.fde-v-phase em { display: block; margin-top: 5px; font-style: normal; font-size: 10px; letter-spacing: .04em; color: rgba(225,245,238,0.55); }
 /* 12 assignments: a tick each. */
-.fde-v-checks { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
-.fde-v-checks span { aspect-ratio: 1; border-radius: 8px; display: grid; place-items: center; background: rgba(93,202,165,0.14); border: 1px solid rgba(93,202,165,0.3); }
+.fde-v-checks { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; max-width: 190px; }
+.fde-v-checks span { aspect-ratio: 1; border-radius: 6px; display: grid; place-items: center; background: rgba(93,202,165,0.14); border: 1px solid rgba(93,202,165,0.3); }
 .fde-v-checks svg { width: 62%; height: 62%; fill: none; stroke: #5DCAA5; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
 /* The six builds, and the six industries. */
-.fde-v-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.fde-v-chips span { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px 8px 8px; border-radius: 999px; border: 1px solid rgba(93,202,165,0.3); background: rgba(6,46,38,0.6); color: #E1F5EE; font-size: 13.5px; }
-.fde-v-chips b { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #5DCAA5; color: #062E26; font-size: 10.5px; }
-.fde-v-cases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.fde-v-cases span { display: flex; align-items: center; gap: 9px; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(93,202,165,0.22); background: rgba(6,46,38,0.6); color: #E1F5EE; font-size: 13.5px; }
-.fde-v-cases svg { width: 18px; height: 18px; flex-shrink: 0; fill: none; stroke: #5DCAA5; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.fde-v-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.fde-v-chips span { display: inline-flex; align-items: center; gap: 7px; padding: 5px 12px 5px 5px; border-radius: 999px; border: 1px solid rgba(93,202,165,0.3); background: rgba(6,46,38,0.6); color: #E1F5EE; font-size: 12.5px; }
+.fde-v-chips b { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: #5DCAA5; color: #062E26; font-size: 9.5px; }
+.fde-v-cases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.fde-v-cases span { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 10px; border: 1px solid rgba(93,202,165,0.22); background: rgba(6,46,38,0.6); color: #E1F5EE; font-size: 12.5px; }
+.fde-v-cases svg { width: 16px; height: 16px; flex-shrink: 0; fill: none; stroke: #5DCAA5; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
 /* FAQ questions as headings that look unchanged. */
 .faq-h { margin: 0; font: inherit; }
@@ -587,8 +587,8 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
 }
 @media (max-width: 760px) {
   .fde-bento { grid-template-columns: 1fr; grid-template-areas: "dots" "sessions" "weeks" "checks" "chips" "cases"; gap: 12px; }
-  .fde-tile { padding: 22px 20px; border-radius: 16px; }
-  .fde-tile--dots .fde-tile-num { font-size: 60px; }
+  .fde-tile { padding: 18px 18px; border-radius: 14px; }
+  .fde-tile--dots .fde-tile-num { font-size: 46px; }
   .fde-v-cases { grid-template-columns: repeat(2, 1fr); }
   .fde-v-dotwrap { flex-direction: column; align-items: flex-start; gap: 18px; }
   .curric-section--gen.curric-section--fde .curric-acc-head { padding-right: 46px; }
