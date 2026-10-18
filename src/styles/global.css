@@ -520,77 +520,29 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
 /* AI FDE course page: the Generalist layout in the page's forest green. */
 .curric-section--fde .curric-tool { border-color: rgba(93,202,165,0.3); color: #E1F5EE; padding: 12px 12px; gap: 10px; font-size: 14px; }
 
-/* Program highlights — where the Generalist page has its domain tracks. A
-   bento of six tiles, each drawing its number: 100 dots, 24 sessions, 12
-   weeks in three phases, 12 ticks, the six builds and the six industries. */
+/* Program highlights — where the Generalist page has its domain tracks. One
+   panel split by hairlines (the gap shows the panel colour through), so the
+   six figures read as a set rather than six loose boxes. */
 .tracks-dark.tracks-dark--fde { background: #062E26; }
-.fde-bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-areas: "dots dots sessions sessions" "dots dots weeks checks" "chips chips cases cases"; gap: 12px; margin: 34px auto 0; max-width: 1080px; }
-.fde-tile { display: flex; flex-direction: column; gap: 12px; padding: 18px 20px 18px; border-radius: 16px; border: 1px solid rgba(93,202,165,0.2); background: linear-gradient(160deg, rgba(93,202,165,0.11) 0%, rgba(93,202,165,0.02) 60%); transition: border-color .2s, transform .2s; }
-.fde-tile:hover { border-color: rgba(93,202,165,0.45); transform: translateY(-2px); }
-.fde-tile--dots { grid-area: dots; }
-.fde-tile--sessions { grid-area: sessions; }
-.fde-tile--weeks { grid-area: weeks; }
-.fde-tile--checks { grid-area: checks; }
-.fde-tile--chips { grid-area: chips; }
-.fde-tile--cases { grid-area: cases; }
-.fde-tile-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-.fde-tile-num { margin: 0; font-family: 'DM Serif Display', serif; font-size: 36px; line-height: 1; background: linear-gradient(135deg, #E1F5EE 0%, #5DCAA5 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.fde-tile--dots .fde-tile-num { font-size: 52px; }
-.fde-tile-label { margin: 0; font-size: 14.5px; font-weight: 600; color: #E1F5EE; }
-.fde-tile-desc { margin: auto 0 0; font-size: 12.5px; line-height: 1.55; color: rgba(225,245,238,0.62); }
-
-/* 100 competencies: a 10×10 field, shaded by phase. */
-.fde-v-dotwrap { display: flex; align-items: center; gap: 22px; }
-.fde-v-dots { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; width: 100%; max-width: 200px; flex-shrink: 0; }
-.fde-v-key { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
-.fde-v-key li { display: flex; align-items: center; gap: 8px; font-size: 12px; line-height: 1.4; color: rgba(225,245,238,0.72); }
-.fde-v-key i { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; background: #5DCAA5; }
-.fde-v-key i.p2 { background: #9FE1CB; }
-.fde-v-key i.p3 { background: #E1F5EE; }
-.fde-v-key b { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: 16px; color: #E1F5EE; min-width: 20px; }
-.fde-v-dots span { aspect-ratio: 1; border-radius: 50%; background: #5DCAA5; }
-.fde-v-dots span.p2 { background: #9FE1CB; }
-.fde-v-dots span.p3 { background: #E1F5EE; }
-/* 48 live hours: 24 two-hour sessions. */
-.fde-v-bars { display: flex; gap: 3px; }
-.fde-v-bars span { flex: 1; height: 22px; border-radius: 4px; background: #5DCAA5; }
-.fde-v-bars span.sun { background: #2E8D70; }
-.fde-v-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 7px; font-size: 11px; color: rgba(225,245,238,0.6); }
-.fde-v-legend span:last-child { margin-left: auto; }
-.fde-v-legend i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; background: #5DCAA5; }
-.fde-v-legend i.sun { background: #2E8D70; }
-/* 12 weeks: three phases of four. */
-.fde-v-weeks { display: flex; gap: 8px; }
-.fde-v-phase { flex: 1; }
-.fde-v-ticks { display: flex; gap: 3px; }
-.fde-v-ticks span { flex: 1; height: 14px; border-radius: 3px; background: #5DCAA5; }
-.fde-v-ticks span.p2 { background: #9FE1CB; }
-.fde-v-ticks span.p3 { background: #E1F5EE; }
-.fde-v-phase em { display: block; margin-top: 5px; font-style: normal; font-size: 10px; letter-spacing: .04em; color: rgba(225,245,238,0.55); }
-/* 12 assignments: a tick each. */
-.fde-v-checks { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; max-width: 190px; }
-.fde-v-checks span { aspect-ratio: 1; border-radius: 6px; display: grid; place-items: center; background: rgba(93,202,165,0.14); border: 1px solid rgba(93,202,165,0.3); }
-.fde-v-checks svg { width: 62%; height: 62%; fill: none; stroke: #5DCAA5; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
-/* The six builds, and the six industries. */
-.fde-v-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.fde-v-chips span { display: inline-flex; align-items: center; gap: 7px; padding: 5px 12px 5px 5px; border-radius: 999px; border: 1px solid rgba(93,202,165,0.3); background: rgba(6,46,38,0.6); color: #E1F5EE; font-size: 12.5px; }
-.fde-v-chips b { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: #5DCAA5; color: #062E26; font-size: 9.5px; }
-.fde-v-cases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-.fde-v-cases span { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 10px; border: 1px solid rgba(93,202,165,0.22); background: rgba(6,46,38,0.6); color: #E1F5EE; font-size: 12.5px; }
-.fde-v-cases svg { width: 16px; height: 16px; flex-shrink: 0; fill: none; stroke: #5DCAA5; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.fde-hl-panel { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin: 42px auto 0; max-width: 1200px; background: rgba(93,202,165,0.2); border: 1px solid rgba(93,202,165,0.2); border-radius: 20px; overflow: hidden; }
+.fde-hl { position: relative; background: #062E26; padding: 30px 30px 28px; transition: background .2s; }
+.fde-hl:hover { background: #083A30; }
+.fde-hl-idx { position: absolute; top: 24px; right: 26px; font-size: 11px; font-weight: 600; letter-spacing: .14em; color: rgba(93,202,165,0.55); }
+.fde-hl-num { margin: 0; font-family: 'DM Serif Display', serif; font-size: 54px; line-height: 1; background: linear-gradient(135deg, #E1F5EE 0%, #5DCAA5 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.fde-hl-label { margin: 12px 0 0; padding-bottom: 12px; font-size: 16px; font-weight: 600; color: #E1F5EE; position: relative; }
+.fde-hl-label::after { content: ''; position: absolute; left: 0; bottom: 0; width: 28px; height: 2px; border-radius: 2px; background: #5DCAA5; }
+.fde-hl-desc { margin: 12px 0 0; font-size: 13.5px; line-height: 1.65; color: rgba(225,245,238,0.62); }
 
 /* FAQ questions as headings that look unchanged. */
 .faq-h { margin: 0; font: inherit; }
 
 @media (max-width: 1100px) {
-  .fde-bento { grid-template-columns: repeat(2, 1fr); grid-template-areas: "dots dots" "sessions sessions" "weeks checks" "chips chips" "cases cases"; }
+  .fde-hl-panel { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 760px) {
-  .fde-bento { grid-template-columns: 1fr; grid-template-areas: "dots" "sessions" "weeks" "checks" "chips" "cases"; gap: 12px; }
-  .fde-tile { padding: 18px 18px; border-radius: 14px; }
-  .fde-tile--dots .fde-tile-num { font-size: 46px; }
-  .fde-v-cases { grid-template-columns: repeat(2, 1fr); }
-  .fde-v-dotwrap { flex-direction: column; align-items: flex-start; gap: 18px; }
+  .fde-hl-panel { grid-template-columns: 1fr; border-radius: 16px; }
+  .fde-hl { padding: 24px 22px 22px; }
+  .fde-hl-num { font-size: 44px; }
   .curric-section--gen.curric-section--fde .curric-acc-head { padding-right: 46px; }
 }
 

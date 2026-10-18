@@ -178,20 +178,11 @@ export const FDE_AUDIENCE = [
 ];
 
 // "Program highlights" — where the Generalist page has its domain tracks.
-// `visual` picks the small picture each bento tile draws (Engineering.jsx).
 export const FDE_HIGHLIGHTS = [
-  { visual: 'dots', num: '100', label: 'Competencies', desc: 'Every skill an AI FDE is hired for, mapped and graded. From prompt design to production ownership, nothing is left to guesswork.' },
-  { visual: 'sessions', num: '48', label: 'Live Hours', desc: 'Real-time, not recorded. Mentors play your client, change requirements mid-week, and you respond the way you would on the job.' },
-  { visual: 'weeks', num: '12', label: 'Weeks', desc: 'One intensive quarter, every Saturday and Sunday. Built to fit around college or a full-time job.' },
-  { visual: 'checks', num: '12', label: 'Assignments', desc: 'Ship something every single week. Each one is reviewed by a mentor and feeds the next build.' },
-  {
-    visual: 'chips', num: '6+', label: 'Production-Grade Projects',
-    desc: 'Deployed, evaluated and secured, not demo-ware. The portfolio that gets you shortlisted.',
-    items: ['Triage engine', 'RAG copilot', 'MCP server', 'Eval harness', 'Production system', 'Capstone'],
-  },
-  {
-    visual: 'cases', num: '6', label: 'Real Case Studies',
-    desc: 'Real time problems, defended, built and shipped live.',
-    items: ['Banking', 'Agriculture', 'GST', 'Health insurance', 'D2C', 'Your capstone'],
-  },
+  { num: '100', label: 'Competencies', desc: 'Every skill an AI FDE is hired for, mapped and graded. From prompt design to production ownership, nothing is left to guesswork.' },
+  { num: '48', label: 'Live Hours', desc: 'Real-time, not recorded. Mentors play your client, change requirements mid-week, and you respond the way you would on the job.' },
+  { num: '12', label: 'Weeks', desc: 'One intensive quarter, every Saturday and Sunday. Built to fit around college or a full-time job.' },
+  { num: '12', label: 'Assignments', desc: 'Ship something every single week. Each one is reviewed by a mentor and feeds the next build.' },
+  { num: '6+', label: 'Production-Grade Projects', desc: 'Deployed, evaluated and secured, not demo-ware. The portfolio that gets you shortlisted.' },
+  { num: '6', label: 'Real Case Studies', desc: 'Banking, agriculture, GST, health insurance, D2C and your capstone. Real time problems, defended, built and shipped live.' },
 ];

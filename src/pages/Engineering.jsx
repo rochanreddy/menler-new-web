@@ -266,15 +266,13 @@ export default function Engineering() {
         <p className="section-label" style={{ color: '#5DCAA5' }}>Program highlights</p>
         <h2 className="section-h2" style={{ color: '#E1F5EE' }}>Everything an AI FDE does.<br /><em style={{ color: '#9FE1CB' }}>Real time and real builds.</em></h2>
         <p className="section-sub" style={{ color: 'rgba(225,245,238,0.55)' }}>Twelve weeks of real briefs, real builds and real deadlines.<br />You don&rsquo;t watch AI get shipped. You deploy it.</p>
-        <div className="fde-bento">
-          {FDE_HIGHLIGHTS.map((h) => (
-            <div className={`fde-tile fde-tile--${h.visual}`} key={h.label}>
-              <div className="fde-tile-head">
-                <p className="fde-tile-num">{h.num}</p>
-                <p className="fde-tile-label">{h.label}</p>
-              </div>
-              <HighlightVisual h={h} />
-              <p className="fde-tile-desc">{h.desc}</p>
+        <div className="fde-hl-panel">
+          {FDE_HIGHLIGHTS.map((h, i) => (
+            <div className="fde-hl" key={h.label}>
+              <span className="fde-hl-idx">{String(i + 1).padStart(2, '0')}</span>
+              <p className="fde-hl-num">{h.num}</p>
+              <p className="fde-hl-label">{h.label}</p>
+              <p className="fde-hl-desc">{h.desc}</p>
             </div>
           ))}
         </div>
@@ -350,85 +348,6 @@ export default function Engineering() {
       <PlaybookModal item={curricItem} onClose={() => setCurricItem(null)} />
       {payProgram && <PayModal program={payProgram} onClose={() => setPayProgram(null)} />}
     </>
-  );
-}
-
-/* The small picture each highlight tile draws, so the figure is something you
-   can see: 100 dots, 24 sessions, 12 weeks in three phases, 12 ticks, the six
-   builds and the six industries. Decorative — the number and label carry the
-   meaning for screen readers. */
-const CASE_ICONS = {
-  Banking: <path d="M3 10h18M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18M12 3l9 5H3z" />,
-  Agriculture: <path d="M12 21V10M12 10c0-4 3-6 7-6 0 4-3 6-7 6zM12 14c0-3-2.5-5-6-5 0 3 2.5 5 6 5z" />,
-  GST: <path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6M9 16h3" />,
-  'Health insurance': <path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10zM12 9v6M9 12h6" />,
-  D2C: <path d="M3 7l9-4 9 4-9 4zM3 7v10l9 4 9-4V7M12 11v10" />,
-  'Your capstone': <path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z" />,
-};
-
-function HighlightVisual({ h }) {
-  if (h.visual === 'dots') {
-    return (
-      <div className="fde-v-dotwrap" aria-hidden="true">
-        <div className="fde-v-dots">
-          {/* 10 competencies a week over Weeks 1–10: 40 in Phase 1, 40 in Phase 2, 20 in Phase 3. */}
-          {Array.from({ length: 100 }, (_, i) => <span key={i} className={i < 40 ? 'p1' : i < 80 ? 'p2' : 'p3'} />)}
-        </div>
-        <ul className="fde-v-key">
-          <li><i className="p1" /><b>40</b>Phase 1 · LLMs, Claude Code &amp; RAG</li>
-          <li><i className="p2" /><b>40</b>Phase 2 · Agents, MCP, evals &amp; security</li>
-          <li><i className="p3" /><b>20</b>Phase 3 · Production, ROI &amp; delivery</li>
-        </ul>
-      </div>
-    );
-  }
-  if (h.visual === 'sessions') {
-    return (
-      <div className="fde-v-sessions" aria-hidden="true">
-        <div className="fde-v-bars">
-          {Array.from({ length: 24 }, (_, i) => <span key={i} className={i % 2 ? 'sun' : 'sat'} />)}
-        </div>
-        <div className="fde-v-legend"><span><i className="sat" />Saturday · 2 hrs</span><span><i className="sun" />Sunday · 2 hrs</span><span>24 sessions</span></div>
-      </div>
-    );
-  }
-  if (h.visual === 'weeks') {
-    return (
-      <div className="fde-v-weeks" aria-hidden="true">
-        {[1, 2, 3].map((ph) => (
-          <div className="fde-v-phase" key={ph}>
-            <div className="fde-v-ticks">{[0, 1, 2, 3].map((k) => <span key={k} className={`p${ph}`} />)}</div>
-            <em>Phase {ph}</em>
-          </div>
-        ))}
-      </div>
-    );
-  }
-  if (h.visual === 'checks') {
-    return (
-      <div className="fde-v-checks" aria-hidden="true">
-        {Array.from({ length: 12 }, (_, i) => (
-          <span key={i}><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span>
-        ))}
-      </div>
-    );
-  }
-  if (h.visual === 'chips') {
-    return (
-      <div className="fde-v-chips" aria-hidden="true">
-        {h.items.map((t, i) => <span key={t}><b>{String(i + 1).padStart(2, '0')}</b>{t}</span>)}
-      </div>
-    );
-  }
-  return (
-    <div className="fde-v-cases" aria-hidden="true">
-      {h.items.map((t) => (
-        <span key={t}>
-          <svg viewBox="0 0 24 24">{CASE_ICONS[t]}</svg>
-          {t}
-        </span>
-      ))}
-    </div>
   );
 }
 
