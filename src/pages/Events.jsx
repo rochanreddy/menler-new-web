@@ -9,6 +9,7 @@ import { useApply } from '../components/common/ApplyContext';
 import { useContentState } from '../lib/useContent';
 import { MENLER_WHATSAPP_URL } from '../data/communityLinks';
 import { eventStartMs, eventIsOver, CANCELLED_CAMPAIGNS } from '../lib/campaignStatus';
+import { FDE_PATH } from '../lib/routes';
 
 // ── /events — Menler masterclasses & events ──────────────────────────────────
 // Ticket-style hero → Live events (Join) → Past events (Download resources).
@@ -515,7 +516,7 @@ export default function Events() {
             <p className="cluster-num">Engineers &amp; technical builders</p>
             <p className="cluster-name">Menler AI Engineering Fellowship</p>
             <p className="cluster-sets">Build production-grade AI systems, agents, RAG applications, MCP integrations, and AI infrastructure.</p>
-            <button className="cluster-btn" onClick={() => go('/engineering')}>Explore Engineering</button>
+            <button className="cluster-btn" onClick={() => go(FDE_PATH)}>Explore Engineering</button>
           </div>
         </div>
       </section>

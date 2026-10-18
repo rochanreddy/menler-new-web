@@ -522,7 +522,7 @@ const LEAD_SORTS = [
 // Friendly label for a lead-capture page path, e.g. "/resources" → "Library".
 const PAGE_LABELS = {
   '/': 'Home', '/resources': 'Library', '/aptitude': 'Aptitude Test',
-  '/generalist': 'Generalist', '/engineering': 'Engineering', '/kickstarter': 'Kickstarter',
+  '/generalist': 'Generalist', '/engineering': 'Engineering', '/ai-forward-deployed-engineer-course': 'Engineering', '/kickstarter': 'Kickstarter',
   '/checkout': 'Checkout', '/join': 'Join', '/events': 'Events', '/community': 'Community',
 };
 const pageLabel = (p) => {

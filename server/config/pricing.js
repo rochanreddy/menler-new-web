@@ -6,6 +6,7 @@
 export const PROGRAM_PRICES = {
   kickstarter: { amount: 4999, label: 'Gen AI Kickstarter' },
   generalist: { amount: 59999, label: 'Claude AI Generalist Fellowship' },
+  engineering: { amount: 75000, label: 'AI FDE Fellowship' },
   // Paid campaign resource packs (keyed by Sanity slug) — the ₹99 Claude Playbook Pack.
   'build-ai-automation-with-claude': { amount: 99, label: 'Build AI Automation with Claude' },
   'program-and-ops-with-ai': { amount: 99, label: 'AI powered Program & Operations' },

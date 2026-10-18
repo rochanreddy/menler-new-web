@@ -24,6 +24,7 @@ import { BrandLogo } from '../components/common/PartnersMarquee';
 import HiringRail from '../components/common/HiringRail';
 import { HIRING_COMPANIES } from '../data/hiringCompanies';
 import TestimonialsColumns from '../components/common/TestimonialsColumns';
+import { FDE_PATH } from '../lib/routes';
 
 // "Builders from" company logos shown on the program cards.
 const GEN_BUILDERS = [
@@ -249,7 +250,7 @@ export default function Home() {
                 <span className="nb-chip">Career Development</span>
               </div>
             </div>
-            <a className="prog-card-cta" href="/engineering" onClick={(e) => linkTo(e, '/engineering')}>Explore Engineering Program</a>
+            <a className="prog-card-cta" href={FDE_PATH} onClick={(e) => linkTo(e, FDE_PATH)}>Explore Engineering Program</a>
           </div>
         </div>
         <div style={{ textAlign: 'center', marginTop: 16 }}>

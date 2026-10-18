@@ -29,7 +29,7 @@ const TOOL_DOMAIN = {
   'Jira': 'atlassian.com', 'Figma': 'figma.com', 'Mixpanel': 'mixpanel.com', 'Keka': 'keka.com',
   'Darwinbox': 'darwinbox.com', 'Web search': 'google.com', 'Multimodal': 'claude.ai',
   // AI FDE curriculum tools.
-  'Postgres': 'postgresql.org', 'pgvector': 'postgresql.org', 'Qdrant': 'qdrant.tech', 'Neo4j': 'neo4j.com',
+  'Postgres': 'postgresql.org', 'pgvector': 'postgresql.org', 'Qdrant': 'qdrant.tech', 'Neo4j': 'neo4j.com', 'Neo4j (optional)': 'neo4j.com',
   'Docker': 'docker.com', 'GitHub Actions': 'github.com', 'OpenTelemetry': 'opentelemetry.io',
   'Langfuse': 'langfuse.com', 'Phoenix': 'arize.com', 'promptfoo': 'promptfoo.dev', 'Braintrust': 'braintrust.dev',
   'RAGAS': 'ragas.io', 'Presidio': 'microsoft.com', 'NeMo Guardrails': 'nvidia.com', 'WhatsApp': 'whatsapp.com',

@@ -18,6 +18,7 @@ import { getFinanceSession, getFinanceSet, FINANCE_SETS } from '../data/financeA
 import { getAnalystsSession, getAnalystsSet, ANALYSTS_SETS } from '../data/analystsAptitude';
 import { getEngineeringSession, getEngineeringSet, ENGINEERING_SETS } from '../data/engineeringAptitude';
 import { APTITUDE_FAQS } from '../data/faqData';
+import { FDE_PATH } from '../lib/routes';
 
 const TRUST_CARDS = [
   { title: 'What it tests', desc: 'AI readiness across three core dimensions: problem-solving, execution ability, and role alignment.' },
@@ -587,7 +588,7 @@ export default function Aptitude() {
               <p className="cluster-num">Engineers &amp; technical builders</p>
               <p className="cluster-name">Menler AI Engineering Fellowship</p>
               <p className="cluster-sets">Build production-grade AI systems, agents, RAG applications, MCP integrations, and AI infrastructure.</p>
-              <button className="cluster-btn" onClick={() => go('/engineering')}>Explore Engineering</button>
+              <button className="cluster-btn" onClick={() => go(FDE_PATH)}>Explore Engineering</button>
             </div>
           </div>
         </section>
@@ -698,7 +699,7 @@ export default function Aptitude() {
             <p className="cluster-num">Engineers &amp; technical builders</p>
             <p className="cluster-name">Menler AI Engineering Fellowship</p>
             <p className="cluster-sets">Build production-grade AI systems, agents, RAG applications, MCP integrations, and AI infrastructure.</p>
-            <button className="cluster-btn" onClick={() => go('/engineering')}>Explore Engineering</button>
+            <button className="cluster-btn" onClick={() => go(FDE_PATH)}>Explore Engineering</button>
           </div>
         </div>
       </section>

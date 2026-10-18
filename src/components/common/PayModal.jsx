@@ -83,8 +83,8 @@ export default function PayModal({ program, onClose }) {
               <input className="pay-input" required type="tel" placeholder="Phone (10 digits)" value={form.phone} onChange={(e) => set('phone', e.target.value)} autoComplete="tel" />
               <input className="pay-input" required type="text" placeholder="City" value={form.city} onChange={(e) => set('city', e.target.value)} autoComplete="address-level2" />
               <BackgroundField className="pay-input" label="Your background" onChange={(v) => set('background', v)} onDetail={setDetail} />
-              {/* Domain track is only shown for the Generalist enrolment, not Kickstarter. */}
-              {program !== 'kickstarter' && (
+              {/* Domain track is only asked on the Generalist enrolment. */}
+              {String(program).startsWith('generalist') && (
                 <select className="pay-input" required value={form.track} onChange={(e) => set('track', e.target.value)}>
                   <option value="" disabled>Domain track</option>
                   <option>Analyst</option>

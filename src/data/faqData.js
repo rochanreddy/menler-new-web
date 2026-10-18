@@ -102,48 +102,64 @@ export const GENERALIST_FAQS = [
 
 export const ENGINEERING_FAQS = [
   {
-    q: 'What is an AI FDE?',
-    a: 'A Forward Deployed AI Engineer sits with a client, understands a messy operational problem, and owns the AI solution from the first interview to handover. The Fellowship trains exactly that: you work through real-world engagements and are graded on whether you can defend what you built to a panel that plays the client.',
+    q: 'What is a Forward Deployed Engineer (FDE)?',
+    a: 'An engineer who embeds with a client, understands their problem, builds the AI system and owns it in production. It combines software engineering with the judgment of a consultant.',
   },
   {
-    q: 'Who is this Fellowship designed for?',
-    a: 'Engineers, analysts, consultants and technical product people who want to deliver AI systems to real clients, and early-career graduates ready to work at that standard. You should be comfortable reading code and working in a terminal, and willing to defend your decisions in front of a panel.',
+    q: 'What does an AI Forward Deployed Engineer do day to day?',
+    a: 'Runs discovery with the client, designs the architecture, builds with LLMs, RAG and agents, integrates with existing systems, evaluates quality, handles security and proves ROI.',
   },
   {
-    q: 'Do I need to be a developer?',
-    a: 'You need Python or JavaScript at reading level. There are two tracks with the same acceptance criteria: on the Builder track you direct Claude Code from starter repositories and own the tests, so you need not have written production code; on the Engineer track you write the core components yourself and take on stretch items.',
+    q: 'What is the difference between an AI engineer and a Forward Deployed Engineer?',
+    a: 'An AI engineer is measured mainly on the system and its code. An FDE is measured on the client outcome, so they also own discovery, deployment, adoption and the business case. This fellowship trains both.',
+  },
+  {
+    q: 'How do I become a Forward Deployed Engineer in India?',
+    a: 'Build real systems end to end, show you can work with clients, and have a portfolio to prove it. The fellowship gives you six deployed builds, six defences and a capstone.',
+  },
+  {
+    q: 'Is this an AI engineering course or an FDE course?',
+    a: 'Both. Phases 1 and 2 are a complete AI engineering curriculum: LLMs, prompt and context engineering, RAG, AI agents, MCP, evals and AI security. Phase 3 adds the forward-deployed layer: production, ROI and client delivery.',
+  },
+  {
+    q: 'Do I need to know how to code?',
+    a: "Basic programming helps. If you're newer to code, the Builder track uses Claude Code and a guided code walkthrough in Week 1 to bring you up to speed.",
+  },
+  {
+    q: 'Is the AI FDE Fellowship only about Claude?',
+    a: 'Claude is the primary stack: Claude API, Claude Code, Claude Agent SDK and MCP. You also compare models, use vector databases, eval tools and integration platforms, and learn model routing.',
   },
   {
     q: 'What will I build during the Fellowship?',
-    a: 'Six milestone projects across six real-world cases: a complaint-triage engine for a bank grievance cell, a cited farm-advisory copilot, a GST reconciliation agent behind a public MCP server, a certified health pre-authorisation review assistant, a production failed-delivery recovery system with an ROI model, and a capstone on a fresh brief.',
+    a: 'A complaint triage engine, a RAG copilot, a public MCP server, a multi-agent system, an eval harness, a hardened assistant, a production deployment and a client capstone.',
   },
   {
-    q: 'How much time should I expect to commit each week?',
-    a: 'About 12 hours a week: 4 live hours (2 hours each on Saturday and Sunday) plus 7–8 hours of outside work with your pod. 48 live hours in total over 12 weeks.',
+    q: 'What are the six case studies?',
+    a: 'Bank grievance triage, farm advisory copilot, GST reconciliation agent, health pre-authorisation assistant, failed-delivery recovery, and a capstone you choose.',
   },
   {
-    q: 'How are fellows graded?',
-    a: 'By defence. Each two-week case ends in a Case Defence: a walk-through of your solution, results on about 10 hidden scenarios you have not seen, and a live change request with panel questions. To graduate you clear 80 of the 100 competencies and pass the capstone on Demo Day.',
+    q: 'How much time should I commit each week?',
+    a: 'Four live hours on weekends plus around 6–8 hours of build time.',
   },
   {
-    q: 'What do I need before Week 1?',
-    a: 'A laptop that can run Docker, with admin rights, and GitHub and Claude accounts. API credits for the programme are provided by Menler. A short diagnostic before the first session confirms that Claude, Claude Code, GitHub and your API key all work.',
+    q: 'Do I get API credits?',
+    a: 'No. You use your own Claude API key, which keeps your builds and portfolio in your own account.',
   },
   {
-    q: 'Is any real client or personal data used?',
-    a: 'No. All case data is synthetic, and the briefs are written by Menler from public information. Systems in the health, tax and claims cases recommend and explain; they never deny claims, file returns or decide eligibility — a human decides.',
+    q: 'Will I get a certificate?',
+    a: 'Yes, the Menler AI FDE Certification, graded against 100 engineering and delivery competencies.',
   },
   {
-    q: 'Will I receive interview opportunities and career support?',
-    a: "Yes. Fellows receive portfolio reviews, technical interview preparation, resume optimization, hiring association introductions, and access to AI Engineering opportunities through Menler's employer network.",
-  },
-  {
-    q: 'What is the refund and cancellation policy?',
-    a: 'Refunds are only applicable if Fellowship access has not been provided. Once access to the platform, curriculum, recordings, or learning resources has been granted, fees become non-refundable and cancellations are not eligible for a refund.',
+    q: 'How does interview preparation and career support work?',
+    a: "Career support is integrated throughout the Fellowship. Fellows get mock FDE interview loops, portfolio and LinkedIn reviews, hiring-readiness guidance, and referrals through Menler's hiring network.",
   },
   {
     q: 'What is the program fee and are there payment options?',
-    a: 'Flexible payment plans are available. Program fees, payment schedules, and available scholarship opportunities are shared during the application process and counselling session.',
+    a: `The 12-week AI FDE Fellowship costs ${formatINR(PROGRAM_PRICES.engineering.amount)} including all taxes, with EMI from ₹4,999 a month. Scholarship options are shared during the application process and counselling session.`,
+  },
+  {
+    q: 'What is the refund and cancellation policy?',
+    a: 'Refunds are only applicable if program access has not been provided. Once access to the Fellowship platform, curriculum, or learning resources has been granted, fees become non-refundable and cancellations are not eligible for a refund.',
   },
 ];
 

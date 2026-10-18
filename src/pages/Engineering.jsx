@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { FDE_CASES, FDE_TRACKS } from '../data/fdeCurriculum';
+import { FDE_PHASES, FDE_AUDIENCE, FDE_HIGHLIGHTS } from '../data/fdeCurriculum';
 import { useNavigate } from 'react-router-dom';
 import FaqList from '../components/common/FaqList';
 import CtaBanner from '../components/common/CtaBanner';
@@ -7,6 +7,8 @@ import Footer from '../components/layout/Footer';
 import Seo from '../components/common/Seo';
 import MentorsRail from '../components/common/MentorsRail';
 import PlaybookModal from '../components/common/PlaybookModal';
+import PayModal from '../components/common/PayModal';
+import PricingCard from '../components/common/PricingCard';
 import ToolChip from '../components/common/ToolChip';
 import { useApply } from '../components/common/ApplyContext';
 import HiringJobs from '../components/common/HiringJobs';
@@ -15,14 +17,15 @@ import { verifyAndDownloadBrochure } from '../lib/brochure';
 import PhoneField from '../components/forms/PhoneField';
 import { isSmsReachable, phoneMinLength } from '../lib/phone';
 import BackgroundField from '../components/forms/BackgroundField';
+import { FDE_PATH } from '../lib/routes';
 
-// Same flow as the Generalist page: hero, who it is for, curriculum, tracks,
-// brochure, mentors, hiring, FAQ, CTA. The curriculum is the AI FDE PDF
-// (src/data/fdeCurriculum.js), which the Download Curriculum button hands out.
+// The AI Forward Deployed Engineer course page. Same flow as the Generalist
+// page: hero, who it is for, curriculum, highlights, brochure, mentors,
+// hiring, pricing, FAQ, CTA. Lives at FDE_PATH (src/lib/routes.js).
 const CURRICULUM_PDF = '/pdfs/Menler_AI_FDE_Fellowship_Curriculum.pdf';
 
-// Hiring section content for the Engineering page only — edit freely, it does
-// NOT affect the Generalist / Kickstarter hiring sections.
+// Hiring section content for this page only — edit freely, it does NOT
+// affect the Generalist / Kickstarter hiring sections.
 const ENG_HIRING = {
   label: 'Hiring associations & roles',
   title: 'The jobs',
@@ -34,12 +37,12 @@ const ENG_HIRING = {
   genLabel: 'AI Engineering',
   engLabel: 'Advanced AI Systems',
   genRoles: [
+    { name: 'AI Forward Deployed Engineer', band: '₹25–50L · AI-first & enterprise teams' },
     { name: 'AI Engineer', band: '₹20–40L · Product & AI teams' },
     { name: 'Solutions Engineer', band: '₹22–45L · AI Native startups' },
     { name: 'RAG Engineer', band: '₹22–40L · Knowledge systems teams' },
     { name: 'Agent Engineer', band: '₹24–45L · Agentic AI companies' },
     { name: 'AI Product Engineer', band: '₹20–38L · Product organizations' },
-    { name: 'AI Platform Engineer', band: '₹25–48L · Enterprise AI teams' },
   ],
   engRoles: [
     { name: 'LLMOps Engineer', band: '₹22–42L · Production AI teams' },
@@ -51,6 +54,28 @@ const ENG_HIRING = {
   ],
 };
 
+// Pricing card content.
+const FDE_PRICING = {
+  pill: 'Flagship Engineering Programme',
+  name: 'AI FDE Fellowship',
+  price: '75,000',
+  priceSub: 'incl. all taxes · EMI from ₹4,999/month',
+  features: [
+    ['48 hrs live instruction over 12 weeks', 'Every Saturday and Sunday, 2 hours each'],
+    ['6 deployed builds', 'One per case, reviewed by mentors'],
+    ['Pods of 5, mentor-led', 'One mentor for every two pods'],
+    ['6 Case Defences + Demo Day', 'Live panels, hidden scenarios, change requests'],
+    ['LMS + community · 1 year access', 'Recordings, labs, repos and cohort community'],
+    ['Menler AI FDE Certification', 'Competency-graded, LinkedIn shareable'],
+  ],
+  chips: [
+    { label: 'Start date', value: 'To be announced' },
+    { label: 'Duration', value: '12 Weeks' },
+    { label: 'Sessions', value: '24 Live · 48 hrs' },
+    { label: 'Cases', value: '6 Real Engagements' },
+  ],
+};
+
 export default function Engineering() {
   const navigate = useNavigate();
   const go = (path) => { navigate(path); window.scrollTo(0, 0); };
@@ -59,15 +84,16 @@ export default function Engineering() {
   const [done, setDone] = useState(false);
   // Download Curriculum → gated lead form (email OTP) that downloads the PDF.
   const [curricItem, setCurricItem] = useState(null);
-  // Curriculum: which case is open (-1 = none) and which of its two weeks is shown.
-  const [activeCase, setActiveCase] = useState(0);
-  const [caseWeek, setCaseWeek] = useState(0);
+  const [payProgram, setPayProgram] = useState(null); // direct Cashfree enrolment
+  // Curriculum: which phase is open (-1 = none) and which of its weeks is shown.
+  const [activePhase, setActivePhase] = useState(0);
+  const [phaseWeek, setPhaseWeek] = useState(0);
   const weekDetailRef = useRef(null);
 
   // Select a week. On mobile, the lesson plan stacks below the week list, so
   // scroll it into view (after re-render) — same UX as the Generalist page.
   const pickWeek = (wi) => {
-    setCaseWeek(wi);
+    setPhaseWeek(wi);
     if (window.matchMedia('(max-width: 760px)').matches) {
       requestAnimationFrame(() => {
         const el = weekDetailRef.current;
@@ -78,6 +104,13 @@ export default function Engineering() {
     }
   };
   const openApply = useApply();
+  // Distinct CTA label per button so the CRM can tell Apply / Book a Call /
+  // Enrol apart (section stays the course name).
+  const openFdeLead = (ctaLabel = 'Apply · AI FDE') => openApply({
+    ctaLabel,
+    source: 'engineering-lead',
+    section: 'AI FDE Fellowship',
+  });
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
   // BackgroundField asks a student their college and a graduate their year.
   // Those ride in their own fields, not in the background string, so spread
@@ -110,10 +143,10 @@ export default function Engineering() {
           scripts/prerender.mjs — a second Course added here would be a thinner
           duplicate, with no price or schedule. */}
       <Seo
-        title="AI FDE Fellowship — Forward Deployed AI Engineer Program India | Menler"
-        description="A 12-week AI Forward Deployed Engineer fellowship. Six real-world cases, built with Claude and defended to a client panel — from first interview to handover."
-        keywords="AI FDE fellowship, forward deployed engineer, forward deployed AI engineer course India, AI engineering fellowship, Claude AI engineering, Claude Agent SDK, MCP, RAG, AI evaluation, AI deployment, AI specialist program India"
-        path="/engineering"
+        title="AI Forward Deployed Engineer Course India | Menler AI FDE"
+        description="12-week Claude-first AI engineering course. Build RAG, AI agents and MCP servers on 6 real Indian cases, deploy to production and become an AI FDE."
+        keywords="forward deployed engineer course, AI forward deployed engineer, AI engineering course India, FDE course India, agentic AI course, AI agents course, RAG course, LLM engineering, Claude Code course, MCP server, AI engineer course for working professionals, how to become a forward deployed engineer, forward deployed engineer vs AI engineer"
+        path={FDE_PATH}
       />
       {/* ── HERO + WHO THIS IS FOR (one screen together) ── */}
       <div className="hero-screen">
@@ -122,19 +155,19 @@ export default function Engineering() {
         <div className="hero-ring r1" style={{ borderColor: 'rgba(93,202,165,0.1)' }} />
         <div className="hero-ring r2" style={{ borderColor: 'rgba(93,202,165,0.08)' }} />
         <div className="hero-inner">
-          <p className="hero-eyebrow" style={{ color: '#5DCAA5' }}>AI FDE Fellowship · Forward Deployed AI Engineer</p>
-          <h1 className="hero-h1" style={{ color: '#E1F5EE' }}>Twelve weeks.<br />Six real-world cases.<br /><em style={{ color: '#9FE1CB' }}>Defended, not just delivered.</em></h1>
-          <p className="hero-sub" style={{ color: 'rgba(225,245,238,0.55)' }}>Sit with a client, frame a messy problem and own the AI solution from first interview to handover.<strong className="hero-tagline" style={{ color: '#E1F5EE', fontWeight: 500 }}>Graded on whether you can defend what you built.</strong></p>
+          <p className="hero-eyebrow" style={{ color: '#5DCAA5' }}>AI Engineering Course · Claude AI FDE Fellowship</p>
+          <h1 className="hero-h1" style={{ color: '#E1F5EE' }}>Build AI Systems.<br /><em style={{ color: '#9FE1CB' }}>Become an AI Forward Deployed Engineer.</em></h1>
+          <p className="hero-sub" style={{ color: 'rgba(225,245,238,0.6)' }}>India&rsquo;s only Claude-first AI Forward Deployed Engineer Fellowship.<strong className="hero-tagline" style={{ color: '#E1F5EE', fontWeight: 500 }}>Engineering that ships. Clients that sign. A portfolio that proves it.</strong></p>
           <div className="hero-actions">
-            <button className="btn-primary" style={{ background: '#1D9E75', minWidth: 220, textAlign: 'center' }} onClick={openApply}>Apply Now</button>
+            <button className="btn-primary" style={{ background: '#1D9E75', minWidth: 220, textAlign: 'center' }} onClick={() => openFdeLead('Apply · AI FDE')}>Apply Now</button>
             <button className="btn-outline" style={{ color: '#9FE1CB', borderColor: 'rgba(93,202,165,0.5)', minWidth: 220, textAlign: 'center' }} onClick={() => go('/aptitude')}>Take the AI Aptitude Test</button>
           </div>
           <div className="hero-stats" style={{ borderColor: 'rgba(93,202,165,0.2)' }}>
-            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}>12</span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Weeks<br />Sat + Sun</span></div>
-            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}>6</span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Real-world<br />cases</span></div>
-            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}>48</span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Live<br />hours</span></div>
-            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}>6</span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Milestone<br />projects</span></div>
-            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}>100</span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Competencies<br />cleared</span></div>
+            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}>100+</span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Graded Engineering<br />Competencies</span></div>
+            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}>25+</span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Hiring<br />Associations</span></div>
+            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}>12</span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Weeks Intensive<br />Fellowship</span></div>
+            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}>6</span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Real Case<br />Engagements</span></div>
+            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}>6</span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Real Time Production<br />Grade Projects</span></div>
           </div>
         </div>
       </section>
@@ -142,33 +175,36 @@ export default function Engineering() {
       {/* ── WHO THIS IS FOR ── */}
       <section className="section" style={{ background: '#E1F5EE', paddingTop: 24, paddingBottom: 20 }}>
         <p className="section-label" style={{ color: 'var(--forest)' }}>Who this is for</p>
-        <h2 className="section-h2" style={{ color: 'var(--forest)' }}>Built for people who will be<br /><em style={{ color: 'var(--placed)' }}>questioned on their decisions.</em></h2>
-        <p className="section-sub">Comfortable reading code and working in a terminal.<br />Willing to defend your decisions in front of a panel.</p>
-        <div className="audience-grid">
-          <div className="audience-card"><div className="ava" style={{ background: '#E1F5EE', color: '#085041' }}>1</div><p className="audience-role">Engineers</p><p className="audience-desc">Write the core components and take on the stretch builds.</p></div>
-          <div className="audience-card"><div className="ava" style={{ background: 'var(--cloud)', color: 'var(--specialist)' }}>2</div><p className="audience-role">Analysts</p><p className="audience-desc">Direct Claude Code, own the tests and defend the numbers.</p></div>
-          <div className="audience-card"><div className="ava" style={{ background: '#FAEEDA', color: '#854F0B' }}>3</div><p className="audience-role">Consultants</p><p className="audience-desc">Run discovery, frame the problem and own the client.</p></div>
-          <div className="audience-card"><div className="ava" style={{ background: '#FCEBEB', color: '#A32D2D' }}>4</div><p className="audience-role">Technical product people</p><p className="audience-desc">Turn a messy operational problem into a shipped system.</p></div>
-          <div className="audience-card"><div className="ava" style={{ background: '#F1EFE8', color: '#5F5E5A' }}>5</div><p className="audience-role">Early-career graduates</p><p className="audience-desc">Ready to work at a client-facing standard from week one.</p></div>
+        <h2 className="section-h2" style={{ color: 'var(--forest)' }}>You already code.<br /><em style={{ color: 'var(--placed)' }}>Now build with AI.</em></h2>
+        <p className="section-sub">The AI Native products of the next decade will be built by engineers who know how to work with AI.</p>
+        <div className="audience-grid fde-audience">
+          {FDE_AUDIENCE.map((a, i) => (
+            <div className="audience-card" key={a.role}>
+              <div className="ava" style={AVA_STYLES[i % AVA_STYLES.length]}>{i + 1}</div>
+              <p className="audience-role">{a.role}</p>
+              <p className="audience-desc">{a.desc}</p>
+              <p className="audience-who">{a.who}</p>
+            </div>
+          ))}
         </div>
       </section>
       </div>
 
-      {/* ── CURRICULUM ── */}
+      {/* ── CURRICULUM ── three phases of four weeks (src/data/fdeCurriculum.js). */}
       <section className="section curric-section--gen curric-section--fde" style={{ background: 'white', paddingTop: 48 }}>
-        <p className="section-label" style={{ color: 'var(--forest)' }}>12-week curriculum</p>
-        <h2 className="section-h2" style={{ color: 'var(--forest)' }}>From problem framer<br /><em style={{ color: 'var(--placed)' }}>to AI FDE.</em></h2>
-        <p className="section-sub">Six two-week cases, each built from a real problem in an Indian industry.<br />Pick a case to open its weeks, tools, and projects.</p>
+        <p className="section-label" style={{ color: 'var(--forest)' }}>12-week AI engineering curriculum</p>
+        <h2 className="section-h2" style={{ color: 'var(--forest)' }}>From prompt<br /><em style={{ color: 'var(--placed)' }}>to production.</em></h2>
+        <p className="section-sub">Three phases, six real client cases and 100+ engineering competencies.<br />Pick a phase to open its weeks, tools and builds.</p>
         <div className="curric-acc">
-          {FDE_CASES.map((c, i) => {
-            const open = activeCase === i;
-            const week = c.modules[caseWeek] || c.modules[0];
+          {FDE_PHASES.map((p, i) => {
+            const open = activePhase === i;
+            const week = p.modules[phaseWeek] || p.modules[0];
             return (
-              <div className={`curric-acc-item${open ? ' open' : ''}`} key={c.label}>
+              <div className={`curric-acc-item${open ? ' open' : ''}`} key={p.label}>
                 <button className="curric-acc-head" onClick={(e) => {
                   const willOpen = !open;
-                  setActiveCase(willOpen ? i : -1);
-                  setCaseWeek(0);
+                  setActivePhase(willOpen ? i : -1);
+                  setPhaseWeek(0);
                   if (willOpen) {
                     const el = e.currentTarget;
                     setTimeout(() => {
@@ -178,19 +214,20 @@ export default function Engineering() {
                     }, 70);
                   }
                 }} aria-expanded={open}>
-                  <span className="curric-acc-no">{c.label} · {c.weeks}</span>
-                  <span className="curric-acc-title">{c.title}</span>
+                  <span className="curric-acc-no">{p.label} · {p.weeks}</span>
+                  <span className="curric-acc-title">{p.title}</span>
                   <span className="curric-acc-caret">{open ? '▾' : '▸'}</span>
                 </button>
                 {open && (
                   <div className="curric-acc-body">
+                    <p className="fde-phase-intro">{p.oneLiner}</p>
                     <div className="curric-detail--split curric-detail--triple">
                       <div className="curric-detail-main">
                         <p className="curric-label">Weeks</p>
                         <ul className="curric-weeks">
-                          {c.modules.map((m, wi) => (
-                            <li key={m.w} className={`curric-week${caseWeek === wi ? ' on' : ''}`}>
-                              <button className="curric-week-head" onClick={() => pickWeek(wi)} aria-pressed={caseWeek === wi}>
+                          {p.modules.map((m, wi) => (
+                            <li key={m.w} className={`curric-week${phaseWeek === wi ? ' on' : ''}`}>
+                              <button className="curric-week-head" onClick={() => pickWeek(wi)} aria-pressed={phaseWeek === wi}>
                                 <span className="curric-week-title">{m.w}</span>
                                 <span className="curric-week-caret">›</span>
                               </button>
@@ -203,15 +240,30 @@ export default function Engineering() {
                         <ul className="curric-modules">
                           {week.lessons.map(l => <li key={l}>{l}</li>)}
                         </ul>
-                        <p className="curric-label" style={{ marginTop: 28 }}>Project you&rsquo;ll build</p>
+                        <p className="curric-label" style={{ marginTop: 28 }}>What you ship</p>
                         <ul className="curric-modules">
-                          {c.projects.map(pr => <li key={pr}>{pr}</li>)}
+                          {p.ship.map(s => <li key={s}>{s}</li>)}
                         </ul>
+                        {p.briefs && (
+                          <>
+                            <p className="curric-label" style={{ marginTop: 28 }}>Capstone briefs</p>
+                            <div className="fde-briefs">
+                              {p.briefs.map(b => <span className="fde-brief" key={b}>{b}</span>)}
+                            </div>
+                          </>
+                        )}
                       </div>
                       <div className="curric-detail-tools">
                         <p className="curric-label">Tool stack</p>
                         <div className="curric-tools">
-                          {c.tools.map(t => <ToolChip key={t} name={t} />)}
+                          {p.tools.map(t => <ToolChip key={t} name={t} />)}
+                        </div>
+                        <div className="fde-phase-meta">
+                          <p className="curric-label">Cases</p>
+                          <ul className="fde-cases">
+                            {p.cases.map(c => <li key={c}>{c}</li>)}
+                          </ul>
+                          <p className="fde-gate"><span>Gate</span>{p.gate}</p>
                         </div>
                       </div>
                     </div>
@@ -226,16 +278,17 @@ export default function Engineering() {
         </div>
       </section>
 
-      {/* ── TRACKS ── */}
+      {/* ── PROGRAM HIGHLIGHTS ── where the Generalist page has its domain tracks. */}
       <section className="section tracks-dark tracks-dark--fde" style={{ paddingTop: 48 }}>
-        <p className="section-label" style={{ color: '#5DCAA5' }}>Two tracks, one standard</p>
-        <h2 className="section-h2" style={{ color: '#E1F5EE' }}>Builder or Engineer.<br /><em style={{ color: '#9FE1CB' }}>Same bar, same defence.</em></h2>
-        <p className="section-sub" style={{ color: 'rgba(225,245,238,0.55)' }}>Both tracks meet the same acceptance criteria and face the same Case Defence.<br />Python or JavaScript at reading level. API credits are provided by Menler.</p>
-        <div className="tracks-grid tracks-grid--two">
-          {FDE_TRACKS.map((t) => (
-            <div key={t.name} className="track">
-              <p className="track-name">{t.name}</p>
-              <p className="track-role">{t.role}</p>
+        <p className="section-label" style={{ color: '#5DCAA5' }}>Program highlights</p>
+        <h2 className="section-h2" style={{ color: '#E1F5EE' }}>Everything an AI FDE does.<br /><em style={{ color: '#9FE1CB' }}>Real time and real builds.</em></h2>
+        <p className="section-sub fde-hl-sub">Twelve weeks of real briefs, real builds and real deadlines. You don&rsquo;t watch AI get shipped. You deploy it. Every week brings a new client brief, a working build to ship and a panel to defend it to.</p>
+        <div className="fde-hl-grid">
+          {FDE_HIGHLIGHTS.map((h) => (
+            <div className="fde-hl" key={h.label}>
+              <p className="fde-hl-num">{h.num}</p>
+              <p className="fde-hl-label">{h.label}</p>
+              <p className="fde-hl-desc">{h.desc}</p>
             </div>
           ))}
         </div>
@@ -270,26 +323,56 @@ export default function Engineering() {
       {/* ── HIRING PARTNERS & ROLES ── */}
       <HiringJobs {...ENG_HIRING} />
 
-      {/* ── FAQ ── */}
+      {/* ── PRICING ── */}
+      <section className="section kp-section fde-pricing" style={{ background: '#ffffff', paddingTop: 8 }}>
+        <p className="section-label" style={{ textAlign: 'center', color: 'var(--forest)' }}>Pricing</p>
+        <h2 className="section-h2" style={{ textAlign: 'center', color: 'var(--forest)' }}>One fellowship. <em style={{ color: 'var(--placed)' }}>Everything shipped.</em></h2>
+        <p className="section-sub" style={{ textAlign: 'center', margin: '0 auto 32px' }}>Twelve weeks of Claude-first engineering, six client cases, a production portfolio and placement support.</p>
+        <PricingCard
+          {...FDE_PRICING}
+          tagline=""
+          ctaLabel="Enrol Now"
+          // The card keeps each line on one row on desktop (.kp-desc), so the
+          // sentence is split where it reads naturally.
+          description={<>Ship your AI engineering portfolio in 12 weeks.<span className="kp-desc-line2">Build RAG, agents and MCP servers on real Indian cases,</span><span className="kp-desc-line2">deploy to production, and defend your work to an industry panel.</span></>}
+          onCta={() => setPayProgram('engineering')}
+        />
+        <p className="fde-price-fine">Bring your own Claude API key. Claude Code used throughout.</p>
+        <div style={{ textAlign: 'center', marginTop: 32 }}>
+          <button className="btn-primary" style={{ minWidth: 220, background: '#1D9E75' }} onClick={() => openFdeLead('Book a Call · AI FDE')}>Book a Call</button>
+        </div>
+      </section>
+
+      {/* ── FAQ ── each question is an H3 (FAQPage schema is baked in by prerender). */}
       <section className="section" style={{ background: 'var(--parchment)', textAlign: 'center', paddingTop: 48 }}>
         <p className="section-label" style={{ color: 'var(--forest)' }}>FAQ</p>
         <h2 className="section-h2" style={{ color: 'var(--forest)' }}>Your questions answered</h2>
-        <FaqList items={ENGINEERING_FAQS} />
+        <FaqList items={ENGINEERING_FAQS} headings />
       </section>
 
       <CtaBanner
         badge="Applications open · 30 seats"
-        title="Ready to deliver AI to real clients?"
-        subtitle="Twelve weeks. Six cases. Every one defended."
+        title="Ready to become an AI Forward Deployed Engineer?"
+        subtitle="Twelve weeks. Six real cases. One production portfolio."
         buttonText="Apply Now"
         buttonStyle={{ color: 'var(--forest)' }}
         style={{ background: 'var(--forest)' }}
-        onButtonClick={openApply}
+        onButtonClick={() => openFdeLead('Apply · AI FDE')}
       />
 
       <Footer />
 
       <PlaybookModal item={curricItem} onClose={() => setCurricItem(null)} />
+      {payProgram && <PayModal program={payProgram} onClose={() => setPayProgram(null)} />}
     </>
   );
 }
+
+// Avatar colours for the five audience cards, matching the Generalist page.
+const AVA_STYLES = [
+  { background: 'var(--cloud)', color: 'var(--specialist)' },
+  { background: '#E1F5EE', color: '#085041' },
+  { background: '#FAEEDA', color: '#854F0B' },
+  { background: '#FCEBEB', color: '#A32D2D' },
+  { background: '#F1EFE8', color: '#5F5E5A' },
+];

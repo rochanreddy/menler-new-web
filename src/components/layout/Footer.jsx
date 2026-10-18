@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import MenlerWordmark from '../common/MenlerWordmark';
 import { useApply } from '../common/ApplyContext';
 import { SOCIAL_LINKS, SUPPORT_MAIL_HREF } from '../../data/socialLinks';
+import { FDE_PATH } from '../../lib/routes';
 
 /* A real link: crawlers follow the href (they cannot follow an onClick), and a
    plain click still navigates inside the app. Cmd/Ctrl/Shift/middle-click keep
@@ -64,7 +65,7 @@ export default function Footer() {
           <ul className="footer-links">
             <li><FooterLink to="/kickstarter">Gen AI Kickstarter</FooterLink></li>
             <li><FooterLink to="/generalist">AI Generalist Fellowship</FooterLink></li>
-            <li><FooterLink to="/engineering">AI Engineering Fellowship</FooterLink></li>
+            <li><FooterLink to={FDE_PATH}>AI FDE Fellowship</FooterLink></li>
           </ul>
         </div>
         <div>

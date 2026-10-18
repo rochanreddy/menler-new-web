@@ -5,6 +5,7 @@ import Seo from '../components/common/Seo';
 import PlaybookModal from '../components/common/PlaybookModal';
 import { PROJECTS, tagClassFor } from '../data/projectsData';
 import { submitLead } from '../services/leadService';
+import { FDE_PATH } from '../lib/routes';
 
 const LIBRARY_CARDS = [
   { num: '01', name: 'Prompt Library', desc: '100+ tested prompts across business, engineering, and beginner tracks.', tags: ['All programs', '100+ prompts'], pdf: '/pdfs/Menler_100_Prompts_Playbook.pdf' },
@@ -250,7 +251,7 @@ export default function Resources() {
             <p className="cluster-num">Engineers &amp; technical builders</p>
             <p className="cluster-name">Menler AI Engineering Fellowship</p>
             <p className="cluster-sets">Build production-grade AI systems, agents, RAG applications, MCP integrations, and AI infrastructure.</p>
-            <button className="cluster-btn" onClick={() => go('/engineering')}>Explore Engineering</button>
+            <button className="cluster-btn" onClick={() => go(FDE_PATH)}>Explore Engineering</button>
           </div>
         </div>
       </section>

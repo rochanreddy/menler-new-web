@@ -1,4 +1,5 @@
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { FDE_PATH } from './lib/routes';
 import { useEffect, useRef, lazy, Suspense } from 'react';
 import Lenis from 'lenis';
 import Navbar from './components/layout/Navbar';
@@ -111,7 +112,10 @@ export default function App() {
                 an ads URL rule on "webinar_paid" can match it. */}
             <Route path="/checkout/:done" element={<Checkout />} />
             <Route path="/generalist" element={<Generalist />} />
-            <Route path="/engineering" element={<Engineering />} />
+            <Route path={FDE_PATH} element={<Engineering />} />
+            {/* The course page's old address. vercel.json answers it with a
+                permanent redirect for direct visits; this covers in-app links. */}
+            <Route path="/engineering" element={<Navigate to={FDE_PATH} replace />} />
             <Route path="/projects/:slug" element={<Projects />} />
             <Route path="/outcomes" element={<Outcomes />} />
             <Route path="/aptitude" element={<Aptitude />} />
