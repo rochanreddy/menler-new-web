@@ -588,12 +588,13 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
 }
 
 @media (max-width: 540px) {
-  /* Highlights on phones: icon and name only, two across. */
-  .fde-hl-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 24px; }
-  .fde-hl-inner { padding: 14px 12px; }
-  .fde-hl-icon { width: 26px; height: 26px; margin-bottom: 10px; }
-  .fde-hl-icon svg { width: 14px; height: 14px; }
-  .fde-hl-name { margin: 0; font-size: 12.5px; line-height: 1.3; }
+  /* Highlights on phones: icon and name only, three across. */
+  .fde-hl-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 24px; }
+  .fde-hl-card { border-radius: 12px; }
+  .fde-hl-inner { padding: 11px 9px 12px; border-radius: 11px; }
+  .fde-hl-icon { width: 22px; height: 22px; margin-bottom: 8px; border-radius: 6px; }
+  .fde-hl-icon svg { width: 12px; height: 12px; }
+  .fde-hl-name { margin: 0; font-size: 11px; line-height: 1.3; overflow-wrap: anywhere; hyphens: auto; }
   .fde-hl-desc { display: none; }
 
   /* Hero: the five figures on one line, the tagline one phrase per line. */
