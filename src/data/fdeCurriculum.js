@@ -61,8 +61,8 @@ export const FDE_PHASES = [
       },
     ],
     projects: [
-      'Complaint Triage Engine (a bank grievance cell, in English, Hindi and Hinglish)',
-      'Cited Farm Advisory Copilot (answers only from vetted advisories, cites every claim)',
+      'Bank Complaint Triage Engine',
+      'Cited Farm Advisory Copilot',
     ],
     tools: ['Claude', 'Claude Code', 'Claude API', 'JSON Schema', 'Postgres', 'pgvector', 'Qdrant', 'Neo4j', 'GitHub'],
   },
@@ -118,8 +118,8 @@ export const FDE_PHASES = [
       },
     ],
     projects: [
-      'GST Reconciliation Agent and Public MCP Server (human approves every credit decision)',
-      'Certified Health Pre-Authorisation Assistant (evaluate, harden, go / no-go memo)',
+      'GST Agent & MCP Server',
+      'Health Pre-Auth Assistant',
     ],
     tools: ['Claude Agent SDK', 'MCP', 'Claude Code', 'n8n', 'promptfoo', 'Braintrust', 'RAGAS', 'Presidio', 'NeMo Guardrails'],
   },
@@ -174,8 +174,8 @@ export const FDE_PHASES = [
       },
     ],
     projects: [
-      'Production NDR Recovery System (failed D2C deliveries, a CFO-checked ROI model)',
-      'Capstone Engagement (EPFO claims, court judgments, ONDC grievances, or your own client)',
+      'Delivery Recovery System',
+      'Real-Client Capstone',
     ],
     // The production and observability stack the deploy weeks use.
     tools: ['Claude Code', 'Docker', 'GitHub Actions', 'OpenTelemetry', 'Langfuse', 'Phoenix'],

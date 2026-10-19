@@ -536,17 +536,17 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
 /* Program highlights — forest green. */
 .tracks-dark.tracks-dark--fde { background: #062E26; }
 /* Separate cards: icon, figure + name, one line of copy. A light runs round
-   each card's border — a conic gradient turning behind a 1px inset — each
-   card a beat behind the last so they never move in step. */
+   each card's border — a conic gradient turning behind a 1px inset — all
+   cards in step. */
 .fde-hl-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; max-width: 1200px; margin: 32px auto 0; }
 .fde-hl-card { position: relative; isolation: isolate; overflow: hidden; padding: 1px; border-radius: 14px; background: rgba(93,202,165,0.16); }
-.fde-hl-card::before { content: ""; position: absolute; z-index: -1; left: 50%; top: 50%; width: 220%; aspect-ratio: 1; translate: -50% -50%; background: conic-gradient(from 0deg, transparent 0 62%, rgba(93,202,165,0.25) 74%, #9FE1CB 86%, #E1F5EE 89%, transparent 94%); animation: fdeSpin 6s linear infinite; animation-delay: calc(var(--i, 0) * -1s); }
+.fde-hl-card::before { content: ""; position: absolute; z-index: -1; left: 50%; top: 50%; width: 220%; aspect-ratio: 1; translate: -50% -50%; background: conic-gradient(from 0deg, transparent 0 62%, rgba(93,202,165,0.25) 74%, #9FE1CB 86%, #E1F5EE 89%, transparent 94%); animation: fdeSpin 6s linear infinite; }
 @keyframes fdeSpin { to { rotate: 360deg; } }
 .fde-hl-inner { position: relative; height: 100%; padding: 16px 18px 18px; border-radius: 13px; background: linear-gradient(180deg, #08362C 0%, #062A22 100%); transition: background .25s; }
 .fde-hl-card:hover .fde-hl-inner { background: linear-gradient(180deg, #0A4034 0%, #072F26 100%); }
 .fde-hl-icon { display: grid; place-items: center; width: 28px; height: 28px; margin-bottom: 12px; border-radius: 8px; background: rgba(93,202,165,0.12); border: 1px solid rgba(93,202,165,0.28); transition: transform .35s cubic-bezier(.2,.7,.2,1), background .25s; }
 .fde-hl-icon svg { width: 15px; height: 15px; fill: none; stroke: #5DCAA5; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.fde-hl-card:hover .fde-hl-icon { transform: translateY(-2px) rotate(-6deg); background: rgba(93,202,165,0.22); }
+.fde-hl-card:hover .fde-hl-icon { background: rgba(93,202,165,0.22); }
 .fde-hl-name { margin: 0 0 5px; font-size: 13px; font-weight: 600; color: #E1F5EE; font-variant-numeric: tabular-nums; }
 .fde-hl-desc { margin: 0; font-size: 11.5px; line-height: 1.5; color: rgba(159,225,203,0.75); }
 
