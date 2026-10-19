@@ -208,10 +208,10 @@ export const FDE_AUDIENCE = [
 
 // "Program highlights" — where the Generalist page has its domain tracks.
 export const FDE_HIGHLIGHTS = [
-  { num: '100', label: 'Graded Competencies', icon: 'target', role: 'Every skill FDE hiring managers test for, graded until you nail it.' },
-  { num: '48', label: 'Live Hours', icon: 'live', role: 'No recordings. Mentors play your client and change the brief.' },
-  { num: '12', label: 'Weeks Intensive', icon: 'calendar', role: 'Prompt to production in one quarter, on weekends.' },
-  { num: '12', label: 'Weekly Assignments', icon: 'check', role: 'Ship every week. Get reviewed. Build on it the next.' },
-  { num: '6+', label: 'Production-Grade Projects', icon: 'rocket', role: 'Deployed, evaluated and secured. Proof, not demos.' },
-  { num: '6', label: 'Real Case Studies', icon: 'case', role: 'Banking, GST, health, D2C. Real briefs you defend live.' },
+  { num: '100', label: 'Graded Competencies', icon: 'target', role: 'Every skill an AI FDE needs, assessed one by one.' },
+  { num: '48', label: 'Live Hours', icon: 'live', role: 'Live weekend sessions led by industry mentors.' },
+  { num: '12', label: 'Weeks Intensive', icon: 'calendar', role: 'A focused programme that fits around work or college.' },
+  { num: '12', label: 'Weekly Assignments', icon: 'check', role: 'One hands-on assignment a week, reviewed by a mentor.' },
+  { num: '6+', label: 'Production-Grade Projects', icon: 'rocket', role: 'Real systems you build, deploy and add to your portfolio.' },
+  { num: '6', label: 'Real Case Studies', icon: 'case', role: 'Real problems from banking, farming, finance, health and retail.' },
 ];
