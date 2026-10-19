@@ -598,6 +598,7 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
   .fde-hl-desc { display: none; }
 
   /* Hero: the five figures on one line, the tagline one phrase per line. */
+  .fde-page .fde-hero .hero-eyebrow { white-space: nowrap; font-size: min(11.5px, 2.9vw); letter-spacing: .08em; }
   .fde-page .hero-screen .hero-big .hero-stats { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0 6px; }
   .fde-page .hero-screen .hero-big .hero-stat-num { font-size: 21px !important; }
   .fde-page .hero-screen .hero-big .hero-stat-lbl { font-size: 9px; line-height: 1.3; }
