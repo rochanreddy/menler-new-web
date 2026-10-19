@@ -179,10 +179,10 @@ export const FDE_AUDIENCE = [
 
 // "Program highlights" — where the Generalist page has its domain tracks.
 export const FDE_HIGHLIGHTS = [
-  { num: '100', label: 'Competencies', desc: 'Every skill an AI FDE is hired for, mapped and graded. From prompt design to production ownership, nothing is left to guesswork.' },
-  { num: '48', label: 'Live Hours', desc: 'Real-time, not recorded. Mentors play your client, change requirements mid-week, and you respond the way you would on the job.' },
-  { num: '12', label: 'Weeks', desc: 'One intensive quarter, every Saturday and Sunday. Built to fit around college or a full-time job.' },
-  { num: '12', label: 'Assignments', desc: 'Ship something every single week. Each one is reviewed by a mentor and feeds the next build.' },
-  { num: '6+', label: 'Production-Grade Projects', desc: 'Deployed, evaluated and secured, not demo-ware. The portfolio that gets you shortlisted.' },
-  { num: '6', label: 'Real Case Studies', desc: 'Banking, agriculture, GST, health insurance, D2C and your capstone. Real time problems, defended, built and shipped live.' },
+  { icon: 'target', tag: 'Weeks 1–10 · 10 a week', num: '100', label: 'Competencies', desc: 'Every skill an AI FDE is hired for, mapped and graded. From prompt design to production ownership, nothing is left to guesswork.' },
+  { icon: 'live', tag: 'Sat + Sun · 2 hrs each', num: '48', label: 'Live Hours', desc: 'Real-time, not recorded. Mentors play your client, change requirements mid-week, and you respond the way you would on the job.' },
+  { icon: 'calendar', tag: '3 phases of 4 weeks', num: '12', label: 'Weeks', desc: 'One intensive quarter, every Saturday and Sunday. Built to fit around college or a full-time job.' },
+  { icon: 'check', tag: 'One every week', num: '12', label: 'Assignments', desc: 'Ship something every single week. Each one is reviewed by a mentor and feeds the next build.' },
+  { icon: 'rocket', tag: 'Deployed & defended', num: '6+', label: 'Production-Grade Projects', desc: 'Deployed, evaluated and secured, not demo-ware. The portfolio that gets you shortlisted.' },
+  { icon: 'case', tag: 'Banking → D2C', num: '6', label: 'Real Case Studies', desc: 'Banking, agriculture, GST, health insurance, D2C and your capstone. Real time problems, defended, built and shipped live.' },
 ];

@@ -525,7 +525,7 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
    six figures read as a set rather than six loose boxes. */
 .tracks-dark.tracks-dark--fde { background: #062E26; }
 .fde-hl-panel { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin: 42px auto 0; max-width: 1200px; background: rgba(93,202,165,0.2); border: 1px solid rgba(93,202,165,0.2); border-radius: 20px; overflow: hidden; }
-.fde-hl { position: relative; background: #062E26; padding: 30px 30px 28px; overflow: hidden; transition: background .25s; }
+.fde-hl { position: relative; display: flex; flex-direction: column; align-items: flex-start; background: #062E26; padding: 30px 30px 28px; overflow: hidden; transition: background .25s; }
 /* Each cell's contents rise in, one cell after another, when the panel
    scrolls into view (.in). The cells themselves stay put, so the hairlines
    never flash while they reveal. */
@@ -543,7 +543,41 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
 .fde-hl-panel.in .fde-hl-label::after { width: 28px; }
 .fde-hl:hover .fde-hl-label::after { width: 44px; transition-delay: 0s; }
 .fde-hl-num { font-variant-numeric: tabular-nums; }
-.fde-hl-desc { margin: 12px 0 0; font-size: 13.5px; line-height: 1.65; color: rgba(225,245,238,0.62); }
+.fde-hl-desc { margin: 12px 0 18px; font-size: 13.5px; line-height: 1.65; color: rgba(225,245,238,0.62); }
+
+/* Highlight cells: an icon above the figure, a tag at the foot. */
+.fde-hl-icon { display: grid; place-items: center; width: 38px; height: 38px; margin-bottom: 16px; border-radius: 11px; background: rgba(93,202,165,0.12); border: 1px solid rgba(93,202,165,0.28); transition: transform .35s cubic-bezier(.2,.7,.2,1), background .25s; }
+.fde-hl-icon svg { width: 20px; height: 20px; fill: none; stroke: #5DCAA5; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.fde-hl:hover .fde-hl-icon { transform: translateY(-2px) rotate(-6deg); background: rgba(93,202,165,0.2); }
+.fde-hl-tag { display: inline-block; margin-top: auto; padding: 4px 11px; border-radius: 999px; border: 1px solid rgba(93,202,165,0.3); color: #9FE1CB; font-size: 11.5px; font-weight: 500; letter-spacing: .02em; }
+
+/* ── AI FDE page motion ────────────────────────────────────────────────────
+   Quiet, once-only movement: sections rise in as they scroll into view
+   ([data-reveal] → .is-in, Engineering.jsx useRevealAll), the hero enters
+   line by line over a slow drifting light, and cards lift a touch on hover.
+   The global prefers-reduced-motion rule turns all of it off. */
+.fde-page [data-reveal] { opacity: 0; transform: translateY(22px); transition: opacity .8s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 80ms), transform .8s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 80ms); }
+.fde-page [data-reveal].is-in { opacity: 1; transform: none; }
+
+.fde-hero { position: relative; overflow: hidden; }
+.fde-hero .hero-inner { position: relative; z-index: 1; }
+.fde-hero .hero-inner > * { animation: fdeRise .9s cubic-bezier(.2,.7,.2,1) both; }
+.fde-hero .hero-inner > :nth-child(2) { animation-delay: .08s; }
+.fde-hero .hero-inner > :nth-child(3) { animation-delay: .18s; }
+.fde-hero .hero-inner > :nth-child(4) { animation-delay: .28s; }
+.fde-hero .hero-inner > :nth-child(5) { animation-delay: .38s; }
+@keyframes fdeRise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+.fde-aurora { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.fde-aurora span { position: absolute; border-radius: 50%; filter: blur(70px); opacity: .55; }
+.fde-aurora span:first-child { width: 520px; height: 520px; right: -120px; top: -160px; background: radial-gradient(circle, rgba(93,202,165,0.55), transparent 65%); animation: fdeDriftA 18s ease-in-out infinite alternate; }
+.fde-aurora span:last-child { width: 420px; height: 420px; right: 22%; bottom: -220px; background: radial-gradient(circle, rgba(159,225,203,0.35), transparent 65%); animation: fdeDriftB 22s ease-in-out infinite alternate; }
+@keyframes fdeDriftA { from { transform: translate(0, 0) scale(1); } to { transform: translate(-90px, 70px) scale(1.12); } }
+@keyframes fdeDriftB { from { transform: translate(0, 0) scale(1); } to { transform: translate(110px, -60px) scale(.92); } }
+
+.fde-page .audience-card { transition: transform .3s cubic-bezier(.2,.7,.2,1), box-shadow .3s, opacity .8s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 80ms); }
+.fde-page .audience-card.is-in:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgba(8,80,65,0.12); }
+.fde-page .curric-tool { transition: transform .25s cubic-bezier(.2,.7,.2,1), border-color .25s; }
+.fde-page .curric-tool:hover { transform: translateY(-2px); border-color: rgba(93,202,165,0.6); }
 
 /* FAQ questions as headings that look unchanged. */
 .faq-h { margin: 0; font: inherit; }
