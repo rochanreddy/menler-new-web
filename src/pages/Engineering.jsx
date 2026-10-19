@@ -38,7 +38,7 @@ const ENG_HIRING = {
   genLabel: 'AI Engineering',
   engLabel: 'Advanced AI Systems',
   genRoles: [
-    { name: 'AI Forward Deployed Engineer', band: '₹25–50L · AI-first & enterprise teams' },
+    { name: 'AI Forward Deployed Engineer', band: '₹25–50L · AI-first teams' },
     { name: 'AI Engineer', band: '₹20–40L · Product & AI teams' },
     { name: 'Solutions Engineer', band: '₹22–45L · AI Native startups' },
     { name: 'RAG Engineer', band: '₹22–40L · Knowledge systems teams' },
@@ -62,18 +62,18 @@ const FDE_PRICING = {
   price: '75,000',
   priceSub: 'incl. all taxes · EMI from ₹4,999/month',
   features: [
-    ['48 hrs live instruction over 12 weeks', 'Every Saturday and Sunday, 2 hours each'],
-    ['6 deployed builds', 'One per case, reviewed by mentors'],
-    ['Pods of 5, mentor-led', 'One mentor for every two pods'],
-    ['6 Case Defences + Demo Day', 'Live panels, hidden scenarios, change requests'],
-    ['LMS + community · 1 year access', 'Recordings, labs, repos and cohort community'],
-    ['Menler AI FDE Certification', 'Competency-graded, LinkedIn shareable'],
+    ['48 hrs live instruction over 12 weeks', 'Instructor led · real questions in real time'],
+    ['Build live projects with mentors', 'Six deployed builds · one per real case'],
+    ['LMS + community · 1-year access', 'Recordings, resources, and cohort community'],
+    ['1:1 doubt-solving sessions', 'Direct mentor access · no question left behind'],
+    ['Interview pipeline + placement support', "LinkedIn review · Menler's hiring network"],
+    ['Menler AI FDE Certification', 'Menler-certified · LinkedIn shareable'],
   ],
   chips: [
     { label: 'Start date', value: 'To be announced' },
     { label: 'Duration', value: '12 Weeks' },
     { label: 'Sessions', value: '24 Live · 48 hrs' },
-    { label: 'Cases', value: '6 Real Engagements' },
+    { label: 'Format', value: 'Live online' },
   ],
 };
 
@@ -175,11 +175,11 @@ export default function Engineering() {
             <button className="btn-outline" style={{ color: '#9FE1CB', borderColor: 'rgba(93,202,165,0.5)', minWidth: 220, textAlign: 'center' }} onClick={() => go('/aptitude')}>Take the AI Aptitude Test</button>
           </div>
           <div className="hero-stats" style={{ borderColor: 'rgba(93,202,165,0.2)' }}>
-            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}><CountUp value="100+" run={heroGo} /></span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Graded Engineering<br />Competencies</span></div>
+            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}><CountUp value="100+" run={heroGo} /></span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Graded<br />Competencies</span></div>
             <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}><CountUp value="25+" run={heroGo} delay={80} /></span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Hiring<br />Associations</span></div>
             <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}><CountUp value="12" run={heroGo} delay={160} /></span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Weeks Intensive<br />Fellowship</span></div>
             <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}><CountUp value="6" run={heroGo} delay={240} /></span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Real Case<br />Engagements</span></div>
-            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}><CountUp value="6" run={heroGo} delay={320} /></span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Real Time Production<br />Grade Projects</span></div>
+            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}><CountUp value="6" run={heroGo} delay={320} /></span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Production<br />Grade Projects</span></div>
           </div>
         </div>
       </section>
@@ -188,7 +188,7 @@ export default function Engineering() {
       <section className="section" style={{ background: '#E1F5EE', paddingTop: 24, paddingBottom: 20 }}>
         <p data-reveal className="section-label" style={{ color: 'var(--forest)' }}>Who this is for</p>
         <h2 data-reveal className="section-h2" style={{ '--i': 1, color: 'var(--forest)' }}>You already code.<br /><em style={{ color: 'var(--placed)' }}>Now build with AI.</em></h2>
-        <p data-reveal className="section-sub" style={{ '--i': 2 }}>The AI Native products of the next decade<br />will be built by engineers who know how to work with AI.</p>
+        <p data-reveal className="section-sub" style={{ '--i': 2 }}>The AI Native products of the next decade{' '}<br />will be built by engineers who know how to work with AI.</p>
         <div className="audience-grid">
           {FDE_AUDIENCE.map((a, i) => (
             <div className="audience-card" key={a.role} data-reveal style={{ '--i': i + 2 }}>
@@ -205,7 +205,7 @@ export default function Engineering() {
       <section className="section curric-section--gen curric-section--fde" style={{ background: 'white', paddingTop: 48 }}>
         <p data-reveal className="section-label" style={{ color: 'var(--forest)' }}>12-week AI engineering curriculum</p>
         <h2 data-reveal className="section-h2" style={{ '--i': 1, color: 'var(--forest)' }}>From prompt<br /><em style={{ color: 'var(--placed)' }}>to production.</em></h2>
-        <p data-reveal className="section-sub" style={{ '--i': 2 }}>Three phases, six real client cases and 100+ engineering competencies.<br />Pick a phase to open its weeks, tools and builds.</p>
+        <p data-reveal className="section-sub" style={{ '--i': 2 }}>Three phases, six real client cases and 100+ engineering competencies.{' '}<br />Pick a phase to open its weeks, tools and builds.</p>
         <div className="curric-acc" data-reveal style={{ '--i': 3 }}>
           {FDE_PHASES.map((p, i) => {
             const open = activePhase === i;
@@ -277,14 +277,15 @@ export default function Engineering() {
       <section className="section tracks-dark tracks-dark--fde" style={{ paddingTop: 48 }}>
         <p data-reveal className="section-label" style={{ color: '#5DCAA5' }}>Program highlights</p>
         <h2 data-reveal className="section-h2" style={{ '--i': 1, color: '#E1F5EE' }}>Everything an AI FDE does.<br /><em style={{ color: '#9FE1CB' }}>Real time and real builds.</em></h2>
-        <p data-reveal className="section-sub" style={{ '--i': 2, color: 'rgba(225,245,238,0.55)' }}>Twelve weeks of real briefs, real builds and real deadlines.<br />You don&rsquo;t watch AI get shipped. You deploy it.</p>
+        <p data-reveal className="section-sub" style={{ '--i': 2, color: 'rgba(225,245,238,0.55)' }}>Twelve weeks of real briefs, real builds and real deadlines.{' '}<br />You don&rsquo;t watch AI get shipped. You deploy it.</p>
         <div ref={hlRef} className={`fde-hl-panel${hlIn ? ' in' : ''}`}>
           {FDE_HIGHLIGHTS.map((h, i) => (
             <div className="fde-hl" key={h.label} style={{ '--i': i }} onMouseMove={glowAt}>
-              <span className="fde-hl-idx">{String(i + 1).padStart(2, '0')}</span>
               <span className="fde-hl-icon" aria-hidden="true"><svg viewBox="0 0 24 24">{HL_ICONS[h.icon]}</svg></span>
-              <p className="fde-hl-num"><CountUp value={h.num} run={hlIn} delay={i * 90} /></p>
-              <p className="fde-hl-label">{h.label}</p>
+              <div className="fde-hl-head">
+                <p className="fde-hl-num"><CountUp value={h.num} run={hlIn} delay={i * 90} /></p>
+                <p className="fde-hl-label">{h.label}</p>
+              </div>
               <p className="fde-hl-desc">{h.desc}</p>
               <span className="fde-hl-tag">{h.tag}</span>
             </div>

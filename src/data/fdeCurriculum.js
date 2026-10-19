@@ -179,10 +179,10 @@ export const FDE_AUDIENCE = [
 
 // "Program highlights" — where the Generalist page has its domain tracks.
 export const FDE_HIGHLIGHTS = [
-  { icon: 'target', tag: 'Weeks 1–10 · 10 a week', num: '100', label: 'Competencies', desc: 'Every skill an AI FDE is hired for, mapped and graded. From prompt design to production ownership, nothing is left to guesswork.' },
-  { icon: 'live', tag: 'Sat + Sun · 2 hrs each', num: '48', label: 'Live Hours', desc: 'Real-time, not recorded. Mentors play your client, change requirements mid-week, and you respond the way you would on the job.' },
-  { icon: 'calendar', tag: '3 phases of 4 weeks', num: '12', label: 'Weeks', desc: 'One intensive quarter, every Saturday and Sunday. Built to fit around college or a full-time job.' },
-  { icon: 'check', tag: 'One every week', num: '12', label: 'Assignments', desc: 'Ship something every single week. Each one is reviewed by a mentor and feeds the next build.' },
+  { icon: 'target', tag: 'Weeks 1–10 · 10 a week', num: '100', label: 'Competencies', desc: 'Every skill an AI FDE is hired for, mapped and graded, from prompt to production.' },
+  { icon: 'live', tag: 'Sat + Sun · 2 hrs each', num: '48', label: 'Live Hours', desc: 'Real-time, not recorded. Mentors play your client and change requirements mid-week.' },
+  { icon: 'calendar', tag: '3 phases of 4 weeks', num: '12', label: 'Weeks', desc: 'One intensive quarter, every Saturday and Sunday. Fits around college or a job.' },
+  { icon: 'check', tag: 'One every week', num: '12', label: 'Assignments', desc: 'Ship something every week, reviewed by a mentor and fed into the next build.' },
   { icon: 'rocket', tag: 'Deployed & defended', num: '6+', label: 'Production-Grade Projects', desc: 'Deployed, evaluated and secured, not demo-ware. The portfolio that gets you shortlisted.' },
-  { icon: 'case', tag: 'Banking → D2C', num: '6', label: 'Real Case Studies', desc: 'Banking, agriculture, GST, health insurance, D2C and your capstone. Real time problems, defended, built and shipped live.' },
+  { icon: 'case', tag: 'Banking → D2C', num: '6', label: 'Real Case Studies', desc: 'Banking, agriculture, GST, health, D2C and your capstone, built and defended live.' },
 ];

@@ -518,38 +518,24 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
 .curric-section--fde .curric-detail-mid,
 .curric-section--fde .curric-detail-tools { border-left-color: rgba(93,202,165,0.16); }
 /* AI FDE course page: the Generalist layout in the page's forest green. */
-.curric-section--fde .curric-tool { border-color: rgba(93,202,165,0.3); color: #E1F5EE; padding: 12px 12px; gap: 10px; font-size: 14px; }
+.curric-section--fde .curric-tool { border-color: rgba(93,202,165,0.3); color: #E1F5EE; }
 
 /* Program highlights — where the Generalist page has its domain tracks. One
-   panel split by hairlines (the gap shows the panel colour through), so the
-   six figures read as a set rather than six loose boxes. */
+   panel split by hairlines (the gap shows the panel colour through). Kept to
+   the Generalist tracks' height: figure and label share a line, the icon
+   sits top-right. */
 .tracks-dark.tracks-dark--fde { background: #062E26; }
-.fde-hl-panel { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin: 42px auto 0; max-width: 1200px; background: rgba(93,202,165,0.2); border: 1px solid rgba(93,202,165,0.2); border-radius: 20px; overflow: hidden; }
-.fde-hl { position: relative; display: flex; flex-direction: column; align-items: flex-start; background: #062E26; padding: 30px 30px 28px; overflow: hidden; transition: background .25s; }
-/* Each cell's contents rise in, one cell after another, when the panel
-   scrolls into view (.in). The cells themselves stay put, so the hairlines
-   never flash while they reveal. */
-.fde-hl > * { position: relative; opacity: 0; transform: translateY(14px); transition: opacity .7s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 90ms), transform .7s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 90ms); }
-.fde-hl > .fde-hl-idx { position: absolute; }
-.fde-hl-panel.in .fde-hl > * { opacity: 1; transform: none; }
-/* A soft light under the cursor. */
-.fde-hl::before { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .35s; background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(93,202,165,0.14), transparent 65%); }
-.fde-hl:hover::before { opacity: 1; }
+.fde-hl-panel { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin: 28px auto 0; max-width: 1200px; background: rgba(93,202,165,0.2); border: 1px solid rgba(93,202,165,0.2); border-radius: 16px; overflow: hidden; }
+.fde-hl { position: relative; display: flex; flex-direction: column; align-items: flex-start; background: #062E26; padding: 18px 22px 16px; overflow: hidden; transition: background .25s; }
 .fde-hl:hover { background: #072F27; }
-.fde-hl-idx { position: absolute; top: 24px; right: 26px; font-size: 11px; font-weight: 600; letter-spacing: .14em; color: rgba(93,202,165,0.55); }
-.fde-hl-num { margin: 0; font-family: 'DM Serif Display', serif; font-size: 54px; line-height: 1; background: linear-gradient(135deg, #E1F5EE 0%, #5DCAA5 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.fde-hl-label { margin: 12px 0 0; padding-bottom: 12px; font-size: 16px; font-weight: 600; color: #E1F5EE; position: relative; }
-.fde-hl-label::after { content: ''; position: absolute; left: 0; bottom: 0; width: 0; height: 2px; border-radius: 2px; background: #5DCAA5; transition: width .6s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 90ms + 450ms); }
-.fde-hl-panel.in .fde-hl-label::after { width: 28px; }
-.fde-hl:hover .fde-hl-label::after { width: 44px; transition-delay: 0s; }
-.fde-hl-num { font-variant-numeric: tabular-nums; }
-.fde-hl-desc { margin: 12px 0 18px; font-size: 13.5px; line-height: 1.65; color: rgba(225,245,238,0.62); }
-
-/* Highlight cells: an icon above the figure, a tag at the foot. */
-.fde-hl-icon { display: grid; place-items: center; width: 38px; height: 38px; margin-bottom: 16px; border-radius: 11px; background: rgba(93,202,165,0.12); border: 1px solid rgba(93,202,165,0.28); transition: transform .35s cubic-bezier(.2,.7,.2,1), background .25s; }
-.fde-hl-icon svg { width: 20px; height: 20px; fill: none; stroke: #5DCAA5; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.fde-hl-head { display: flex; align-items: baseline; gap: 10px; padding-right: 40px; }
+.fde-hl-num { margin: 0; font-family: 'DM Serif Display', serif; font-size: 36px; line-height: 1; font-variant-numeric: tabular-nums; background: linear-gradient(135deg, #E1F5EE 0%, #5DCAA5 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.fde-hl-label { margin: 0; font-size: 14px; font-weight: 600; color: #E1F5EE; }
+.fde-hl-desc { margin: 8px 0 12px; font-size: 12.5px; line-height: 1.55; color: rgba(225,245,238,0.62); }
+.fde-hl-icon { position: absolute; top: 18px; right: 18px; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: rgba(93,202,165,0.12); border: 1px solid rgba(93,202,165,0.28); transition: transform .35s cubic-bezier(.2,.7,.2,1), background .25s; }
+.fde-hl-icon svg { width: 16px; height: 16px; fill: none; stroke: #5DCAA5; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .fde-hl:hover .fde-hl-icon { transform: translateY(-2px) rotate(-6deg); background: rgba(93,202,165,0.2); }
-.fde-hl-tag { display: inline-block; margin-top: auto; padding: 4px 11px; border-radius: 999px; border: 1px solid rgba(93,202,165,0.3); color: #9FE1CB; font-size: 11.5px; font-weight: 500; letter-spacing: .02em; }
+.fde-hl-tag { margin-top: auto; padding: 3px 10px; border-radius: 999px; border: 1px solid rgba(93,202,165,0.3); color: #9FE1CB; font-size: 11px; font-weight: 500; letter-spacing: .02em; }
 
 /* ── AI FDE page motion ────────────────────────────────────────────────────
    Quiet, once-only movement: sections rise in as they scroll into view
@@ -586,9 +572,18 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
   .fde-hl-panel { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 760px) {
-  .fde-hl-panel { grid-template-columns: 1fr; border-radius: 16px; }
-  .fde-hl { padding: 24px 22px 22px; }
-  .fde-hl-num { font-size: 44px; }
+  .fde-hl-panel { margin-top: 24px; border-radius: 14px; }
+  .fde-hl { padding: 16px 14px 14px; }
+  .fde-hl-head { flex-direction: column; align-items: flex-start; gap: 4px; padding-right: 0; }
+  .fde-hl-num { font-size: 30px; }
+  .fde-hl-label { font-size: 12.5px; line-height: 1.3; padding-right: 30px; }
+  .fde-hl-desc { display: none; }
+  .fde-hl-head { margin-bottom: 10px; }
+  .fde-hl-tag { font-size: 10px; padding: 2px 8px; }
+  /* Let subtitles wrap on their own: the desktop line breaks strand a word here. */
+  .fde-page .section-sub br { display: none; }
+  .fde-hl-icon { top: 14px; right: 12px; width: 26px; height: 26px; border-radius: 8px; }
+  .fde-hl-icon svg { width: 14px; height: 14px; }
   .curric-section--gen.curric-section--fde .curric-acc-head { padding-right: 46px; }
 }
 
