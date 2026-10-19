@@ -179,10 +179,10 @@ export const FDE_AUDIENCE = [
 
 // "Program highlights" — where the Generalist page has its domain tracks.
 export const FDE_HIGHLIGHTS = [
-  { icon: 'target', tag: 'Weeks 1–10 · 10 a week', num: '100', label: 'Competencies', desc: 'Every skill an AI FDE is hired for, mapped and graded, from prompt to production.' },
-  { icon: 'live', tag: 'Sat + Sun · 2 hrs each', num: '48', label: 'Live Hours', desc: 'Real-time, not recorded. Mentors play your client and change requirements mid-week.' },
-  { icon: 'calendar', tag: '3 phases of 4 weeks', num: '12', label: 'Weeks', desc: 'One intensive quarter, every Saturday and Sunday. Fits around college or a job.' },
-  { icon: 'check', tag: 'One every week', num: '12', label: 'Assignments', desc: 'Ship something every week, reviewed by a mentor and fed into the next build.' },
-  { icon: 'rocket', tag: 'Deployed & defended', num: '6+', label: 'Production-Grade Projects', desc: 'Deployed, evaluated and secured, not demo-ware. The portfolio that gets you shortlisted.' },
-  { icon: 'case', tag: 'Banking → D2C', num: '6', label: 'Real Case Studies', desc: 'Banking, agriculture, GST, health, D2C and your capstone, built and defended live.' },
+  { num: '100', label: 'Graded Competencies', role: 'Mapped to the FDE role · graded weekly · prompt to production' },
+  { num: '48', label: 'Live Hours', role: 'Sat + Sun · 2 hrs each · mentors play your client' },
+  { num: '12', label: 'Weeks Intensive', role: '3 phases of 4 weeks · fits around college or a job' },
+  { num: '12', label: 'Weekly Assignments', role: 'One every week · mentor-reviewed · feeds the next build' },
+  { num: '6+', label: 'Production-Grade Projects', role: 'Deployed · evaluated · secured · defended live' },
+  { num: '6', label: 'Real Case Studies', role: 'Banking · agriculture · GST · health · D2C · capstone' },
 ];

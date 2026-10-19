@@ -18,7 +18,6 @@ import PhoneField from '../components/forms/PhoneField';
 import { isSmsReachable, phoneMinLength } from '../lib/phone';
 import BackgroundField from '../components/forms/BackgroundField';
 import { FDE_PATH } from '../lib/routes';
-import { useReveal } from '../hooks/useReveal';
 
 // The AI Forward Deployed Engineer course page. Same flow as the Generalist
 // page: hero, who it is for, curriculum, highlights, brochure, mentors,
@@ -91,7 +90,6 @@ export default function Engineering() {
   const [phaseWeek, setPhaseWeek] = useState(0);
   const weekDetailRef = useRef(null);
   // Program highlights reveal once, when they scroll into view.
-  const [hlRef, hlIn] = useReveal({ threshold: 0.2 });
   // Everything marked data-reveal rises in as it scrolls into view, and the
   // hero stats count up a moment after the page opens.
   const pageRef = useRevealAll();
@@ -278,16 +276,11 @@ export default function Engineering() {
         <p data-reveal className="section-label" style={{ color: '#5DCAA5' }}>Program highlights</p>
         <h2 data-reveal className="section-h2" style={{ '--i': 1, color: '#E1F5EE' }}>Everything an AI FDE does.<br /><em style={{ color: '#9FE1CB' }}>Real time and real builds.</em></h2>
         <p data-reveal className="section-sub" style={{ '--i': 2, color: 'rgba(225,245,238,0.55)' }}>Twelve weeks of real briefs, real builds and real deadlines.{' '}<br />You don&rsquo;t watch AI get shipped. You deploy it.</p>
-        <div ref={hlRef} className={`fde-hl-panel${hlIn ? ' in' : ''}`}>
+        <div className="tracks-grid">
           {FDE_HIGHLIGHTS.map((h, i) => (
-            <div className="fde-hl" key={h.label} style={{ '--i': i }} onMouseMove={glowAt}>
-              <span className="fde-hl-icon" aria-hidden="true"><svg viewBox="0 0 24 24">{HL_ICONS[h.icon]}</svg></span>
-              <div className="fde-hl-head">
-                <p className="fde-hl-num"><CountUp value={h.num} run={hlIn} delay={i * 90} /></p>
-                <p className="fde-hl-label">{h.label}</p>
-              </div>
-              <p className="fde-hl-desc">{h.desc}</p>
-              <span className="fde-hl-tag">{h.tag}</span>
+            <div data-reveal key={h.label} className="track" style={{ '--i': i % 3 }}>
+              <p className="track-name">{h.num} {h.label}</p>
+              <p className="track-role">{h.role}</p>
             </div>
           ))}
         </div>
@@ -415,21 +408,8 @@ function useRevealAll() {
 }
 
 /* Line icons for the highlight cells. */
-const HL_ICONS = {
-  target: <><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="4" /><circle cx="12" cy="12" r="0.8" /></>,
-  live: <><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></>,
-  calendar: <><rect x="4" y="5.5" width="16" height="14" rx="2.5" /><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4" /></>,
-  check: <><rect x="5" y="4" width="14" height="16" rx="2.5" /><path d="M8.5 12.5l2.3 2.3 4.7-4.8" /></>,
-  rocket: <><path d="M12 3c3.5 2 5 5.5 5 9l-2.5 3h-5L7 12c0-3.5 1.5-7 5-9z" /><circle cx="12" cy="9.5" r="1.6" /><path d="M9.5 18l-1.5 3M14.5 18l1.5 3M12 18v3" /></>,
-  case: <><rect x="3.5" y="7" width="17" height="12" rx="2.5" /><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M3.5 12.5h17" /></>,
-};
 
 /* A soft light that follows the cursor inside a highlight cell. */
-function glowAt(e) {
-  const r = e.currentTarget.getBoundingClientRect();
-  e.currentTarget.style.setProperty('--mx', `${e.clientX - r.left}px`);
-  e.currentTarget.style.setProperty('--my', `${e.clientY - r.top}px`);
-}
 
 // Avatar colours for the five audience cards, matching the Generalist page.
 const AVA_STYLES = [
