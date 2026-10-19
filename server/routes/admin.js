@@ -8,6 +8,7 @@ import { Profile } from '../models/Profile.js';
 import { CampaignSetting } from '../models/CampaignSetting.js';
 import { ShortLink } from '../models/ShortLink.js';
 import { ClientError } from '../models/ClientError.js';
+import { Notification } from '../models/Notification.js';
 import { requireAdmin } from '../middleware/adminAuth.js';
 import { buildCertificatePdf, buildCertificateEmail } from '../utils/certificate.js';
 import { sendMail, isMailConfigured, verifyMailer } from '../utils/email.js';
@@ -137,6 +138,34 @@ router.post('/login', (req, res) => {
 router.post('/logout', (_req, res) => {
   res.clearCookie(ADMIN_COOKIE_NAME, { path: '/' });
   res.json({ ok: true });
+});
+
+/* Alerts for the header bell: failed or abandoned payments and emails that did
+   not go out (utils/notify.js). Newest first, with the unread count. */
+router.get('/notifications', requireAdmin, async (_req, res) => {
+  try {
+    const [items, unread] = await Promise.all([
+      Notification.find().sort({ createdAt: -1 }).limit(50).lean(),
+      Notification.countDocuments({ read: false }),
+    ]);
+    res.json({ items, unread });
+  } catch (err) {
+    console.error('notifications list failed', err.message);
+    res.status(500).json({ error: 'Could not load notifications.' });
+  }
+});
+
+/* Mark one alert read (body.id) or all of them (no id). */
+router.post('/notifications/read', requireAdmin, async (req, res) => {
+  try {
+    const id = req.body?.id;
+    if (id) await Notification.updateOne({ _id: id }, { $set: { read: true } });
+    else await Notification.updateMany({ read: false }, { $set: { read: true } });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('notifications read failed', err.message);
+    res.status(500).json({ error: 'Could not update notifications.' });
+  }
 });
 
 /* Failures visitors hit during registration and checkout (POST /client-errors).

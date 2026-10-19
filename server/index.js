@@ -17,6 +17,7 @@ import shortRoutes from './routes/short.js';
 import paymentRoutes from './routes/payments.js';
 import postRoutes from './routes/posts.js';
 import clientErrorRoutes from './routes/clientErrors.js';
+import webhookRoutes from './routes/webhooks.js';
 import { rateLimit } from './middleware/rateLimit.js';
 
 const app = express();
@@ -75,6 +76,7 @@ app.use('/l', shortRoutes); // legacy prefix — keeps older short links working
 app.use('/payments', paymentRoutes);
 app.use('/posts', postRoutes);
 app.use('/client-errors', clientErrorRoutes);
+app.use('/webhooks', rateLimit({ name: 'webhooks', max: 120, windowMs: 1 * MIN }), webhookRoutes);
 
 async function start() {
   try {

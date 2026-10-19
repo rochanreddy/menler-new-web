@@ -5,6 +5,7 @@ import Seo from '../components/common/Seo';
 import AttendanceTab from '../components/admin/AttendanceTab';
 import RefundCaptcha from '../components/admin/RefundCaptcha';
 import EditPaymentModal from '../components/admin/EditPaymentModal';
+import NotificationBell from '../components/admin/NotificationBell';
 import { SearchResults, UpcomingMasterclasses } from '../components/admin/DashboardExtras';
 
 /* Courses offered in the manual-payment form. The paid campaign packs and the
@@ -2573,6 +2574,7 @@ function AdminPanel({ onLogout }) {
           />
           {query && <button type="button" onClick={() => setQuery('')} aria-label="Clear search">×</button>}
         </div>
+        <NotificationBell />
         <button className="admin-btn admin-logout" onClick={onLogout}>Log Out</button>
       </header>
 

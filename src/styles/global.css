@@ -3632,7 +3632,48 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 }
 .admin-tab:hover { color: var(--white); }
 .admin-tab.is-active { background: rgba(175,169,236,0.22); color: var(--white); }
-.admin-logout { margin-left: auto; }
+.admin-logout { margin-left: 0; white-space: nowrap; }
+
+/* ── Alerts bell (components/admin/NotificationBell.jsx) ── */
+.admin-bell { position: relative; margin-left: auto; }
+.admin-bell-btn {
+  position: relative; display: grid; place-items: center; width: 38px; height: 38px; cursor: pointer;
+  border-radius: 999px; border: 0.5px solid rgba(238,237,254,0.22); background: transparent; color: var(--white);
+  transition: background .16s;
+}
+.admin-bell-btn:hover, .admin-bell-btn.is-open { background: rgba(175,169,236,0.22); }
+.admin-bell-btn:focus-visible { outline: 2px solid var(--lavender); outline-offset: 2px; }
+.admin-bell-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.admin-bell-count {
+  position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 5px; box-sizing: border-box;
+  display: grid; place-items: center; border-radius: 999px; background: #E24B4A; color: #fff;
+  font-size: 10.5px; font-weight: 800; line-height: 1; border: 2px solid var(--ink);
+}
+.admin-bell-panel {
+  position: absolute; right: 0; top: calc(100% + 10px); width: min(380px, calc(100vw - 32px)); max-height: min(520px, 70vh);
+  display: flex; flex-direction: column; overflow: hidden; z-index: 30;
+  background: var(--white); color: var(--ink); border: 0.5px solid var(--border); border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(38,33,92,0.22);
+}
+.admin-bell-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 0.5px solid var(--border); font-size: 14px; }
+.admin-bell-head button { font: inherit; font-size: 12.5px; font-weight: 600; color: var(--specialist); background: none; border: none; cursor: pointer; padding: 2px 4px; }
+.admin-bell-empty { margin: 0; padding: 22px 16px; font-size: 13px; color: var(--text-muted); text-align: center; line-height: 1.5; }
+.admin-bell-list { list-style: none; margin: 0; padding: 0; overflow-y: auto; }
+.admin-bell-list li + li { border-top: 0.5px solid var(--border); }
+.admin-bell-item {
+  display: flex; gap: 11px; width: 100%; padding: 12px 14px; text-align: left; cursor: pointer;
+  background: none; border: none; font: inherit; color: inherit; transition: background .14s;
+}
+.admin-bell-item:hover { background: var(--cloud); }
+.admin-bell-item.is-unread { background: rgba(175,169,236,0.12); }
+.admin-bell-icon { flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; font-size: 13px; font-weight: 800; }
+.admin-bell-icon.is-bad { background: rgba(226,75,74,0.12); color: #C23A39; }
+.admin-bell-icon.is-warn { background: rgba(239,159,39,0.15); color: #A86A0F; }
+.admin-bell-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.admin-bell-title { font-size: 13.5px; font-weight: 700; }
+.admin-bell-detail { font-size: 12.5px; color: var(--text-muted); line-height: 1.4; overflow-wrap: anywhere; }
+.admin-bell-time { font-size: 11.5px; color: var(--text-muted); }
+.admin-bell-resolved { margin-left: 6px; font-style: normal; font-size: 11px; font-weight: 600; color: #0F6E56; background: rgba(29,158,117,0.12); padding: 1px 7px; border-radius: 999px; }
 
 .admin-main { padding: clamp(20px, 3vw, 36px) clamp(16px, 4vw, 40px); max-width: 1400px; margin: 0 auto; }
 .admin-empty { color: var(--text-muted); font-size: 14px; padding: 20px 0; text-align: center; }
@@ -4003,6 +4044,10 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
   .admin-two-col { grid-template-columns: 1fr; }
   .admin-topbar { flex-wrap: wrap; gap: 12px; }
   .admin-logout { margin-left: 0; }
+  /* The bell sits mid-row here, so its panel spans the screen under the top
+     bar (the sticky top bar is the panel's containing block). */
+  .admin-bell { position: static; }
+  .admin-bell-panel { left: 12px; right: 12px; width: auto; top: calc(100% + 6px); }
 }
 
 /* ── Kickstarter pricing card (single, premium) ── */
