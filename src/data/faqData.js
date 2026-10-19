@@ -123,7 +123,7 @@ export const ENGINEERING_FAQS = [
   },
   {
     q: 'How much time should I commit each week?',
-    a: 'Four live hours on weekends plus around 6–8 hours of build time.',
+    a: 'Four live hours on weekends plus around 7–8 hours of build time, about 12 hours a week.',
   },
   {
     q: 'Will I get a certificate?',
