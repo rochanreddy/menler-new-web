@@ -522,14 +522,29 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
 
 /* Program highlights — the Generalist's domain-track cards, in forest green. */
 .tracks-dark.tracks-dark--fde { background: #062E26; }
-.tracks-dark--fde .track { border-color: rgba(93,202,165,0.22); }
-.tracks-dark--fde .track:hover { border-color: rgba(93,202,165,0.5); background: rgba(93,202,165,0.06); }
-.fde-page .tracks-dark--fde .track[data-reveal] { transition: opacity .8s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 80ms), transform .8s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 80ms), border-color .2s, background .2s; }
-.tracks-dark--fde .track-name { color: #E1F5EE; }
+/* One panel split by hairlines (the 1px gap shows the panel colour through),
+   on the Generalist's track sizes: 13px name, 11px line, same cell height. */
+.tracks-dark--fde .fde-hl-panel { position: relative; gap: 1px; background: rgba(93,202,165,0.2); border: 1px solid rgba(93,202,165,0.2); border-radius: 16px; overflow: hidden; }
+/* 100.5px cells: two rows + the 1px hairline + the 2px border make the
+   Generalist grid's 204px (two 96px cards and a 12px gap), so the section
+   stays 481px tall. */
+.tracks-dark--fde .fde-hl-panel .track { position: relative; min-height: 100.5px; border: 0; border-radius: 0; background: #062E26; padding-right: 56px; transition: background .25s; }
+.tracks-dark--fde .fde-hl-panel .track:hover { background: #083A30; }
+.tracks-dark--fde .track-name { color: #E1F5EE; font-variant-numeric: tabular-nums; }
 .tracks-dark--fde .track-role { color: #5DCAA5; }
-.tracks-dark--fde .track { position: relative; padding-right: 52px; }
-.tracks-dark--fde .track-icon { position: absolute; top: 50%; right: 16px; transform: translateY(-50%); display: grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; background: rgba(93,202,165,0.12); border: 1px solid rgba(93,202,165,0.28); }
+.tracks-dark--fde .track-icon { position: absolute; top: calc(50% - 14px); right: 18px; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; background: rgba(93,202,165,0.12); border: 1px solid rgba(93,202,165,0.28); transition: transform .35s cubic-bezier(.2,.7,.2,1), background .25s; }
 .tracks-dark--fde .track-icon svg { width: 15px; height: 15px; fill: none; stroke: #5DCAA5; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.tracks-dark--fde .track:hover .track-icon { transform: translateY(-2px) rotate(-6deg); background: rgba(93,202,165,0.22); }
+
+/* Motion: cell contents rise in one after another (the cells stay put, so the
+   hairlines never flash), the figures count up, and one soft light passes
+   across the panel. Reduced motion lands on the finished state. */
+.fde-hl-panel .track > * { opacity: 0; transform: translateY(10px); transition: opacity .7s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 90ms), transform .7s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 90ms), background .25s; }
+.fde-hl-panel.in .track > * { opacity: 1; transform: none; }
+.fde-hl-panel.in .track:hover .track-icon { transform: translateY(-2px) rotate(-6deg); }
+.fde-hl-panel::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(105deg, transparent 35%, rgba(159,225,203,0.09) 50%, transparent 65%); transform: translateX(-100%); }
+.fde-hl-panel.in::after { animation: fdeSweep 1.6s ease-in-out .7s both; }
+@keyframes fdeSweep { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
 
 /* ── AI FDE page motion ────────────────────────────────────────────────────
    Quiet, once-only movement: sections rise in as they scroll into view
@@ -569,9 +584,9 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
 }
 
 @media (max-width: 540px) {
-  .tracks-dark--fde .tracks-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-  .tracks-dark--fde .track { min-height: 0; padding: 14px 12px; justify-content: flex-start; }
-  .tracks-dark--fde .track-icon { position: static; transform: none; width: 26px; height: 26px; margin-bottom: 10px; }
+  .tracks-dark--fde .fde-hl-panel { grid-template-columns: 1fr 1fr; gap: 1px; border-radius: 14px; }
+  .tracks-dark--fde .fde-hl-panel .track { min-height: 0; padding: 14px 12px; justify-content: flex-start; }
+  .tracks-dark--fde .track-icon { position: static; width: 26px; height: 26px; margin-bottom: 10px; }
   .tracks-dark--fde .track-icon svg { width: 14px; height: 14px; }
   .tracks-dark--fde .track-role { display: none; }
 
@@ -1124,6 +1139,14 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
 .captain-company { margin-top: auto; font-size: 17px; font-weight: 700; color: #fff; letter-spacing: .01em; }
 @media (max-width: 540px) {
   .captain-card { flex-basis: 260px; width: 260px; height: 260px; }
+  /* AI FDE page: smaller mentor cards on phones. */
+  .fde-page .captain-card { flex-basis: 200px; width: 200px; height: 200px; border-radius: 12px; }
+  .fde-page .captains-track > .captain-card { margin-right: 12px; }
+  .fde-page .captains-rows { gap: 12px; }
+  .fde-page .captain-overlay { padding: 16px 16px; }
+  .fde-page .captain-overlay--photo .captain-name { font-size: 17px; }
+  .fde-page .captain-role { font-size: 11px; margin-top: 3px; white-space: normal; }
+  .fde-page .captain-overlay--photo .captain-company { font-size: 12.5px; margin-top: 4px; }
 }
 
 /* Project builds — domain filter chips */

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { FDE_PHASES, FDE_AUDIENCE, FDE_HIGHLIGHTS } from '../data/fdeCurriculum';
+import { useReveal } from '../hooks/useReveal';
 import { useNavigate } from 'react-router-dom';
 import FaqList from '../components/common/FaqList';
 import CtaBanner from '../components/common/CtaBanner';
@@ -93,6 +94,7 @@ export default function Engineering() {
   // Everything marked data-reveal rises in as it scrolls into view, and the
   // hero stats count up a moment after the page opens.
   const pageRef = useRevealAll();
+  const [hlRef, hlIn] = useReveal({ threshold: 0.25 });
   const [heroGo, setHeroGo] = useState(false);
   useEffect(() => {
     const t = setTimeout(() => setHeroGo(true), 450);
@@ -276,11 +278,11 @@ export default function Engineering() {
         <p data-reveal className="section-label" style={{ color: '#5DCAA5' }}>Program highlights</p>
         <h2 data-reveal className="section-h2" style={{ '--i': 1, color: '#E1F5EE' }}>Everything an AI FDE does.<br /><em style={{ color: '#9FE1CB' }}>Real time and real builds.</em></h2>
         <p data-reveal className="section-sub" style={{ '--i': 2, color: 'rgba(225,245,238,0.55)' }}>Twelve weeks of real briefs, real builds and real deadlines.{' '}<br />You don&rsquo;t watch AI get shipped. You deploy it.</p>
-        <div className="tracks-grid">
+        <div ref={hlRef} className={`tracks-grid fde-hl-panel${hlIn ? ' in' : ''}`}>
           {FDE_HIGHLIGHTS.map((h, i) => (
-            <div data-reveal key={h.label} className="track" style={{ '--i': i % 3 }}>
+            <div key={h.label} className="track" style={{ '--i': i }}>
               <span className="track-icon" aria-hidden="true"><svg viewBox="0 0 24 24">{HL_ICONS[h.icon]}</svg></span>
-              <p className="track-name">{h.num} {h.label}</p>
+              <p className="track-name"><CountUp value={h.num} run={hlIn} delay={i * 90} /> {h.label}</p>
               <p className="track-role">{h.role}</p>
             </div>
           ))}
