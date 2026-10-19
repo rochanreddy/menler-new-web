@@ -167,7 +167,7 @@ export default function Engineering() {
         <div className="hero-inner">
           <p className="hero-eyebrow" style={{ color: '#5DCAA5' }}>AI Engineering Course · Claude AI FDE Fellowship</p>
           <h1 className="hero-h1" style={{ color: '#E1F5EE' }}>Build AI Systems.<br /><em style={{ color: '#9FE1CB' }}>Become an AI Forward Deployed Engineer.</em></h1>
-          <p className="hero-sub" style={{ color: 'rgba(225,245,238,0.6)' }}>India&rsquo;s only Claude-first AI Forward Deployed Engineer Fellowship.<strong className="hero-tagline" style={{ color: '#E1F5EE', fontWeight: 500 }}>Engineering that ships. Clients that sign. A portfolio that proves it.</strong></p>
+          <p className="hero-sub" style={{ color: 'rgba(225,245,238,0.6)' }}>India&rsquo;s only Claude-first AI Forward Deployed Engineer Fellowship.<strong className="hero-tagline" style={{ color: '#E1F5EE', fontWeight: 500 }}><span className="fde-tag-line">Engineering that ships.</span>{' '}<span className="fde-tag-line">Clients that sign.</span>{' '}<span className="fde-tag-line">A portfolio that proves it.</span></strong></p>
           <div className="hero-actions">
             <button className="btn-primary" style={{ background: '#1D9E75', minWidth: 220, textAlign: 'center' }} onClick={() => openFdeLead('Apply · AI FDE')}>Apply Now</button>
             <button className="btn-outline" style={{ color: '#9FE1CB', borderColor: 'rgba(93,202,165,0.5)', minWidth: 220, textAlign: 'center' }} onClick={() => go('/aptitude')}>Take the AI Aptitude Test</button>
@@ -279,6 +279,7 @@ export default function Engineering() {
         <div className="tracks-grid">
           {FDE_HIGHLIGHTS.map((h, i) => (
             <div data-reveal key={h.label} className="track" style={{ '--i': i % 3 }}>
+              <span className="track-icon" aria-hidden="true"><svg viewBox="0 0 24 24">{HL_ICONS[h.icon]}</svg></span>
               <p className="track-name">{h.num} {h.label}</p>
               <p className="track-role">{h.role}</p>
             </div>
@@ -360,6 +361,16 @@ export default function Engineering() {
 
 /* Counts a figure up from zero once `run` turns true ("6+" keeps its "+").
    Reduced motion, or a value that isn't a number, shows the final figure. */
+// Line icons for the Program highlights cards, drawn on a 24 grid.
+const HL_ICONS = {
+  target: <><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="4" /><circle cx="12" cy="12" r="0.8" /></>,
+  live: <><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></>,
+  calendar: <><rect x="4" y="5.5" width="16" height="14" rx="2.5" /><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4" /></>,
+  check: <><rect x="5" y="4" width="14" height="16" rx="2.5" /><path d="M8.5 12.5l2.3 2.3 4.7-4.8" /></>,
+  rocket: <><path d="M12 3c3.5 2 5 5.5 5 9l-2.5 3h-5L7 12c0-3.5 1.5-7 5-9z" /><circle cx="12" cy="9.5" r="1.6" /><path d="M9.5 18l-1.5 3M14.5 18l1.5 3M12 18v3" /></>,
+  case: <><rect x="3.5" y="7" width="17" height="12" rx="2.5" /><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M3.5 12.5h17" /></>,
+};
+
 function CountUp({ value, run, delay = 0, duration = 1100 }) {
   const m = String(value).match(/^(\d+)(.*)$/);
   const target = m ? Number(m[1]) : null;

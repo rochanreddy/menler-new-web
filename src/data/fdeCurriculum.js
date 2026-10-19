@@ -179,10 +179,10 @@ export const FDE_AUDIENCE = [
 
 // "Program highlights" — where the Generalist page has its domain tracks.
 export const FDE_HIGHLIGHTS = [
-  { num: '100', label: 'Graded Competencies', role: 'Mapped to the FDE role · graded weekly · prompt to production' },
-  { num: '48', label: 'Live Hours', role: 'Sat + Sun · 2 hrs each · mentors play your client' },
-  { num: '12', label: 'Weeks Intensive', role: '3 phases of 4 weeks · fits around college or a job' },
-  { num: '12', label: 'Weekly Assignments', role: 'One every week · mentor-reviewed · feeds the next build' },
-  { num: '6+', label: 'Production-Grade Projects', role: 'Deployed · evaluated · secured · defended live' },
-  { num: '6', label: 'Real Case Studies', role: 'Banking · agriculture · GST · health · D2C · capstone' },
+  { num: '100', label: 'Graded Competencies', icon: 'target', role: 'Mapped to the FDE role · graded weekly · prompt to production' },
+  { num: '48', label: 'Live Hours', icon: 'live', role: 'Sat + Sun · 2 hrs each · mentors play your client' },
+  { num: '12', label: 'Weeks Intensive', icon: 'calendar', role: '3 phases of 4 weeks · fits around college or a job' },
+  { num: '12', label: 'Weekly Assignments', icon: 'check', role: 'One every week · mentor-reviewed · feeds the next build' },
+  { num: '6+', label: 'Production-Grade Projects', icon: 'rocket', role: 'Deployed · evaluated · secured · defended live' },
+  { num: '6', label: 'Real Case Studies', icon: 'case', role: 'Banking · agriculture · GST · health · D2C · capstone' },
 ];
