@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import { FDE_PHASES, FDE_AUDIENCE, FDE_HIGHLIGHTS } from '../data/fdeCurriculum';
-import { useReveal } from '../hooks/useReveal';
 import { useNavigate } from 'react-router-dom';
 import FaqList from '../components/common/FaqList';
 import CtaBanner from '../components/common/CtaBanner';
@@ -90,11 +89,7 @@ export default function Engineering() {
   const [activePhase, setActivePhase] = useState(0);
   const [phaseWeek, setPhaseWeek] = useState(0);
   const weekDetailRef = useRef(null);
-  // Program highlights reveal once, when they scroll into view.
-  // Everything marked data-reveal rises in as it scrolls into view, and the
-  // hero stats count up a moment after the page opens.
-  const pageRef = useRevealAll();
-  const [hlRef, hlIn] = useReveal({ threshold: 0.25 });
+  // The hero stats count up a moment after the page opens.
   const [heroGo, setHeroGo] = useState(false);
   useEffect(() => {
     const t = setTimeout(() => setHeroGo(true), 450);
@@ -149,7 +144,7 @@ export default function Engineering() {
   };
 
   return (
-    <div className="fde-page" ref={pageRef}>
+    <div className="fde-page">
       {/* The Course, FAQ and breadcrumb structured data is baked into the HTML by
           scripts/prerender.mjs — a second Course added here would be a thinner
           duplicate, with no price or schedule. */}
@@ -175,7 +170,7 @@ export default function Engineering() {
             <button className="btn-outline" style={{ color: '#9FE1CB', borderColor: 'rgba(93,202,165,0.5)', minWidth: 220, textAlign: 'center' }} onClick={() => go('/aptitude')}>Take the AI Aptitude Test</button>
           </div>
           <div className="hero-stats" style={{ borderColor: 'rgba(93,202,165,0.2)' }}>
-            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}><CountUp value="100+" run={heroGo} /></span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Graded<br />Competencies</span></div>
+            <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}><CountUp value="100+" run={heroGo} /></span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Engineering<br />Competencies</span></div>
             <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}><CountUp value="25+" run={heroGo} delay={80} /></span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Hiring<br />Associations</span></div>
             <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}><CountUp value="12" run={heroGo} delay={160} /></span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Weeks Intensive<br />Fellowship</span></div>
             <div><span className="hero-stat-num" style={{ color: '#E1F5EE' }}><CountUp value="6" run={heroGo} delay={240} /></span><span className="hero-stat-lbl" style={{ color: '#5DCAA5' }}>Real Case<br />Engagements</span></div>
@@ -186,12 +181,12 @@ export default function Engineering() {
 
       {/* ── WHO THIS IS FOR ── */}
       <section className="section" style={{ background: '#E1F5EE', paddingTop: 24, paddingBottom: 20 }}>
-        <p data-reveal className="section-label" style={{ color: 'var(--forest)' }}>Who this is for</p>
-        <h2 data-reveal className="section-h2" style={{ '--i': 1, color: 'var(--forest)' }}>You already code.<br /><em style={{ color: 'var(--placed)' }}>Now build with AI.</em></h2>
-        <p data-reveal className="section-sub" style={{ '--i': 2 }}>The AI Native products of the next decade{' '}<br />will be built by engineers who know how to work with AI.</p>
+        <p className="section-label" style={{ color: 'var(--forest)' }}>Who this is for</p>
+        <h2 className="section-h2" style={{ '--i': 1, color: 'var(--forest)' }}>You already code.<br /><em style={{ color: 'var(--placed)' }}>Now build with AI.</em></h2>
+        <p className="section-sub" style={{ '--i': 2 }}>The AI Native products of the next decade{' '}<br />will be built by engineers who know how to work with AI.</p>
         <div className="audience-grid">
           {FDE_AUDIENCE.map((a, i) => (
-            <div className="audience-card" key={a.role} data-reveal style={{ '--i': i + 2 }}>
+            <div className="audience-card" key={a.role} style={{ '--i': i + 2 }}>
               <div className="ava" style={AVA_STYLES[i % AVA_STYLES.length]}>{i + 1}</div>
               <p className="audience-role">{a.role}</p>
               <p className="audience-desc">{a.desc}</p>
@@ -203,10 +198,10 @@ export default function Engineering() {
 
       {/* ── CURRICULUM ── three phases of four weeks (src/data/fdeCurriculum.js). */}
       <section className="section curric-section--gen curric-section--fde" style={{ background: 'white', paddingTop: 48 }}>
-        <p data-reveal className="section-label" style={{ color: 'var(--forest)' }}>12-week AI engineering curriculum</p>
-        <h2 data-reveal className="section-h2" style={{ '--i': 1, color: 'var(--forest)' }}>From prompt<br /><em style={{ color: 'var(--placed)' }}>to production.</em></h2>
-        <p data-reveal className="section-sub" style={{ '--i': 2 }}>Three phases, six real client cases and 100+ engineering competencies.{' '}<br />Pick a phase to open its weeks, tools and builds.</p>
-        <div className="curric-acc" data-reveal style={{ '--i': 3 }}>
+        <p className="section-label" style={{ color: 'var(--forest)' }}>12-week AI engineering curriculum</p>
+        <h2 className="section-h2" style={{ '--i': 1, color: 'var(--forest)' }}>From prompt<br /><em style={{ color: 'var(--placed)' }}>to production.</em></h2>
+        <p className="section-sub" style={{ '--i': 2 }}>Three phases, six real client cases and 100+ engineering competencies.{' '}<br />Pick a phase to open its weeks, tools and builds.</p>
+        <div className="curric-acc" style={{ '--i': 3 }}>
           {FDE_PHASES.map((p, i) => {
             const open = activePhase === i;
             const week = p.modules[phaseWeek] || p.modules[0];
@@ -275,15 +270,15 @@ export default function Engineering() {
 
       {/* ── PROGRAM HIGHLIGHTS ── where the Generalist page has its domain tracks. */}
       <section className="section tracks-dark tracks-dark--fde" style={{ paddingTop: 48 }}>
-        <p data-reveal className="section-label" style={{ color: '#5DCAA5' }}>Program highlights</p>
-        <h2 data-reveal className="section-h2" style={{ '--i': 1, color: '#E1F5EE' }}>Everything an AI FDE does.<br /><em style={{ color: '#9FE1CB' }}>Real time and real builds.</em></h2>
-        <p data-reveal className="section-sub" style={{ '--i': 2, color: 'rgba(225,245,238,0.55)' }}>Twelve weeks of real briefs, real builds and real deadlines.{' '}<br />You don&rsquo;t watch AI get shipped. You deploy it.</p>
-        <div ref={hlRef} className={`fde-hl-grid${hlIn ? ' in' : ''}`}>
+        <p className="section-label" style={{ color: '#5DCAA5' }}>Program highlights</p>
+        <h2 className="section-h2" style={{ '--i': 1, color: '#E1F5EE' }}>Everything an AI FDE does.<br /><em style={{ color: '#9FE1CB' }}>Real time and real builds.</em></h2>
+        <p className="section-sub" style={{ '--i': 2, color: 'rgba(225,245,238,0.55)' }}>Twelve weeks of real briefs, real builds and real deadlines.{' '}<br />You don&rsquo;t watch AI get shipped. You deploy it.</p>
+        <div className="fde-hl-grid">
           {FDE_HIGHLIGHTS.map((h, i) => (
             <div key={h.label} className="fde-hl-card" style={{ '--i': i }}>
               <div className="fde-hl-inner">
                 <span className="fde-hl-icon" aria-hidden="true"><svg viewBox="0 0 24 24">{HL_ICONS[h.icon]}</svg></span>
-                <p className="fde-hl-name"><CountUp value={h.num} run={hlIn} delay={i * 90} /> {h.label}</p>
+                <p className="fde-hl-name">{h.num} {h.label}</p>
                 <p className="fde-hl-desc">{h.role}</p>
               </div>
             </div>
@@ -293,7 +288,7 @@ export default function Engineering() {
 
       {/* ── LEAD FORM (brochure) ── */}
       <section className="mini-lead" style={{ paddingTop: 48 }}>
-        <div className="mini-lead-inner" data-reveal>
+        <div className="mini-lead-inner">
           <div className="mini-lead-copy">
             <h3 style={{ color: 'var(--forest)' }}>Get the AI FDE <em style={{ color: 'var(--placed)' }}>brochure & curriculum</em>.</h3>
             <p>Syllabus, schedule, fees &amp; scholarships — verify your number and download it instantly.</p>
@@ -315,17 +310,17 @@ export default function Engineering() {
       </section>
 
       {/* ── MENTORS ── */}
-      <div data-reveal><MentorsRail style={{ paddingTop: 48 }} labelStyle={{ color: 'var(--forest)' }} titleStyle={{ color: 'var(--forest)' }} /></div>
+      <div><MentorsRail style={{ paddingTop: 48 }} labelStyle={{ color: 'var(--forest)' }} titleStyle={{ color: 'var(--forest)' }} /></div>
 
       {/* ── HIRING PARTNERS & ROLES ── */}
-      <div data-reveal><HiringJobs {...ENG_HIRING} /></div>
+      <div><HiringJobs {...ENG_HIRING} /></div>
 
       {/* ── PRICING ── */}
       <section className="section kp-section fde-pricing" style={{ background: '#ffffff', paddingTop: 8 }}>
-        <p data-reveal className="section-label" style={{ textAlign: 'center', color: 'var(--forest)' }}>Pricing</p>
-        <h2 data-reveal className="section-h2" style={{ '--i': 1, textAlign: 'center', color: 'var(--forest)' }}>One fellowship. <em style={{ color: 'var(--placed)' }}>Everything shipped.</em></h2>
-        <p data-reveal className="section-sub" style={{ '--i': 2, textAlign: 'center', margin: '0 auto 32px' }}>Twelve weeks of Claude-first engineering, real client cases and placement support.</p>
-        <div data-reveal style={{ '--i': 3 }}><PricingCard
+        <p className="section-label" style={{ textAlign: 'center', color: 'var(--forest)' }}>Pricing</p>
+        <h2 className="section-h2" style={{ '--i': 1, textAlign: 'center', color: 'var(--forest)' }}>One fellowship. <em style={{ color: 'var(--placed)' }}>Everything shipped.</em></h2>
+        <p className="section-sub" style={{ '--i': 2, textAlign: 'center', margin: '0 auto 32px' }}>Twelve weeks of Claude-first engineering, real client cases and placement support.</p>
+        <div style={{ '--i': 3 }}><PricingCard
           {...FDE_PRICING}
           tagline=""
           ctaLabel="Enrol Now"
@@ -340,12 +335,12 @@ export default function Engineering() {
 
       {/* ── FAQ ── each question is an H3 (FAQPage schema is baked in by prerender). */}
       <section className="section" style={{ background: 'var(--parchment)', textAlign: 'center', paddingTop: 48 }}>
-        <p data-reveal className="section-label" style={{ color: 'var(--forest)' }}>FAQ</p>
-        <h2 data-reveal className="section-h2" style={{ '--i': 1, color: 'var(--forest)' }}>Your questions answered</h2>
-        <div data-reveal style={{ '--i': 2 }}><FaqList items={ENGINEERING_FAQS} headings /></div>
+        <p className="section-label" style={{ color: 'var(--forest)' }}>FAQ</p>
+        <h2 className="section-h2" style={{ '--i': 1, color: 'var(--forest)' }}>Your questions answered</h2>
+        <div style={{ '--i': 2 }}><FaqList items={ENGINEERING_FAQS} headings /></div>
       </section>
 
-      <div data-reveal><CtaBanner
+      <div><CtaBanner
         badge="Applications open · 30 seats"
         title="Ready to become an AI Forward Deployed Engineer?"
         subtitle="Twelve weeks. Six real cases. One production portfolio."
@@ -396,35 +391,6 @@ function CountUp({ value, run, delay = 0, duration = 1100 }) {
   if (target === null || still) return value;
   return <>{run ? n : 0}{m[2]}</>;
 }
-
-/* Adds .is-in to every [data-reveal] inside the page as it scrolls into
-   view, once each. Reduced motion (or no IntersectionObserver) shows
-   everything at once. */
-function useRevealAll() {
-  const ref = useRef(null);
-  useEffect(() => {
-    const root = ref.current;
-    if (!root) return undefined;
-    const els = [...root.querySelectorAll('[data-reveal]')];
-    const still = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    if (still || typeof IntersectionObserver === 'undefined') {
-      els.forEach((el) => el.classList.add('is-in'));
-      return undefined;
-    }
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
-      });
-    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, []);
-  return ref;
-}
-
-/* Line icons for the highlight cells. */
-
-/* A soft light that follows the cursor inside a highlight cell. */
 
 // Avatar colours for the five audience cards, matching the Generalist page.
 const AVA_STYLES = [

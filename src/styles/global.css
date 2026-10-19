@@ -550,17 +550,10 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
 .fde-hl-name { margin: 0 0 5px; font-size: 13px; font-weight: 600; color: #E1F5EE; font-variant-numeric: tabular-nums; }
 .fde-hl-desc { margin: 0; font-size: 11.5px; line-height: 1.5; color: rgba(159,225,203,0.75); }
 
-/* Reveal: the cards rise in one after another. */
-.fde-hl-grid .fde-hl-card { opacity: 0; transform: translateY(14px); transition: opacity .7s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 90ms), transform .7s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 90ms); }
-.fde-hl-grid.in .fde-hl-card { opacity: 1; transform: none; }
-
 /* ── AI FDE page motion ────────────────────────────────────────────────────
-   Quiet, once-only movement: sections rise in as they scroll into view
-   ([data-reveal] → .is-in, Engineering.jsx useRevealAll), the hero enters
+   No scroll-in: sections sit still like the other pages. The hero enters
    line by line over a slow drifting light, and cards lift a touch on hover.
    The global prefers-reduced-motion rule turns all of it off. */
-.fde-page [data-reveal] { opacity: 0; transform: translateY(22px); transition: opacity .8s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 80ms), transform .8s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 80ms); }
-.fde-page [data-reveal].is-in { opacity: 1; transform: none; }
 
 .fde-hero { position: relative; overflow: hidden; }
 .fde-hero .hero-inner { position: relative; z-index: 1; }
@@ -577,8 +570,8 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
 @keyframes fdeDriftA { from { transform: translate(0, 0) scale(1); } to { transform: translate(-90px, 70px) scale(1.12); } }
 @keyframes fdeDriftB { from { transform: translate(0, 0) scale(1); } to { transform: translate(110px, -60px) scale(.92); } }
 
-.fde-page .audience-card { transition: transform .3s cubic-bezier(.2,.7,.2,1), box-shadow .3s, opacity .8s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 80ms); }
-.fde-page .audience-card.is-in:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgba(8,80,65,0.12); }
+.fde-page .audience-card { transition: transform .3s cubic-bezier(.2,.7,.2,1), box-shadow .3s; }
+.fde-page .audience-card:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgba(8,80,65,0.12); }
 .fde-page .curric-tool { transition: transform .25s cubic-bezier(.2,.7,.2,1), border-color .25s; }
 .fde-page .curric-tool:hover { transform: translateY(-2px); border-color: rgba(93,202,165,0.6); }
 

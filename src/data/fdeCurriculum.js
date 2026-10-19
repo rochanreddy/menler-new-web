@@ -208,7 +208,7 @@ export const FDE_AUDIENCE = [
 
 // "Program highlights" — where the Generalist page has its domain tracks.
 export const FDE_HIGHLIGHTS = [
-  { num: '100', label: 'Graded Competencies', icon: 'target', role: 'Every skill an AI FDE needs, assessed one by one.' },
+  { num: '100', label: 'Engineering Competencies', icon: 'target', role: 'Every skill an AI FDE needs, assessed one by one.' },
   { num: '48', label: 'Live Hours', icon: 'live', role: 'Live weekend sessions led by industry mentors.' },
   { num: '12', label: 'Weeks Intensive', icon: 'calendar', role: 'A focused programme that fits around work or college.' },
   { num: '12', label: 'Weekly Assignments', icon: 'check', role: 'One hands-on assignment a week, reviewed by a mentor.' },
