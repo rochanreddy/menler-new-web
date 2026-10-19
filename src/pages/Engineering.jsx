@@ -168,7 +168,7 @@ export default function Engineering() {
         <div className="hero-ring r2" style={{ borderColor: 'rgba(93,202,165,0.08)' }} />
         <div className="hero-inner">
           <p className="hero-eyebrow" style={{ color: '#5DCAA5' }}>AI Engineering Course · Claude AI FDE Fellowship</p>
-          <h1 className="hero-h1" style={{ color: '#E1F5EE' }}>Build AI Systems.<br /><em style={{ color: '#9FE1CB' }}>Become an AI Forward Deployed Engineer.</em></h1>
+          <h1 className="hero-h1" style={{ color: '#E1F5EE' }}>Build AI Systems.<br /><em style={{ color: '#9FE1CB' }}>Become an AI FDE.</em></h1>
           <p className="hero-sub" style={{ color: 'rgba(225,245,238,0.6)' }}>India&rsquo;s only Claude-first AI Forward Deployed Engineer Fellowship.<strong className="hero-tagline" style={{ color: '#E1F5EE', fontWeight: 500 }}><span className="fde-tag-line">Engineering that ships.</span>{' '}<span className="fde-tag-line">Clients that sign.</span>{' '}<span className="fde-tag-line">A portfolio that proves it.</span></strong></p>
           <div className="hero-actions">
             <button className="btn-primary" style={{ background: '#1D9E75', minWidth: 220, textAlign: 'center' }} onClick={() => openFdeLead('Apply · AI FDE')}>Apply Now</button>
@@ -278,12 +278,14 @@ export default function Engineering() {
         <p data-reveal className="section-label" style={{ color: '#5DCAA5' }}>Program highlights</p>
         <h2 data-reveal className="section-h2" style={{ '--i': 1, color: '#E1F5EE' }}>Everything an AI FDE does.<br /><em style={{ color: '#9FE1CB' }}>Real time and real builds.</em></h2>
         <p data-reveal className="section-sub" style={{ '--i': 2, color: 'rgba(225,245,238,0.55)' }}>Twelve weeks of real briefs, real builds and real deadlines.{' '}<br />You don&rsquo;t watch AI get shipped. You deploy it.</p>
-        <div ref={hlRef} className={`tracks-grid fde-hl-panel${hlIn ? ' in' : ''}`}>
+        <div ref={hlRef} className={`fde-hl-grid${hlIn ? ' in' : ''}`}>
           {FDE_HIGHLIGHTS.map((h, i) => (
-            <div key={h.label} className="track" style={{ '--i': i }}>
-              <span className="track-icon" aria-hidden="true"><svg viewBox="0 0 24 24">{HL_ICONS[h.icon]}</svg></span>
-              <p className="track-name"><CountUp value={h.num} run={hlIn} delay={i * 90} /> {h.label}</p>
-              <p className="track-role">{h.role}</p>
+            <div key={h.label} className="fde-hl-card" style={{ '--i': i }}>
+              <div className="fde-hl-inner">
+                <span className="fde-hl-icon" aria-hidden="true"><svg viewBox="0 0 24 24">{HL_ICONS[h.icon]}</svg></span>
+                <p className="fde-hl-name"><CountUp value={h.num} run={hlIn} delay={i * 90} /> {h.label}</p>
+                <p className="fde-hl-desc">{h.role}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -328,7 +330,7 @@ export default function Engineering() {
           tagline=""
           ctaLabel="Enrol Now"
           // Two lines, like the Generalist card: .kp-desc keeps each on one row on desktop.
-          description={<>Ship your AI engineering portfolio in 12 weeks.<span className="kp-desc-line2">Build RAG, agents and MCP servers on real Indian cases, then deploy and defend them.</span></>}
+          description={<>Ship your AI engineering portfolio in 12 weeks.<span className="kp-desc-line2">RAG, agents and MCP servers, built on real Indian cases.</span></>}
           onCta={() => setPayProgram('engineering')}
         /></div>
         <div style={{ textAlign: 'center', marginTop: 56 }}>

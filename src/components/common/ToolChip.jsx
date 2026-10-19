@@ -50,7 +50,7 @@ export default function ToolChip({ name }) {
   return (
     <span className="curric-tool">
       {src && <img className="curric-tool-logo" src={src} alt="" width="36" height="36" loading="lazy" onError={() => setI(i + 1)} />}
-      {name}
+      <span className="curric-tool-name">{name}</span>
     </span>
   );
 }

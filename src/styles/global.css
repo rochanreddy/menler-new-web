@@ -422,6 +422,8 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
 .curric .curric-detail-tools .curric-tool,
 .curric-acc .curric-detail-tools .curric-tool,
 .curric-detail--triple .curric-detail-tools .curric-tool { width: 100%; justify-content: flex-start; }
+.curric-tool { min-width: 0; }
+.curric-tool-name { min-width: 0; overflow-wrap: anywhere; hyphens: auto; line-height: 1.25; }
 .curric-tool-logo { width: 36px; height: 36px; object-fit: contain; background: #fff; border-radius: 7px; padding: 4px; flex-shrink: 0; }
 /* Mobile: tool stack drops to two per row so long names (e.g. "ElevenLabs")
    don't get clipped; allow them to wrap inside the chip if still tight. */
@@ -520,31 +522,37 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
 /* AI FDE course page: the Generalist layout in the page's forest green. */
 .curric-section--fde .curric-tool { border-color: rgba(93,202,165,0.3); color: #E1F5EE; }
 
-/* Program highlights — the Generalist's domain-track cards, in forest green. */
-.tracks-dark.tracks-dark--fde { background: #062E26; }
-/* One panel split by hairlines (the 1px gap shows the panel colour through),
-   on the Generalist's track sizes: 13px name, 11px line, same cell height. */
-.tracks-dark--fde .fde-hl-panel { position: relative; gap: 1px; background: rgba(93,202,165,0.2); border: 1px solid rgba(93,202,165,0.2); border-radius: 16px; overflow: hidden; }
-/* 100.5px cells: two rows + the 1px hairline + the 2px border make the
-   Generalist grid's 204px (two 96px cards and a 12px gap), so the section
-   stays 481px tall. */
-.tracks-dark--fde .fde-hl-panel .track { position: relative; min-height: 100.5px; border: 0; border-radius: 0; background: #062E26; padding-right: 56px; transition: background .25s; }
-.tracks-dark--fde .fde-hl-panel .track:hover { background: #083A30; }
-.tracks-dark--fde .track-name { color: #E1F5EE; font-variant-numeric: tabular-nums; }
-.tracks-dark--fde .track-role { color: #5DCAA5; }
-.tracks-dark--fde .track-icon { position: absolute; top: calc(50% - 14px); right: 18px; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; background: rgba(93,202,165,0.12); border: 1px solid rgba(93,202,165,0.28); transition: transform .35s cubic-bezier(.2,.7,.2,1), background .25s; }
-.tracks-dark--fde .track-icon svg { width: 15px; height: 15px; fill: none; stroke: #5DCAA5; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.tracks-dark--fde .track:hover .track-icon { transform: translateY(-2px) rotate(-6deg); background: rgba(93,202,165,0.22); }
+/* AI FDE curriculum on wider screens: smaller type inside an open phase. */
+@media (min-width: 641px) {
+  .fde-page .curric-section--fde .curric-label { font-size: 15px; margin-bottom: 12px; }
+  .fde-page .curric-section--fde .curric-week-head { padding: 11px 14px; }
+  .fde-page .curric-section--fde .curric-week-title { font-size: 13px; }
+  .fde-page .curric-section--fde .curric-modules li { font-size: 13.5px; line-height: 1.5; margin-bottom: 7px; }
+  .fde-page .curric-section--fde .curric-modules li::before { top: 8px; }
+  .fde-page .curric-section--fde .curric-detail-tools .curric-tool { padding: 9px 12px; font-size: 13px; gap: 9px; }
+  .fde-page .curric-section--fde .curric-detail-tools .curric-tool-logo { width: 26px; height: 26px; }
+}
 
-/* Motion: cell contents rise in one after another (the cells stay put, so the
-   hairlines never flash), the figures count up, and one soft light passes
-   across the panel. Reduced motion lands on the finished state. */
-.fde-hl-panel .track > * { opacity: 0; transform: translateY(10px); transition: opacity .7s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 90ms), transform .7s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 90ms), background .25s; }
-.fde-hl-panel.in .track > * { opacity: 1; transform: none; }
-.fde-hl-panel.in .track:hover .track-icon { transform: translateY(-2px) rotate(-6deg); }
-.fde-hl-panel::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(105deg, transparent 35%, rgba(159,225,203,0.09) 50%, transparent 65%); transform: translateX(-100%); }
-.fde-hl-panel.in::after { animation: fdeSweep 1.6s ease-in-out .7s both; }
-@keyframes fdeSweep { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+/* Program highlights — forest green. */
+.tracks-dark.tracks-dark--fde { background: #062E26; }
+/* Separate cards: icon, figure + name, one line of copy. A light runs round
+   each card's border — a conic gradient turning behind a 1px inset — each
+   card a beat behind the last so they never move in step. */
+.fde-hl-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; max-width: 1200px; margin: 32px auto 0; }
+.fde-hl-card { position: relative; isolation: isolate; overflow: hidden; padding: 1px; border-radius: 14px; background: rgba(93,202,165,0.16); }
+.fde-hl-card::before { content: ""; position: absolute; z-index: -1; left: 50%; top: 50%; width: 220%; aspect-ratio: 1; translate: -50% -50%; background: conic-gradient(from 0deg, transparent 0 62%, rgba(93,202,165,0.25) 74%, #9FE1CB 86%, #E1F5EE 89%, transparent 94%); animation: fdeSpin 6s linear infinite; animation-delay: calc(var(--i, 0) * -1s); }
+@keyframes fdeSpin { to { rotate: 360deg; } }
+.fde-hl-inner { position: relative; height: 100%; padding: 16px 18px 18px; border-radius: 13px; background: linear-gradient(180deg, #08362C 0%, #062A22 100%); transition: background .25s; }
+.fde-hl-card:hover .fde-hl-inner { background: linear-gradient(180deg, #0A4034 0%, #072F26 100%); }
+.fde-hl-icon { display: grid; place-items: center; width: 28px; height: 28px; margin-bottom: 12px; border-radius: 8px; background: rgba(93,202,165,0.12); border: 1px solid rgba(93,202,165,0.28); transition: transform .35s cubic-bezier(.2,.7,.2,1), background .25s; }
+.fde-hl-icon svg { width: 15px; height: 15px; fill: none; stroke: #5DCAA5; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.fde-hl-card:hover .fde-hl-icon { transform: translateY(-2px) rotate(-6deg); background: rgba(93,202,165,0.22); }
+.fde-hl-name { margin: 0 0 5px; font-size: 13px; font-weight: 600; color: #E1F5EE; font-variant-numeric: tabular-nums; }
+.fde-hl-desc { margin: 0; font-size: 11.5px; line-height: 1.5; color: rgba(159,225,203,0.75); }
+
+/* Reveal: the cards rise in one after another. */
+.fde-hl-grid .fde-hl-card { opacity: 0; transform: translateY(14px); transition: opacity .7s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 90ms), transform .7s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 90ms); }
+.fde-hl-grid.in .fde-hl-card { opacity: 1; transform: none; }
 
 /* ── AI FDE page motion ────────────────────────────────────────────────────
    Quiet, once-only movement: sections rise in as they scroll into view
@@ -577,6 +585,9 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
 /* FAQ questions as headings that look unchanged. */
 .faq-h { margin: 0; font: inherit; }
 
+@media (max-width: 1100px) {
+  .fde-hl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 @media (max-width: 760px) {
   /* Let subtitles wrap on their own: the desktop line breaks strand a word here. */
   .fde-page .section-sub br { display: none; }
@@ -584,11 +595,13 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
 }
 
 @media (max-width: 540px) {
-  .tracks-dark--fde .fde-hl-panel { grid-template-columns: 1fr 1fr; gap: 1px; border-radius: 14px; }
-  .tracks-dark--fde .fde-hl-panel .track { min-height: 0; padding: 14px 12px; justify-content: flex-start; }
-  .tracks-dark--fde .track-icon { position: static; width: 26px; height: 26px; margin-bottom: 10px; }
-  .tracks-dark--fde .track-icon svg { width: 14px; height: 14px; }
-  .tracks-dark--fde .track-role { display: none; }
+  /* Highlights on phones: icon and name only, two across. */
+  .fde-hl-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 24px; }
+  .fde-hl-inner { padding: 14px 12px; }
+  .fde-hl-icon { width: 26px; height: 26px; margin-bottom: 10px; }
+  .fde-hl-icon svg { width: 14px; height: 14px; }
+  .fde-hl-name { margin: 0; font-size: 12.5px; line-height: 1.3; }
+  .fde-hl-desc { display: none; }
 
   /* Hero: the five figures on one line, the tagline one phrase per line. */
   .fde-page .hero-screen .hero-big .hero-stats { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0 6px; }
@@ -603,9 +616,9 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
   .fde-page .curric-section--fde .curric-week-head { padding: 9px 12px; }
   .fde-page .curric-section--fde .curric-week-title { font-size: 12.5px; }
   .fde-page .curric-section--fde .curric-modules li { font-size: 12px; margin-bottom: 4px; }
-  .fde-page .curric-section--fde .curric-detail-tools .curric-tools { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
-  .fde-page .curric-section--fde .curric-detail-tools .curric-tool { padding: 7px 7px; font-size: 11px; gap: 6px; border-radius: 10px; }
-  .fde-page .curric-section--fde .curric-detail-tools .curric-tool-logo { width: 20px; height: 20px; }
+  .fde-page .curric-section--fde .curric-detail-tools .curric-tools { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .fde-page .curric-section--fde .curric-detail-tools .curric-tool { padding: 4px 8px; font-size: 11.5px; gap: 7px; border-radius: 9px; }
+  .fde-page .curric-section--fde .curric-detail-tools .curric-tool-logo { width: 18px; height: 18px; padding: 2px; border-radius: 5px; }
 }
 
 /* Generalist curriculum: more compact accordion cards on mobile. */
