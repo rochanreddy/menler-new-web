@@ -3,6 +3,10 @@ import { GENERALIST_QUALIFY } from '../data/qualifyQuestions';
 import { adminApi } from '../lib/adminApi';
 import Seo from '../components/common/Seo';
 import AttendanceTab from '../components/admin/AttendanceTab';
+import RefundCaptcha from '../components/admin/RefundCaptcha';
+import EditPaymentModal from '../components/admin/EditPaymentModal';
+import NotificationBell from '../components/admin/NotificationBell';
+import { SearchResults, UpcomingMasterclasses } from '../components/admin/DashboardExtras';
 
 /* Courses offered in the manual-payment form. The paid campaign packs and the
  * library aren't in the client price list (registration for those is free and
@@ -413,6 +417,9 @@ function Overview() {
 
   return (
     <div className="admin-overview">
+      {/* What the team asks first: how the next sessions are filling, and money in. */}
+      <UpcomingMasterclasses />
+
       <div className="admin-stat-grid">
         <StatCard label="Total leads" value={t.leads} accent="var(--specialist)"
           note="Every form submission — website and campaign pages together" />
@@ -832,11 +839,20 @@ function UsersTab() {
   const [verifyErr, setVerifyErr] = useState('');
   const [verifyDone, setVerifyDone] = useState(null);
   const [refundRow, setRefundRow] = useState(null);
+  // The row open in Edit payment (details + later instalments).
+  const [editRow, setEditRow] = useState(null);
   const [refundAmount, setRefundAmount] = useState('');
   const [refundNote, setRefundNote] = useState('');
   const [refundBusy, setRefundBusy] = useState(false);
   const [refundErr, setRefundErr] = useState('');
   const [refundDone, setRefundDone] = useState(null);
+  // Every refund is approved by a code texted to the owner's phone:
+  // 'form' (amount, reason, security check) → 'code' (type the code).
+  const [refundStep, setRefundStep] = useState('form');
+  const [refundCaptcha, setRefundCaptcha] = useState('');
+  const [refundCaptchaKey, setRefundCaptchaKey] = useState(0);
+  const [refundApproval, setRefundApproval] = useState(null);
+  const [refundOtp, setRefundOtp] = useState('');
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -917,22 +933,50 @@ function UsersTab() {
     }
   };
 
+  // Back to the first step with a fresh security check (each one works once).
+  const refundToForm = (msg = '') => {
+    setRefundStep('form');
+    setRefundApproval(null); setRefundOtp('');
+    setRefundCaptcha(''); setRefundCaptchaKey((k) => k + 1);
+    setRefundErr(msg);
+  };
+
   const openRefund = (row) => {
     setRefundRow(row);
     setRefundAmount(String(row.amount));
     setRefundNote('');
-    setRefundErr(''); setRefundDone(null);
+    setRefundDone(null);
+    refundToForm();
   };
 
-  const doRefund = async () => {
+  const sendRefundOtp = async () => {
     if (!refundRow) return;
     setRefundBusy(true); setRefundErr('');
     try {
-      const res = await adminApi.refundPayment(refundRow._id, { amount: Number(refundAmount), note: refundNote.trim() });
+      const res = await adminApi.refundOtp(refundRow._id, {
+        amount: Number(refundAmount), note: refundNote.trim(), captchaToken: refundCaptcha,
+      });
+      setRefundApproval(res);
+      setRefundOtp('');
+      setRefundStep('code');
+    } catch (err) {
+      refundToForm(err.message || 'Could not send the code.');
+    } finally {
+      setRefundBusy(false);
+    }
+  };
+
+  const doRefund = async () => {
+    if (!refundRow || !refundApproval) return;
+    setRefundBusy(true); setRefundErr('');
+    try {
+      const res = await adminApi.refundPayment(refundRow._id, { approvalId: refundApproval.approvalId, otp: refundOtp });
       setRefundDone(res.refund);
       load();
     } catch (err) {
-      setRefundErr(err.message || 'Could not start the refund.');
+      // An expired or used-up code sends them back to ask for a new one.
+      if (err.status === 400 && /expired|no longer|new one/i.test(err.message || '')) refundToForm(err.message);
+      else setRefundErr(err.message || 'Could not start the refund.');
       load();   // an uncertain attempt leaves the row marked; show it
     } finally {
       setRefundBusy(false);
@@ -1147,6 +1191,7 @@ function UsersTab() {
                       title={r.extra?.actual_price ? `List price ₹${r.extra.actual_price.toLocaleString('en-IN')}` : ''}>
                       Payment {r.extra.payment_cycle}
                       {r.extra?.sold_price ? ` · sold ₹${r.extra.sold_price.toLocaleString('en-IN')}` : ''}
+                      {r.extra?.sold_price > r.amount ? ` · ₹${(r.extra.sold_price - r.amount).toLocaleString('en-IN')} due` : ''}
                     </span>
                   )}
                   {/* How it was paid, under what was paid. EMI is called out
@@ -1191,6 +1236,10 @@ function UsersTab() {
                 </td>
                 <td className="admin-muted">{fmtDate(r.paid_at || r.createdAt)}</td>
                 <td className="admin-rowacts">
+                  <button type="button" className="admin-refundbtn" title="Edit details, or record the next instalment on this row"
+                    onClick={(e) => { e.stopPropagation(); setEditRow(r); }}>
+                    Edit
+                  </button>
                   {canRefund(r) && (
                     <button type="button" className="admin-refundbtn" title="Send this payment back through Cashfree"
                       onClick={(e) => { e.stopPropagation(); openRefund(r); }}>
@@ -1300,6 +1349,15 @@ function UsersTab() {
         />
       )}
 
+      {editRow && (
+        <EditPaymentModal
+          row={editRow}
+          courseOptions={COURSE_OPTIONS}
+          onClose={() => setEditRow(null)}
+          onSaved={load}
+        />
+      )}
+
       {refundRow && (
         <div className="admin-modal-backdrop" onClick={() => !refundBusy && setRefundRow(null)} role="presentation" data-lenis-prevent>
           <div className="admin-modal admin-modal--sm" onClick={(e) => e.stopPropagation()}
@@ -1329,9 +1387,36 @@ function UsersTab() {
                 </>
               ) : (
                 <>
+                  {refundStep === 'code' && refundApproval ? (
+                  <>
+                    <div className="admin-note admin-note--ok">
+                      <b>Code sent to {refundApproval.phone}.</b> Type the 6-digit code below. It approves a
+                      refund of <b>₹{Number(refundAmount).toLocaleString('en-IN')}</b> for this payment only.
+                    </div>
+                    <label className="admin-field"><span>Approval code</span>
+                      <input className="admin-search admin-otp-input" inputMode="numeric" autoComplete="one-time-code"
+                        maxLength={6} placeholder="6-digit code" autoFocus value={refundOtp} disabled={refundBusy}
+                        onChange={(e) => { setRefundOtp(e.target.value.replace(/\D/g, '').slice(0, 6)); setRefundErr(''); }}
+                        onKeyDown={(e) => { if (e.key === 'Enter' && refundOtp.length === 6 && !refundBusy) doRefund(); }} />
+                      <em className="admin-field-hint">
+                        The code works for 10 minutes. Didn&rsquo;t get it?{' '}
+                        <button type="button" className="admin-linkbtn" disabled={refundBusy} onClick={() => refundToForm()}>Send a new one</button>
+                      </em>
+                    </label>
+                    {refundErr && <div className="admin-note admin-note--bad">{refundErr}</div>}
+                    <div className="admin-modal-foot">
+                      <button className="admin-btn" type="button" onClick={() => refundToForm()} disabled={refundBusy}>Back</button>
+                      <button className="admin-btn admin-btn--danger" type="button" onClick={doRefund}
+                        disabled={refundBusy || refundOtp.length !== 6}>
+                        {refundBusy ? 'Refunding…' : `Verify & refund ₹${Number(refundAmount || 0).toLocaleString('en-IN')}`}
+                      </button>
+                    </div>
+                  </>
+                  ) : (
+                  <>
                   <div className="admin-note admin-note--warn">
                     <b>This sends real money back and cannot be undone.</b> It goes through Cashfree to
-                    the card, UPI or bank account that paid.
+                    the card, UPI or bank account that paid. Every refund needs a code sent to the owner&rsquo;s phone.
                   </div>
                   <label className="admin-field"><span>Refund amount (₹)</span>
                     <input className="admin-search" type="number" min="1" max={refundRow.amount} step="any"
@@ -1345,14 +1430,17 @@ function UsersTab() {
                     <input className="admin-search" placeholder="e.g. Could not attend the batch" maxLength={100}
                       value={refundNote} disabled={refundBusy} onChange={(e) => setRefundNote(e.target.value)} />
                   </label>
+                  <RefundCaptcha key={refundCaptchaKey} onToken={setRefundCaptcha} />
                   {refundErr && <div className="admin-note admin-note--bad">{refundErr}</div>}
                   <div className="admin-modal-foot">
                     <button className="admin-btn" type="button" onClick={() => setRefundRow(null)} disabled={refundBusy}>Cancel</button>
-                    <button className="admin-btn admin-btn--danger" type="button" onClick={doRefund}
-                      disabled={refundBusy || !(Number(refundAmount) > 0) || Number(refundAmount) > refundRow.amount}>
-                      {refundBusy ? 'Refunding…' : `Refund ₹${Number(refundAmount || 0).toLocaleString('en-IN')}`}
+                    <button className="admin-btn admin-btn--danger" type="button" onClick={sendRefundOtp}
+                      disabled={refundBusy || !refundCaptcha || !(Number(refundAmount) > 0) || Number(refundAmount) > refundRow.amount}>
+                      {refundBusy ? 'Sending code…' : 'Send OTP to approve'}
                     </button>
                   </div>
+                  </>
+                  )}
                 </>
               )}
             </div>
@@ -2454,6 +2542,9 @@ const TABS = [
 
 function AdminPanel({ onLogout }) {
   const [tab, setTab] = useState('overview');
+  // Search runs across leads, payments and accounts, whatever tab is open.
+  const [query, setQuery] = useState('');
+  const searching = query.trim().length >= 3;
 
   return (
     <div className="admin-shell">
@@ -2467,24 +2558,36 @@ function AdminPanel({ onLogout }) {
             <button
               key={t.key}
               className={`admin-tab${tab === t.key ? ' is-active' : ''}`}
-              onClick={() => setTab(t.key)}
+              onClick={() => { setTab(t.key); setQuery(''); }}
             >
               {t.label}
             </button>
           ))}
         </nav>
+        <div className="admin-search-box">
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search name, email or phone…"
+            aria-label="Search leads, payments and accounts"
+          />
+          {query && <button type="button" onClick={() => setQuery('')} aria-label="Clear search">×</button>}
+        </div>
+        <NotificationBell />
         <button className="admin-btn admin-logout" onClick={onLogout}>Log Out</button>
       </header>
 
       <main className="admin-main">
-        {tab === 'overview' && <Overview />}
-        {tab === 'leads' && <LeadsTab />}
-        {tab === 'users' && <UsersTab />}
-        {tab === 'campaigns' && <CampaignsTab />}
-        {tab === 'shortlinks' && <ShortLinksTab />}
-        {tab === 'certificates' && <CertificatesTab />}
-        {tab === 'attendance' && <AttendanceTab />}
-        {tab === 'errors' && <ErrorsTab />}
+        {searching && <SearchResults q={query.trim()} />}
+        {!searching && tab === 'overview' && <Overview />}
+        {!searching && tab === 'leads' && <LeadsTab />}
+        {!searching && tab === 'users' && <UsersTab />}
+        {!searching && tab === 'campaigns' && <CampaignsTab />}
+        {!searching && tab === 'shortlinks' && <ShortLinksTab />}
+        {!searching && tab === 'certificates' && <CertificatesTab />}
+        {!searching && tab === 'attendance' && <AttendanceTab />}
+        {!searching && tab === 'errors' && <ErrorsTab />}
       </main>
     </div>
   );

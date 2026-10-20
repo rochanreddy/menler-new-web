@@ -9,7 +9,8 @@ import { submitLead, deliverResources, completeCheckout } from '../services/lead
 import { ADDON_PRICE, CHECKOUT_CATALOG, resourcePackFor } from '../data/resourceCatalog';
 import { PROGRAM_PRICES, formatINR } from '../data/pricing';
 import { createEnrolOrder, getPaymentStatus } from '../services/paymentService';
-import { openCashfreeCheckout } from '../lib/cashfree';
+import { runCashfreePayment, isOrderPaid } from '../lib/cashfree';
+import PaymentRecovery from '../components/common/PaymentRecovery';
 
 import { MENLER_WHATSAPP_URL } from '../data/communityLinks';
 import { friendlyError, reportError } from '../lib/friendlyError';
@@ -39,6 +40,11 @@ export default function Checkout() {
   const [placed, setPlaced] = useState(done === PAID_DONE);
   const [err, setErr] = useState('');
   const [confirmLeave, setConfirmLeave] = useState(false); // "Leave checkout?" guard
+  // A payment that did not complete: { outcome, orderId } for PaymentRecovery.
+  const [recover, setRecover] = useState(null);
+  const [checking, setChecking] = useState(false);
+  const [checked, setChecked] = useState(false);
+  const [confirming, setConfirming] = useState(false);
 
   // Guard: /checkout is only valid after registering on a campaign, which passes
   // the verified registrant in router state. A direct URL visit has no state, so
@@ -136,8 +142,9 @@ export default function Checkout() {
     setErr({ message: f.message, retry: f.retry });
   };
 
-  const pay = async () => {
-    setErr(''); setPlacing(true);
+  // `method: 'upi'` is the "Pay with UPI instead" retry: a UPI-only checkout.
+  const pay = async (method) => {
+    setErr(''); setRecover(null); setChecked(false); setConfirming(false); setPlacing(true);
     let stage = isPaid ? 'order' : 'register';
     try {
       if (isPaid) {
@@ -154,23 +161,38 @@ export default function Checkout() {
           // every price.
           pack: packOn,
           addons: pack ? [] : addedItems.map((i) => i.pdf),
+          method: method === 'upi' ? 'upi' : undefined,
         });
         stage = 'payment';
-        const result = await openCashfreeCheckout(order.payment_session_id, order.mode);
-        if (result && result.error) {
-          fail('payment', new Error(result.error.message || 'Payment was cancelled.'));
+        const r = await runCashfreePayment(order, getPaymentStatus, () => setConfirming(true));
+        if (r.outcome !== 'paid') {
+          // Not a dead end: PaymentRecovery offers a retry, UPI, or a re-check.
+          reportError('payment', new Error(`payment ${r.outcome}`), { campaign: reg.campaign, order: r.orderId });
+          setRecover(r);
           return;
         }
         stage = 'confirm';
-        const status = await getPaymentStatus(order.order_id);
-        if (status.status !== 'PAID') {
-          fail('confirm', new Error(`Payment status ${status.status || 'unknown'}`));
-          return;
-        }
       }
       await finishRegistration();
     } catch (e) {
       fail(stage, e);
+    } finally {
+      setPlacing(false); setConfirming(false);
+    }
+  };
+
+  // "Check again" on a pending payment: finish the registration once it lands.
+  const checkAgain = async () => {
+    if (!recover) return;
+    setChecking(true);
+    const paid = await isOrderPaid(recover.orderId, getPaymentStatus);
+    setChecking(false); setChecked(true);
+    if (!paid) return;
+    setRecover(null); setPlacing(true);
+    try {
+      await finishRegistration();
+    } catch (e) {
+      fail('confirm', e);
     } finally {
       setPlacing(false);
     }
@@ -391,14 +413,26 @@ export default function Checkout() {
           <div className="cox-sub-line cox-sub-line--muted"><span>Taxes</span><span>₹0</span></div>
           <div className="cox-total"><span>Total</span><span>{formatINR(total)}</span></div>
 
-          <button className="cox-complete" onClick={pay} disabled={placing}>
-            {placing ? 'Processing…' : isPaid ? `Pay ${formatINR(total)} & Register` : 'Complete Registration'}
+          {recover ? (
+            <PaymentRecovery
+              outcome={recover.outcome}
+              orderId={recover.orderId}
+              busy={placing || checking}
+              checked={checked}
+              onRetry={() => pay()}
+              onUpi={() => pay('upi')}
+              onCheck={checkAgain}
+            />
+          ) : (
+          <button className="cox-complete" onClick={() => pay()} disabled={placing}>
+            {confirming ? 'Confirming your payment…' : placing ? 'Processing…' : isPaid ? `Pay ${formatINR(total)} & Register` : 'Complete Registration'}
           </button>
+          )}
           {err && (
             <div className="cox-err" role="alert">
               <p>{typeof err === 'string' ? err : err.message}</p>
               {typeof err === 'object' && err.retry && (
-                <button type="button" className="cox-err-retry" onClick={pay} disabled={placing}>Try again</button>
+                <button type="button" className="cox-err-retry" onClick={() => pay()} disabled={placing}>Try again</button>
               )}
             </div>
           )}

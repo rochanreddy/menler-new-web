@@ -3,6 +3,7 @@ import crypto from 'crypto';
 
 import { Lead } from '../models/Lead.js';
 import { Order } from '../models/Order.js';
+import { notify, resolveNotification } from '../utils/notify.js';
 import { PROGRAM_PRICES, checkoutAmount, priceFor } from '../config/pricing.js';
 import {
   createCashfreeOrder,
@@ -118,6 +119,8 @@ router.post('/cashfree/order', async (req, res) => {
       customer: { id: String(lead._id), name, email, phone },
       returnUrl: `${FRONTEND_BASE()}${returnPath}?order_id={order_id}`,
       notifyUrl: notifyBase ? `${notifyBase}/payments/cashfree/webhook` : undefined,
+      // "Pay with UPI instead" after a failed card payment opens a UPI-only checkout.
+      paymentMethods: body.method === 'upi' ? 'upi' : undefined,
     });
 
     await Order.create({
@@ -160,6 +163,8 @@ router.post('/cashfree/order', async (req, res) => {
  * ever say "Cashfree". */
 async function markPaid(order, cfPaymentId, payment) {
   if (!order || order.status === 'PAID') return;
+  // A failed attempt on this order that was then paid needs no follow-up.
+  resolveNotification(`pay:${order.order_id}`);
   order.status = 'PAID';
   order.paid_at = new Date();
   const info = describePayment(payment);
@@ -218,6 +223,16 @@ router.post('/cashfree/webhook', async (req, res) => {
         } else if ((status === 'FAILED' || status === 'USER_DROPPED') && order.status === 'CREATED') {
           order.status = 'FAILED';
           await order.save();
+          const dropped = status === 'USER_DROPPED';
+          const reason = data.payment?.payment_message || data.error_details?.error_description || '';
+          const who = [order.customer_name || 'A student', order.customer_phone].filter(Boolean).join(' · ');
+          notify({
+            kind: dropped ? 'payment_dropped' : 'payment_failed',
+            key: `pay:${order.order_id}`,
+            title: dropped ? 'Checkout abandoned' : 'Payment failed',
+            detail: `${who} · ${order.program || 'payment'} · ₹${Number(order.amount || 0).toLocaleString('en-IN')}${reason ? ` · ${reason}` : ''}`,
+            meta: { order_id: order.order_id, email: order.customer_email, phone: order.customer_phone, program: order.program, amount: order.amount },
+          });
         }
       }
     }

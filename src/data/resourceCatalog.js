@@ -55,6 +55,8 @@ export const RESOURCE_PACKS = {
   'build-with-generative-ai': CLAUDE_PLAYBOOK_PACK,
   'ai-forward-deployed-engineering': CLAUDE_PLAYBOOK_PACK,
   'ai-for-modern-work-and-careers': CLAUDE_PLAYBOOK_PACK,
+  'build-your-first-rag-application': CLAUDE_PLAYBOOK_PACK,
+  'grok-bot': CLAUDE_PLAYBOOK_PACK,
   // This one sells the pack ON TOP of a paid seat rather than instead of one,
   // so it also appears in the client PROGRAM_PRICES. The server adds the pack
   // price itself — see amountFor() in server/config/pricing.js.

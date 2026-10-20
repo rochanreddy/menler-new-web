@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import nodemailer from 'nodemailer';
 import { JWT } from 'google-auth-library';
+import { notify } from './notify.js';
 
 // MailComposer builds a correct RFC-822 MIME message (with attachments) without
 // sending it — we reuse it to hand a raw message to the Gmail API.
@@ -354,9 +355,21 @@ export async function sendMail({ to, subject, text, html, attachments = [] }) {
     ...(REPLY_TO ? { replyTo: REPLY_TO } : {}),
     attachments,
   };
-  if (mode === 'zeptomail') return zeptoSend(message);
-  if (mode === 'brevo') return brevoSend(message);
-  if (mode === 'resend') return resendSend(message);
-  if (mode === 'gmail-api') return gmailSend(message);
-  return transporter.sendMail(message);
+  try {
+    if (mode === 'zeptomail') return await zeptoSend(message);
+    if (mode === 'brevo') return await brevoSend(message);
+    if (mode === 'resend') return await resendSend(message);
+    if (mode === 'gmail-api') return await gmailSend(message);
+    return await transporter.sendMail(message);
+  } catch (err) {
+    // Tell the team, then let the caller handle the failure as before.
+    // Not awaited: the alert must not slow or change the caller's error path.
+    notify({
+      kind: 'email_failed',
+      title: 'Email not sent',
+      detail: `"${subject}" to ${[].concat(to).join(', ')} · ${err.message || 'send failed'}`,
+      meta: { to: [].concat(to).join(', '), subject },
+    });
+    throw err;
+  }
 }

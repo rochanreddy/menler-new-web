@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { PROGRAM_PRICES, formatINR } from '../../data/pricing';
 import { createEnrolOrder, getPaymentStatus } from '../../services/paymentService';
-import { openCashfreeCheckout } from '../../lib/cashfree';
+import { runCashfreePayment, isOrderPaid } from '../../lib/cashfree';
+import PaymentRecovery from './PaymentRecovery';
 import BackgroundField from '../forms/BackgroundField';
 
 /**
@@ -17,6 +18,10 @@ export default function PayModal({ program, onClose }) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const [done, setDone] = useState(false);
+  // A payment that did not complete: { outcome, orderId } for PaymentRecovery.
+  const [recover, setRecover] = useState(null);
+  const [checked, setChecked] = useState(false);
+  const [confirming, setConfirming] = useState(false);
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
   // BackgroundField asks a student their college and a graduate their year.
   // Those ride in their own fields, not in the background string, so spread
@@ -33,28 +38,28 @@ export default function PayModal({ program, onClose }) {
 
   if (!price) return null;
 
-  const pay = async (e) => {
-    e.preventDefault();
-    setErr(''); setBusy(true);
+  // `method: 'upi'` is the "Pay with UPI instead" retry: a UPI-only checkout.
+  const pay = async (e, method) => {
+    e?.preventDefault();
+    setErr(''); setRecover(null); setChecked(false); setBusy(true);
     try {
-      const order = await createEnrolOrder({ program, ...form });
-      const result = await openCashfreeCheckout(order.payment_session_id, order.mode);
-      if (result && result.error) {
-        setErr(result.error.message || 'Payment was cancelled.');
-        setBusy(false);
-        return;
-      }
-      const status = await getPaymentStatus(order.order_id);
-      if (status.status === 'PAID') {
-        setDone(true);
-      } else {
-        setErr('Payment not completed. If you were charged, it will confirm shortly — check your email.');
-      }
+      const order = await createEnrolOrder({ program, ...form, method });
+      const r = await runCashfreePayment(order, getPaymentStatus, () => setConfirming(true));
+      if (r.outcome === 'paid') setDone(true);
+      else setRecover(r);
     } catch (e2) {
       setErr(e2.message || 'Could not process the payment.');
     } finally {
-      setBusy(false);
+      setBusy(false); setConfirming(false);
     }
+  };
+
+  const checkAgain = async () => {
+    if (!recover) return;
+    setBusy(true);
+    const paid = await isOrderPaid(recover.orderId, getPaymentStatus);
+    setBusy(false); setChecked(true);
+    if (paid) { setRecover(null); setDone(true); }
   };
 
   return (
@@ -100,9 +105,21 @@ export default function PayModal({ program, onClose }) {
                 </select>
               )}
               {err && <p className="pay-modal-err">{err}</p>}
+              {recover ? (
+                <PaymentRecovery
+                  outcome={recover.outcome}
+                  orderId={recover.orderId}
+                  busy={busy}
+                  checked={checked}
+                  onRetry={() => pay(null)}
+                  onUpi={() => pay(null, 'upi')}
+                  onCheck={checkAgain}
+                />
+              ) : (
               <button className="pay-modal-btn" type="submit" disabled={busy}>
-                {busy ? 'Processing…' : `Pay ${formatINR(price.amount)}`}
+                {confirming ? 'Confirming your payment…' : busy ? 'Processing…' : `Pay ${formatINR(price.amount)}`}
               </button>
+              )}
               <p className="pay-modal-fine">Secured by Cashfree · UPI · Cards · Netbanking</p>
             </form>
           </>

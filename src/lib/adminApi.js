@@ -60,6 +60,10 @@ export const adminApi = {
   getSession: () => api('/admin/session'),
   getStats: () => api('/admin/stats'),
   getClientErrors: () => api('/admin/client-errors'),
+  getNotifications: () => api('/admin/notifications'),
+  markNotificationsRead: (id) => api('/admin/notifications/read', { method: 'POST', body: id ? { id } : {} }),
+  getCampaignStats: (slugs) => api(`/admin/campaign-stats${qs({ slugs: slugs.join(',') })}`),
+  search: (q) => api(`/admin/search${qs({ q })}`),
 
   /** Leads count for one calendar day (IST). date = "YYYY-MM-DD". */
   getDayLeads: (from, to) => api(`/admin/stats/day${qs({ from, to: to || from })}`),
@@ -108,12 +112,21 @@ export const adminApi = {
   setBatch: (id, batch) =>
     api(`/admin/paid-users/${encodeURIComponent(id)}/batch`, { method: 'PATCH', body: { batch } }),
   addPaidUser: (body) => api('/admin/paid-users', { method: 'POST', body }),
-  /** Refund a paid order through Cashfree. `amount` omitted = the full amount. */
+  /** Text the refund approval code to the approver's phone. body: { amount, note, captchaToken } */
+  refundOtp: (id, body) =>
+    api(`/admin/paid-users/${encodeURIComponent(id)}/refund/otp`, { method: 'POST', body }),
+  /** Refund a paid order through Cashfree. body: { approvalId, otp } from refundOtp. */
   refundPayment: (id, body) =>
     api(`/admin/paid-users/${encodeURIComponent(id)}/refund`, { method: 'POST', body }),
   refundStatus: (id) =>
     api(`/admin/paid-users/${encodeURIComponent(id)}/refund/status`, { method: 'POST' }),
   deletePaidUser: (id) => api(`/admin/paid-users/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+  /** Edit a payment row's details (and, on an unverified row, its amount/date). */
+  editPaidUser: (id, body) => api(`/admin/paid-users/${encodeURIComponent(id)}`, { method: 'PATCH', body }),
+  /** Record the next instalment on a row. body: { reference } or { unverified: true, txn_id, amount }, plus paid_at, note. */
+  addInstalment: (id, body) => api(`/admin/paid-users/${encodeURIComponent(id)}/instalments`, { method: 'POST', body }),
+  /** Take back the latest instalment on a row. */
+  removeInstalment: (id, cycle) => api(`/admin/paid-users/${encodeURIComponent(id)}/instalments/${cycle}`, { method: 'DELETE' }),
 
   // Zoom attendance for a campaign's session (admin-only).
   zoomMeetings: (slug) => api(`/admin/zoom/meetings${qs({ slug })}`),

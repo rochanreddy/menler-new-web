@@ -6,7 +6,8 @@ import { formatPhone, isSmsReachable, phoneMinLength } from '../../lib/phone';
 import { getVerifiedLead, saveVerifiedLead } from '../../lib/verifiedSession';
 import { downloadFile } from '../../lib/download';
 import { createEnrolOrder, getPaymentStatus } from '../../services/paymentService';
-import { openCashfreeCheckout } from '../../lib/cashfree';
+import { runCashfreePayment, isOrderPaid } from '../../lib/cashfree';
+import PaymentRecovery from './PaymentRecovery';
 import PdfView from './PdfView';
 
 /**
@@ -27,6 +28,10 @@ export default function PlaybookModal({ item, onClose }) {
   const [err, setErr] = useState(false); // false | true | string
   const [pdfReady, setPdfReady] = useState(null); // null = checking, true/false
   const [formOpen, setFormOpen] = useState(false); // mobile: reveal form after tapping Download
+  // A paid purchase that did not complete: { outcome, orderId } for PaymentRecovery.
+  const [recover, setRecover] = useState(null);
+  const [recoverChecked, setRecoverChecked] = useState(false);
+  const [confirming, setConfirming] = useState(false);
 
   const isPaid = Boolean(item?.price);
 
@@ -36,6 +41,7 @@ export default function PlaybookModal({ item, onClose }) {
     setDone(false);
     setErr(false);
     setFormOpen(false);
+    setRecover(null); setRecoverChecked(false);
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
     document.addEventListener('keydown', onKey);
     document.body.style.overflow = 'hidden';
@@ -95,10 +101,26 @@ export default function PlaybookModal({ item, onClose }) {
     }
   };
 
+  // Once confirmed PAID: email the PDF (the primary delivery) and download it.
+  const deliverPaid = (orderId) => {
+    deliverLibraryResource({ orderId, pdf: item.pdf, name: form.name.trim(), email: form.email.trim() }).catch(() => {});
+    downloadFile(item.pdf, `${item.title}.pdf`);
+    setDone(true);
+  };
+
+  const checkAgain = async () => {
+    if (!recover) return;
+    setSubmitting(true);
+    const paid = await isOrderPaid(recover.orderId, getPaymentStatus);
+    setSubmitting(false); setRecoverChecked(true);
+    if (paid) { const id = recover.orderId; setRecover(null); deliverPaid(id); }
+  };
+
   // PAID flow: charge ₹price via Cashfree, then download only once confirmed PAID.
-  const handlePaidSubmit = async (e) => {
-    e.preventDefault();
-    setErr(false);
+  // `method: 'upi'` is the "Pay with UPI instead" retry: a UPI-only checkout.
+  const handlePaidSubmit = async (e, method) => {
+    e?.preventDefault();
+    setErr(false); setRecover(null); setRecoverChecked(false);
     const phoneDigits = String(form.phone || '').replace(/\D/g, '').slice(-10);
     if (!form.name.trim() || !form.email.trim() || phoneDigits.length !== 10) {
       setErr('Enter your name, email and a 10-digit phone number.');
@@ -115,26 +137,15 @@ export default function PlaybookModal({ item, onClose }) {
         // on the order and the webhook delivers it, whatever this tab does next.
         pdf: item.pdf,
         resource: item.title,
+        method,
       });
-      const result = await openCashfreeCheckout(order.payment_session_id, order.mode);
-      if (result && result.error) {
-        setErr(result.error.message || 'Payment was cancelled.');
-        return;
-      }
-      const status = await getPaymentStatus(order.order_id);
-      if (status.status !== 'PAID') {
-        setErr('Payment not completed. If you were charged, it will confirm shortly — check your email or contact us.');
-        return;
-      }
-      // Email the PDF to the buyer (per-resource template) — the primary delivery.
-      deliverLibraryResource({ orderId: order.order_id, pdf: item.pdf, name: form.name.trim(), email: form.email.trim() }).catch(() => {});
-      // And download on-site for instant access.
-      downloadFile(item.pdf, `${item.title}.pdf`);
-      setDone(true);
+      const r = await runCashfreePayment(order, getPaymentStatus, () => setConfirming(true));
+      if (r.outcome !== 'paid') { setRecover(r); return; }
+      deliverPaid(order.order_id);
     } catch (e2) {
       setErr(e2?.message || 'Something went wrong — please try again.');
     } finally {
-      setSubmitting(false);
+      setSubmitting(false); setConfirming(false);
     }
   };
 
@@ -207,7 +218,19 @@ export default function PlaybookModal({ item, onClose }) {
                   <label>Phone</label>
                   <PhoneField countryCode={form.countryCode} phone={form.phone} onCountryCode={(v) => set('countryCode', v)} onPhone={(v) => set('phone', v)} />
                 </div>
-                <button className="pb-modal-btn" type="submit" disabled={submitting || !item.pdf}>{submitting ? 'Processing…' : item.pdf ? 'Pay & Download' : 'Coming soon'}</button>
+                {recover ? (
+                  <PaymentRecovery
+                    outcome={recover.outcome}
+                    orderId={recover.orderId}
+                    busy={submitting}
+                    checked={recoverChecked}
+                    onRetry={() => handlePaidSubmit(null)}
+                    onUpi={() => handlePaidSubmit(null, 'upi')}
+                    onCheck={checkAgain}
+                  />
+                ) : (
+                <button className="pb-modal-btn" type="submit" disabled={submitting || !item.pdf}>{confirming ? 'Confirming your payment…' : submitting ? 'Processing…' : item.pdf ? 'Pay & Download' : 'Coming soon'}</button>
+                )}
                 {err && <p className="lf-fineprint" style={{ color: '#c0392b' }}>{errText}</p>}
                 <p className="lf-fineprint">Secured by Cashfree · UPI · Cards · Netbanking. The moment your payment is confirmed, the PDF is emailed to you — and downloads here too.</p>
               </form>
