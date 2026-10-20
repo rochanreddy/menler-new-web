@@ -888,7 +888,7 @@ ${faqSection('About Menler', HOME_FAQS)}
 
 ${faqSection('AI Generalist Fellowship (Claude AI Generalist)', GENERALIST_FAQS)}
 
-${faqSection('AI Engineering Fellowship (Claude AI Engineering)', ENGINEERING_FAQS)}
+${faqSection('AI FDE Fellowship (AI Forward Deployed Engineer)', ENGINEERING_FAQS)}
 
 ${faqSection('Gen AI Kickstarter (AI Kickstarter)', KICKSTARTER_FAQS)}
 

@@ -71,7 +71,7 @@ const COURSE_OPTIONS = [
   { key: 'generalist-6w', label: 'Claude AI Generalist — 6 weeks', amount: 35000 },
   // 'engineering' is exactly what Engineering.jsx posts, so sales taken by hand
   // group with the ones that came through the website.
-  { key: 'engineering', label: 'Claude AI Engineering Fellowship', amount: 59999 },
+  { key: 'engineering', label: 'AI FDE Fellowship', amount: 75000 },
   { key: 'build-ai-automation-with-claude', label: 'Build AI Automation with Claude — pack', amount: 99 },
   { key: 'program-and-ops-with-ai', label: 'AI powered Program & Operations — pack', amount: 99 },
   { key: 'library', label: 'Menler Library — single resource', amount: 49 },

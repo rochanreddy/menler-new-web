@@ -514,9 +514,9 @@ export default function Events() {
           </div>
           <div className="cluster-card cluster-card--eng">
             <p className="cluster-num">Engineers &amp; technical builders</p>
-            <p className="cluster-name">Menler AI Engineering Fellowship</p>
+            <p className="cluster-name">Menler AI FDE Fellowship</p>
             <p className="cluster-sets">Build production-grade AI systems, agents, RAG applications, MCP integrations, and AI infrastructure.</p>
-            <button className="cluster-btn" onClick={() => go(FDE_PATH)}>Explore Engineering</button>
+            <button className="cluster-btn" onClick={() => go(FDE_PATH)}>Explore AI FDE</button>
           </div>
         </div>
       </section>

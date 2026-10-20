@@ -21,7 +21,7 @@ const TPL = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'email
 // page name) falls back to wording that reads correctly without one.
 const PROGRAMMES = [
   'Claude AI Generalist Fellowship',
-  'Claude AI Engineering Fellowship',
+  'AI FDE Fellowship',
   'Gen AI Kickstarter',
 ];
 
@@ -31,7 +31,7 @@ export function programmeFor(lead) {
     // The campaign pages send the programme without the "Fellowship" suffix.
     || (hay.includes('generalist') ? 'Claude AI Generalist Fellowship' : null)
     || (hay.includes('kickstarter') ? 'Gen AI Kickstarter' : null)
-    || (hay.includes('engineering') ? 'Claude AI Engineering Fellowship' : null);
+    || (hay.includes('engineering') || hay.includes('fde') ? 'AI FDE Fellowship' : null);
 }
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));

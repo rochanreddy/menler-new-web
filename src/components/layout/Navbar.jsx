@@ -114,7 +114,7 @@ export default function Navbar() {
             <div className="dd-divider" />
             <a className="dd-item dd-eng" role="menuitem" {...link(FDE_PATH)}>
               <span className="dd-badge" style={{ background: '#E1F5EE', color: '#085041' }}>12 weeks · Code</span>
-              <span className="dd-title">Claude AI Engineering</span>
+              <span className="dd-title">AI FDE Fellowship</span>
               <span className="dd-desc">For software engineers, DS, ML, IT. Build production Claude systems — API, RAG, MCP, agents.</span>
             </a>
           </div>
@@ -137,7 +137,7 @@ export default function Navbar() {
       <div className={`mobile-menu${mobileOpen ? ' open' : ''}`} aria-hidden={!mobileOpen}>
         <div className="mm-section-label">Fellowship</div>
         <a className="mm-link" {...link('/generalist')}>Claude AI Generalist</a>
-        <a className="mm-link" {...link(FDE_PATH)}>Claude AI Engineering</a>
+        <a className="mm-link" {...link(FDE_PATH)}>AI FDE Fellowship</a>
         <div className="mm-divider" />
         <a className="mm-link" {...link('/kickstarter')}>AI Kickstarter</a>
         <div className="mm-divider" />

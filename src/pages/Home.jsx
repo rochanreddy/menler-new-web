@@ -229,7 +229,7 @@ export default function Home() {
           </div>
           <div className="prog-card eng">
             <span className="prog-card-badge">Coding experience required</span>
-            <p className="prog-card-title">Claude AI Engineering</p>
+            <p className="prog-card-title">AI FDE Fellowship</p>
             <div className="prog-card-desc">
               <p className="prog-card-sub">Master Claude AI, build AI applications, get certified and graduate with a portfolio of AI projects</p>
               <p className="prog-card-sub">AI Agent Engineer · AI Application Developer · AI Consultant · AI Engineer · AI Automation Engineer</p>
@@ -250,7 +250,7 @@ export default function Home() {
                 <span className="nb-chip">Career Development</span>
               </div>
             </div>
-            <a className="prog-card-cta" href={FDE_PATH} onClick={(e) => linkTo(e, FDE_PATH)}>Explore Engineering Program</a>
+            <a className="prog-card-cta" href={FDE_PATH} onClick={(e) => linkTo(e, FDE_PATH)}>Explore AI FDE Program</a>
           </div>
         </div>
         <div style={{ textAlign: 'center', marginTop: 16 }}>
@@ -363,7 +363,7 @@ export default function Home() {
             </div>
           </div>
           <div className="role-card eng-side">
-            <p className="role-card-program">Claude AI Engineering · Open roles</p>
+            <p className="role-card-program">AI FDE Fellowship · Open roles</p>
             <div className="role-list">
               <div className="role-row"><p className="role-name">Forward Deployed Engineer</p><p className="role-band">₹20–40L · Product, engineering &amp; AI teams</p></div>
               <div className="role-row"><p className="role-name">AI Solutions Engineer</p><p className="role-band">₹22–45L · Enterprise AI &amp; solution delivery teams</p></div>
