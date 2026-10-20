@@ -69,7 +69,7 @@ const ORG_FULL = {
   url: SITE,
   logo: `${SITE}/icon-512.png`,
   image: `${SITE}/og-image.png`,
-  description: "India's Claude-native AI learning company — the AI Generalist Fellowship (no-code), the AI Engineering Fellowship and the Gen AI Kickstarter for beginners, with real projects and placement support.",
+  description: "India's Claude-native AI learning company — the AI Generalist Fellowship (no-code), the AI FDE Fellowship and the Gen AI Kickstarter for beginners, with real projects and placement support.",
   knowsAbout: ['AI generalist skills', 'Generative AI', 'Claude', 'AI automation', 'No-code AI', 'AI engineering', 'Prompt engineering'],
   sameAs: SOCIAL,
 };
@@ -158,7 +158,7 @@ const STATIC_ROUTES = [
     description: "Menler is India's Claude-native AI learning company. Become an AI generalist with the no-code AI Generalist Fellowship, start with the 14-day Gen AI Kickstarter, or build AI systems in the Engineering Fellowship.",
     keywords: "Menler, Menler AI, AI courses India, best AI course India, AI generalist, AI generalist course, AI generalist fellowship, AI kickstarter, Gen AI Kickstarter, AI course for beginners, AI engineering fellowship, AI fellowship India, AI bootcamp India, no-code AI course, Claude AI course, learn AI India, AI upskilling India, AI certification India, AI careers India, top AI courses, best AI courses in India, Claude AI training, online AI course India",
     h1: "Menler — AI courses India: AI Generalist Fellowship & Gen AI Kickstarter",
-    intro: 'AI courses and fellowships: the no-code AI Generalist Fellowship (Claude AI Generalist), the AI Engineering Fellowship, and the 14-day Gen AI Kickstarter for beginners. Learn AI, build real projects, and get placement support.',
+    intro: 'AI courses and fellowships: the no-code AI Generalist Fellowship (Claude AI Generalist), the AI FDE Fellowship, and the 14-day Gen AI Kickstarter for beginners. Learn AI, build real projects, and get placement support.',
     jsonLd: [ORG_FULL, PROGRAM_LIST, faqOf(HOME_FAQS)],
     programs: PROGRAM_FACTS,
     faqs: HOME_FAQS,
@@ -232,7 +232,7 @@ const STATIC_ROUTES = [
       faqOf(KICKSTARTER_FAQS),
       crumbs([{ name: 'Home', path: '/' }, { name: 'Gen AI Kickstarter', path: '/kickstarter' }]),
     ],
-    extra: 'The Menler Kickstarter — also called the AI Kickstarter — is the entry programme: 4 live sessions across 2 weekends, 8 live hours in all, for ₹4,999. You build a personal AI operating system on Claude, a research system and an automation, then ship a capstone on Demo Day and earn the Menler AI Kickstarter Certificate. Kickstarter alumni get a 30% scholarship to the AI Generalist Fellowship or the AI Engineering Fellowship.',
+    extra: 'The Menler Kickstarter — also called the AI Kickstarter — is the entry programme: 4 live sessions across 2 weekends, 8 live hours in all, for ₹4,999. You build a personal AI operating system on Claude, a research system and an automation, then ship a capstone on Demo Day and earn the Menler AI Kickstarter Certificate. Kickstarter alumni get a 30% scholarship to the AI Generalist Fellowship or the AI FDE Fellowship.',
     days: KICKSTARTER_DAYS,
     modules: KICKSTARTER_MODULES,
     faqs: KICKSTARTER_FAQS,
@@ -818,7 +818,7 @@ const llmsHead = `# Menler
 
 > Menler is an India-based, Claude-native AI learning company. It runs live, cohort-based AI courses and fellowships that teach professionals, students and engineers to build real work with Claude and other AI tools — with real projects, a portfolio, and placement support.
 
-Its programmes: the AI Generalist Fellowship — a no-code course for becoming an AI generalist, also called the Menler Generalist program; the Gen AI Kickstarter — a 14-day AI course for beginners, also called the Menler Kickstarter or AI Kickstarter; and the AI Engineering Fellowship for developers.
+Its programmes: the AI Generalist Fellowship — a no-code course for becoming an AI generalist, also called the Menler Generalist program; the Gen AI Kickstarter — a 14-day AI course for beginners, also called the Menler Kickstarter or AI Kickstarter; and the AI FDE Fellowship for developers.
 
 The Gen AI Kickstarter is an AI course. It is not connected to Kickstarter, the crowdfunding platform.
 

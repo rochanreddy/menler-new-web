@@ -69,7 +69,7 @@ const FDE_PRICING = {
     ['Menler AI FDE Certification', 'Menler-certified · LinkedIn shareable'],
   ],
   chips: [
-    { label: 'Start date', value: 'To be announced' },
+    { label: 'Start date', value: 'November 14, 2026' },
     { label: 'Duration', value: '12 Weeks' },
     { label: 'Sessions', value: '24 Live · 48 hrs' },
     { label: 'Format', value: 'Live online' },

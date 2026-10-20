@@ -3,7 +3,7 @@ import { PROGRAM_PRICES, formatINR } from './pricing.js';
 export const HOME_FAQS = [
   {
     q: 'What programs does Menler offer?',
-    a: `Menler runs three live, cohort-based AI programs. The AI Generalist Fellowship is a 10-week no-code course for professionals and students who want to use AI across their work. The Gen AI Kickstarter is a 14-day AI course for complete beginners, priced at ${formatINR(PROGRAM_PRICES.kickstarter.amount)}. The AI Engineering Fellowship is a 12-week program for developers building production AI systems.`,
+    a: `Menler runs three live, cohort-based AI programs. The AI Generalist Fellowship is a 10-week no-code course for professionals and students who want to use AI across their work. The Gen AI Kickstarter is a 14-day AI course for complete beginners, priced at ${formatINR(PROGRAM_PRICES.kickstarter.amount)}. The AI FDE Fellowship is a 12-week program for engineers who build and deploy production AI systems for real clients.`,
   },
   {
     q: 'What is Menler Fellowship and how is it different from other AI courses in India?',
@@ -48,7 +48,7 @@ export const KICKSTARTER_FAQS = [
   { q: 'Will I get a refund if it\'s not a fit?', a: 'Once access to the program has been activated, fees are non-refundable. A full refund will be issued only if course access is not provided.' },
   { q: 'What language is the program in?', a: 'Primary instruction in English. Hindi explanations available on request. Slack is bilingual.' },
   { q: 'Are the sessions recorded?', a: 'Yes — every live class is recorded.' },
-  { q: 'What can I do after the Kickstarter?', a: 'Most learners move on to a longer program. Kickstarter alumni get a 30% scholarship to the AI Generalist Fellowship or the AI Engineering Fellowship.' },
+  { q: 'What can I do after the Kickstarter?', a: 'Most learners move on to a longer program. Kickstarter alumni get a 30% scholarship to the AI Generalist Fellowship or the AI FDE Fellowship.' },
   { q: 'Do you offer group discounts?', a: 'Yes — 15% off for groups of 5+ from the same school, college, or company. Email partner@menler.in.' },
   { q: 'Is the certificate recognised?', a: "Yes. Menler certificates are verifiable and backed by industry-recognised standards, including MSME, Skill India, and ISO accreditations. They are designed to signal practical AI capability and portfolio-backed learning." },
 ];
@@ -72,7 +72,7 @@ export const GENERALIST_FAQS = [
   },
   {
     q: 'What is the difference between an AI generalist and an AI engineer?',
-    a: "An AI generalist applies AI tools to business work — research, content, analysis, automation — without writing code. An AI engineer writes code to build the AI systems themselves: APIs, RAG pipelines, agents and evaluations. Menler teaches both: the AI Generalist Fellowship needs no coding, and the AI Engineering Fellowship requires Python or JavaScript.",
+    a: "An AI generalist applies AI tools to business work — research, content, analysis, automation — without writing code. An AI engineer writes code to build the AI systems themselves: APIs, RAG pipelines, agents and evaluations. Menler teaches both: the AI Generalist Fellowship needs no coding, and the AI FDE Fellowship requires Python or JavaScript.",
   },
   {
     q: "I'm not a technical person. Can I still succeed in this Fellowship?",
