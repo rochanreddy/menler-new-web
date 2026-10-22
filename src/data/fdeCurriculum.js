@@ -215,3 +215,20 @@ export const FDE_HIGHLIGHTS = [
   { num: '6+', label: 'Production-Grade Projects', icon: 'rocket', role: 'Real systems you build, deploy and add to your portfolio.' },
   { num: '6', label: 'Real Case Studies', icon: 'case', role: 'Real problems from banking, farming, finance, health and retail.' },
 ];
+
+// The next batch. The course page shows the label; the build bakes the ISO
+// date into the Course structured data, so search and answer engines read the
+// same date the page does. Change it here and both follow.
+export const FDE_START = { iso: '2026-11-14', label: 'November 14, 2026' };
+
+// The page's title, description and keywords — used by the page (<Seo>) and by
+// scripts/prerender.mjs, so the static HTML and the live page say the same.
+// The address is /ai-engineering-course, so the title leads with that phrase;
+// "AI FDE" and "Forward Deployed Engineer" stay as the programme's name.
+export const FDE_SEO = {
+  title: 'AI Engineering Course in India | AI FDE Fellowship | Menler',
+  description:
+    'Live 12-week AI engineering course: build RAG, AI agents and MCP servers with Claude on 6 real Indian cases, deploy them to production and become an AI FDE.',
+  keywords:
+    'AI engineering course, AI engineering course India, AI engineering course online, AI engineer course, forward deployed engineer course, AI forward deployed engineer, FDE course India, agentic AI course, AI agents course, RAG course, MCP server course, Claude Code course, LLM engineering course, generative AI engineering course, AI engineer course for working professionals, how to become an AI engineer, how to become a forward deployed engineer, forward deployed engineer vs AI engineer',
+};

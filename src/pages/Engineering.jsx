@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { FDE_PHASES, FDE_AUDIENCE, FDE_HIGHLIGHTS } from '../data/fdeCurriculum';
+import { FDE_PHASES, FDE_AUDIENCE, FDE_HIGHLIGHTS, FDE_START, FDE_SEO } from '../data/fdeCurriculum';
 import { useNavigate } from 'react-router-dom';
 import FaqList from '../components/common/FaqList';
 import CtaBanner from '../components/common/CtaBanner';
@@ -69,7 +69,7 @@ const FDE_PRICING = {
     ['Menler AI FDE Certification', 'Menler-certified · LinkedIn shareable'],
   ],
   chips: [
-    { label: 'Start date', value: 'November 14, 2026' },
+    { label: 'Start date', value: FDE_START.label },
     { label: 'Duration', value: '12 Weeks' },
     { label: 'Sessions', value: '24 Live · 48 hrs' },
     { label: 'Format', value: 'Live online' },
@@ -149,9 +149,9 @@ export default function Engineering() {
           scripts/prerender.mjs — a second Course added here would be a thinner
           duplicate, with no price or schedule. */}
       <Seo
-        title="AI Forward Deployed Engineer Course India | Menler AI FDE"
-        description="12-week Claude-first AI engineering course. Build RAG, AI agents and MCP servers on 6 real Indian cases, deploy to production and become an AI FDE."
-        keywords="forward deployed engineer course, AI forward deployed engineer, AI engineering course India, FDE course India, agentic AI course, AI agents course, RAG course, LLM engineering, Claude Code course, MCP server, AI engineer course for working professionals, how to become a forward deployed engineer, forward deployed engineer vs AI engineer"
+        title={FDE_SEO.title}
+        description={FDE_SEO.description}
+        keywords={FDE_SEO.keywords}
         path={FDE_PATH}
       />
       {/* ── HERO + WHO THIS IS FOR (one screen together) ── */}

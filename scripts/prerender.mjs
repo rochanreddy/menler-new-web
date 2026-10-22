@@ -16,6 +16,7 @@ import { POLICIES } from '../src/data/policyContent.js';
 import { DOMAIN_TRACKS, GENERALIST_WEEKS, KICKSTARTER_DAYS, KICKSTARTER_MODULES } from '../src/data/curriculumData.js';
 import { RESOURCE_PACKS } from '../src/data/resourceCatalog.js';
 import { HIRING_COMPANIES } from '../src/data/hiringCompanies.js';
+import { FDE_PHASES, FDE_AUDIENCE, FDE_HIGHLIGHTS, FDE_START, FDE_SEO } from '../src/data/fdeCurriculum.js';
 import { BLOG_POSTS as FILE_POSTS } from '../src/data/blogData.js';
 
 const SITE = 'https://menler.in';
@@ -86,7 +87,7 @@ const crumbs = (items) => ({
  * '10 weeks'` was not a valid duration, so the block read as a course with no
  * usable instance. `weeks` x `hoursPerWeek` is the schedule the page itself
  * states. */
-const course = ({ name, alternateName, description, path, price, weeks, hoursPerWeek, level, prerequisites, credential, teaches }) => ({
+const course = ({ name, alternateName, description, path, price, weeks, hoursPerWeek, level, prerequisites, credential, teaches, startDate, syllabus, audience, financialAid }) => ({
   '@context': 'https://schema.org',
   '@type': 'Course',
   '@id': `${SITE}${path}#course`,
@@ -101,9 +102,15 @@ const course = ({ name, alternateName, description, path, price, weeks, hoursPer
   ...(prerequisites ? { coursePrerequisites: prerequisites } : {}),
   ...(credential ? { educationalCredentialAwarded: credential } : {}),
   ...(teaches ? { teaches } : {}),
+  ...(syllabus ? { syllabusSections: syllabus.map(([name, description]) => ({ '@type': 'Syllabus', name, description })) } : {}),
+  ...(audience ? { audience: { '@type': 'EducationalAudience', audienceType: audience } } : {}),
+  ...(financialAid ? { financialAidEligible: financialAid } : {}),
   hasCourseInstance: {
     '@type': 'CourseInstance',
     courseMode: 'Online',
+    courseWorkload: `PT${weeks * hoursPerWeek}H`,
+    ...(startDate ? { startDate } : {}),
+    location: { '@type': 'VirtualLocation', url: SITE + path },
     courseSchedule: { '@type': 'Schedule', repeatFrequency: 'Weekly', repeatCount: weeks, duration: `PT${hoursPerWeek}H` },
   },
   offers: {
@@ -131,8 +138,8 @@ const PROGRAM_FACTS = [
     'A 10-week, no-code AI generalist course and fellowship for non-technical professionals and students — how to become an AI generalist. Covers Claude and 35+ AI tools for research, writing, automation (n8n, Make, Zapier) and no-code building, applied across marketing, finance, product, HR and operations. ₹59,999. Includes real projects and placement support.'],
   ['AI Generalist Fellowship — 6 weeks', '/generalist',
     'A shorter 6-week version of the AI Generalist Fellowship. ₹35,000.'],
-  ['AI FDE Fellowship (AI Forward Deployed Engineer course)', '/ai-engineering-course',
-    'A 12-week, Claude-first AI Forward Deployed Engineer course. Build RAG, AI agents and MCP servers on 6 real Indian cases — bank grievance triage, a farm advisory copilot, GST reconciliation, health pre-authorisation, failed-delivery recovery and a client capstone — deploy to production and defend each build to a panel. ₹75,000 including taxes, EMI available. Includes placement support.'],
+  ['AI FDE Fellowship (AI engineering course; AI Forward Deployed Engineer course)', '/ai-engineering-course',
+    'A 12-week, live online, Claude-first AI engineering course for becoming an AI Forward Deployed Engineer. Build RAG, AI agents and MCP servers on 6 real Indian cases — bank grievance triage, a farm advisory copilot, GST reconciliation, health pre-authorisation, failed-delivery recovery and a client capstone — deploy to production and defend each build to a panel. ₹75,000 including taxes, EMI available. Includes placement support.'],
   ['Gen AI Kickstarter (AI Kickstarter)', '/kickstarter',
     'A 14-day AI course for complete beginners — 4 live sessions across 2 weekends. Hands-on with 10+ AI tools, 4 portfolio projects and a certificate. No prerequisites. ₹4,999.'],
 ];
@@ -190,26 +197,42 @@ const STATIC_ROUTES = [
     tracks: DOMAIN_TRACKS,
   },
   {
-    path: '/ai-engineering-course', file: 'ai-engineering-course.html', nav: 'AI FDE Fellowship',
-    title: 'AI Forward Deployed Engineer Course India | Menler AI FDE',
-    description: '12-week Claude-first AI engineering course. Build RAG, AI agents and MCP servers on 6 real Indian cases, deploy to production and become an AI FDE.',
-    keywords: 'forward deployed engineer course, AI forward deployed engineer, AI engineering course India, FDE course India, agentic AI course, AI agents course, RAG course, LLM engineering, Claude Code course, MCP server, AI engineer course for working professionals, how to become a forward deployed engineer, forward deployed engineer vs AI engineer',
-    h1: 'Build AI Systems. Become an AI Forward Deployed Engineer.',
-    intro: "India's only Claude-first AI Forward Deployed Engineer Fellowship — a 12-week AI engineering course. Build RAG, AI agents and MCP servers on six real Indian cases, deploy them to production, and defend each one to an industry panel.",
+    path: '/ai-engineering-course', file: 'ai-engineering-course.html', nav: 'AI Engineering Course (AI FDE)',
+    title: FDE_SEO.title,
+    description: FDE_SEO.description,
+    keywords: FDE_SEO.keywords,
+    h1: 'AI Engineering Course: Build AI Systems and Become an AI Forward Deployed Engineer',
+    intro: `The AI FDE Fellowship is Menler's 12-week, live online AI engineering course — India's only Claude-first AI Forward Deployed Engineer Fellowship. Build RAG, AI agents and MCP servers on six real Indian cases, deploy them to production, and defend each one to an industry panel. Next batch starts ${FDE_START.label}.`,
     extra: 'A Forward Deployed Engineer (FDE) embeds with a client, understands their problem, builds the AI system and owns it in production. The Menler AI FDE Fellowship trains this role over 12 weeks in three phases: LLM foundations, Claude Code and RAG (Weeks 1–4); AI agents, MCP, evals and AI security (Weeks 5–8); and production deployment, ROI and a client capstone (Weeks 9–12). It runs live on Saturdays and Sundays — 24 sessions, 48 hours — in pods of five with one mentor for every two pods, costs ₹75,000 including taxes with EMI from ₹4,999 a month, and ends with six deployed builds, six Case Defences, Demo Day and the Menler AI FDE Certification.',
     jsonLd: [
       course({
         name: 'AI FDE Fellowship',
-        alternateName: ['AI Forward Deployed Engineer Course', 'Forward Deployed Engineer Course India', 'AI Forward Deployed Engineer Fellowship', 'Claude AI FDE Fellowship', 'Menler AI FDE'],
+        alternateName: ['AI Engineering Course', 'AI Engineering Course India', 'AI Forward Deployed Engineer Course', 'Forward Deployed Engineer Course India', 'AI Forward Deployed Engineer Fellowship', 'Claude AI FDE Fellowship', 'Menler AI FDE'],
         description: '12-week Claude-first AI Forward Deployed Engineer course — build RAG, AI agents and MCP servers on six real Indian cases, deploy to production and defend each build to a panel.',
         path: '/ai-engineering-course', price: 75000, weeks: 12, hoursPerWeek: 12,
         prerequisites: 'Basic programming helps; a guided code walkthrough in Week 1 brings newer coders up to speed.',
         credential: 'Menler AI FDE Certification',
         teaches: ['LLM foundations and prompt and context engineering', 'Building with Claude Code', 'RAG: retrieval, reranking and citations', 'AI agents, multi-agent systems and MCP servers', 'LLM evaluation and AI security', 'Production deployment (LLMOps), ROI and client delivery'],
+        startDate: FDE_START.iso,
+        syllabus: FDE_PHASES.map((ph) => [`${ph.label} (${ph.weeks}): ${ph.title}`, ph.modules.map((m) => m.w).join('; ')]),
+        audience: FDE_AUDIENCE.map((a) => a.role).join(', '),
+        financialAid: 'EMI from ₹4,999 a month; scholarships shared during counselling',
       }),
+      /* The role the course is named for, as a defined term: answer engines
+         asked "what is a forward deployed engineer" get Menler's definition. */
+      {
+        '@context': 'https://schema.org',
+        '@type': 'DefinedTerm',
+        '@id': `${SITE}/ai-engineering-course#fde`,
+        name: 'Forward Deployed Engineer (FDE)',
+        description: 'An engineer who embeds with a client, understands their problem, builds the AI system and owns it in production — software engineering combined with the judgment of a consultant.',
+        url: `${SITE}/ai-engineering-course`,
+        inDefinedTermSet: { '@type': 'DefinedTermSet', name: 'Menler AI glossary', url: `${SITE}/resources` },
+      },
       faqOf(ENGINEERING_FAQS),
-      crumbs([{ name: 'Home', path: '/' }, { name: 'AI FDE Fellowship', path: '/ai-engineering-course' }]),
+      crumbs([{ name: 'Home', path: '/' }, { name: 'AI Engineering Course (AI FDE Fellowship)', path: '/ai-engineering-course' }]),
     ],
+    fde: { phases: FDE_PHASES, audience: FDE_AUDIENCE, highlights: FDE_HIGHLIGHTS },
     faqs: ENGINEERING_FAQS,
   },
   {
@@ -634,6 +657,35 @@ function curriculumHtml(weeks, tracks) {
  * render away, which the crawlers behind ChatGPT, Claude and Perplexity never
  * perform.
  */
+/**
+ * The AI FDE Fellowship as text: the numbers, who it is for, and all twelve
+ * weeks with their topics. Until now the page's HTML had a heading, two
+ * paragraphs and the FAQ; the curriculum was a React render away, which the
+ * crawlers behind ChatGPT, Claude and Perplexity never perform.
+ */
+function fdeHtml(fde) {
+  if (!fde) return '';
+  let out = '';
+  if (fde.highlights?.length) {
+    out += '<section><h2>The AI FDE Fellowship in numbers</h2><ul>' +
+      fde.highlights.map((h) => `<li>${escText(h.num)} ${escText(h.label)} — ${escText(h.role)}</li>`).join('') + '</ul></section>';
+  }
+  if (fde.audience?.length) {
+    out += '<section><h2>Who this AI engineering course is for</h2><ul>' +
+      fde.audience.map((a) => `<li>${escText(a.role)}: ${escText(a.desc)}</li>`).join('') + '</ul></section>';
+  }
+  if (fde.phases?.length) {
+    out += '<section><h2>AI engineering course curriculum — 12 weeks</h2>' + fde.phases.map((ph) =>
+      `<h3>${escText(ph.label)} (${escText(ph.weeks)}): ${escText(ph.title)}</h3>` +
+      ph.modules.map((m) =>
+        `<h4>${escText(m.w)}</h4>` +
+        (m.lessons?.length ? `<ul>${m.lessons.map((l) => `<li>${escText(l)}</li>`).join('')}</ul>` : '')
+      ).join('')
+    ).join('') + '</section>';
+  }
+  return out;
+}
+
 function kickstarterHtml(days, modules) {
   let out = '';
   if (Array.isArray(modules) && modules.length) {
@@ -706,6 +758,7 @@ function fallback(route) {
     programsHtml(route.programs) +
     curriculumHtml(route.weeks, route.tracks) +
     kickstarterHtml(route.days, route.modules) +
+    fdeHtml(route.fde) +
     policyHtml(route.policy) +
     packsHtml(route.packs) +
     hiringHtml(route.hiring) +

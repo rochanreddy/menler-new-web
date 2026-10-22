@@ -1,4 +1,5 @@
 import { PROGRAM_PRICES, formatINR } from './pricing.js';
+import { FDE_START } from './fdeCurriculum.js';
 
 export const HOME_FAQS = [
   {
@@ -100,38 +101,64 @@ export const GENERALIST_FAQS = [
   },
 ];
 
+/* AI FDE / AI engineering course. Each answer opens with the answer and names
+   the programme, so it still reads right when an answer engine quotes it alone. */
 export const ENGINEERING_FAQS = [
   {
+    q: 'What is the AI FDE Fellowship?',
+    a: "The AI FDE Fellowship is Menler's 12-week, live online AI engineering course for becoming an AI Forward Deployed Engineer. You build RAG systems, AI agents and MCP servers with Claude on six real Indian business cases, deploy them to production, and earn the Menler AI FDE Certification.",
+  },
+  {
     q: 'What is a Forward Deployed Engineer (FDE)?',
-    a: 'An engineer who embeds with a client, understands their problem, builds the AI system and owns it in production. It combines software engineering with the judgment of a consultant.',
+    a: 'A Forward Deployed Engineer is an engineer who embeds with a client, understands their problem, builds the AI system and owns it in production. The role combines software engineering with the judgment of a consultant.',
   },
   {
     q: 'What is the difference between an AI engineer and a Forward Deployed Engineer?',
-    a: 'An AI engineer is measured mainly on the system and its code. An FDE is measured on the client outcome, so they also own discovery, deployment, adoption and the business case. This fellowship trains both.',
+    a: 'An AI engineer is measured mainly on the system and its code. A Forward Deployed Engineer is measured on the client outcome, so they also own discovery, deployment, adoption and the business case. The AI FDE Fellowship trains both.',
+  },
+  {
+    q: 'How do I become a Forward Deployed Engineer?',
+    a: 'To become a Forward Deployed Engineer, learn to frame a client problem, build the AI system (RAG, agents, integrations), deploy it and prove its return, then show deployed work. The AI FDE Fellowship follows that path in 12 weeks and ends with six deployed builds, six Case Defences and Demo Day.',
+  },
+  {
+    q: 'Who is this AI engineering course for?',
+    a: 'The AI FDE Fellowship is for students and fresh graduates, engineers and developers, product, design and delivery professionals, founders and domain experts, and freelancers or career switchers who want to build and ship AI systems.',
   },
   {
     q: 'Do I need to know how to code?',
-    a: "Basic programming helps. If you're newer to code, the Builder track uses Claude Code and a guided code walkthrough in Week 1 to bring you up to speed.",
+    a: "Basic programming helps but is not required. If you're newer to code, the Builder track uses Claude Code and a guided code walkthrough in Week 1 to bring you up to speed.",
+  },
+  {
+    q: 'When does the next batch start?',
+    a: `The next batch of the AI FDE Fellowship starts on ${FDE_START.label}. It runs live online on weekends for 12 weeks.`,
+  },
+  {
+    q: 'Is the AI engineering course online?',
+    a: 'Yes. The AI FDE Fellowship is fully live and online: 24 weekend sessions, 48 live hours over 12 weeks, in pods of five learners with mentors, plus recordings and one year of access to the LMS and community.',
+  },
+  {
+    q: 'How much time should I commit each week?',
+    a: 'About 12 hours a week: four live hours on weekends plus around 7–8 hours of build time.',
+  },
+  {
+    q: 'What tools and technologies will I learn?',
+    a: 'Claude is the core stack: the Claude API, Claude Code, the Claude Agent SDK and MCP. You also work with vector databases, hybrid search and reranking, evaluation tools, SQL, Git, integration platforms and production deployment (LLMOps).',
   },
   {
     q: 'Is the AI FDE Fellowship only about Claude?',
-    a: 'Claude is the primary stack: Claude API, Claude Code, Claude Agent SDK and MCP. You also compare models, use vector databases, eval tools and integration platforms, and learn model routing. You use your own Claude API key, so every build stays in your own account.',
+    a: 'Claude is the primary stack, but not the only one. You also compare models, use vector databases, eval tools and integration platforms, and learn model routing. You use your own Claude API key, so every build stays in your own account.',
   },
   {
     q: 'What will I build during the Fellowship?',
     a: 'Six builds across six real cases: a bank grievance triage engine, a cited farm-advisory RAG copilot, a GST reconciliation agent behind a public MCP server, a certified health pre-authorisation assistant, a production failed-delivery recovery system, and a client capstone you choose.',
   },
   {
-    q: 'How much time should I commit each week?',
-    a: 'Four live hours on weekends plus around 7–8 hours of build time, about 12 hours a week.',
-  },
-  {
     q: 'Will I get a certificate?',
-    a: 'Yes, the Menler AI FDE Certification, graded against 100 engineering and delivery competencies.',
+    a: 'Yes. You earn the Menler AI FDE Certification, graded against 100 engineering and delivery competencies.',
   },
   {
     q: 'How does interview preparation and career support work?',
-    a: "Career support is integrated throughout the Fellowship. Fellows get mock FDE interview loops, portfolio and LinkedIn reviews, hiring-readiness guidance, and referrals through Menler's hiring network.",
+    a: "Career support runs through the whole Fellowship: mock FDE interview loops, portfolio and LinkedIn reviews, hiring-readiness guidance, and referrals through Menler's hiring network.",
   },
   {
     q: 'What is the program fee and are there payment options?',
