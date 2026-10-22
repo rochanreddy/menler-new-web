@@ -223,7 +223,7 @@ export const FDE_START = { iso: '2026-11-14', label: 'November 14, 2026' };
 
 // The page's title, description and keywords — used by the page (<Seo>) and by
 // scripts/prerender.mjs, so the static HTML and the live page say the same.
-// The address is /ai-engineering-course, so the title leads with that phrase;
+// The address is /ai-engineering, so the title leads with "AI Engineering Course";
 // "AI FDE" and "Forward Deployed Engineer" stay as the programme's name.
 export const FDE_SEO = {
   title: 'AI Engineering Course in India | AI FDE Fellowship | Menler',

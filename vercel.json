@@ -1,23 +1,33 @@
 {
   "redirects": [
     {
+      "source": "/ai-engineering-course",
+      "destination": "/ai-engineering",
+      "permanent": true
+    },
+    {
+      "source": "/ai-engineering-course/",
+      "destination": "/ai-engineering",
+      "permanent": true
+    },
+    {
       "source": "/ai-forward-deployed-engineer-course",
-      "destination": "/ai-engineering-course",
+      "destination": "/ai-engineering",
       "permanent": true
     },
     {
       "source": "/ai-forward-deployed-engineer-course/",
-      "destination": "/ai-engineering-course",
+      "destination": "/ai-engineering",
       "permanent": true
     },
     {
       "source": "/engineering",
-      "destination": "/ai-engineering-course",
+      "destination": "/ai-engineering",
       "permanent": true
     },
     {
       "source": "/engineering/",
-      "destination": "/ai-engineering-course",
+      "destination": "/ai-engineering",
       "permanent": true
     }
   ],

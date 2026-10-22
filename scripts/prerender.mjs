@@ -138,7 +138,7 @@ const PROGRAM_FACTS = [
     'A 10-week, no-code AI generalist course and fellowship for non-technical professionals and students — how to become an AI generalist. Covers Claude and 35+ AI tools for research, writing, automation (n8n, Make, Zapier) and no-code building, applied across marketing, finance, product, HR and operations. ₹59,999. Includes real projects and placement support.'],
   ['AI Generalist Fellowship — 6 weeks', '/generalist',
     'A shorter 6-week version of the AI Generalist Fellowship. ₹35,000.'],
-  ['AI FDE Fellowship (AI engineering course; AI Forward Deployed Engineer course)', '/ai-engineering-course',
+  ['AI FDE Fellowship (AI engineering course; AI Forward Deployed Engineer course)', '/ai-engineering',
     'A 12-week, live online, Claude-first AI engineering course for becoming an AI Forward Deployed Engineer. Build RAG, AI agents and MCP servers on 6 real Indian cases — bank grievance triage, a farm advisory copilot, GST reconciliation, health pre-authorisation, failed-delivery recovery and a client capstone — deploy to production and defend each build to a panel. ₹75,000 including taxes, EMI available. Includes placement support.'],
   ['Gen AI Kickstarter (AI Kickstarter)', '/kickstarter',
     'A 14-day AI course for complete beginners — 4 live sessions across 2 weekends. Hands-on with 10+ AI tools, 4 portfolio projects and a certificate. No prerequisites. ₹4,999.'],
@@ -153,7 +153,7 @@ const PROGRAM_LIST = {
   itemListElement: [
     ['AI Generalist Fellowship', '/generalist'],
     ['Gen AI Kickstarter', '/kickstarter'],
-    ['AI FDE Fellowship', '/ai-engineering-course'],
+    ['AI FDE Fellowship', '/ai-engineering'],
   ].map(([name, path], i) => ({ '@type': 'ListItem', position: i + 1, name, url: SITE + path })),
 };
 
@@ -197,7 +197,7 @@ const STATIC_ROUTES = [
     tracks: DOMAIN_TRACKS,
   },
   {
-    path: '/ai-engineering-course', file: 'ai-engineering-course.html', nav: 'AI Engineering Course (AI FDE)',
+    path: '/ai-engineering', file: 'ai-engineering.html', nav: 'AI Engineering Course (AI FDE)',
     title: FDE_SEO.title,
     description: FDE_SEO.description,
     keywords: FDE_SEO.keywords,
@@ -209,7 +209,7 @@ const STATIC_ROUTES = [
         name: 'AI FDE Fellowship',
         alternateName: ['AI Engineering Course', 'AI Engineering Course India', 'AI Forward Deployed Engineer Course', 'Forward Deployed Engineer Course India', 'AI Forward Deployed Engineer Fellowship', 'Claude AI FDE Fellowship', 'Menler AI FDE'],
         description: '12-week Claude-first AI Forward Deployed Engineer course — build RAG, AI agents and MCP servers on six real Indian cases, deploy to production and defend each build to a panel.',
-        path: '/ai-engineering-course', price: 75000, weeks: 12, hoursPerWeek: 12,
+        path: '/ai-engineering', price: 75000, weeks: 12, hoursPerWeek: 12,
         prerequisites: 'Basic programming helps; a guided code walkthrough in Week 1 brings newer coders up to speed.',
         credential: 'Menler AI FDE Certification',
         teaches: ['LLM foundations and prompt and context engineering', 'Building with Claude Code', 'RAG: retrieval, reranking and citations', 'AI agents, multi-agent systems and MCP servers', 'LLM evaluation and AI security', 'Production deployment (LLMOps), ROI and client delivery'],
@@ -223,14 +223,14 @@ const STATIC_ROUTES = [
       {
         '@context': 'https://schema.org',
         '@type': 'DefinedTerm',
-        '@id': `${SITE}/ai-engineering-course#fde`,
+        '@id': `${SITE}/ai-engineering#fde`,
         name: 'Forward Deployed Engineer (FDE)',
         description: 'An engineer who embeds with a client, understands their problem, builds the AI system and owns it in production — software engineering combined with the judgment of a consultant.',
-        url: `${SITE}/ai-engineering-course`,
+        url: `${SITE}/ai-engineering`,
         inDefinedTermSet: { '@type': 'DefinedTermSet', name: 'Menler AI glossary', url: `${SITE}/resources` },
       },
       faqOf(ENGINEERING_FAQS),
-      crumbs([{ name: 'Home', path: '/' }, { name: 'AI Engineering Course (AI FDE Fellowship)', path: '/ai-engineering-course' }]),
+      crumbs([{ name: 'Home', path: '/' }, { name: 'AI Engineering Course (AI FDE Fellowship)', path: '/ai-engineering' }]),
     ],
     fde: { phases: FDE_PHASES, audience: FDE_AUDIENCE, highlights: FDE_HIGHLIGHTS, guide: FDE_GUIDE },
     faqs: ENGINEERING_FAQS,
@@ -848,7 +848,7 @@ console.log(`✓ Prerendered ${ROUTES.length} routes (${STATIC_ROUTES.length} st
 const today = new Date().toISOString().slice(0, 10);
 const sitemapMeta = (path) => {
   if (path === '/') return { priority: '1.0', changefreq: 'weekly' };
-  if (['/generalist', '/ai-engineering-course', '/kickstarter'].includes(path)) return { priority: '0.9', changefreq: 'weekly' };
+  if (['/generalist', '/ai-engineering', '/kickstarter'].includes(path)) return { priority: '0.9', changefreq: 'weekly' };
   if (['/aptitude', '/resources'].includes(path)) return { priority: '0.8', changefreq: 'weekly' };
   if (path === '/blog') return { priority: '0.6', changefreq: 'weekly' };
   if (path.startsWith('/blog/')) return { priority: '0.5', changefreq: 'monthly' };

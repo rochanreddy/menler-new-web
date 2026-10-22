@@ -117,6 +117,7 @@ export default function App() {
                 permanent redirect for direct visits; this covers in-app links. */}
             <Route path="/engineering" element={<Navigate to={FDE_PATH} replace />} />
             <Route path="/ai-forward-deployed-engineer-course" element={<Navigate to={FDE_PATH} replace />} />
+            <Route path="/ai-engineering-course" element={<Navigate to={FDE_PATH} replace />} />
             <Route path="/projects/:slug" element={<Projects />} />
             <Route path="/outcomes" element={<Outcomes />} />
             <Route path="/aptitude" element={<Aptitude />} />

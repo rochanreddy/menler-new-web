@@ -114,7 +114,7 @@ router.post('/cashfree/order', async (req, res) => {
     // Back to the page the buyer paid from. The FDE course page moved off its
     // programme slug; /engineering only redirects there, and a redirect can
     // drop the order_id this address carries.
-    const PROGRAM_PAGES = { engineering: '/ai-engineering-course' };
+    const PROGRAM_PAGES = { engineering: '/ai-engineering' };
     const returnPath = leadId ? '/checkout' : (PROGRAM_PAGES[program] || `/${program}`);
 
     const cf = await createCashfreeOrder({
