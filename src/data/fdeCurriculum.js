@@ -212,7 +212,7 @@ export const FDE_HIGHLIGHTS = [
   { num: '48', label: 'Live Hours', icon: 'live', role: 'Live weekend sessions led by industry mentors.' },
   { num: '12', label: 'Weeks Intensive', icon: 'calendar', role: 'A focused programme that fits around work or college.' },
   { num: '12', label: 'Weekly Assignments', icon: 'check', role: 'One hands-on assignment a week, reviewed by a mentor.' },
-  { num: '6+', label: 'Production-Grade Projects', icon: 'rocket', role: 'Real systems you build, deploy and add to your portfolio.' },
+  { num: '6', label: 'Production-Grade Projects', icon: 'rocket', role: 'Real systems you build, deploy and add to your portfolio.' },
   { num: '6', label: 'Real Case Studies', icon: 'case', role: 'Real problems from banking, farming, finance, health and retail.' },
 ];
 
