@@ -48,9 +48,9 @@ export const eventIsOver = (ev) => {
 // Campaigns that were announced but never ran. They are not past events — there
 // is no session to catch up on — so /events leaves them out entirely, and their
 // URL shows the closed notice whatever date the document still carries.
-// Empty for now: AI for Modern Work & Careers was cancelled, then rescheduled
-// for 31 October 2026.
-export const CANCELLED_CAMPAIGNS = new Set([]);
+// AI for Modern Work & Careers (31 October 2026) is hidden again: off /events,
+// and its page shows the closed notice.
+export const CANCELLED_CAMPAIGNS = new Set(['ai-for-modern-work-and-careers']);
 
 // A campaign page stops taking registrations once its session has run (or was
 // called off). `session` is anything with the campaign's `date` and `time`.
