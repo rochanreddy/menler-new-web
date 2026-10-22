@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { FDE_PHASES, FDE_AUDIENCE, FDE_HIGHLIGHTS, FDE_START, FDE_SEO } from '../data/fdeCurriculum';
+import { FDE_PHASES, FDE_AUDIENCE, FDE_HIGHLIGHTS, FDE_START, FDE_SEO, FDE_GUIDE } from '../data/fdeCurriculum';
 import { useNavigate } from 'react-router-dom';
 import FaqList from '../components/common/FaqList';
 import CtaBanner from '../components/common/CtaBanner';
@@ -333,10 +333,50 @@ export default function Engineering() {
         </div>
       </section>
 
+      {/* ── AI ENGINEERING COURSE GUIDE ── plain answers to what people search
+          before choosing a course; the same words are baked into the static
+          HTML by prerender. */}
+      <section className="section fde-guide" aria-labelledby="fde-guide-h">
+        <p className="section-label" style={{ textAlign: 'center', color: 'var(--forest)' }}>AI engineering course guide</p>
+        <h2 id="fde-guide-h" className="section-h2" style={{ '--i': 1, textAlign: 'center', color: 'var(--forest)' }}>Everything about this <em style={{ color: 'var(--placed)' }}>AI engineering course.</em></h2>
+        <p className="section-sub" style={{ '--i': 2, textAlign: 'center', margin: '0 auto' }}>Generative AI, RAG, agentic AI and MCP, taught live and built for production.</p>
+        <div className="fde-guide-grid">
+          {FDE_GUIDE.blocks.map((b) => (
+            <article key={b.h} className={b.wide ? 'fde-guide-card is-wide' : 'fde-guide-card'}>
+              <h3>{b.h}</h3>
+              {b.p && <p>{b.p}</p>}
+              {b.chips && (
+                <ul className="fde-guide-chips">
+                  {b.chips.map((c) => <li key={c}>{c}</li>)}
+                </ul>
+              )}
+            </article>
+          ))}
+        </div>
+        <div className="fde-compare-wrap">
+          <h3 className="fde-compare-h">AI Engineer vs Forward Deployed Engineer vs ML Engineer</h3>
+          <div className="fde-compare-scroll">
+            <table className="fde-compare">
+              <thead>
+                <tr>{FDE_GUIDE.compare.head.map((h, i) => (i ? <th key={h} scope="col">{h}</th> : <td key="corner" />))}</tr>
+              </thead>
+              <tbody>
+                {FDE_GUIDE.compare.rows.map(([label, ...cells]) => (
+                  <tr key={label}>
+                    <th scope="row">{label}</th>
+                    {cells.map((c, i) => <td key={i}>{c}</td>)}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       {/* ── FAQ ── each question is an H3 (FAQPage schema is baked in by prerender). */}
       <section className="section" style={{ background: 'var(--parchment)', textAlign: 'center', paddingTop: 48 }}>
         <p className="section-label" style={{ color: 'var(--forest)' }}>FAQ</p>
-        <h2 className="section-h2" style={{ '--i': 1, color: 'var(--forest)' }}>Your questions answered</h2>
+        <h2 className="section-h2" style={{ '--i': 1, color: 'var(--forest)' }}>AI engineering course: <em style={{ color: 'var(--placed)' }}>your questions answered</em></h2>
         <div style={{ '--i': 2 }}><FaqList items={ENGINEERING_FAQS} headings /></div>
       </section>
 

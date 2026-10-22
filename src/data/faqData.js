@@ -141,6 +141,22 @@ export const ENGINEERING_FAQS = [
     a: 'About 12 hours a week: four live hours on weekends plus around 7–8 hours of build time.',
   },
   {
+    q: 'Can I take this AI engineering course while working full time?',
+    a: 'Yes. Classes are live on Saturdays and Sundays, and the rest is about 7–8 hours of build time you schedule yourself, so the AI FDE Fellowship fits alongside a full-time job.',
+  },
+  {
+    q: 'Can freshers or final-year students join?',
+    a: 'Yes. Students and fresh graduates are one of the groups the AI FDE Fellowship is built for. You finish with six deployed AI projects, which gives a fresher a portfolio most applicants do not have.',
+  },
+  {
+    q: 'Is this an AI engineering bootcamp?',
+    a: 'It works like one: an intensive, live, cohort-based 12-week programme where you build and ship every week. Unlike most bootcamps, every build is a real Indian business case, and each one is defended to a panel.',
+  },
+  {
+    q: 'How is this different from a machine learning or data science course?',
+    a: 'A machine learning or data science course teaches you to train models from data. This AI engineering course teaches you to build products on top of large language models — RAG, AI agents and MCP servers — and to deploy them. Model training is covered only as background in Week 1.',
+  },
+  {
     q: 'What tools and technologies will I learn?',
     a: 'Claude is the core stack: the Claude API, Claude Code, the Claude Agent SDK and MCP. You also work with vector databases, hybrid search and reranking, evaluation tools, SQL, Git, integration platforms and production deployment (LLMOps).',
   },
@@ -153,8 +169,24 @@ export const ENGINEERING_FAQS = [
     a: 'Six builds across six real cases: a bank grievance triage engine, a cited farm-advisory RAG copilot, a GST reconciliation agent behind a public MCP server, a certified health pre-authorisation assistant, a production failed-delivery recovery system, and a client capstone you choose.',
   },
   {
+    q: 'What is RAG, and will I build RAG systems?',
+    a: 'RAG (retrieval-augmented generation) lets an AI answer from your own documents, with citations, instead of from memory. Yes: you build RAG pipelines from Week 4, covering parsing, chunking, embeddings, vector stores, hybrid search, reranking and grounded answers.',
+  },
+  {
+    q: 'What is MCP (Model Context Protocol)?',
+    a: 'MCP is an open standard that lets an AI model use outside tools and data — your database, files or business apps — through one common interface. In the AI FDE Fellowship you build and publish your own MCP server, used by a GST reconciliation agent.',
+  },
+  {
+    q: 'What is agentic AI?',
+    a: 'Agentic AI is AI that plans and carries out multi-step tasks — calling tools, checking results and deciding what to do next — instead of answering one prompt. Weeks 5–8 of the course cover agent architecture, memory, multi-agent systems and keeping agents safe.',
+  },
+  {
     q: 'Will I get a certificate?',
     a: 'Yes. You earn the Menler AI FDE Certification, graded against 100 engineering and delivery competencies.',
+  },
+  {
+    q: 'Does the course include placement support?',
+    a: "Yes. Placement support is part of the AI FDE Fellowship: mock FDE interviews, portfolio and LinkedIn reviews, hiring-readiness guidance and referrals through Menler's hiring network.",
   },
   {
     q: 'How does interview preparation and career support work?',

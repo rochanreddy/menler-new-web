@@ -16,7 +16,7 @@ import { POLICIES } from '../src/data/policyContent.js';
 import { DOMAIN_TRACKS, GENERALIST_WEEKS, KICKSTARTER_DAYS, KICKSTARTER_MODULES } from '../src/data/curriculumData.js';
 import { RESOURCE_PACKS } from '../src/data/resourceCatalog.js';
 import { HIRING_COMPANIES } from '../src/data/hiringCompanies.js';
-import { FDE_PHASES, FDE_AUDIENCE, FDE_HIGHLIGHTS, FDE_START, FDE_SEO } from '../src/data/fdeCurriculum.js';
+import { FDE_PHASES, FDE_AUDIENCE, FDE_HIGHLIGHTS, FDE_START, FDE_SEO, FDE_GUIDE } from '../src/data/fdeCurriculum.js';
 import { BLOG_POSTS as FILE_POSTS } from '../src/data/blogData.js';
 
 const SITE = 'https://menler.in';
@@ -232,7 +232,7 @@ const STATIC_ROUTES = [
       faqOf(ENGINEERING_FAQS),
       crumbs([{ name: 'Home', path: '/' }, { name: 'AI Engineering Course (AI FDE Fellowship)', path: '/ai-engineering-course' }]),
     ],
-    fde: { phases: FDE_PHASES, audience: FDE_AUDIENCE, highlights: FDE_HIGHLIGHTS },
+    fde: { phases: FDE_PHASES, audience: FDE_AUDIENCE, highlights: FDE_HIGHLIGHTS, guide: FDE_GUIDE },
     faqs: ENGINEERING_FAQS,
   },
   {
@@ -682,6 +682,18 @@ function fdeHtml(fde) {
         (m.lessons?.length ? `<ul>${m.lessons.map((l) => `<li>${escText(l)}</li>`).join('')}</ul>` : '')
       ).join('')
     ).join('') + '</section>';
+  }
+  if (fde.guide) {
+    const g = fde.guide;
+    out += '<section><h2>AI engineering course guide</h2>' + g.blocks.map((b) =>
+      `<h3>${escText(b.h)}</h3>` +
+      (b.p ? `<p>${escText(b.p)}</p>` : '') +
+      (b.chips ? `<ul>${b.chips.map((c) => `<li>${escText(c)}</li>`).join('')}</ul>` : '')
+    ).join('') +
+      '<h3>AI Engineer vs Forward Deployed Engineer vs ML Engineer</h3><table><thead><tr>' +
+      g.compare.head.map((h) => `<th>${escText(h)}</th>`).join('') + '</tr></thead><tbody>' +
+      g.compare.rows.map((r) => '<tr>' + r.map((c, i) => (i ? `<td>${escText(c)}</td>` : `<th>${escText(c)}</th>`)).join('') + '</tr>').join('') +
+      '</tbody></table></section>';
   }
   return out;
 }

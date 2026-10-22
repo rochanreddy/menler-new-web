@@ -229,6 +229,66 @@ export const FDE_SEO = {
   title: 'AI Engineering Course in India | AI FDE Fellowship | Menler',
   description:
     'Live 12-week AI engineering course: build RAG, AI agents and MCP servers with Claude on 6 real Indian cases, deploy them to production and become an AI FDE.',
-  keywords:
-    'AI engineering course, AI engineering course India, AI engineering course online, AI engineer course, forward deployed engineer course, AI forward deployed engineer, FDE course India, agentic AI course, AI agents course, RAG course, MCP server course, Claude Code course, LLM engineering course, generative AI engineering course, AI engineer course for working professionals, how to become an AI engineer, how to become a forward deployed engineer, forward deployed engineer vs AI engineer',
+  keywords: [
+    'AI engineering course', 'AI engineering course India', 'AI engineering course online', 'AI engineer course',
+    'AI engineering certification', 'AI engineering bootcamp', 'AI engineer course with placement',
+    'AI engineer course for working professionals', 'AI engineer course for freshers', 'weekend AI course',
+    'generative AI course', 'generative AI engineering course', 'gen AI course India', 'LLM engineering course', 'LLM course',
+    'agentic AI course', 'AI agents course', 'multi-agent systems course', 'RAG course', 'retrieval augmented generation course',
+    'MCP server course', 'Model Context Protocol course', 'Claude course', 'Claude Code course', 'Claude API course',
+    'prompt engineering course', 'context engineering', 'LLMOps course', 'AI evaluation', 'AI security course',
+    'forward deployed engineer course', 'AI forward deployed engineer', 'FDE course India', 'forward deployed engineer vs AI engineer',
+    'how to become an AI engineer', 'AI engineer roadmap 2026', 'how to become a forward deployed engineer',
+    'AI course Bangalore', 'AI course Hyderabad', 'AI course Pune', 'AI course Chennai', 'AI course Mumbai', 'AI course Delhi',
+  ].join(', '),
+};
+
+// "AI engineering course guide" — the section between Pricing and the FAQ.
+// Plain answers to what people search before they buy an AI engineering course
+// (what it is, the skills, the roadmap, time, certification, where), plus a
+// role comparison. The page shows it, and the build writes it into the
+// static HTML, so search engines and answer engines read the same words.
+export const FDE_GUIDE = {
+  blocks: [
+    {
+      h: 'What is an AI engineering course?',
+      p: "An AI engineering course teaches you to build software on top of large language models (LLMs), not to train models from scratch. This one covers generative AI, prompt and context engineering, retrieval-augmented generation (RAG), AI agents and MCP servers, then takes every build to production with evaluation, security and LLMOps.",
+    },
+    {
+      h: 'Skills you will learn',
+      chips: [
+        'Generative AI', 'Large language models (LLMs)', 'Prompt & context engineering', 'Structured outputs',
+        'RAG pipelines', 'Embeddings & vector databases', 'Hybrid search & reranking', 'AI agents', 'Agentic AI',
+        'Multi-agent systems', 'MCP servers', 'Claude API', 'Claude Code', 'Claude Agent SDK', 'LLM evaluation',
+        'AI security & guardrails', 'LLMOps & deployment', 'Full-stack AI apps', 'SQL & data modelling', 'DPDP & PII basics',
+      ],
+      wide: true,
+    },
+    {
+      h: 'Your AI engineer roadmap, in 12 weeks',
+      p: 'Weeks 1–4: LLM foundations, Claude Code and RAG. Weeks 5–8: AI agents, multi-agent systems, MCP, evals and AI security. Weeks 9–12: deployment, ROI and a client capstone ending in Demo Day. The 2026 AI engineer roadmap, done as live builds instead of videos.',
+    },
+    {
+      h: 'For working professionals, freshers and career switchers',
+      p: 'Live weekend classes, about 12 hours a week including build time, so you can take this AI engineering course alongside a full-time job or your final year of college. Basic coding helps; a guided code walkthrough in Week 1 brings newer coders up to speed.',
+    },
+    {
+      h: 'Certification, portfolio and placement support',
+      p: "Earn the Menler AI FDE Certification, graded on 100 engineering and delivery competencies, with six deployed AI projects in your portfolio. Placement support includes mock FDE interviews, portfolio and LinkedIn reviews, and referrals through Menler's hiring network.",
+    },
+    {
+      h: 'Live online, anywhere in India',
+      p: 'Join from Bengaluru, Hyderabad, Pune, Chennai, Mumbai, Delhi NCR, Kolkata, Kochi or anywhere else in India. Every session is live online, in pods of five with mentors, and every recording stays in the LMS for a year.',
+      wide: true,
+    },
+  ],
+  compare: {
+    head: ['', 'AI Engineer', 'Forward Deployed Engineer', 'ML Engineer'],
+    rows: [
+      ['What they build', 'LLM apps, RAG systems and AI agents', 'The same, deployed inside a client’s business', 'Trained models and data pipelines'],
+      ['Measured on', 'The system and its code', 'The client outcome and its ROI', 'Model accuracy'],
+      ['Core skills', 'Prompting, RAG, agents, evals', 'All of that, plus discovery, deployment and adoption', 'Statistics, model training, MLOps'],
+      ['In this course', 'Yes, all of it', 'Yes, the heart of the course', 'The fundamentals, in Week 1'],
+    ],
+  },
 };
