@@ -116,6 +116,7 @@ export default function App() {
             {/* The course page's old address. vercel.json answers it with a
                 permanent redirect for direct visits; this covers in-app links. */}
             <Route path="/engineering" element={<Navigate to={FDE_PATH} replace />} />
+            <Route path="/ai-forward-deployed-engineer-course" element={<Navigate to={FDE_PATH} replace />} />
             <Route path="/projects/:slug" element={<Projects />} />
             <Route path="/outcomes" element={<Outcomes />} />
             <Route path="/aptitude" element={<Aptitude />} />
