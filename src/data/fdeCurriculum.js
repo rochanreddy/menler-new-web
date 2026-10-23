@@ -252,7 +252,7 @@ export const FDE_GUIDE = {
   blocks: [
     {
       h: 'What is an AI engineering course?',
-      p: "An AI engineering course teaches you to build software on top of large language models (LLMs), not to train models from scratch. This one covers generative AI, prompt and context engineering, retrieval-augmented generation (RAG), AI agents and MCP servers, then takes every build to production with evaluation, security and LLMOps.",
+      p: 'A course in building applications on large language models (LLMs), rather than training models. You learn RAG, AI agents and MCP, and take every build to production.',
     },
     {
       h: 'Skills you will learn',
@@ -266,19 +266,19 @@ export const FDE_GUIDE = {
     },
     {
       h: 'Your AI engineer roadmap, in 12 weeks',
-      p: 'Weeks 1–4: LLM foundations, Claude Code and RAG. Weeks 5–8: AI agents, multi-agent systems, MCP, evals and AI security. Weeks 9–12: deployment, ROI and a client capstone ending in Demo Day. The 2026 AI engineer roadmap, done as live builds instead of videos.',
+      p: 'Weeks 1–4: LLM foundations, Claude Code and RAG. Weeks 5–8: AI agents, MCP, evaluation and security. Weeks 9–12: deployment and a client capstone.',
     },
     {
       h: 'For working professionals, freshers and career switchers',
-      p: 'Live weekend classes, about 12 hours a week including build time, so you can take this AI engineering course alongside a full-time job or your final year of college. Basic coding helps; a guided code walkthrough in Week 1 brings newer coders up to speed.',
+      p: 'Live weekend classes, about 12 hours a week, designed to fit around a full-time job or college. Basic coding helps; Week 1 covers the essentials.',
     },
     {
       h: 'Certification, portfolio and placement support',
-      p: "Earn the Menler AI FDE Certification, graded on 100 engineering and delivery competencies, with six deployed AI projects in your portfolio. Placement support includes mock FDE interviews, portfolio and LinkedIn reviews, and referrals through Menler's hiring network.",
+      p: 'Earn the Menler AI FDE Certification and graduate with six deployed projects. Placement support includes mock interviews, portfolio reviews and referrals.',
     },
     {
       h: 'Live online, anywhere in India',
-      p: 'Join from Bengaluru, Hyderabad, Pune, Chennai, Mumbai, Delhi NCR, Kolkata, Kochi or anywhere else in India. Every session is live online, in pods of five with mentors, and every recording stays in the LMS for a year.',
+      p: 'Join live from Bengaluru, Hyderabad, Pune, Mumbai, Delhi NCR or anywhere in India. Small pods of five with mentors, and recordings for a year.',
       wide: true,
     },
   ],
