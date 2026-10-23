@@ -115,7 +115,7 @@ export default function Navbar() {
             <a className="dd-item dd-eng" role="menuitem" {...link(FDE_PATH)}>
               <span className="dd-badge" style={{ background: '#E1F5EE', color: '#085041' }}>12 weeks · Code</span>
               <span className="dd-title">AI FDE Fellowship</span>
-              <span className="dd-desc">For software engineers, DS, ML, IT. Build production Claude systems — API, RAG, MCP, agents.</span>
+              <span className="dd-desc">For students, devs, product teams, founders &amp; career switchers. Build RAG, MCP and agents.</span>
             </a>
           </div>
         </div>

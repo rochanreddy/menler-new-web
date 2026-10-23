@@ -16,7 +16,7 @@ export const HOME_FAQS = [
   },
   {
     q: 'Who should apply to the Claude AI Engineering program?',
-    a: "The Engineering program is built for technical professionals — software engineers, data scientists, ML practitioners, IT engineers, and deep-tech professionals — who already write production code in Python or JavaScript. You'll go from Claude API basics to deployed multi-agent systems, MCP servers, RAG pipelines with evals, and full LLMOps.",
+    a: "The AI FDE Fellowship is built for students and fresh graduates, engineers and developers, product, design and delivery professionals, founders and domain experts, and freelancers and career switchers. Basic programming helps, and Week 1 covers the essentials. You'll go from Claude API basics to deployed multi-agent systems, MCP servers, RAG pipelines with evals, and full LLMOps.",
   },
   {
     q: 'Does Menler guarantee placement and what does placement support look like?',
