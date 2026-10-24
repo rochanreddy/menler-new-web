@@ -52,7 +52,14 @@ export const eventIsOver = (ev) => {
 // and its page shows the closed notice.
 export const CANCELLED_CAMPAIGNS = new Set(['ai-for-modern-work-and-careers']);
 
+// Campaigns moved to a date not yet announced. Their page stops taking
+// registrations and says the class is postponed (not closed), and /events
+// leaves them out until the new date is set. To bring one back: put the new
+// date in the CMS and take its slug out of this list.
+// Build Your First RAG Application (was 24 Oct 2026) — postponed on the day.
+export const POSTPONED_CAMPAIGNS = new Set(['build-your-first-rag-application']);
+
 // A campaign page stops taking registrations once its session has run (or was
 // called off). `session` is anything with the campaign's `date` and `time`.
 export const campaignIsClosed = (slug, session) =>
-  CANCELLED_CAMPAIGNS.has(slug) || eventIsOver(session);
+  CANCELLED_CAMPAIGNS.has(slug) || POSTPONED_CAMPAIGNS.has(slug) || eventIsOver(session);

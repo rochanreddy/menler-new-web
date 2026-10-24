@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react';
 import { useParams } from 'react-router-dom';
 import PageLoader from '../components/common/PageLoader';
 import { useContentState } from '../lib/useContent';
-import { CANCELLED_CAMPAIGNS, campaignIsClosed } from '../lib/campaignStatus';
+import { CANCELLED_CAMPAIGNS, POSTPONED_CAMPAIGNS, campaignIsClosed } from '../lib/campaignStatus';
 import KickstarterLanding from './KickstarterLanding';
 import CampaignClosed from './campaign/CampaignClosed';
 
@@ -34,6 +34,13 @@ export default function CampaignBySlug() {
   // Hold the frame rather than paint the classic page and swap it — a visitor
   // seeing one design flash into another reads as a broken page.
   if (loading && !data) return <PageLoader />;
+
+  // A postponed one says so, rather than "no longer open" — after the document
+  // loads, so the notice can name the class.
+  if (POSTPONED_CAMPAIGNS.has(slug)) {
+    const title = [data?.bannerLine1, data?.bannerLine2].filter(Boolean).join(' ') || data?.title;
+    return <CampaignClosed title={title} postponed />;
+  }
 
   if (campaignIsClosed(slug, data)) {
     const title = [data?.bannerLine1, data?.bannerLine2].filter(Boolean).join(' ') || data?.title;

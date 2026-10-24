@@ -12,19 +12,19 @@ import { MENLER_WHATSAPP_URL } from '../../data/communityLinks';
  * someone who followed a link for a specific masterclass is told why they are
  * not looking at it.
  */
-export default function CampaignClosed({ title }) {
+export default function CampaignClosed({ title, postponed = false }) {
   const navigate = useNavigate();
 
   return (
     <>
-      <Seo title="Registrations closed | Menler Masterclass" noindex />
+      <Seo title={postponed ? 'Masterclass postponed | Menler' : 'Registrations closed | Menler Masterclass'} noindex />
       <section className="notfound">
         <div className="notfound-rings" aria-hidden="true">
           <span /><span /><span />
         </div>
         <div className="notfound-inner cc-card">
-          <span className="cc-pill"><span className="cc-pill-dot" aria-hidden="true" />Registrations closed</span>
-          <h1 className="cc-h1">This masterclass is <em>no longer open</em></h1>
+          <span className="cc-pill"><span className="cc-pill-dot" aria-hidden="true" />{postponed ? 'Postponed' : 'Registrations closed'}</span>
+          <h1 className="cc-h1">{postponed ? <>This masterclass has been <em>postponed</em></> : <>This masterclass is <em>no longer open</em></>}</h1>
 
           {/* The masterclass they came for, named as its own row rather than
               buried mid-sentence. */}
@@ -40,12 +40,14 @@ export default function CampaignClosed({ title }) {
                 <span className="cc-event-label">Masterclass</span>
                 <span className="cc-event-title">{title}</span>
               </span>
-              <span className="cc-event-status">Closed</span>
+              <span className="cc-event-status">{postponed ? 'New date soon' : 'Closed'}</span>
             </div>
           )}
 
           <p className="cc-sub">
-            See what&rsquo;s coming up next and get the free resources from past sessions on our events page.
+            {postponed
+              ? <>The new date will be announced soon. If you&rsquo;ve already registered, your seat is safe — we&rsquo;ll send you the new date.</>
+              : <>See what&rsquo;s coming up next and get the free resources from past sessions on our events page.</>}
           </p>
 
           <div className="cc-actions">

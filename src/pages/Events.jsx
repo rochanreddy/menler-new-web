@@ -8,7 +8,7 @@ import CtaBanner from '../components/common/CtaBanner';
 import { useApply } from '../components/common/ApplyContext';
 import { useContentState } from '../lib/useContent';
 import { MENLER_WHATSAPP_URL } from '../data/communityLinks';
-import { eventStartMs, eventIsOver, CANCELLED_CAMPAIGNS } from '../lib/campaignStatus';
+import { eventStartMs, eventIsOver, CANCELLED_CAMPAIGNS, POSTPONED_CAMPAIGNS } from '../lib/campaignStatus';
 import { FDE_PATH } from '../lib/routes';
 
 // ── /events — Menler masterclasses & events ──────────────────────────────────
@@ -343,7 +343,8 @@ export default function Events() {
   // Past — it is left off the page (see CANCELLED_CAMPAIGNS).
   const events = (data || [])
     .map((e) => (e && e.status ? e : toEvent(e)))
-    .filter((e) => !CANCELLED_CAMPAIGNS.has(e.campaignSlug));
+    // A postponed one is off the page until its new date is set.
+    .filter((e) => !CANCELLED_CAMPAIGNS.has(e.campaignSlug) && !POSTPONED_CAMPAIGNS.has(e.campaignSlug));
   // A finished event is Past regardless of its Live toggle (see eventIsOver).
   // With more than one session live, the soonest one leads — the CMS order is
   // creation order, which would just as easily put next month's class above
