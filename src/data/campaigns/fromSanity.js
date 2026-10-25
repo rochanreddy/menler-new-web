@@ -192,7 +192,8 @@ export function contentFromSanity(d) {
       cta: 'Reserve your seat',
     },
 
-    FAQS: (list(d.faqs) || []).map((f) => [clean(f.q) || '', clean(f.a) || '']),
+    // Ten at most on any page: past that the list reads as a wall, not answers.
+    FAQS: (list(d.faqs) || []).slice(0, 10).map((f) => [clean(f.q) || '', clean(f.a) || '']),
     COMMUNITY: {
       ...DEFAULT_COMMUNITY,
       lede: clean(d.whatsappText) || DEFAULT_COMMUNITY.lede,

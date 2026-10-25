@@ -50,7 +50,6 @@ export const KICKSTARTER_FAQS = [
   { q: 'What language is the program in?', a: 'Primary instruction in English. Hindi explanations available on request. Slack is bilingual.' },
   { q: 'Are the sessions recorded?', a: 'Yes — every live class is recorded.' },
   { q: 'What can I do after the Kickstarter?', a: 'Most learners move on to a longer program. Kickstarter alumni get a 30% scholarship to the AI Generalist Fellowship or the AI FDE Fellowship.' },
-  { q: 'Do you offer group discounts?', a: 'Yes — 15% off for groups of 5+ from the same school, college, or company. Email partner@menler.in.' },
   { q: 'Is the certificate recognised?', a: "Yes. Menler certificates are verifiable and backed by industry-recognised standards, including MSME, Skill India, and ISO accreditations. They are designed to signal practical AI capability and portfolio-backed learning." },
 ];
 
@@ -62,10 +61,6 @@ export const GENERALIST_FAQS = [
   {
     q: 'How do I become an AI generalist?',
     a: "Learn the core skills in order: prompting and context, AI research and writing, AI for documents and presentations, creative and media tools, automation with tools like n8n, Make and Zapier, and no-code building with Lovable and Claude Code. Then apply them to real projects in your own field and build a portfolio. Menler's 10-week AI Generalist Fellowship follows this path, with live sessions, domain tracks and placement support.",
-  },
-  {
-    q: 'Is the AI Generalist course only about Claude?',
-    a: 'Claude is the core tool, but the course covers the wider AI stack a generalist uses: ChatGPT, Gemini, Perplexity and NotebookLM for research; Canva, Firefly and ElevenLabs for creative work; n8n, Make and Zapier for automation; and Lovable, Cursor and Claude Code for building — 35+ tools in all.',
   },
   {
     q: 'What is the Menler Generalist program?',
@@ -113,14 +108,6 @@ export const ENGINEERING_FAQS = [
     a: 'A Forward Deployed Engineer is an engineer who embeds with a client, understands their problem, builds the AI system and owns it in production. The role combines software engineering with the judgment of a consultant.',
   },
   {
-    q: 'What is the difference between an AI engineer and a Forward Deployed Engineer?',
-    a: 'An AI engineer is measured mainly on the system and its code. A Forward Deployed Engineer is measured on the client outcome, so they also own discovery, deployment, adoption and the business case. The AI FDE Fellowship trains both.',
-  },
-  {
-    q: 'How do I become a Forward Deployed Engineer?',
-    a: 'To become a Forward Deployed Engineer, learn to frame a client problem, build the AI system (RAG, agents, integrations), deploy it and prove its return, then show deployed work. The AI FDE Fellowship follows that path in 12 weeks and ends with six deployed builds, six Case Defences and Demo Day.',
-  },
-  {
     q: 'Who is this AI engineering course for?',
     a: 'The AI FDE Fellowship is for students and fresh graduates, engineers and developers, product, design and delivery professionals, founders and domain experts, and freelancers or career switchers who want to build and ship AI systems.',
   },
@@ -133,52 +120,12 @@ export const ENGINEERING_FAQS = [
     a: `The next batch of the AI FDE Fellowship starts on ${FDE_START.label}. It runs live online on weekends for 12 weeks.`,
   },
   {
-    q: 'Is the AI engineering course online?',
-    a: 'Yes. The AI FDE Fellowship is fully live and online: 24 weekend sessions, 48 live hours over 12 weeks, in pods of five learners with mentors, plus recordings and one year of access to the LMS and community.',
-  },
-  {
     q: 'How much time should I commit each week?',
     a: 'About 12 hours a week: four live hours on weekends plus around 7–8 hours of build time.',
   },
   {
-    q: 'Can I take this AI engineering course while working full time?',
-    a: 'Yes. Classes are live on Saturdays and Sundays, and the rest is about 7–8 hours of build time you schedule yourself, so the AI FDE Fellowship fits alongside a full-time job.',
-  },
-  {
-    q: 'Can freshers or final-year students join?',
-    a: 'Yes. Students and fresh graduates are one of the groups the AI FDE Fellowship is built for. You finish with six deployed AI projects, which gives a fresher a portfolio most applicants do not have.',
-  },
-  {
-    q: 'Is this an AI engineering bootcamp?',
-    a: 'It works like one: an intensive, live, cohort-based 12-week programme where you build and ship every week. Unlike most bootcamps, every build is a real Indian business case, and each one is defended to a panel.',
-  },
-  {
-    q: 'How is this different from a machine learning or data science course?',
-    a: 'A machine learning or data science course teaches you to train models from data. This AI engineering course teaches you to build products on top of large language models — RAG, AI agents and MCP servers — and to deploy them. Model training is covered only as background in Week 1.',
-  },
-  {
-    q: 'What tools and technologies will I learn?',
-    a: 'Claude is the core stack: the Claude API, Claude Code, the Claude Agent SDK and MCP. You also work with vector databases, hybrid search and reranking, evaluation tools, SQL, Git, integration platforms and production deployment (LLMOps).',
-  },
-  {
-    q: 'Is the AI FDE Fellowship only about Claude?',
-    a: 'Claude is the primary stack, but not the only one. You also compare models, use vector databases, eval tools and integration platforms, and learn model routing. You use your own Claude API key, so every build stays in your own account.',
-  },
-  {
     q: 'What will I build during the Fellowship?',
     a: 'Six builds across six real cases: a bank grievance triage engine, a cited farm-advisory RAG copilot, a GST reconciliation agent behind a public MCP server, a certified health pre-authorisation assistant, a production failed-delivery recovery system, and a client capstone you choose.',
-  },
-  {
-    q: 'What is RAG, and will I build RAG systems?',
-    a: 'RAG (retrieval-augmented generation) lets an AI answer from your own documents, with citations, instead of from memory. Yes: you build RAG pipelines from Week 4, covering parsing, chunking, embeddings, vector stores, hybrid search, reranking and grounded answers.',
-  },
-  {
-    q: 'What is MCP (Model Context Protocol)?',
-    a: 'MCP is an open standard that lets an AI model use outside tools and data — your database, files or business apps — through one common interface. In the AI FDE Fellowship you build and publish your own MCP server, used by a GST reconciliation agent.',
-  },
-  {
-    q: 'What is agentic AI?',
-    a: 'Agentic AI is AI that plans and carries out multi-step tasks — calling tools, checking results and deciding what to do next — instead of answering one prompt. Weeks 5–8 of the course cover agent architecture, memory, multi-agent systems and keeping agents safe.',
   },
   {
     q: 'Will I get a certificate?',
@@ -189,16 +136,8 @@ export const ENGINEERING_FAQS = [
     a: "Yes. Placement support is part of the AI FDE Fellowship: mock FDE interviews, portfolio and LinkedIn reviews, hiring-readiness guidance and referrals through Menler's hiring network.",
   },
   {
-    q: 'How does interview preparation and career support work?',
-    a: "Career support runs through the whole Fellowship: mock FDE interview loops, portfolio and LinkedIn reviews, hiring-readiness guidance, and referrals through Menler's hiring network.",
-  },
-  {
     q: 'What is the program fee and are there payment options?',
     a: `The 12-week AI FDE Fellowship costs ${formatINR(PROGRAM_PRICES.engineering.amount)} including all taxes, with EMI from ₹4,999 a month. Scholarship options are shared during the application process and counselling session.`,
-  },
-  {
-    q: 'What is the refund and cancellation policy?',
-    a: 'Refunds are only applicable if program access has not been provided. Once access to the Fellowship platform, curriculum, or learning resources has been granted, fees become non-refundable and cancellations are not eligible for a refund.',
   },
 ];
 
