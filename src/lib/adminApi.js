@@ -44,6 +44,21 @@ async function openPreview(path, body) {
   setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
+/** GETs a file and saves it under the name the server gives it. */
+async function download(path) {
+  const res = await fetch(`${API_URL}${path}`, { credentials: 'include' });
+  if (!res.ok) {
+    let msg = 'Download failed';
+    try { msg = (await res.json())?.error || msg; } catch { /* not JSON */ }
+    throw new Error(msg);
+  }
+  const name = /filename="([^"]+)"/.exec(res.headers.get('Content-Disposition') || '')?.[1] || 'invoice.pdf';
+  const url = URL.createObjectURL(await res.blob());
+  const a = Object.assign(document.createElement('a'), { href: url, download: name });
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
+}
+
 const qs = (params = {}) => {
   const sp = new URLSearchParams();
   for (const [k, v] of Object.entries(params)) {
@@ -122,6 +137,7 @@ export const adminApi = {
     api(`/admin/paid-users/${encodeURIComponent(id)}/refund/status`, { method: 'POST' }),
   deletePaidUser: (id) => api(`/admin/paid-users/${encodeURIComponent(id)}`, { method: 'DELETE' }),
   /** Edit a payment row's details (and, on an unverified row, its amount/date). */
+  downloadInvoice: (id) => download(`/admin/paid-users/${encodeURIComponent(id)}/invoice`),
   editPaidUser: (id, body) => api(`/admin/paid-users/${encodeURIComponent(id)}`, { method: 'PATCH', body }),
   /** Record the next instalment on a row. body: { reference } or { unverified: true, txn_id, amount }, plus paid_at, note. */
   addInstalment: (id, body) => api(`/admin/paid-users/${encodeURIComponent(id)}/instalments`, { method: 'POST', body }),

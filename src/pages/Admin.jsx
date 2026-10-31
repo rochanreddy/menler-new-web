@@ -1240,6 +1240,10 @@ function UsersTab() {
                     onClick={(e) => { e.stopPropagation(); setEditRow(r); }}>
                     Edit
                   </button>
+                  <button type="button" className="admin-refundbtn" title="Download the GST tax invoice (for our records; not sent to the buyer)"
+                    onClick={(e) => { e.stopPropagation(); adminApi.downloadInvoice(r._id).catch((err) => alert(err.message)); }}>
+                    Invoice
+                  </button>
                   {canRefund(r) && (
                     <button type="button" className="admin-refundbtn" title="Send this payment back through Cashfree"
                       onClick={(e) => { e.stopPropagation(); openRefund(r); }}>

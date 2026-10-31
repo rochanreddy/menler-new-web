@@ -52,6 +52,8 @@ app.use(cors({
     return cb(null, false);
   },
   credentials: true,
+  // Lets the admin read the file name of a download (the invoice).
+  exposedHeaders: ['Content-Disposition'],
 }));
 
 app.get('/health', (_req, res) => res.json({ ok: true }));

@@ -17,6 +17,7 @@ import { deliverPackForOrder, deliverLibraryForOrder } from '../utils/packDelive
 import { createCashfreeRefund, getCashfreeRefund } from '../utils/cashfree.js';
 import { sendRefundCode, verifyRefundCode, maskedApproverPhone } from '../utils/refundApproval.js';
 import { zoomConfigured, meetingIdFromLink, pastInstances, latestInstanceUuid, pastMeeting, pastMeetings, meetingParticipants, explainZoomError } from '../utils/zoom.js';
+import { buildInvoice } from '../utils/invoice.js';
 import { RESOURCE_PACKS, CLAUDE_PLAYBOOK_PACK } from '../../src/data/resourceCatalog.js';
 import {
   ADMIN_COOKIE_NAME,
@@ -1297,6 +1298,23 @@ function instalmentsOf(order) {
 }
 
 const isLocked = (order) => !order.extra?.manual || Boolean(order.extra?.verified);
+
+/* The GST tax invoice for a paid order, as a PDF. For Menler's records only:
+ * nothing is sent to the buyer. Numbered on first download (utils/invoice.js). */
+router.get('/paid-users/:id/invoice', requireAdmin, async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id).lean();
+    if (!order || order.status !== 'PAID') return res.status(404).json({ error: 'Not found.' });
+    if (!(Number(order.amount) > 0)) return res.status(400).json({ error: 'This payment has no amount to invoice.' });
+    const { bytes, number } = await buildInvoice(order);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="Invoice-${number.replaceAll('/', '-')}.pdf"`);
+    res.send(Buffer.from(bytes));
+  } catch (err) {
+    console.error('admin invoice error', err);
+    res.status(500).json({ error: 'Could not make the invoice.' });
+  }
+});
 
 router.patch('/paid-users/:id', requireAdmin, async (req, res) => {
   try {
