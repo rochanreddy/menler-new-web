@@ -115,7 +115,7 @@ export async function buildInvoice(order) {
   const hex = (h) => rgb(parseInt(h.slice(1, 3), 16) / 255, parseInt(h.slice(3, 5), 16) / 255, parseInt(h.slice(5, 7), 16) / 255);
   const C = {
     ink: hex('#26215C'), body: hex('#4A4741'), muted: hex('#888780'), violet: hex('#534AB7'),
-    green: hex('#1D9E75'), box: hex('#F6F5FD'), line: hex('#ECEBF5'), paidBg: hex('#E1F5EE'), paidInk: hex('#085041'),
+    green: hex('#1D9E75'), box: hex('#F6F5FD'), line: hex('#ECEBF5'),
     white: rgb(1, 1, 1),
   };
 
@@ -271,18 +271,12 @@ export async function buildInvoice(order) {
   T('Total', tl, ty, 16, { font: bold, color: C.ink });
   M(total, R, ty, 16, { font: bold, color: C.ink, align: 'right' });
 
-  // ── Words, the paid stamp, notes.
+  // ── Words, then notes.
   ty += 38;
   const ww = T('Amount in words: ', L, ty, 11.5);
   T(rupeesInWords(total), L + ww, ty, 11.5, { font: bold, color: C.ink });
 
-  ty += 26;
-  const stampW = bold.widthOfTextAtSize('PAID IN FULL', 11.5 * K) / K + 46;
-  rect(L, ty, stampW, 28, C.paidBg, 14);
-  page.drawSvgPath('M0 4 L3.5 7.5 L10 0', { x: X(L + 16), y: Y(ty + 9.5), scale: K, borderColor: C.paidInk, borderWidth: 1.6 });
-  T('PAID IN FULL', L + 32, ty + 18.5, 11.5, { font: bold, color: C.paidInk });
-
-  ty += 60;
+  ty += 34;
   hline(L, R, ty, 1, C.line);
   const igstW = T(`Prices include GST. For buyers outside ${COMPANY.state}, IGST @ ${GST_RATE}% (`, L, ty + 26, 10.5, { color: C.muted });
   const igstAmt = M(tax, L + igstW, ty + 26, 10.5, { color: C.muted });
