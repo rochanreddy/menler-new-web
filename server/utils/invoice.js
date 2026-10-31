@@ -101,6 +101,7 @@ export async function buildInvoice(orderDoc) {
   pdf.registerFontkit(fontkit);
   const regular = await pdf.embedFont(fs.readFileSync(path.join(FONTS, 'DMSans-Regular.ttf')), { subset: true });
   const bold = await pdf.embedFont(fs.readFileSync(path.join(FONTS, 'DMSans-Bold.ttf')), { subset: true });
+  const serif = await pdf.embedFont(fs.readFileSync(path.join(FONTS, 'DMSerifDisplay-Italic.ttf')), { subset: true });
   pdf.setTitle(`Tax Invoice ${invoice.no}`);
   pdf.setAuthor(COMPANY.name);
 
@@ -122,8 +123,15 @@ export async function buildInvoice(orderDoc) {
 
   // Header: seller on the left, invoice facts on the right.
   let y = 790;
-  text('menler', M, y, { size: 26, font: bold });
-  page.drawRectangle({ x: M, y: y - 6, width: 92, height: 2, color: violet });
+  // The wordmark as the site draws it: "menler" in heavy DM Sans, the green
+  // dot at the shoulder of the r, and the tagline in the serif italic. DM Sans
+  // ships here in bold only, so the word is laid down three times a hair apart
+  // to bring it up to the black weight of the logo.
+  const markSize = 30;
+  for (const dx of [0, 0.35, 0.7]) page.drawText('menler', { x: M + dx, y, size: markSize, font: bold, color: ink });
+  const markW = bold.widthOfTextAtSize('menler', markSize);
+  page.drawCircle({ x: M + markW + 4.5, y: y + markSize * 0.5, size: markSize * 0.09, color: rgb(0.114, 0.62, 0.459) }); // #1D9E75
+  page.drawText('Your turning point in the AI era.', { x: M, y: y - 17, size: 10.5, font: serif, color: violet });
   text('TAX INVOICE', W - M, y + 4, { size: 16, font: bold, color: violet, align: 'right' });
   text('Original for Recipient', W - M, y - 12, { size: 8.5, color: muted, align: 'right' });
 
