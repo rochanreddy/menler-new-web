@@ -169,7 +169,7 @@ export async function buildInvoice(order) {
   // "menler" is set three times a hair apart to reach the logo's black weight.
   for (const dx of [0, 0.45, 0.9]) T('menler', L + dx, 76, 34, { font: bold, color: C.ink });
   const markW = bold.widthOfTextAtSize('menler', 34 * K) / K;
-  page.drawCircle({ x: X(L + markW + 6), y: Y(60), size: 4.4 * K, color: C.green });
+  page.drawCircle({ x: X(L + markW + 6), y: Y(56), size: 4.4 * K, color: C.green });
   T('Your turning point in the AI era.', L, 96, 12, { font: serifItalic, color: C.violet });
 
   T(COMPANY.name, L, 130, 12.5, { font: bold, color: C.ink });
