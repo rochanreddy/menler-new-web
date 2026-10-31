@@ -141,12 +141,29 @@ export async function buildInvoice(orderDoc) {
     ['Place of supply', `${COMPANY.state} (${COMPANY.stateCode})`],
   ]) {
     text(k, W - M - 150, ry, { size: 9, color: muted });
-    text(v, W - M, ry, { size: 9, font: bold, align: 'right' });
+    const value = String(v ?? '');
+    if (regular.widthOfTextAtSize(k, 9) + 10 + bold.widthOfTextAtSize(value, 9) <= 150) {
+      text(value, W - M, ry, { size: 9, font: bold, align: 'right' });
+      ry -= 14;
+      continue;
+    }
+    // A Cashfree order ID runs to 50+ characters, wider than the column and
+    // into the address beside it. Long values go under their label, broken
+    // into lines that fit the column.
+    let chunk = '';
+    for (const ch of value) {
+      if (chunk && bold.widthOfTextAtSize(chunk + ch, 8.5) > 150) {
+        ry -= 12; text(chunk, W - M, ry, { size: 8.5, font: bold, align: 'right' });
+        chunk = '';
+      }
+      chunk += ch;
+    }
+    ry -= 12; text(chunk, W - M, ry, { size: 8.5, font: bold, align: 'right' });
     ry -= 14;
   }
 
-  // Bill to.
-  y -= 26; rule(y);
+  // Bill to. The rule goes below whichever column ran longer.
+  y = Math.min(y - 26, ry - 4); rule(y);
   y -= 20; text('BILL TO', M, y, { size: 8, font: bold, color: violet });
   y -= 15; text(order.customer_name || '—', M, y, { size: 10.5, font: bold });
   if (order.customer_email) { y -= 13; text(order.customer_email, M, y, { size: 9, color: muted }); }
