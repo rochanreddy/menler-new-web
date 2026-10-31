@@ -142,14 +142,18 @@ router.post('/logout', (_req, res) => {
 });
 
 /* Alerts for the header bell: failed or abandoned payments and emails that did
-   not go out (utils/notify.js). Newest first, with the unread count. */
+   not go out (utils/notify.js). Newest first, with the unread count and the
+   total still on the list. Cleared alerts are kept (their dedupe key stops a
+   webhook retry raising them again) but no longer listed. */
+const LISTED = { cleared: { $ne: true } };
 router.get('/notifications', requireAdmin, async (_req, res) => {
   try {
-    const [items, unread] = await Promise.all([
-      Notification.find().sort({ createdAt: -1 }).limit(50).lean(),
-      Notification.countDocuments({ read: false }),
+    const [items, unread, total] = await Promise.all([
+      Notification.find(LISTED).sort({ createdAt: -1 }).limit(50).lean(),
+      Notification.countDocuments({ ...LISTED, read: false }),
+      Notification.countDocuments(LISTED),
     ]);
-    res.json({ items, unread });
+    res.json({ items, unread, total });
   } catch (err) {
     console.error('notifications list failed', err.message);
     res.status(500).json({ error: 'Could not load notifications.' });
@@ -166,6 +170,17 @@ router.post('/notifications/read', requireAdmin, async (req, res) => {
   } catch (err) {
     console.error('notifications read failed', err.message);
     res.status(500).json({ error: 'Could not update notifications.' });
+  }
+});
+
+/* Clear every alert off the bell. */
+router.post('/notifications/clear', requireAdmin, async (_req, res) => {
+  try {
+    await Notification.updateMany(LISTED, { $set: { cleared: true, read: true } });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('notifications clear failed', err.message);
+    res.status(500).json({ error: 'Could not clear notifications.' });
   }
 });
 

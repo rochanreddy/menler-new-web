@@ -17,6 +17,7 @@ const notificationSchema = new mongoose.Schema(
     meta: { type: mongoose.Schema.Types.Mixed, default: {} },
     read: { type: Boolean, default: false, index: true },
     resolved: { type: Boolean, default: false },
+    cleared: { type: Boolean, default: false }, // taken off the bell by "Clear all"
   },
   { timestamps: true }
 );

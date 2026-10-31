@@ -3784,6 +3784,7 @@ button.mag-card { width: 100%; text-align: left; background: none; border: none;
 }
 .admin-bell-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 0.5px solid var(--border); font-size: 14px; }
 .admin-bell-head button { font: inherit; font-size: 12.5px; font-weight: 600; color: var(--specialist); background: none; border: none; cursor: pointer; padding: 2px 4px; }
+.admin-bell-actions { display: flex; gap: 10px; }
 .admin-bell-empty { margin: 0; padding: 22px 16px; font-size: 13px; color: var(--text-muted); text-align: center; line-height: 1.5; }
 .admin-bell-list { list-style: none; margin: 0; padding: 0; overflow-y: auto; }
 .admin-bell-list li + li { border-top: 0.5px solid var(--border); }

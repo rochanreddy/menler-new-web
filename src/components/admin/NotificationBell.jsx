@@ -3,8 +3,9 @@ import { adminApi } from '../../lib/adminApi';
 
 /* The bell in the admin header: failed or abandoned Cashfree payments and
    emails that did not go out (server/utils/notify.js). Checks every minute and
-   whenever the tab comes back into focus; the red count is the unread alerts.
-   Opening an alert marks it read. */
+   whenever the tab comes back into focus. The red count is every alert still
+   on the list, read or not, until someone clears them. Opening an alert marks
+   it read. */
 
 const KIND = {
   payment_failed: { icon: '₹', tone: 'bad' },
@@ -24,6 +25,7 @@ function ago(iso) {
 export default function NotificationBell() {
   const [items, setItems] = useState([]);
   const [unread, setUnread] = useState(0);
+  const [total, setTotal] = useState(0);
   const [open, setOpen] = useState(false);
   const [error, setError] = useState('');
   const wrapRef = useRef(null);
@@ -33,6 +35,7 @@ export default function NotificationBell() {
       const data = await adminApi.getNotifications();
       setItems(data.items || []);
       setUnread(data.unread || 0);
+      setTotal(data.total ?? (data.items || []).length);
       setError('');
     } catch (err) {
       setError(err.message || 'Could not load alerts.');
@@ -70,27 +73,37 @@ export default function NotificationBell() {
     try { await adminApi.markNotificationsRead(); } catch { load(); }
   };
 
+  const clearAll = async () => {
+    setItems([]);
+    setUnread(0);
+    setTotal(0);
+    try { await adminApi.clearNotifications(); } catch { load(); }
+  };
+
   return (
     <div className="admin-bell" ref={wrapRef}>
       <button
         type="button"
         className={`admin-bell-btn${open ? ' is-open' : ''}`}
         onClick={() => setOpen((o) => !o)}
-        aria-label={unread ? `Alerts, ${unread} unread` : 'Alerts'}
+        aria-label={total ? `Alerts, ${total}` : 'Alerts'}
         aria-expanded={open}
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
           <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
         </svg>
-        {unread > 0 && <span className="admin-bell-count">{unread > 99 ? '99+' : unread}</span>}
+        {total > 0 && <span className="admin-bell-count">{total > 99 ? '99+' : total}</span>}
       </button>
 
       {open && (
         <div className="admin-bell-panel" role="dialog" aria-label="Alerts">
           <div className="admin-bell-head">
             <strong>Alerts</strong>
-            {unread > 0 && <button type="button" onClick={markAll}>Mark all read</button>}
+            <span className="admin-bell-actions">
+              {unread > 0 && <button type="button" onClick={markAll}>Mark all read</button>}
+              {items.length > 0 && <button type="button" onClick={clearAll}>Clear all</button>}
+            </span>
           </div>
           {error && <p className="admin-bell-empty">{error}</p>}
           {!error && items.length === 0 && (
