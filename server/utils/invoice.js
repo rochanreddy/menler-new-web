@@ -224,52 +224,42 @@ export async function buildInvoice(order) {
   T(`${day(paidAt)}, ${time} IST`, bx2 + 16, boxTop + 87.8, 11.5);
   T('Reverse charge: No', bx2 + 16, boxTop + 106.2, 11.5);
 
-  // ── Line items.
+  // ── Line item. One row with the taxable value only; the tax and the total
+  // are added up once, in the block below, so no amount appears twice.
   const thTop = boxTop + boxH + 26;
-  const thH = 49;
-  rect(L, thTop, R - L, thH, C.ink, 8);
-  const cols = { n: L + 12, desc: L + 41, sac: L + 296, qty: L + 368, taxable: L + 446, cgst: L + 520, sgst: L + 596, amt: R - 11 };
-  const th = (s, x, align = 'left') => {
-    const parts = s.split('\n');
-    const mid = thTop + thH / 2 + 4;
-    parts.forEach((p, i) => T(p, x, mid + (i - (parts.length - 1) / 2) * 15.5, 11.5, { font: medium, color: C.white, align }));
-  };
-  th('#', cols.n);
-  th('Description', cols.desc);
-  th('SAC', cols.sac);
-  th('Qty', cols.qty, 'right');
-  th('Taxable\nvalue', cols.taxable, 'right');
-  th(`CGST\n${GST_RATE / 2}%`, cols.cgst, 'right');
-  th(`SGST\n${GST_RATE / 2}%`, cols.sgst, 'right');
-  th('Amount', cols.amt, 'right');
+  const thH = 34;
+  rect(L, thTop, R - L, thH, hex('#EFEDFB'), 6);
+  const cols = { desc: L + 16, sac: L + 440, qty: L + 534, amt: R - 16 };
+  const thY = thTop + thH / 2 + 4.5;
+  T('Description', cols.desc, thY, 11.5, { font: bold, color: C.ink });
+  T('SAC', cols.sac, thY, 11.5, { font: bold, color: C.ink });
+  T('Qty', cols.qty, thY, 11.5, { font: bold, color: C.ink });
+  T('Taxable value', cols.amt, thY, 11.5, { font: bold, color: C.ink, align: 'right' });
 
-  const rowY = thTop + thH + 24;
-  T('1', cols.n - 1, rowY, 11.5);
-  const descLines = wrap(courseName(order), bold, 12.5, 240);
-  descLines.forEach((l, i) => T(l, cols.desc, rowY + i * 16, 12.5, { font: bold, color: C.ink }));
+  const rowY = thTop + thH + 26;
+  const descLines = wrap(courseName(order), medium, 12.5, 360);
+  descLines.forEach((l, i) => T(l, cols.desc, rowY + i * 16, 12.5, { font: medium, color: C.ink }));
   const subY = rowY + descLines.length * 16 + 1;
-  T(order.extra?.batch ? `Batch: ${order.extra.batch}` : 'Online programme · Menler', cols.desc, subY, 11.5, { color: C.muted });
-  T(SAC, cols.sac, rowY, 11.5);
-  T('1', cols.qty, rowY, 11.5, { align: 'right' });
-  M(taxable, cols.taxable, rowY, 11.5, { align: 'right' });
-  M(cgst, cols.cgst, rowY, 11.5, { align: 'right' });
-  M(sgst, cols.sgst, rowY, 11.5, { align: 'right' });
-  M(total, cols.amt, rowY, 11.5, { align: 'right' });
-  const rowBottom = subY + 21;
+  if (order.extra?.batch) T(`Batch: ${order.extra.batch}`, cols.desc, subY, 11, { color: C.muted });
+  T(SAC, cols.sac, rowY, 12.5, { color: C.ink });
+  T('1', cols.qty, rowY, 12.5, { color: C.ink });
+  M(taxable, cols.amt, rowY, 12.5, { color: C.ink, align: 'right' });
+  const rowBottom = (order.extra?.batch ? subY : rowY) + 22;
   hline(L, R, rowBottom, 1, C.line);
 
-  // ── Totals.
+  // ── Totals: the taxable value, the two taxes, and the total in a violet bar.
   const tl = R - 330;
-  let ty = rowBottom + 34;
+  let ty = rowBottom + 32;
   for (const [k, v] of [['Taxable value', taxable], [`CGST @ ${GST_RATE / 2}%`, cgst], [`SGST @ ${GST_RATE / 2}%`, sgst]]) {
-    T(k, tl, ty, 12);
-    M(v, R, ty, 12, { align: 'right' });
-    ty += 28.5;
+    T(k, tl + 16, ty, 12, { color: C.muted });
+    M(v, R - 16, ty, 12, { color: C.ink, align: 'right' });
+    ty += 28;
   }
-  hline(tl, R, ty - 9, 2, C.ink);
-  ty += 22;
-  T('Total', tl, ty, 16, { font: bold, color: C.ink });
-  M(total, R, ty, 16, { font: bold, color: C.ink, align: 'right' });
+  rect(tl, ty - 12, R - tl, 40, C.violet);
+  ty += 13;
+  T('Total (incl. GST)', tl + 16, ty, 14, { font: bold, color: C.white });
+  M(total, R - 16, ty, 14, { font: bold, color: C.white, align: 'right' });
+  ty += 6;
 
   // ── Words, then notes.
   ty += 38;
