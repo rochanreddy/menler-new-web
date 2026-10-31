@@ -142,32 +142,28 @@ export async function buildInvoice(orderDoc) {
   y -= 13; text(`${COMPANY.email}   ·   ${COMPANY.website}`, M, y, { size: 9, color: muted });
 
   let ry = 756;
+  const FX = W - M - 222; // label column
+  const VX = FX + 84; // value column
+  const FW = W - M - VX;
   for (const [k, v] of [
     ['Invoice no.', invoice.no],
     ['Invoice date', day(order.paid_at || order.createdAt)],
     ['Order ID', order.order_id],
     ['Place of supply', `${COMPANY.state} (${COMPANY.stateCode})`],
   ]) {
-    text(k, W - M - 150, ry, { size: 9, color: muted });
-    const value = String(v ?? '');
-    if (regular.widthOfTextAtSize(k, 9) + 10 + bold.widthOfTextAtSize(value, 9) <= 150) {
-      text(value, W - M, ry, { size: 9, font: bold, align: 'right' });
-      ry -= 14;
-      continue;
-    }
-    // A Cashfree order ID runs to 50+ characters, wider than the column and
-    // into the address beside it. Long values go under their label, broken
-    // into lines that fit the column.
+    // Two columns: labels on the left, values left-aligned beside them. A
+    // value too wide for its column (a Cashfree order ID runs to 50+
+    // characters) wraps inside it, so it never reaches the address.
+    text(k, FX, ry, { size: 9, color: muted });
+    const lines = [];
     let chunk = '';
-    for (const ch of value) {
-      if (chunk && bold.widthOfTextAtSize(chunk + ch, 8.5) > 150) {
-        ry -= 12; text(chunk, W - M, ry, { size: 8.5, font: bold, align: 'right' });
-        chunk = '';
-      }
+    for (const ch of String(v ?? '')) {
+      if (chunk && bold.widthOfTextAtSize(chunk + ch, 9) > FW) { lines.push(chunk); chunk = ''; }
       chunk += ch;
     }
-    ry -= 12; text(chunk, W - M, ry, { size: 8.5, font: bold, align: 'right' });
-    ry -= 14;
+    lines.push(chunk);
+    lines.forEach((l, i) => text(l, VX, ry - i * 12, { size: 9, font: bold }));
+    ry -= 12 * (lines.length - 1) + 15;
   }
 
   // Bill to. The rule goes below whichever column ran longer.
