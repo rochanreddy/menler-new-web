@@ -2281,6 +2281,64 @@ a.dd-item { width: 100%; text-align: left; color: inherit; }
 .lp2-cert-sign-name { font-family: 'DM Serif Display', serif; font-size: 17px; color: var(--ink); border-bottom: 1px solid rgba(38,33,92,0.3); padding: 0 10px 4px; width: 100%; box-sizing: border-box; }
 .lp2-cert-sign-role { font-size: 10.5px; line-height: 1.4; color: var(--text-muted); margin-top: 5px; }
 .lp2-cert-note { font-size: 12.5px; color: var(--text-muted); }
+
+/* Program pages' certificate section (ProgramCertificate.jsx). The sheet is a
+   port of the LMS certificate (menler-lms CertificateModal + styles.css),
+   palette written out rather than themed: it must look like the one document
+   students are actually issued. */
+.prog-cert { text-align: center; padding-top: 40px; padding-bottom: 40px; }
+.prog-cert-label, .prog-cert-h2 { color: var(--pc-accent, var(--ink)); }
+.prog-cert-h2 em { color: var(--pc-em, var(--specialist)); }
+.prog-cert-sub { margin: 0 auto; }
+/* Certificate and points side by side, so the whole section fits one screen. */
+.prog-cert-grid { display: grid; grid-template-columns: minmax(0, 600px) 220px; justify-content: center; align-items: center; gap: 36px; margin: 24px auto 0; }
+.pcert-fit { min-width: 0; }
+.prog-cert-points { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 18px; text-align: left; }
+.prog-cert-points li { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; line-height: 1.5; color: var(--text-muted); }
+.prog-cert-points b { display: block; font-size: 14px; color: var(--ink); margin-bottom: 2px; }
+.prog-cert-tick { flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #fff; background: #534AB7; }
+/* Phones: the thumbnail on top, the points as three short columns under it. */
+@media (max-width: 760px) {
+  .prog-cert { padding: 36px 16px 32px; }
+  .prog-cert-grid { grid-template-columns: minmax(0, 1fr); gap: 18px; margin-top: 18px; }
+  .prog-cert-points { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .prog-cert-points li { flex-direction: column; align-items: center; text-align: center; gap: 6px; font-size: 11.5px; line-height: 1.35; }
+  .prog-cert-points b { font-size: 12.5px; }
+}
+
+.pcert {
+  --c-ground: #231D3D; --c-card: #2E2751; --c-line: #463C77; --c-ink: #FFFFFF;
+  --c-read: #C7C0E4; --c-dim: #8E86B6; --c-accent: #A99BF5;
+  background: var(--c-ground); border-radius: 14px; overflow: hidden;
+  box-shadow: 0 18px 50px rgba(10,7,26,.3);
+  width: 720px; text-align: left; transform-origin: top left;
+}
+.pcert-inner { background: var(--c-card); border: 1px solid var(--c-line); border-radius: 10px; margin: 11px; padding: 30px 34px 26px; }
+.pcert-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 22px; flex-wrap: wrap; }
+.pcert-brand { position: relative; display: inline-block; font-family: 'DM Sans', sans-serif; font-weight: 900; font-size: 22px; color: var(--c-ink); letter-spacing: -0.025em; line-height: 1; padding-bottom: 0.2em; }
+.pcert-brand-ruled { position: relative; }
+.pcert-brand-ruled::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0.04em; height: 0.0625em; min-height: 2px; border-radius: 3px; background: #6F63D8; }
+.pcert-brand-dot { position: absolute; top: 0.06em; right: -0.1em; width: 0.175em; height: 0.175em; border-radius: 50%; background: #1D9E75; }
+.pcert-tagline { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 10px; color: var(--c-accent); margin-top: 5px; }
+.pcert-partners { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.pcert-partners img { width: auto; object-fit: contain; filter: brightness(0) invert(1); opacity: .9; }
+.pcert-rule { height: 1px; background: var(--c-line); margin: 17px 0 22px; }
+.pcert-kicker { text-transform: uppercase; letter-spacing: .32em; font-size: 10.5px; font-weight: 600; color: var(--c-accent); }
+.pcert-lede { margin: 13px 0 0; font-size: 12.5px; color: var(--c-read); }
+.pcert-name { font-family: 'DM Sans', sans-serif; font-weight: 800; font-size: 42px; line-height: 1.05; letter-spacing: -0.035em; color: var(--c-ink); margin: 8px 0 16px; }
+.pcert-body { margin: 0 0 9px; font-size: 11.5px; line-height: 1.75; color: var(--c-read); max-width: 76ch; }
+.pcert-body strong { color: var(--c-accent); font-weight: 700; }
+.pcert-foot { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-top: 24px; flex-wrap: wrap; }
+.pcert-idblock { display: flex; align-items: flex-start; gap: 11px; }
+.pcert-qr { display: block; background: #fff; padding: 4px; border-radius: 5px; flex: none; }
+.pcert-idtext { display: grid; gap: 0; }
+.pcert-id { font-family: Consolas, Menlo, monospace; font-variant-numeric: tabular-nums; font-size: 10px; letter-spacing: .04em; color: var(--c-read); line-height: 13px; padding-bottom: 5px; border-bottom: 1px solid var(--c-line); }
+.pcert-issued { font-family: Consolas, Menlo, monospace; font-size: 9px; color: var(--c-dim); margin-top: 6px; }
+.pcert-signs { display: flex; gap: 26px; flex-wrap: wrap; }
+.pcert-sign { min-width: 130px; }
+.pcert-sign-name { line-height: 13px; font-size: 11px; font-weight: 700; color: var(--c-ink); padding-bottom: 5px; border-bottom: 1px solid var(--c-line); }
+.pcert-sign-role { font-size: 9px; color: var(--c-dim); margin-top: 6px; }
+
 /* Join WhatsApp community — narrow bar */
 .lp2-wa { display: flex; align-items: center; gap: 14px; margin-top: 28px; padding: 14px 18px; border-radius: 14px; background: #fff; border: 1px solid rgba(38,33,92,0.12); color: var(--ink); text-decoration: none; box-shadow: 0 10px 26px rgba(38,33,92,0.08); transition: transform .15s, box-shadow .15s, border-color .15s; }
 .lp2-wa:hover { transform: translateY(-1px); border-color: #25D366; box-shadow: 0 14px 32px rgba(37,211,102,0.18); }

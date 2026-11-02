@@ -10,6 +10,7 @@ import PlaybookModal from '../components/common/PlaybookModal';
 import { useApply } from '../components/common/ApplyContext';
 import PayModal from '../components/common/PayModal';
 import HiringJobs from '../components/common/HiringJobs';
+import ProgramCertificate from '../components/common/ProgramCertificate';
 import PricingCard from '../components/common/PricingCard';
 import ToolChip from '../components/common/ToolChip';
 import { useContent } from '../lib/useContent';
@@ -434,6 +435,15 @@ export default function Generalist() {
 
       {/* ── HIRING PARTNERS ── */}
       <HiringJobs {...GEN_HIRING} />
+
+      {/* ── CERTIFICATE ── the credential, right before the price. */}
+      <ProgramCertificate
+        program="Menler AI Generalist Fellowship Program"
+        certId="MNLR-AGFEL-1126-0000"
+        qr="/certificate/sample-qr-generalist.svg"
+        title={<>A credential <em>that counts.</em></>}
+        sub="Graduate as a Menler-certified Claude AI Specialist, certified in your domain track."
+      />
 
       {/* ── PRICING ── */}
       <section className="section kp-section" style={{ background: '#ffffff', paddingTop: 8 }}>
