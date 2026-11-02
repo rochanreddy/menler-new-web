@@ -702,6 +702,11 @@ function LeadsTab() {
         >
           ⭳ Export CSV
         </button>
+        <button className="admin-btn" title="Every paid order's GST invoice in one zip, with a CSV summary. Refunds are left out."
+          onClick={(e) => { const b = e.currentTarget; const label = b.textContent; b.disabled = true; b.textContent = 'Preparing…';
+            adminApi.downloadAllInvoices().catch((err) => alert(err.message)).finally(() => { b.disabled = false; b.textContent = label; }); }}>
+          ⭳ All invoices
+        </button>
       </div>
 
       <div className="admin-table-wrap">

@@ -138,6 +138,7 @@ export const adminApi = {
     api(`/admin/paid-users/${encodeURIComponent(id)}/refund/status`, { method: 'POST' }),
   deletePaidUser: (id) => api(`/admin/paid-users/${encodeURIComponent(id)}`, { method: 'DELETE' }),
   /** Edit a payment row's details (and, on an unverified row, its amount/date). */
+  downloadAllInvoices: () => download('/admin/paid-users/invoices.zip'),
   downloadInvoice: (id) => download(`/admin/paid-users/${encodeURIComponent(id)}/invoice`),
   editPaidUser: (id, body) => api(`/admin/paid-users/${encodeURIComponent(id)}`, { method: 'PATCH', body }),
   /** Record the next instalment on a row. body: { reference } or { unverified: true, txn_id, amount }, plus paid_at, note. */

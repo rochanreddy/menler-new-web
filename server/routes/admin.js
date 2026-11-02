@@ -17,7 +17,8 @@ import { deliverPackForOrder, deliverLibraryForOrder } from '../utils/packDelive
 import { createCashfreeRefund, getCashfreeRefund } from '../utils/cashfree.js';
 import { sendRefundCode, verifyRefundCode, maskedApproverPhone } from '../utils/refundApproval.js';
 import { zoomConfigured, meetingIdFromLink, pastInstances, latestInstanceUuid, pastMeeting, pastMeetings, meetingParticipants, explainZoomError } from '../utils/zoom.js';
-import { buildInvoice } from '../utils/invoice.js';
+import { buildInvoice, gstSplit } from '../utils/invoice.js';
+import { makeZip } from '../utils/zip.js';
 import { RESOURCE_PACKS, CLAUDE_PLAYBOOK_PACK } from '../../src/data/resourceCatalog.js';
 import {
   ADMIN_COOKIE_NAME,
@@ -1313,6 +1314,35 @@ function instalmentsOf(order) {
 }
 
 const isLocked = (order) => !order.extra?.manual || Boolean(order.extra?.verified);
+
+/* Every paid order's invoice in one zip, with invoices.csv for the CA.
+ * Refunded orders are left out. Orders are taken oldest first, so any order
+ * being invoiced for the first time is numbered in the order it was paid. */
+router.get('/paid-users/invoices.zip', requireAdmin, async (_req, res) => {
+  try {
+    const orders = await Order.find({ status: 'PAID', amount: { $gt: 0 }, 'extra.refund.status': { $ne: 'SUCCESS' } })
+      .sort({ paid_at: 1, createdAt: 1 }).lean();
+    const files = [];
+    const csv = [['Invoice no.', 'Date', 'Name', 'Email', 'Phone', 'Course', 'Order ID', 'Taxable value', 'CGST', 'SGST', 'Total']];
+    for (const order of orders) {
+      const { bytes, number } = await buildInvoice(order);
+      const who = String(order.customer_name || 'buyer').replace(/[^\w]+/g, '-').replace(/^-|-$/g, '').slice(0, 40);
+      files.push({ name: `${number.replaceAll('/', '-')}_${who}.pdf`, data: bytes });
+      const g = gstSplit(order.amount);
+      const date = new Date(order.paid_at || order.createdAt).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
+      csv.push([number, date, order.customer_name, order.customer_email, order.customer_phone, order.program, order.order_id, g.taxable, g.cgst, g.sgst, g.total]);
+    }
+    const cell = (v) => { const s = String(v ?? ''); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+    files.push({ name: 'invoices.csv', data: Buffer.from('﻿' + csv.map((r) => r.map(cell).join(',')).join('\r\n'), 'utf8') });
+    const day = new Date().toISOString().slice(0, 10);
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', `attachment; filename="Menler-Invoices-${day}.zip"`);
+    res.send(makeZip(files));
+  } catch (err) {
+    console.error('admin invoices zip error', err);
+    res.status(500).json({ error: 'Could not make the invoices.' });
+  }
+});
 
 /* The GST tax invoice for a paid order, as a PDF. For Menler's records only:
  * nothing is sent to the buyer. Numbered on first download (utils/invoice.js). */
