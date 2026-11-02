@@ -1129,7 +1129,7 @@ function UsersTab() {
         </button>
         <button className="admin-btn" title="Every paid order's GST invoice in one zip, with a CSV summary. Refunds are left out."
           onClick={(e) => { const b = e.currentTarget; const label = b.textContent; b.disabled = true; b.textContent = 'Preparing…';
-            adminApi.downloadAllInvoices().catch((err) => alert(err.message)).finally(() => { b.disabled = false; b.textContent = label; }); }}>
+            adminApi.downloadAllInvoices((done, total) => { b.textContent = total ? `Preparing ${done}/${total}…` : 'Preparing…'; }).catch((err) => alert(err.message)).finally(() => { b.disabled = false; b.textContent = label; }); }}>
           ⭳ All invoices
         </button>
       </div>

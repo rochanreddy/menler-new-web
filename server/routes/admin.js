@@ -1317,11 +1317,19 @@ const isLocked = (order) => !order.extra?.manual || Boolean(order.extra?.verifie
 
 /* Every paid order's invoice in one zip, with invoices.csv for the CA.
  * Refunded orders are left out. Orders are taken oldest first, so any order
- * being invoiced for the first time is numbered in the order it was paid. */
-router.get('/paid-users/invoices.zip', requireAdmin, async (_req, res) => {
+ * being invoiced for the first time is numbered in the order it was paid.
+ *
+ * Building ~100 invoices takes a minute or two on Render, too long for one
+ * request. So the zip is made in the background: POST starts it, GET .../status
+ * reports progress, and GET .../download hands over the finished file once.
+ * One job at a time; it lives in memory, which is fine for a single instance. */
+let invoiceJob = null;
+
+async function runInvoiceJob(job) {
   try {
     const orders = await Order.find({ status: 'PAID', amount: { $gt: 0 }, 'extra.refund.status': { $ne: 'SUCCESS' } })
       .sort({ paid_at: 1, createdAt: 1 }).lean();
+    job.total = orders.length;
     const files = [];
     const csv = [['Invoice no.', 'Date', 'Name', 'Email', 'Phone', 'Course', 'Order ID', 'Taxable value', 'CGST', 'SGST', 'Total']];
     for (const order of orders) {
@@ -1331,17 +1339,39 @@ router.get('/paid-users/invoices.zip', requireAdmin, async (_req, res) => {
       const g = gstSplit(order.amount);
       const date = new Date(order.paid_at || order.createdAt).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
       csv.push([number, date, order.customer_name, order.customer_email, order.customer_phone, order.program, order.order_id, g.taxable, g.cgst, g.sgst, g.total]);
+      job.done += 1;
+      // Let other requests through between invoices.
+      await new Promise((r) => setImmediate(r));
     }
     const cell = (v) => { const s = String(v ?? ''); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
     files.push({ name: 'invoices.csv', data: Buffer.from('﻿' + csv.map((r) => r.map(cell).join(',')).join('\r\n'), 'utf8') });
-    const day = new Date().toISOString().slice(0, 10);
-    res.setHeader('Content-Type', 'application/zip');
-    res.setHeader('Content-Disposition', `attachment; filename="Menler-Invoices-${day}.zip"`);
-    res.send(makeZip(files));
+    job.zip = makeZip(files);
+    job.status = 'ready';
   } catch (err) {
     console.error('admin invoices zip error', err);
-    res.status(500).json({ error: 'Could not make the invoices.' });
+    job.status = 'failed';
   }
+}
+
+const jobView = (job) => (job ? { id: job.id, status: job.status, done: job.done, total: job.total } : { status: 'none' });
+
+router.post('/paid-users/invoices.zip', requireAdmin, (_req, res) => {
+  if (invoiceJob?.status === 'running') return res.json(jobView(invoiceJob));
+  invoiceJob = { id: crypto.randomUUID(), status: 'running', done: 0, total: 0, zip: null, started: Date.now() };
+  runInvoiceJob(invoiceJob);
+  res.json(jobView(invoiceJob));
+});
+
+router.get('/paid-users/invoices.zip/status', requireAdmin, (_req, res) => res.json(jobView(invoiceJob)));
+
+router.get('/paid-users/invoices.zip/download', requireAdmin, (req, res) => {
+  const job = invoiceJob;
+  if (!job || job.id !== req.query.id || job.status !== 'ready') return res.status(404).json({ error: 'The zip is not ready.' });
+  const day = new Date().toISOString().slice(0, 10);
+  res.setHeader('Content-Type', 'application/zip');
+  res.setHeader('Content-Disposition', `attachment; filename="Menler-Invoices-${day}.zip"`);
+  res.send(job.zip);
+  invoiceJob = null; // free the memory once it has been handed over
 });
 
 /* The GST tax invoice for a paid order, as a PDF. For Menler's records only:

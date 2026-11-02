@@ -138,7 +138,17 @@ export const adminApi = {
     api(`/admin/paid-users/${encodeURIComponent(id)}/refund/status`, { method: 'POST' }),
   deletePaidUser: (id) => api(`/admin/paid-users/${encodeURIComponent(id)}`, { method: 'DELETE' }),
   /** Edit a payment row's details (and, on an unverified row, its amount/date). */
-  downloadAllInvoices: () => download('/admin/paid-users/invoices.zip'),
+  /** Starts the zip on the server, reports `done/total` while it builds, then downloads it. */
+  async downloadAllInvoices(onProgress = () => {}) {
+    let job = await api('/admin/paid-users/invoices.zip', { method: 'POST' });
+    while (job.status === 'running') {
+      onProgress(job.done, job.total);
+      await new Promise((r) => setTimeout(r, 1500));
+      job = await api('/admin/paid-users/invoices.zip/status');
+    }
+    if (job.status !== 'ready') throw new Error('Could not make the invoices. Try again.');
+    await download(`/admin/paid-users/invoices.zip/download?id=${encodeURIComponent(job.id)}`);
+  },
   downloadInvoice: (id) => download(`/admin/paid-users/${encodeURIComponent(id)}/invoice`),
   editPaidUser: (id, body) => api(`/admin/paid-users/${encodeURIComponent(id)}`, { method: 'PATCH', body }),
   /** Record the next instalment on a row. body: { reference } or { unverified: true, txn_id, amount }, plus paid_at, note. */
