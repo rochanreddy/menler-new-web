@@ -12,6 +12,7 @@ import PricingCard from '../components/common/PricingCard';
 import ToolChip from '../components/common/ToolChip';
 import { useApply } from '../components/common/ApplyContext';
 import HiringJobs from '../components/common/HiringJobs';
+import ProgramCertificate from '../components/common/ProgramCertificate';
 import { ENGINEERING_FAQS } from '../data/faqData';
 import { verifyAndDownloadBrochure } from '../lib/brochure';
 import PhoneField from '../components/forms/PhoneField';
@@ -314,6 +315,17 @@ export default function Engineering() {
 
       {/* ── HIRING PARTNERS & ROLES ── */}
       <div><HiringJobs {...ENG_HIRING} /></div>
+
+      {/* ── CERTIFICATE ── the credential, right before the price. */}
+      <ProgramCertificate
+        program="Menler AI FDE Fellowship Program"
+        certId="MNLR-AIFEL-1126-0000"
+        qr="/certificate/sample-qr-fde.svg"
+        title={<>Certified to <em>ship AI.</em></>}
+        sub="Finish the twelve weeks and graduate as a Menler-certified AI Forward Deployed Engineer."
+        accent="var(--forest)"
+        em="var(--placed)"
+      />
 
       {/* ── PRICING ── */}
       <section className="section kp-section fde-pricing" style={{ background: '#ffffff', paddingTop: 8 }}>

@@ -9,6 +9,7 @@ import ProjectModal from '../components/common/ProjectModal';
 import PlaybookModal from '../components/common/PlaybookModal';
 import { useApply } from '../components/common/ApplyContext';
 import HiringJobs from '../components/common/HiringJobs';
+import ProgramCertificate from '../components/common/ProgramCertificate';
 import PricingCard from '../components/common/PricingCard';
 import PayModal from '../components/common/PayModal';
 import BackgroundField from '../components/forms/BackgroundField';
@@ -372,6 +373,17 @@ export default function Kickstarter() {
 
       {/* ── HIRING PARTNERS & ROLES ── */}
       <HiringJobs label="Internship opportunities" title="The internships" sectionStyle={{ paddingTop: 48 }} labelStyle={{ color: '#854F0B' }} titleStyle={{ color: '#854F0B' }} titleEmStyle={{ color: '#BA7517' }} />
+
+      {/* ── CERTIFICATE ── the credential, right before the price. */}
+      <ProgramCertificate
+        program="Menler AI Kickstarter Fellowship Program"
+        certId="MNLR-AKFEL-1126-0000"
+        qr="/certificate/sample-qr-kickstarter.svg"
+        title={<>Two weekends. <em>One certificate.</em></>}
+        sub="Ship your four builds and walk away with a verifiable Menler certificate you can put on LinkedIn the same day."
+        accent="#854F0B"
+        em="#BA7517"
+      />
 
       {/* ── PRICING ── */}
       <section className="section kp-section" style={{ background: '#ffffff', paddingTop: 8 }}>
