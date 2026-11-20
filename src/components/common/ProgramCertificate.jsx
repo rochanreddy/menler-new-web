@@ -51,10 +51,33 @@ const SIGNATORIES = [
   { name: 'Sachin Roy', role: 'Founder, Menler' },
 ];
 
+// Line icons, one per point, so the three read as three different promises
+// rather than a checklist. Drawn in currentColor so they take the page accent.
+const ICONS = {
+  verify: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 3l7 3v5c0 4.5-3 8.4-7 10-4-1.6-7-5.5-7-10V6l7-3z" />
+      <path d="M9 12l2 2 4-4" />
+    </svg>
+  ),
+  share: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="4" />
+      <path d="M8 10.5V16M8 7.6v.1M11.5 16v-3.2a2.3 2.3 0 0 1 4.5 0V16M11.5 10.5V16" />
+    </svg>
+  ),
+  award: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="9" r="5.5" />
+      <path d="M8.6 13.4L7.5 21l4.5-2.5 4.5 2.5-1.1-7.6" />
+    </svg>
+  ),
+};
+
 const DEFAULT_POINTS = [
-  ['Verifiable', 'Unique ID and QR code.'],
-  ['LinkedIn-ready', 'Add it to your profile in one click.'],
-  ['Earned, not attended', 'Issued only after your projects ship.'],
+  ['verify', 'Verifiable', 'Unique ID and a scannable QR.'],
+  ['share', 'LinkedIn-ready', 'On your profile in one click.'],
+  ['award', 'Earned, not attended', 'Only after your projects ship.'],
 ];
 
 export default function ProgramCertificate({
@@ -131,9 +154,9 @@ export default function ProgramCertificate({
         </div>
 
         <ul className="prog-cert-points">
-          {points.map(([h, p]) => (
+          {points.map(([icon, h, p]) => (
             <li key={h}>
-              <span className="prog-cert-tick" aria-hidden="true">✓</span>
+              <span className="prog-cert-icon" aria-hidden="true">{ICONS[icon]}</span>
               <span><b>{h}</b>{p}</span>
             </li>
           ))}
